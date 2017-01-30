@@ -9,6 +9,8 @@
 #include <OpenHome/PowerManager.h>
 #include <OpenHome/Media/MuteManager.h>
 #include <OpenHome/Media/Pipeline/AnalogBypassRamper.h>
+#include <OpenHome/Media/Pipeline/MuterVolume.h>
+
 #include <functional>
 #include <vector>
 
@@ -87,6 +89,7 @@ public:
     virtual TUint VolumeDefaultLimit() const = 0;
     virtual TUint VolumeStep() const = 0;
     virtual TUint VolumeMilliDbPerStep() const = 0;
+    virtual TUint ThreadPriority() const = 0;
     virtual TUint BalanceMax() const = 0;
     virtual TUint FadeMax() const = 0;
     virtual TUint OffsetMax() const = 0;
@@ -128,6 +131,7 @@ private: // from IVolumeProfile
     TUint VolumeDefaultLimit() const override   { return 0; }
     TUint VolumeStep() const override           { return 0; }
     TUint VolumeMilliDbPerStep() const override { return 0; }
+    TUint ThreadPriority() const override       { return kPriorityNormal; }
     TUint BalanceMax() const override           { return 0; }
     TUint FadeMax() const override              { return 0; }
     TUint OffsetMax() const override            { return 0; }
@@ -341,6 +345,50 @@ private:
     TUint iMultiplier;
 };
 
+class VolumeRamper : public IVolume
+                   , public Media::IVolumeRamper
+                   , private INonCopyable
+{
+    friend class SuiteVolumeRamper;
+
+    static const TUint kJiffiesPerVolumeStep;
+public:
+    VolumeRamper(IVolume& aVolume, TUint aUnityGainValue, TUint aMilliDbPerStep, TUint aThreadPriority);
+    ~VolumeRamper();
+private: // from IVolume
+    void SetVolume(TUint aValue) override;
+private: // from Media::IVolumeRamper
+    Media::IVolumeRamper::Status BeginMute() override;
+    Media::IVolumeRamper::Status StepMute(TUint aJiffies) override;
+    void SetMuted() override;
+    Media::IVolumeRamper::Status BeginUnmute() override;
+    Media::IVolumeRamper::Status StepUnmute(TUint aJiffies) override;
+    void SetUnmuted() override;
+private:
+    inline TUint VolumeStepLocked() const;
+    void Run();
+private:
+    enum class Status
+    {
+        eRunning,
+        eMuting,
+        eUnmuting,
+        eMuted
+    };
+private:
+    IVolume& iVolume;
+    Mutex iLock;
+    ThreadFunctor* iThread;
+    const TUint iUnityGainVolume;
+    const TUint iMilliDbPerStep;
+    TUint iUpstreamVolume;
+    TUint iPendingVolume;
+    TUint iCurrentVolume;
+    TUint iJiffiesUntilStep;
+    Status iStatus;
+    TBool iMuted;
+};
+
 class BalanceUser : public IBalance, private INonCopyable
 {
 public:
@@ -435,6 +483,7 @@ public: // from IVolumeProfile
     TUint VolumeDefaultLimit() const override;
     TUint VolumeStep() const override;
     TUint VolumeMilliDbPerStep() const override;
+    TUint ThreadPriority() const override;
     TUint BalanceMax() const override;
     TUint FadeMax() const override;
     TUint OffsetMax() const override;
@@ -455,6 +504,7 @@ private:
     TUint iVolumeDefaultLimit;
     TUint iVolumeStep;
     TUint iVolumeMilliDbPerStep;
+    TUint iThreadPriority;
     TUint iBalanceMax;
     TUint iFadeMax;
     TUint iOffsetMax;
@@ -469,6 +519,7 @@ class IVolumeManager : public IVolumeReporter
                      , public IVolumeSourceOffset
                      , public IVolumeSourceUnityGain
                      , public Media::IAnalogBypassVolumeRamper
+                     , public Media::IVolumeRamper
                      , public Media::IMute
 {
 public:
@@ -501,6 +552,7 @@ private: // from IVolumeProfile
     TUint VolumeDefaultLimit() const override;
     TUint VolumeStep() const override;
     TUint VolumeMilliDbPerStep() const override;
+    TUint ThreadPriority() const override;
     TUint BalanceMax() const override;
     TUint FadeMax() const override;
     TUint OffsetMax() const override;
@@ -513,11 +565,19 @@ private: // from IFade
     void SetFade(TInt aFade) override;
 private: // from Media::IAnalogBypassVolumeRamper
     void ApplyVolumeMultiplier(TUint aValue) override;
+private: // from Media::IVolumeRamper
+    Media::IVolumeRamper::Status BeginMute() override;
+    Media::IVolumeRamper::Status StepMute(TUint aJiffies) override;
+    void SetMuted() override;
+    Media::IVolumeRamper::Status BeginUnmute() override;
+    Media::IVolumeRamper::Status StepUnmute(TUint aJiffies) override;
+    void SetUnmuted() override;
 private: // from Media::IMute
     void Mute() override;
     void Unmute() override;
 private:
     VolumeConfig& iVolumeConfig;
+    VolumeRamper* iVolumeRamper;
     AnalogBypassRamper* iAnalogBypassRamper;
     VolumeSourceUnityGain* iVolumeSourceUnityGain;
     VolumeUnityGain* iVolumeUnityGain;

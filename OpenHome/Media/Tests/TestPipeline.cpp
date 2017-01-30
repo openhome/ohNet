@@ -9,6 +9,7 @@
 #include <OpenHome/Media/Debug.h>
 #include <OpenHome/Private/Shell.h>
 #include <OpenHome/Media/Pipeline/AnalogBypassRamper.h>
+#include <OpenHome/Media/Pipeline/MuterVolume.h>
 
 #include <string.h>
 #include <vector>
@@ -135,6 +136,7 @@ private:
     Pipeline* iPipeline;
     TrackFactory* iTrackFactory;
     IPipelineElementUpstream* iPipelineEnd;
+    VolumeRamperStub iVolumeRamper;
     TUint iSampleRate;
     TUint iNumChannels;
     TUint iBitDepth;
@@ -341,7 +343,7 @@ SuitePipeline::SuitePipeline()
     iPipeline->SetAnimator(*this);
     iSupplier = new Supplier(iPipeline->Factory(), *iPipeline, *iTrackFactory);
     iPipeline->AddCodec(new DummyCodec(kNumChannels, kSampleRate, kBitDepth, AudioDataEndian::Little, kProfile));
-    iPipeline->Start(*this);
+    iPipeline->Start(*this, iVolumeRamper);
     iPipelineEnd = iPipeline;
 }
 

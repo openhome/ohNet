@@ -35,6 +35,7 @@ SIMPLE_TEST_DECLARATION(TestSilencer);
 SIMPLE_TEST_DECLARATION(TestPruner);
 SIMPLE_TEST_DECLARATION(TestStarvationRamper);
 SIMPLE_TEST_DECLARATION(TestMuter);
+SIMPLE_TEST_DECLARATION(TestMuterVolume);
 SIMPLE_TEST_DECLARATION(TestAnalogBypassRamper);
 ENV_TEST_DECLARATION(TestDrainer);
 SIMPLE_TEST_DECLARATION(TestStopper);
@@ -101,6 +102,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     shellTests.push_back(ShellTest("TestPruner", ShellTestPruner));
     shellTests.push_back(ShellTest("TestStarvationRamper", ShellTestStarvationRamper));
     shellTests.push_back(ShellTest("TestMuter", ShellTestMuter));
+    shellTests.push_back(ShellTest("TestMuterVolume", ShellTestMuterVolume));
     shellTests.push_back(ShellTest("TestAnalogBypassRamper", ShellTestAnalogBypassRamper));
     shellTests.push_back(ShellTest("TestDrainer", ShellTestDrainer));
     shellTests.push_back(ShellTest("TestStopper", ShellTestStopper));

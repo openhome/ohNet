@@ -151,7 +151,7 @@ void MediaPlayer::Start()
     iConfigStartupSource = new ConfigStartupSource(*iConfigManager);
 
     iConfigManager->Open();
-    iPipeline->Start(*iVolumeManager);
+    iPipeline->Start(*iVolumeManager, *iVolumeManager);
     iCredentials->Start();
     iMimeTypes.Start();
     iProduct->Start();

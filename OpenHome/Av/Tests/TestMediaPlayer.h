@@ -60,6 +60,7 @@ class VolumeProfile : public IVolumeProfile
     static const TUint kVolumeDefaultLimit = 85;
     static const TUint kVolumeStep = 1;
     static const TUint kVolumeMilliDbPerStep = 1024;
+    static const TUint kThreadPriority = kPriorityNormal;
     static const TUint kBalanceMax = 12;
     static const TUint kFadeMax = 10;
     static const TUint kOffsetMax = 15;
@@ -71,6 +72,7 @@ private: // from IVolumeProfile
     TUint VolumeDefaultLimit() const override;
     TUint VolumeStep() const override;
     TUint VolumeMilliDbPerStep() const override;
+    TUint ThreadPriority() const override;
     TUint BalanceMax() const override;
     TUint FadeMax() const override;
     TUint OffsetMax() const override;

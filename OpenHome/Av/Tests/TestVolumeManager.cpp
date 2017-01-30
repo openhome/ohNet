@@ -31,7 +31,9 @@ private:
     TInt iOffset;
 };
 
-class SuiteVolumeScaler : public OpenHome::TestFramework::SuiteUnitTest
+} // namespace Test
+
+class SuiteVolumeScaler : public TestFramework::SuiteUnitTest
 {
 public:
     SuiteVolumeScaler();
@@ -47,11 +49,46 @@ private:
     void TestUserVolumeChanges();
     void TestExternalVolumeChanges();
 private:
-    MockVolumeReporter* iReporter;
-    MockVolumeOffset* iOffset;
+    Test::MockVolumeReporter* iReporter;
+    Test::MockVolumeOffset* iOffset;
 };
 
-} // namespace Test
+class SuiteVolumeRamper : public TestFramework::SuiteUnitTest
+                        , private IVolume
+{
+    static const TUint kVolumeMilliDbPerStep = 1024;
+    static const TUint kVolumeMin = 0;
+    static const TUint kVolumeUnityGain = 80 * kVolumeMilliDbPerStep;
+    static const TUint kVolumeInvalid = UINT_MAX;
+public:
+    SuiteVolumeRamper();
+private: // from SuiteUnitTest
+    void Setup() override;
+    void TearDown() override;
+private: // from IVolume
+    void SetVolume(TUint aVolume) override;
+private:
+    void SetVolumeSync(TUint aVolume);
+    void WaitForVolumeChange();
+private:
+    void TestVolumePassedThruWhenRunning();
+    void TestVolumeNotPassedWhenMuting();
+    void TestVolumeStepsWhileMuting();
+    void TestVolumeChangesOnSetMuted();
+    void TestVolumeChangesOnSetUnmuted();
+    void TestCompletionReportedWhenMuted();
+    void TestVolumeNotPassedWhenMuted();
+    void TestVolumeNotPassedWhenUnmuting();
+    void TestVolumeStepsWhileUnmuting();
+    void TestCompletionReportedWhenUnmuted();
+    void TestVolumePassedOnceUnmuted();
+private:
+    VolumeRamper* iVolumeRamper;
+    TUint iVolume;
+    Mutex iLock;
+    Semaphore iSem;
+};
+
 } // namespace Av
 } // namespace OpenHome
 
@@ -340,10 +377,225 @@ void SuiteVolumeScaler::TestExternalVolumeChanges()
 }
 
 
+// SuiteVolumeRamper
+
+SuiteVolumeRamper::SuiteVolumeRamper()
+    : SuiteUnitTest("VolumeRamper")
+    , iLock("SVR1")
+    , iSem("SVR2", 0)
+{
+    AddTest(MakeFunctor(*this, &SuiteVolumeRamper::TestVolumePassedThruWhenRunning), "TestVolumePassedThruWhenRunning");
+    AddTest(MakeFunctor(*this, &SuiteVolumeRamper::TestVolumeNotPassedWhenMuting), "TestVolumeNotPassedWhenMuting");
+    AddTest(MakeFunctor(*this, &SuiteVolumeRamper::TestVolumeStepsWhileMuting), "TestVolumeStepsWhileMuting");
+    AddTest(MakeFunctor(*this, &SuiteVolumeRamper::TestVolumeChangesOnSetMuted), "TestVolumeChangesOnSetMuted");
+    AddTest(MakeFunctor(*this, &SuiteVolumeRamper::TestVolumeChangesOnSetUnmuted), "TestVolumeChangesOnSetUnmuted");
+    AddTest(MakeFunctor(*this, &SuiteVolumeRamper::TestCompletionReportedWhenMuted), "TestCompletionReportedWhenMuted");
+    AddTest(MakeFunctor(*this, &SuiteVolumeRamper::TestVolumeNotPassedWhenMuted), "TestVolumeNotPassedWhenMuted");
+    AddTest(MakeFunctor(*this, &SuiteVolumeRamper::TestVolumeNotPassedWhenUnmuting), "TestVolumeNotPassedWhenUnmuting");
+    AddTest(MakeFunctor(*this, &SuiteVolumeRamper::TestVolumeStepsWhileUnmuting), "TestVolumeStepsWhileUnmuting");
+    AddTest(MakeFunctor(*this, &SuiteVolumeRamper::TestCompletionReportedWhenUnmuted), "TestCompletionReportedWhenUnmuted");
+    AddTest(MakeFunctor(*this, &SuiteVolumeRamper::TestVolumePassedOnceUnmuted), "TestVolumePassedOnceUnmuted");
+}
+
+void SuiteVolumeRamper::Setup()
+{
+    iVolumeRamper = new VolumeRamper(*this, kVolumeUnityGain, kVolumeMilliDbPerStep, kPriorityNormal);
+    iVolume = kVolumeInvalid;
+    (void)iSem.Clear();
+}
+
+void SuiteVolumeRamper::TearDown()
+{
+    delete iVolumeRamper;
+}
+
+void SuiteVolumeRamper::SetVolume(TUint aVolume)
+{
+    AutoMutex _(iLock);
+    iVolume = aVolume;
+    iSem.Signal();
+}
+
+void SuiteVolumeRamper::SetVolumeSync(TUint aVolume)
+{
+    iVolumeRamper->SetVolume(aVolume);
+    WaitForVolumeChange();
+}
+
+void SuiteVolumeRamper::WaitForVolumeChange()
+{
+    iSem.Wait();
+}
+
+void SuiteVolumeRamper::TestVolumePassedThruWhenRunning()
+{
+    static const TUint kVolume = 50 * kVolumeMilliDbPerStep;
+    TEST(iVolume != kVolume);
+    SetVolumeSync(kVolume);
+    TEST(iVolume == kVolume);
+}
+
+void SuiteVolumeRamper::TestVolumeNotPassedWhenMuting()
+{
+    static const TUint kVolumeInitial = 50 * kVolumeMilliDbPerStep;
+    static const TUint kVolumeUpdated = 49 * kVolumeMilliDbPerStep;
+    SetVolumeSync(kVolumeInitial);
+    const auto pending = iVolumeRamper->iPendingVolume;
+    TEST(iVolumeRamper->BeginMute() == Media::IVolumeRamper::Status::eInProgress);
+    iVolumeRamper->SetVolume(kVolumeUpdated);
+    TEST(iVolumeRamper->iPendingVolume == pending);
+    TEST_THROWS(iSem.Wait(10), Timeout);
+    TEST(iVolumeRamper->iPendingVolume == pending);
+    TEST(iVolume == kVolumeInitial);
+}
+
+void SuiteVolumeRamper::TestVolumeStepsWhileMuting()
+{
+    static const TUint kVolumeInitial = 50 * kVolumeMilliDbPerStep;
+    SetVolumeSync(kVolumeInitial);
+    auto prevVolume = iVolume;
+    static const TUint kJiffies = (5 * Media::Jiffies::kPerMs) - 1;
+    auto pending = iVolumeRamper->iPendingVolume;
+    TEST(iVolumeRamper->BeginMute() == Media::IVolumeRamper::Status::eInProgress);
+    do {
+        TEST(iVolumeRamper->StepMute(kJiffies) == Media::IVolumeRamper::Status::eInProgress);
+        if (pending != iVolumeRamper->iPendingVolume) {
+            WaitForVolumeChange();
+            TEST(iVolume < prevVolume);
+            pending = iVolumeRamper->iPendingVolume;
+            prevVolume = iVolume;
+        }
+    } while (iVolume > 0);
+}
+
+void SuiteVolumeRamper::TestVolumeChangesOnSetMuted()
+{
+    static const TUint kVolumeInitial = 50 * kVolumeMilliDbPerStep;
+    SetVolumeSync(kVolumeInitial);
+    iVolumeRamper->SetMuted();
+    WaitForVolumeChange();
+    TEST(iVolume == 0);
+}
+
+void SuiteVolumeRamper::TestVolumeChangesOnSetUnmuted()
+{
+    static const TUint kVolumeInitial = 50 * kVolumeMilliDbPerStep;
+    SetVolumeSync(kVolumeInitial);
+    iVolumeRamper->SetMuted();
+    WaitForVolumeChange();
+    iVolumeRamper->SetUnmuted();
+    WaitForVolumeChange();
+    TEST(iVolume == kVolumeInitial);
+}
+
+void SuiteVolumeRamper::TestCompletionReportedWhenMuted()
+{
+    static const TUint kVolumeInitial = 10 * kVolumeMilliDbPerStep;
+    SetVolumeSync(kVolumeInitial);
+    static const TUint kJiffies = 10 * Media::Jiffies::kPerMs;
+    auto pending = iVolumeRamper->iPendingVolume;
+    TEST(iVolumeRamper->BeginMute() == Media::IVolumeRamper::Status::eInProgress);
+    do {
+        TEST(iVolumeRamper->StepMute(kJiffies) == Media::IVolumeRamper::Status::eInProgress);
+        if (pending != iVolumeRamper->iPendingVolume) {
+            WaitForVolumeChange();
+            pending = iVolumeRamper->iPendingVolume;
+        }
+    } while (iVolume > 0);
+    TEST(iVolumeRamper->StepMute(kJiffies) == Media::IVolumeRamper::Status::eComplete);
+}
+
+void SuiteVolumeRamper::TestVolumeNotPassedWhenMuted()
+{
+    static const TUint kVolumeInitial = 50 * kVolumeMilliDbPerStep;
+    SetVolumeSync(kVolumeInitial);
+    iVolumeRamper->SetMuted();
+    WaitForVolumeChange();
+    TEST(iVolume == 0);
+    static const TUint kVolumeUpdated = 35 * kVolumeMilliDbPerStep;
+    iVolumeRamper->SetVolume(kVolumeUpdated);
+    TEST_THROWS(iSem.Wait(10), Timeout);
+}
+
+void SuiteVolumeRamper::TestVolumeNotPassedWhenUnmuting()
+{
+    static const TUint kVolumeInitial = 50 * kVolumeMilliDbPerStep;
+    SetVolumeSync(kVolumeInitial);
+    iVolumeRamper->SetMuted();
+    WaitForVolumeChange();
+    TEST(iVolumeRamper->BeginUnmute() == Media::IVolumeRamper::Status::eInProgress);
+
+    static const TUint kVolumeUpdated = 35 * kVolumeMilliDbPerStep;
+    iVolumeRamper->SetVolume(kVolumeInitial);
+    TEST_THROWS(iSem.Wait(10), Timeout);
+
+    static const TUint kJiffies = (5 * Media::Jiffies::kPerMs) - 1;
+    TEST(iVolumeRamper->StepUnmute(kJiffies) == Media::IVolumeRamper::Status::eInProgress);
+    TEST_THROWS(iSem.Wait(10), Timeout);
+}
+
+void SuiteVolumeRamper::TestVolumeStepsWhileUnmuting()
+{
+    static const TUint kVolumeInitial = 50 * kVolumeMilliDbPerStep;
+    SetVolumeSync(kVolumeInitial);
+    iVolumeRamper->SetMuted();
+    WaitForVolumeChange();
+    auto prevVolume = iVolume;
+    static const TUint kJiffies = (5 * Media::Jiffies::kPerMs) - 1;
+    auto pending = iVolumeRamper->iPendingVolume;
+    TEST(iVolumeRamper->BeginUnmute() == Media::IVolumeRamper::Status::eInProgress);
+    do {
+        TEST(iVolumeRamper->StepUnmute(kJiffies) == Media::IVolumeRamper::Status::eInProgress);
+        if (pending != iVolumeRamper->iPendingVolume) {
+            WaitForVolumeChange();
+            TEST(iVolume > prevVolume);
+            pending = iVolumeRamper->iPendingVolume;
+            prevVolume = iVolume;
+        }
+    } while (iVolume < kVolumeInitial);
+}
+
+void SuiteVolumeRamper::TestCompletionReportedWhenUnmuted()
+{
+    static const TUint kVolumeInitial = 10 * kVolumeMilliDbPerStep;
+    SetVolumeSync(kVolumeInitial);
+    iVolumeRamper->SetMuted();
+    WaitForVolumeChange();
+    TEST(iVolume == 0);
+    static const TUint kJiffies = 10 * Media::Jiffies::kPerMs;
+    auto pending = iVolumeRamper->iPendingVolume;
+    TEST(iVolumeRamper->BeginUnmute() == Media::IVolumeRamper::Status::eInProgress);
+    do {
+        TEST(iVolumeRamper->StepUnmute(kJiffies) == Media::IVolumeRamper::Status::eInProgress);
+        if (pending != iVolumeRamper->iPendingVolume) {
+            WaitForVolumeChange();
+            pending = iVolumeRamper->iPendingVolume;
+        }
+    } while (iVolume < kVolumeInitial);
+    TEST(iVolumeRamper->StepUnmute(kJiffies) == Media::IVolumeRamper::Status::eComplete);
+}
+
+void SuiteVolumeRamper::TestVolumePassedOnceUnmuted()
+{
+    static const TUint kVolumeInitial = 50 * kVolumeMilliDbPerStep;
+    SetVolumeSync(kVolumeInitial);
+    iVolumeRamper->SetMuted();
+    WaitForVolumeChange();
+    TEST(iVolume == 0);
+    iVolumeRamper->SetUnmuted();
+    WaitForVolumeChange();
+    TEST(iVolume == kVolumeInitial);
+    static const TUint kVolumeUpdated = 35 * kVolumeMilliDbPerStep;
+    SetVolumeSync(kVolumeUpdated);
+    TEST(iVolume == kVolumeUpdated);
+}
+
+
 
 void TestVolumeManager()
 {
     Runner runner("VolumeManager tests\n");
     runner.Add(new SuiteVolumeScaler());
+    runner.Add(new SuiteVolumeRamper());
     runner.Run();
 }

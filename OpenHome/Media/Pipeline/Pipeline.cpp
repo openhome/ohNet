@@ -58,6 +58,7 @@ PipelineInitParams::PipelineInitParams()
     , iRampEmergencyJiffies(kEmergencyRampDurationDefault)
     , iMaxLatencyJiffies(kMaxLatencyDefault)
     , iSupportElements(EPipelineSupportElementsAll)
+    , iMuter(kMuterDefault)
 {
     SetThreadPriorityMax(kThreadPriorityMax);
 }
@@ -130,6 +131,11 @@ void PipelineInitParams::SetSupportElements(TUint aElements)
     iSupportElements = aElements;
 }
 
+void PipelineInitParams::SetMuter(MuterImpl aMuter)
+{
+    iMuter = aMuter;
+}
+
 TUint PipelineInitParams::EncodedReservoirBytes() const
 {
     return iEncodedReservoirBytes;
@@ -193,6 +199,11 @@ TUint PipelineInitParams::MaxLatencyJiffies() const
 TUint PipelineInitParams::SupportElements() const
 {
     return iSupportElements;
+}
+
+PipelineInitParams::MuterImpl PipelineInitParams::Muter() const
+{
+    return iMuter;
 }
 
 
@@ -432,10 +443,23 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     ATTACH_ELEMENT(iDecodedAudioValidatorStarvationRamper,
                    new DecodedAudioValidator(*upstream, "StarvationRamper"),
                    upstream, elementsSupported, EPipelineSupportElementsDecodedAudioValidator);
-    ATTACH_ELEMENT(iMuter, new Muter(*iMsgFactory, *upstream, aInitParams->RampLongJiffies()),
-                   upstream, elementsSupported, EPipelineSupportElementsMandatory);
-    ATTACH_ELEMENT(iLoggerMuter, new Logger(*iMuter, "Muter"),
-                   upstream, elementsSupported, EPipelineSupportElementsLogger);
+    IMute* muter = nullptr;
+    if (aInitParams->Muter() == PipelineInitParams::MuterImpl::eRampSamples) {
+        ATTACH_ELEMENT(iMuterSamples, new Muter(*iMsgFactory, *upstream, aInitParams->RampLongJiffies()),
+                       upstream, elementsSupported, EPipelineSupportElementsMandatory);
+        muter = iMuterSamples;
+        iMuterVolume = nullptr;
+        ATTACH_ELEMENT(iLoggerMuter, new Logger(*iMuterSamples, "Muter"),
+                       upstream, elementsSupported, EPipelineSupportElementsLogger);
+    }
+    else {
+        ATTACH_ELEMENT(iMuterVolume, new MuterVolume(*iMsgFactory, *upstream),
+                       upstream, elementsSupported, EPipelineSupportElementsMandatory);
+        muter = iMuterVolume;
+        iMuterSamples = nullptr;
+        ATTACH_ELEMENT(iLoggerMuter, new Logger(*iMuterVolume, "Muter"),
+                       upstream, elementsSupported, EPipelineSupportElementsLogger);
+    }
     ATTACH_ELEMENT(iDecodedAudioValidatorMuter, new DecodedAudioValidator(*upstream, "Muter"),
                    upstream, elementsSupported, EPipelineSupportElementsDecodedAudioValidator | EPipelineSupportElementsValidatorMinimal);
     ATTACH_ELEMENT(iAnalogBypassRamper, new AnalogBypassRamper(*iMsgFactory, *upstream),
@@ -454,7 +478,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     if (iPipelineEnd == nullptr) {
         iPipelineEnd = iPreDriver;
     }
-    iMuteCounted = new MuteCounted(*iMuter);
+    iMuteCounted = new MuteCounted(*muter);
 
     gPipeline = this;
 
@@ -532,7 +556,8 @@ Pipeline::~Pipeline()
     delete iAnalogBypassRamper;
     delete iDecodedAudioValidatorMuter;
     delete iLoggerMuter;
-    delete iMuter;
+    delete iMuterVolume;
+    delete iMuterSamples;
     delete iDecodedAudioValidatorStarvationRamper;
     delete iRampValidatorStarvationRamper;
     delete iLoggerStarvationRamper;
@@ -609,9 +634,12 @@ void Pipeline::AddCodec(Codec::CodecBase* aCodec)
     iCodecController->AddCodec(aCodec);
 }
 
-void Pipeline::Start(IAnalogBypassVolumeRamper& aAnalogBypassVolumeRamper)
+void Pipeline::Start(IAnalogBypassVolumeRamper& aAnalogBypassVolumeRamper, IVolumeRamper& aVolumeRamper)
 {
     iAnalogBypassRamper->SetVolumeRamper(aAnalogBypassVolumeRamper);
+    if (iMuterVolume != nullptr) {
+        iMuterVolume->Start(aVolumeRamper);
+    }
     iCodecController->Start();
 }
 
@@ -810,7 +838,9 @@ void Pipeline::SetAnimator(IPipelineAnimator& aAnimator)
 {
     iSampleRateValidator->SetAnimator(aAnimator);
     iVariableDelay2->SetAnimator(aAnimator);
-    iMuter->SetAnimator(aAnimator);
+    if (iMuterSamples != nullptr) {
+        iMuterSamples->SetAnimator(aAnimator);
+    }
 }
 
 void Pipeline::PipelinePaused()

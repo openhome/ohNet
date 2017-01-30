@@ -420,6 +420,166 @@ void AnalogBypassRamper::SetVolume()
 }
 
 
+// VolumeRamper
+
+const TUint VolumeRamper::kJiffiesPerVolumeStep = 10 * Media::Jiffies::kPerMs;
+
+VolumeRamper::VolumeRamper(IVolume& aVolume, TUint aUnityGainValue, TUint aMilliDbPerStep, TUint aThreadPriority)
+    : iVolume(aVolume)
+    , iLock("VOLR")
+    , iUnityGainVolume(aUnityGainValue)
+    , iUpstreamVolume(aUnityGainValue)
+    , iMilliDbPerStep(aMilliDbPerStep)
+    , iPendingVolume(aUnityGainValue)
+    , iCurrentVolume(aUnityGainValue)
+    , iStatus(Status::eRunning)
+    , iMuted(false)
+{
+    iThread = new ThreadFunctor("VolumeRamper", MakeFunctor(*this, &VolumeRamper::Run), aThreadPriority);
+    iThread->Start();
+}
+
+VolumeRamper::~VolumeRamper()
+{
+    delete iThread;
+}
+
+void VolumeRamper::SetVolume(TUint aValue)
+{
+    AutoMutex _(iLock);
+    iUpstreamVolume = aValue;
+    if (iStatus == Status::eRunning) {
+        iPendingVolume = aValue;
+        iThread->Signal();
+    }
+}
+
+inline TUint VolumeRamper::VolumeStepLocked() const
+{
+    // values and threshold for change copied from Linn volkano1
+    if (iCurrentVolume < 20 * iMilliDbPerStep) {
+        return 4 * iMilliDbPerStep;
+    }
+    return 2 * iMilliDbPerStep;
+}
+
+Media::IVolumeRamper::Status VolumeRamper::BeginMute()
+{
+    AutoMutex _(iLock);
+    if (iStatus == Status::eMuted) {
+        return IVolumeRamper::Status::eComplete;
+    }
+    else if (iStatus != Status::eMuting) {
+        iJiffiesUntilStep = kJiffiesPerVolumeStep;
+        iStatus = Status::eMuting;
+    }
+    return IVolumeRamper::Status::eInProgress;
+}
+
+Media::IVolumeRamper::Status VolumeRamper::StepMute(TUint aJiffies)
+{
+    AutoMutex _(iLock);
+    if (iStatus == Status::eMuted) {
+        return IVolumeRamper::Status::eComplete;
+    }
+    if (iJiffiesUntilStep <= aJiffies) {
+        aJiffies -= iJiffiesUntilStep;
+        const auto step = VolumeStepLocked();
+        if (step > iPendingVolume) {
+            iPendingVolume = 0;
+        }
+        else {
+            iPendingVolume -= step;
+        }
+        iThread->Signal();
+
+        ASSERT(aJiffies < kJiffiesPerVolumeStep); // we're not effectively ramping volume if a single call here results in a large volume adjustment
+        iJiffiesUntilStep = kJiffiesPerVolumeStep;
+    }
+    iJiffiesUntilStep -= aJiffies;
+    return IVolumeRamper::Status::eInProgress;
+}
+
+void VolumeRamper::SetMuted()
+{
+    AutoMutex _(iLock);
+    iStatus = Status::eMuted;
+    if (iPendingVolume != 0) {
+        iPendingVolume = 0;
+        iThread->Signal();
+    }
+}
+
+Media::IVolumeRamper::Status VolumeRamper::BeginUnmute()
+{
+    AutoMutex _(iLock);
+    if (iStatus == Status::eRunning) {
+        return IVolumeRamper::Status::eComplete;
+    }
+    else if (iStatus != Status::eUnmuting) {
+        iJiffiesUntilStep = kJiffiesPerVolumeStep;
+        iStatus = Status::eUnmuting;
+    }
+    return IVolumeRamper::Status::eInProgress;
+}
+
+Media::IVolumeRamper::Status VolumeRamper::StepUnmute(TUint aJiffies)
+{
+    AutoMutex _(iLock);
+    if (iStatus == Status::eRunning) {
+        return IVolumeRamper::Status::eComplete;
+    }
+    if (iJiffiesUntilStep <= aJiffies) {
+        aJiffies -= iJiffiesUntilStep;
+        iPendingVolume += VolumeStepLocked();
+        iPendingVolume = std::min(iPendingVolume, iUpstreamVolume);
+        iThread->Signal();
+
+        ASSERT(aJiffies < kJiffiesPerVolumeStep); // we're not effectively ramping volume if a single call here results in a large volume adjustment
+        iJiffiesUntilStep = kJiffiesPerVolumeStep;
+    }
+    iJiffiesUntilStep -= aJiffies;
+    return IVolumeRamper::Status::eInProgress;
+}
+
+void VolumeRamper::SetUnmuted()
+{
+    AutoMutex _(iLock);
+    iStatus = Status::eRunning;
+    if (iPendingVolume != iUpstreamVolume) {
+        iPendingVolume = iUpstreamVolume;
+        iThread->Signal();
+    }
+}
+
+void VolumeRamper::Run()
+{
+    try {
+        for (;;) {
+            iThread->Wait();
+            TUint pendingVolume;
+            {
+                AutoMutex _(iLock);
+                pendingVolume = iPendingVolume;
+                iCurrentVolume = iPendingVolume;
+                if (iStatus == Status::eMuting) {
+                    if (iCurrentVolume == 0) {
+                        iStatus = Status::eMuted;
+                    }
+                }
+                else if (iStatus == Status::eUnmuting) {
+                    if (iCurrentVolume == iUpstreamVolume) {
+                        iStatus = Status::eRunning;
+                    }
+                }
+            }
+            iVolume.SetVolume(pendingVolume);
+        }
+    }
+    catch (ThreadKill&) {}
+}
+
+
 // BalanceUser
 
 BalanceUser::BalanceUser(IBalance& aBalance, IConfigManager& aConfigReader)
@@ -581,6 +741,7 @@ VolumeConfig::VolumeConfig(IStoreReadWrite& aStore, IConfigInitialiser& aConfigI
     iVolumeDefaultLimit   = aProfile.VolumeDefaultLimit();
     iVolumeStep           = aProfile.VolumeStep();
     iVolumeMilliDbPerStep = aProfile.VolumeMilliDbPerStep();
+    iThreadPriority       = aProfile.ThreadPriority();
     iBalanceMax           = aProfile.BalanceMax();
     iFadeMax              = aProfile.FadeMax();
     iOffsetMax            = aProfile.OffsetMax();
@@ -683,6 +844,11 @@ TUint VolumeConfig::VolumeMilliDbPerStep() const
     return iVolumeMilliDbPerStep;
 }
 
+TUint VolumeConfig::ThreadPriority() const
+{
+    return iThreadPriority;
+}
+
 TUint VolumeConfig::BalanceMax() const
 {
     return iBalanceMax;
@@ -744,7 +910,8 @@ VolumeManager::VolumeManager(VolumeConsumer& aVolumeConsumer, IMute* aMute, Volu
     }
     const TUint milliDbPerStep = iVolumeConfig.VolumeMilliDbPerStep();
     const TUint volumeUnity = iVolumeConfig.VolumeUnity() * milliDbPerStep;
-    iAnalogBypassRamper = new AnalogBypassRamper(*aVolumeConsumer.Volume());
+    iVolumeRamper = new VolumeRamper(*aVolumeConsumer.Volume(), volumeUnity, milliDbPerStep, iVolumeConfig.ThreadPriority());
+    iAnalogBypassRamper = new AnalogBypassRamper(*iVolumeRamper);
     if (aVolumeConfig.VolumeControlEnabled() && aVolumeConsumer.Volume() != nullptr) {
         if (iVolumeConfig.AlwaysOn()) {
             iVolumeSourceUnityGain = new VolumeSourceUnityGain(*iAnalogBypassRamper, volumeUnity);
@@ -763,6 +930,7 @@ VolumeManager::VolumeManager(VolumeConsumer& aVolumeConsumer, IMute* aMute, Volu
         aProduct.AddAttribute("Volume");
     }
     else {
+        iVolumeRamper = nullptr;
         iVolumeSourceUnityGain = nullptr;
         iVolumeUnityGain = nullptr;
         iVolumeSourceOffset = nullptr;
@@ -788,6 +956,7 @@ VolumeManager::~VolumeManager()
     delete iVolumeUnityGain;
     delete iVolumeSourceUnityGain;
     delete iAnalogBypassRamper;
+    delete iVolumeRamper;
 }
 
 void VolumeManager::AddVolumeObserver(IVolumeObserver& aObserver)
@@ -864,6 +1033,11 @@ TUint VolumeManager::VolumeMilliDbPerStep() const
     return iVolumeConfig.VolumeMilliDbPerStep();
 }
 
+TUint VolumeManager::ThreadPriority() const
+{
+    return iVolumeConfig.ThreadPriority();
+}
+
 TUint VolumeManager::BalanceMax() const
 {
     return iVolumeConfig.BalanceMax();
@@ -921,6 +1095,36 @@ void VolumeManager::SetFade(TInt aFade)
 void VolumeManager::ApplyVolumeMultiplier(TUint aValue)
 {
     static_cast<IAnalogBypassVolumeRamper*>(iAnalogBypassRamper)->ApplyVolumeMultiplier(aValue);
+}
+
+Media::IVolumeRamper::Status VolumeManager::BeginMute()
+{
+    return static_cast<IVolumeRamper*>(iVolumeRamper)->BeginMute();
+}
+
+Media::IVolumeRamper::Status VolumeManager::StepMute(TUint aJiffies)
+{
+    return static_cast<IVolumeRamper*>(iVolumeRamper)->StepMute(aJiffies);
+}
+
+void VolumeManager::SetMuted()
+{
+    static_cast<IVolumeRamper*>(iVolumeRamper)->SetMuted();
+}
+
+Media::IVolumeRamper::Status VolumeManager::BeginUnmute()
+{
+    return static_cast<IVolumeRamper*>(iVolumeRamper)->BeginUnmute();
+}
+
+Media::IVolumeRamper::Status VolumeManager::StepUnmute(TUint aJiffies)
+{
+    return static_cast<IVolumeRamper*>(iVolumeRamper)->StepUnmute(aJiffies);
+}
+
+void VolumeManager::SetUnmuted()
+{
+    static_cast<IVolumeRamper*>(iVolumeRamper)->SetUnmuted();
 }
 
 void VolumeManager::Mute()

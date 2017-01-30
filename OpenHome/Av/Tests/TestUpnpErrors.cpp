@@ -74,6 +74,7 @@ private: // from IVolumeProfile
     TUint VolumeDefaultLimit() const override;
     TUint VolumeStep() const override;
     TUint VolumeMilliDbPerStep() const override;
+    TUint ThreadPriority() const override;
     TUint BalanceMax() const override;
     TUint FadeMax() const override;
     TUint OffsetMax() const override;
@@ -87,6 +88,13 @@ private: // from IVolumeSourceUnityGain
     void AddUnityGainObserver(IUnityGainObserver& aObserver) override;
 private: // from IAnalogBypassVolumeRamper
     void ApplyVolumeMultiplier(TUint aValue) override;
+private: // from Media::IVolumeRamper
+    Media::IVolumeRamper::Status BeginMute() override;
+    Media::IVolumeRamper::Status StepMute(TUint aJiffies) override;
+    void SetMuted() override;
+    Media::IVolumeRamper::Status BeginUnmute() override;
+    Media::IVolumeRamper::Status StepUnmute(TUint aJiffies) override;
+    void SetUnmuted() override;
 private: // from Media::IMute
     void Mute() override;
     void Unmute() override;
@@ -207,6 +215,7 @@ TUint DummyVolumeManager::VolumeUnity() const                        { return 8;
 TUint DummyVolumeManager::VolumeDefaultLimit() const                 { return 9; }
 TUint DummyVolumeManager::VolumeStep() const                         { return 1; }
 TUint DummyVolumeManager::VolumeMilliDbPerStep() const               { return 1024; }
+TUint DummyVolumeManager::ThreadPriority() const                     { return kPriorityNormal; }
 TUint DummyVolumeManager::BalanceMax() const                         { return 5; }
 TUint DummyVolumeManager::FadeMax() const                            { return 4; }
 TUint DummyVolumeManager::OffsetMax() const                          { return 3; }
@@ -216,6 +225,12 @@ void DummyVolumeManager::SetVolumeOffset(TInt /*aValue*/)            {}
 void DummyVolumeManager::SetUnityGain(TBool /*aEnable*/)             {}
 void DummyVolumeManager::AddUnityGainObserver(IUnityGainObserver&)   {}
 void DummyVolumeManager::ApplyVolumeMultiplier(TUint /*aValue*/)     {}
+Media::IVolumeRamper::Status DummyVolumeManager::BeginMute()         { return Media::IVolumeRamper::Status::eComplete; }
+Media::IVolumeRamper::Status DummyVolumeManager::StepMute(TUint /*aJiffies*/)   { return Media::IVolumeRamper::Status::eComplete; }
+void DummyVolumeManager::SetMuted()                                  {}
+Media::IVolumeRamper::Status DummyVolumeManager::BeginUnmute()       { return Media::IVolumeRamper::Status::eComplete; }
+Media::IVolumeRamper::Status DummyVolumeManager::StepUnmute(TUint /*aJiffies*/) { return Media::IVolumeRamper::Status::eComplete; }
+void DummyVolumeManager::SetUnmuted()                                {}
 void DummyVolumeManager::Mute()                                      {}
 void DummyVolumeManager::Unmute()                                    {}
 

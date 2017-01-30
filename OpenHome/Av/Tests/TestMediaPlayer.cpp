@@ -71,6 +71,11 @@ TUint VolumeProfile::VolumeMilliDbPerStep() const
     return kVolumeMilliDbPerStep;
 }
 
+TUint VolumeProfile::ThreadPriority() const
+{
+    return kThreadPriority;
+}
+
 TUint VolumeProfile::BalanceMax() const
 {
     return kBalanceMax;

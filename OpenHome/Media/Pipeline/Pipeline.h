@@ -29,16 +29,12 @@ enum EPipelineSupportElements {
 
 class PipelineInitParams
 {
-    static const TUint kEncodedReservoirSizeBytes       = 1536 * 1024;
-    static const TUint kDecodedReservoirSize            = Jiffies::kPerMs * 2000;
-    static const TUint kGorgerSizeDefault               = Jiffies::kPerMs * 1000;
-    static const TUint kStarvationRamperSizeDefault     = Jiffies::kPerMs * 20;
-    static const TUint kMaxReservoirStreamsDefault      = 10;
-    static const TUint kLongRampDurationDefault         = Jiffies::kPerMs * 500;
-    static const TUint kShortRampDurationDefault        = Jiffies::kPerMs * 50;
-    static const TUint kEmergencyRampDurationDefault    = Jiffies::kPerMs * 20;
-    static const TUint kThreadPriorityMax               = kPriorityHighest - 1;
-    static const TUint kMaxLatencyDefault               = Jiffies::kPerMs * 2000;
+public:
+    enum class MuterImpl
+    {
+        eRampSamples,
+        eRampVolume
+    };
 public:
     static PipelineInitParams* New();
     virtual ~PipelineInitParams();
@@ -55,6 +51,7 @@ public:
     void SetThreadPriorities(TUint aStarvationRamper, TUint aCodec, TUint aEvent);
     void SetMaxLatency(TUint aJiffies);
     void SetSupportElements(TUint aElements); // EPipelineSupportElements members OR'd together
+    void SetMuter(MuterImpl aMuter);
     // getters
     TUint EncodedReservoirBytes() const;
     TUint DecodedReservoirJiffies() const;
@@ -69,6 +66,7 @@ public:
     TUint ThreadPriorityEvent() const;
     TUint MaxLatencyJiffies() const;
     TUint SupportElements() const;
+    MuterImpl Muter() const;
 private:
     PipelineInitParams();
 private:
@@ -85,6 +83,19 @@ private:
     TUint iThreadPriorityEvent;
     TUint iMaxLatencyJiffies;
     TUint iSupportElements;
+    MuterImpl iMuter;
+private:
+    static const TUint kEncodedReservoirSizeBytes       = 1536 * 1024;
+    static const TUint kDecodedReservoirSize            = Jiffies::kPerMs * 2000;
+    static const TUint kGorgerSizeDefault               = Jiffies::kPerMs * 1000;
+    static const TUint kStarvationRamperSizeDefault     = Jiffies::kPerMs * 20;
+    static const TUint kMaxReservoirStreamsDefault      = 10;
+    static const TUint kLongRampDurationDefault         = Jiffies::kPerMs * 500;
+    static const TUint kShortRampDurationDefault        = Jiffies::kPerMs * 50;
+    static const TUint kEmergencyRampDurationDefault    = Jiffies::kPerMs * 20;
+    static const TUint kThreadPriorityMax               = kPriorityHighest - 1;
+    static const TUint kMaxLatencyDefault               = Jiffies::kPerMs * 2000;
+    static const MuterImpl kMuterDefault                = MuterImpl::eRampSamples;
 };
 
 namespace Codec {
@@ -118,6 +129,8 @@ class VariableDelayRight;
 class Pruner;
 class StarvationRamper;
 class Muter;
+class MuterVolume;
+class IVolumeRamper;
 class PreDriver;
 class ITrackObserver;
 class ISpotifyReporter;
@@ -159,7 +172,7 @@ public:
     virtual ~Pipeline();
     void AddContainer(Codec::ContainerBase* aContainer);
     void AddCodec(Codec::CodecBase* aCodec);
-    void Start(IAnalogBypassVolumeRamper& aAnalogBypassVolumeRamper);
+    void Start(IAnalogBypassVolumeRamper& aAnalogBypassVolumeRamper, IVolumeRamper& aVolumeRamper);
     void Quit();
     MsgFactory& Factory();
     void Play();
@@ -287,7 +300,9 @@ private:
     Logger* iLoggerStarvationRamper;
     RampValidator* iRampValidatorStarvationRamper;
     DecodedAudioValidator* iDecodedAudioValidatorStarvationRamper;
-    Muter* iMuter;
+    Muter* iMuterSamples;      // only one of iMuter or iMuterVolume will be instantiated
+    MuterVolume* iMuterVolume; // only one of iMuter or iMuterVolume will be instantiated
+    IMute* iMuter;
     Logger* iLoggerMuter;
     DecodedAudioValidator* iDecodedAudioValidatorMuter;
     AnalogBypassRamper* iAnalogBypassRamper;

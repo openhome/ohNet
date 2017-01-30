@@ -224,6 +224,7 @@ def build(bld):
                 'OpenHome/Media/Pipeline/Logger.cpp',
                 'OpenHome/Media/Pipeline/Msg.cpp',
                 'OpenHome/Media/Pipeline/Muter.cpp',
+                'OpenHome/Media/Pipeline/MuterVolume.cpp',
                 'OpenHome/Media/Pipeline/PreDriver.cpp',
                 'OpenHome/Media/Pipeline/Pruner.cpp',
                 'OpenHome/Media/Pipeline/Attenuator.cpp',
@@ -653,6 +654,7 @@ def build(bld):
                 'OpenHome/Media/Tests/TestPruner.cpp',
                 'OpenHome/Media/Tests/TestAnalogBypassRamper.cpp',
                 'OpenHome/Media/Tests/TestMuter.cpp',
+                'OpenHome/Media/Tests/TestMuterVolume.cpp',
                 'OpenHome/Media/Tests/TestDrainer.cpp',
                 'OpenHome/Av/Tests/TestContentProcessor.cpp',
                 'OpenHome/Media/Tests/TestPipeline.cpp',
@@ -805,6 +807,11 @@ def build(bld):
             source='OpenHome/Media/Tests/TestMuterMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestMuter',
+            install_path=None)
+    bld.program(
+            source='OpenHome/Media/Tests/TestMuterVolumeMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestMuterVolume',
             install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestDrainerMain.cpp',

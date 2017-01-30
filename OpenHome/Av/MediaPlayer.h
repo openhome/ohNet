@@ -89,7 +89,7 @@ public:
     virtual IUnixTimestamp& UnixTimestamp() = 0;
 };
 
-class MediaPlayer : public IMediaPlayer, private INonCopyable
+class MediaPlayer : public IMediaPlayer , private INonCopyable
 {
     static const TUint kTrackCount = 1200;
 public:
@@ -130,6 +130,7 @@ public: // from IMediaPlayer
     void AddAttribute(const TChar* aAttribute) override;
     ILoggerSerial& BufferLogOutput(TUint aBytes, IShell& aShell, Optional<ILogPoster> aLogPoster) override; // must be called before Start()
     IUnixTimestamp& UnixTimestamp() override;
+private: // from IVolumeRamper
 private:
     Net::DvStack& iDvStack;
     Net::DvDeviceStandard& iDevice;

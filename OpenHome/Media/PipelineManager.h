@@ -28,6 +28,7 @@ class Protocol;
 class ContentProcessor;
 class UriProvider;
 class IAnalogBypassVolumeRamper;
+class IVolumeRamper;
 
 class PriorityArbitratorPipeline : public IPriorityArbitrator, private INonCopyable
 {
@@ -118,7 +119,7 @@ public:
      *
      * Begin() can only be called after Start() returns.
      */
-    void Start(IAnalogBypassVolumeRamper& aAnalogBypassVolumeRamper);
+    void Start(IAnalogBypassVolumeRamper& aAnalogBypassVolumeRamper, IVolumeRamper& aVolumeRamper);
     /**
      * Add an observer of changes in pipeline state.
      *

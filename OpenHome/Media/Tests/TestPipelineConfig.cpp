@@ -4,6 +4,7 @@
 #include <OpenHome/Media/Pipeline/Pipeline.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/Pipeline/AnalogBypassRamper.h>
+#include <OpenHome/Media/Pipeline/MuterVolume.h>
 #include <OpenHome/Media/PipelineObserver.h>
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 
@@ -69,6 +70,7 @@ private:
        ,EMsgQuit
     };
 private:
+    void RunTest(PipelineInitParams* aInitParams);
     void PullNext(EMsgType aExpectedMsg);
     void TimerCallback();
     Msg* CreateMsgSilence();
@@ -83,6 +85,7 @@ private:
     MsgFactory* iMsgFactory;
     NullPipelineObserver iPipelineObserver;
     EMsgType iLastPulledMsg;
+    VolumeRamperStub iVolumeRamper;
 };
 
 } // namespace Media
@@ -116,15 +119,29 @@ void SuitePipelineConfig::Test()
     for (TUint i=0; i<num_elems; i++) {
         auto initParams = PipelineInitParams::New();
         initParams->SetSupportElements(elems[i]);
-        Pipeline* pipeline = new Pipeline(initParams, iInfoAggregator, *iTrackFactory, iPipelineObserver, *this, *this, *this);
-        pipeline->Start(*this);
-        pipeline->Push(iMsgFactory->CreateMsgQuit());
-        Msg* msg = pipeline->Pull();
-        msg = msg->Process(*this);
-        msg->RemoveRef();
-        TEST(iLastPulledMsg == EMsgQuit);
-        delete pipeline;
+        RunTest(initParams);
     }
+
+    auto initParams = PipelineInitParams::New();
+    if (initParams->Muter() == PipelineInitParams::MuterImpl::eRampSamples) {
+        initParams->SetMuter(PipelineInitParams::MuterImpl::eRampVolume);
+    }
+    else {
+        initParams->SetMuter(PipelineInitParams::MuterImpl::eRampSamples);
+    }
+    RunTest(initParams);
+}
+
+void SuitePipelineConfig::RunTest(PipelineInitParams* aInitParams)
+{
+    Pipeline* pipeline = new Pipeline(aInitParams, iInfoAggregator, *iTrackFactory, iPipelineObserver, *this, *this, *this);
+    pipeline->Start(*this, iVolumeRamper);
+    pipeline->Push(iMsgFactory->CreateMsgQuit());
+    Msg* msg = pipeline->Pull();
+    msg = msg->Process(*this);
+    msg->RemoveRef();
+    TEST(iLastPulledMsg == EMsgQuit);
+    delete pipeline;
 }
 
 Msg* SuitePipelineConfig::ProcessMsg(MsgMode* aMsg)
