@@ -526,7 +526,7 @@ void SuiteVolumeRamper::TestVolumeNotPassedWhenUnmuting()
     TEST(iVolumeRamper->BeginUnmute() == Media::IVolumeRamper::Status::eInProgress);
 
     static const TUint kVolumeUpdated = 35 * kVolumeMilliDbPerStep;
-    iVolumeRamper->SetVolume(kVolumeInitial);
+    iVolumeRamper->SetVolume(kVolumeUpdated);
     TEST_THROWS(iSem.Wait(10), Timeout);
 
     static const TUint kJiffies = (5 * Media::Jiffies::kPerMs) - 1;

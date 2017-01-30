@@ -428,10 +428,11 @@ VolumeRamper::VolumeRamper(IVolume& aVolume, TUint aUnityGainValue, TUint aMilli
     : iVolume(aVolume)
     , iLock("VOLR")
     , iUnityGainVolume(aUnityGainValue)
-    , iUpstreamVolume(aUnityGainValue)
     , iMilliDbPerStep(aMilliDbPerStep)
+    , iUpstreamVolume(aUnityGainValue)
     , iPendingVolume(aUnityGainValue)
     , iCurrentVolume(aUnityGainValue)
+    , iJiffiesUntilStep(0)
     , iStatus(Status::eRunning)
     , iMuted(false)
 {
