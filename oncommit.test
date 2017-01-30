@@ -24,7 +24,7 @@ tests = '''
     TestReporter
     TestPruner
     TestStarvationRamper
-    #3518 TestMuter
+    TestMuter
     TestMuterVolume
     TestAnalogBypassRamper
     TestDrainer
