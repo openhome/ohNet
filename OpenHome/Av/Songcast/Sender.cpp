@@ -49,6 +49,7 @@ Sender::Sender(Environment& aEnv,
     , iSongcastMode(aSongcastMode)
     , iUnicastOverrideObserver(aUnicastOverrideObserver)
     , iEnabled(true)
+    , iUserEnabledInitialised(false)
     , iStreamForbidden(false)
     , iEnabledLock("SSND")
     , iFirstChannelIndex(0)
@@ -316,7 +317,8 @@ void Sender::ConfigEnabledChanged(KeyValuePair<TUint>& aStringId)
 {
     AutoMutex _(iEnabledLock);
     const TBool configEnabled = (aStringId.Value() == eStringIdYes);
-    if (configEnabled != iUserEnabled) {
+    if (!iUserEnabledInitialised || configEnabled != iUserEnabled) {
+        iUserEnabledInitialised = true;
         iUserEnabled = configEnabled;
         const TBool enabled = iUserEnabled && !iStreamForbidden;
         iOhmSender->SetEnabled(enabled);
