@@ -25,7 +25,7 @@ const TUint FlywheelRamperManager::kMaxOutputJiffiesBlockSize = Jiffies::kPerMs;
 
 FlywheelRamperManager::FlywheelRamperManager(IPcmProcessor& aOutput, TUint aInputJiffies, TUint aOutputJiffies)
     :iOutput(aOutput)
-    ,iOutBuf(FlywheelRamper::SampleCount(kMaxSampleRate, kMaxOutputJiffiesBlockSize)*kMaxChannelCount*4)
+    ,iOutBuf(Jiffies::ToSamples(kMaxOutputJiffiesBlockSize, kMaxSampleRate)*kMaxChannelCount*4)
     ,iOutputJiffies(aOutputJiffies)
 {
     for(TUint i=0; i<kMaxChannelCount; i++)
@@ -47,8 +47,8 @@ void FlywheelRamperManager::Ramp(const Brx& aSamples, TUint aSampleRate, TUint a
     InitChannels(aSamples, aSampleRate, aChannelCount); // prepare the ramp generation
 
     TUint decFactor = FlywheelRamper::DecimationFactor(aSampleRate);
-    TUint maxOutputSamplesBlockSize = FlywheelRamper::SampleCount(aSampleRate, kMaxOutputJiffiesBlockSize);
-    TUint remainingSamples = FlywheelRamper::SampleCount(aSampleRate, iOutputJiffies);
+    TUint maxOutputSamplesBlockSize = Jiffies::ToSamples(kMaxOutputJiffiesBlockSize, aSampleRate);
+    TUint remainingSamples = Jiffies::ToSamples(iOutputJiffies, aSampleRate);
 
     while (remainingSamples > 0)
     {
@@ -142,7 +142,7 @@ FlywheelRamper::FlywheelRamper(TUint aDegree, TUint aInputJiffies)
     :iDegree(aDegree)
     ,iInputJiffies(aInputJiffies)
     ,iFeedback(new FeedbackModel(iDegree, kFeedbackDataDescaleBitCount, kBurgOutputFormat, kFeedbackDataFormat, 1))
-    ,iMaxInputSampleCount(SampleCount(kMaxSampleRate, iInputJiffies))
+    ,iMaxInputSampleCount(Jiffies::ToSamples(iInputJiffies, kMaxSampleRate))
 {
     iInputSamples = (TInt16*) calloc (iMaxInputSampleCount, sizeof(TInt16));
     iBurgPer = (TInt16*) calloc (iMaxInputSampleCount, sizeof(TInt16));
@@ -174,7 +174,7 @@ TUint FlywheelRamper::InputJiffies() const
 void FlywheelRamper::Initialise(const Brx& aSamples, TUint aSampleRate)
 {
     ASSERT(aSampleRate<=kMaxSampleRate);
-    ASSERT(aSamples.Bytes()==(SampleCount(aSampleRate, iInputJiffies)*kBytesPerSample));
+    ASSERT(aSamples.Bytes()==(Jiffies::ToSamples(iInputJiffies, aSampleRate)*kBytesPerSample));
 
     // copy input samples out of buffer into memory
     TUint decFactor = DecimationFactor(aSampleRate);
@@ -362,12 +362,6 @@ TInt16 FlywheelRamper::CoeffOverflow(TInt16* aCoeffs, TUint aCoeffCount, TUint a
     }
 
     return(excess);
-}
-
-TUint FlywheelRamper::SampleCount(TUint aSampleRate, TUint aJiffies)
-{
-    TUint64 sampleCount = (((TUint64)aSampleRate) * aJiffies) / Jiffies::kPerSecond;
-    return (TUint)sampleCount;
 }
 
 void FlywheelRamper::ToInt32(double* aInput, TUint aLength, TInt32* aOutput, TUint aScale)

@@ -45,7 +45,7 @@ private:
     void Reset();
 public:
     static void BurgsMethod(TInt16* aSamples, TUint aSamplesCount, TUint aDegree, TInt16* aOutput, TInt16* aH, TInt16* aPer, TInt16* aPef);
-    static TUint SampleCount(TUint aSampleRate, TUint aJiffies);
+    static TUint SampleCount(TUint aSampleRate, TUint aJiffies) { return Jiffies::ToSamples(aJiffies, aSampleRate); }
     static TUint DecimationFactor(TUint aSampleRate);
     static TInt16 CoeffOverflow(TInt16* aCoeffs, TUint aCoeffCount, TUint aFormat);
     static void ToInt32(double* aInput, TUint aLength, TInt32* aOutput, TUint aScale);
