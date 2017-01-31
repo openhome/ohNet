@@ -163,7 +163,7 @@ void Allocated::AddRef()
 
 void Allocated::RemoveRef()
 {
-    ASSERT_DEBUG(iRefCount != 0);
+    ASSERT(iRefCount != 0);
     TBool free = (--iRefCount == 0);
     RefRemoved();
     if (free) {
@@ -2374,7 +2374,6 @@ void MsgQueueBase::DoEnqueue(Msg* aMsg)
         iTail->iNextMsg = aMsg;
     }
     iTail = aMsg;
-    aMsg->iNextMsg = nullptr;
     iNumMsgs++;
 }
 
@@ -2426,6 +2425,7 @@ void MsgQueueBase::CheckMsgNotQueued(Msg* aMsg) const
 {
     ASSERT(aMsg != iTail);
     ASSERT(aMsg != iHead);
+    ASSERT(aMsg->iNextMsg == nullptr);
 #ifdef DEFINE_DEBUG // iterate over queue, comparing aMsg to all msg pointers
     TUint count = 0;
     for (Msg* msg = iHead; msg != nullptr; msg = msg->iNextMsg) {
