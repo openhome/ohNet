@@ -277,6 +277,9 @@ void VolumeSourceOffset::SetVolumeOffset(TInt aOffset)
 void VolumeSourceOffset::DoSetVolume(TUint aValue)
 {
     TUint volume = aValue + iSourceOffset;
+    if (aValue == 0) {
+        volume = 0; // upstream volume of 0 should mean we output silence
+    }
     if (volume > aValue && iSourceOffset < 0) {
         volume = 0;
     }
