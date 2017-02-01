@@ -603,9 +603,8 @@ Msg* ContainerController::Pull()
         while (msg == nullptr) {
             ASSERT(iActiveContainer != nullptr);
             msg = iActiveContainer->Pull();
-            if (msg != nullptr) {
-                msg = msg->Process(*this);
-            }
+            ASSERT(msg != nullptr);
+            msg = msg->Process(*this);
         }
 
         return msg;
