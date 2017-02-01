@@ -38,7 +38,11 @@ MuterVolume::MuterVolume(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUps
 
 void MuterVolume::Start(IVolumeRamper& aVolumeRamper)
 {
+    AutoMutex _(iLock);
     iVolumeRamper = &aVolumeRamper;
+    if (iState == State::eMuted) {
+        iVolumeRamper->SetMuted();
+    }
 }
 
 void MuterVolume::Mute()
@@ -47,31 +51,35 @@ void MuterVolume::Mute()
     TBool block = false;
     {
         AutoMutex _(iLock);
-
-        switch (iState)
-        {
-        case State::eMutingRamp:
-        case State::eMutingWait:
-        case State::eMuted:
-            break;
-        case State::eRunning:
-        case State::eUnmutingRamp:
-            if (iHalted) {
-                iState = State::eMuted;
-                iVolumeRamper->SetMuted();
-            }
-            else if (iVolumeRamper->BeginMute() == IVolumeRamper::Status::eComplete) {
-                iState = State::eMuted;
-            }
-            else {
-                iState = State::eMutingRamp;
-                block = true;
-            }
-            break;
+        if (iVolumeRamper == nullptr) { // not yet Start()ed
+            iState = State::eMuted;
         }
+        else {
+            switch (iState)
+            {
+            case State::eMutingRamp:
+            case State::eMutingWait:
+            case State::eMuted:
+                break;
+            case State::eRunning:
+            case State::eUnmutingRamp:
+                if (iHalted) {
+                    iState = State::eMuted;
+                    iVolumeRamper->SetMuted();
+                }
+                else if (iVolumeRamper->BeginMute() == IVolumeRamper::Status::eComplete) {
+                    iState = State::eMuted;
+                }
+                else {
+                    iState = State::eMutingRamp;
+                    block = true;
+                }
+                break;
+            }
 
-        if (block) {
-            (void)iSemMuted.Clear();
+            if (block) {
+                (void)iSemMuted.Clear();
+            }
         }
     }
     if (block) {
@@ -83,28 +91,32 @@ void MuterVolume::Unmute()
 {
     LOG(kPipeline, "MuterVolume::Unmute\n");
     AutoMutex _(iLock);
-
-    switch (iState)
-    {
-    case State::eRunning:
-    case State::eUnmutingRamp:
-        break;
-    case State::eMutingRamp:
-    case State::eMutingWait:
-        iSemMuted.Signal();
-        // fall through
-    case State::eMuted:
-        if (iHalted) {
-            iState = State::eRunning;
-            iVolumeRamper->SetUnmuted();
+    if (iVolumeRamper == nullptr) { // not yet Start()ed
+        iState = State::eRunning;
+    }
+    else {
+        switch (iState)
+        {
+        case State::eRunning:
+        case State::eUnmutingRamp:
+            break;
+        case State::eMutingRamp:
+        case State::eMutingWait:
+            iSemMuted.Signal();
+            // fall through
+        case State::eMuted:
+            if (iHalted) {
+                iState = State::eRunning;
+                iVolumeRamper->SetUnmuted();
+            }
+            else if (iVolumeRamper->BeginUnmute() == IVolumeRamper::Status::eComplete) {
+                iState = State::eRunning;
+            }
+            else {
+                iState = State::eUnmutingRamp;
+            }
+            break;
         }
-        else if (iVolumeRamper->BeginUnmute() == IVolumeRamper::Status::eComplete) {
-            iState = State::eRunning;
-        }
-        else {
-            iState = State::eUnmutingRamp;
-        }
-        break;
     }
 }
 
