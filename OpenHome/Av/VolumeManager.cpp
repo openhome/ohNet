@@ -424,14 +424,13 @@ void AnalogBypassRamper::SetVolume()
 
 const TUint VolumeRamper::kJiffiesPerVolumeStep = 10 * Media::Jiffies::kPerMs;
 
-VolumeRamper::VolumeRamper(IVolume& aVolume, TUint aUnityGainValue, TUint aMilliDbPerStep, TUint aThreadPriority)
+VolumeRamper::VolumeRamper(IVolume& aVolume, TUint aMilliDbPerStep, TUint aThreadPriority)
     : iVolume(aVolume)
     , iLock("VOLR")
-    , iUnityGainVolume(aUnityGainValue)
     , iMilliDbPerStep(aMilliDbPerStep)
-    , iUpstreamVolume(aUnityGainValue)
-    , iPendingVolume(aUnityGainValue)
-    , iCurrentVolume(aUnityGainValue)
+    , iUpstreamVolume(0)
+    , iPendingVolume(0)
+    , iCurrentVolume(0)
     , iJiffiesUntilStep(0)
     , iStatus(Status::eRunning)
     , iMuted(false)
@@ -911,7 +910,7 @@ VolumeManager::VolumeManager(VolumeConsumer& aVolumeConsumer, IMute* aMute, Volu
     }
     const TUint milliDbPerStep = iVolumeConfig.VolumeMilliDbPerStep();
     const TUint volumeUnity = iVolumeConfig.VolumeUnity() * milliDbPerStep;
-    iVolumeRamper = new VolumeRamper(*aVolumeConsumer.Volume(), volumeUnity, milliDbPerStep, iVolumeConfig.ThreadPriority());
+    iVolumeRamper = new VolumeRamper(*aVolumeConsumer.Volume(), milliDbPerStep, iVolumeConfig.ThreadPriority());
     iAnalogBypassRamper = new AnalogBypassRamper(*iVolumeRamper);
     if (aVolumeConfig.VolumeControlEnabled() && aVolumeConsumer.Volume() != nullptr) {
         if (iVolumeConfig.AlwaysOn()) {

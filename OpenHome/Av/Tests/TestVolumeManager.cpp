@@ -57,8 +57,6 @@ class SuiteVolumeRamper : public TestFramework::SuiteUnitTest
                         , private IVolume
 {
     static const TUint kVolumeMilliDbPerStep = 1024;
-    static const TUint kVolumeMin = 0;
-    static const TUint kVolumeUnityGain = 80 * kVolumeMilliDbPerStep;
     static const TUint kVolumeInvalid = UINT_MAX;
 public:
     SuiteVolumeRamper();
@@ -399,7 +397,7 @@ SuiteVolumeRamper::SuiteVolumeRamper()
 
 void SuiteVolumeRamper::Setup()
 {
-    iVolumeRamper = new VolumeRamper(*this, kVolumeUnityGain, kVolumeMilliDbPerStep, kPriorityNormal);
+    iVolumeRamper = new VolumeRamper(*this, kVolumeMilliDbPerStep, kPriorityNormal);
     iVolume = kVolumeInvalid;
     (void)iSem.Clear();
 }

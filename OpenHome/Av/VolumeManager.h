@@ -353,7 +353,7 @@ class VolumeRamper : public IVolume
 
     static const TUint kJiffiesPerVolumeStep;
 public:
-    VolumeRamper(IVolume& aVolume, TUint aUnityGainValue, TUint aMilliDbPerStep, TUint aThreadPriority);
+    VolumeRamper(IVolume& aVolume, TUint aMilliDbPerStep, TUint aThreadPriority);
     ~VolumeRamper();
 private: // from IVolume
     void SetVolume(TUint aValue) override;
@@ -379,7 +379,6 @@ private:
     IVolume& iVolume;
     Mutex iLock;
     ThreadFunctor* iThread;
-    const TUint iUnityGainVolume;
     const TUint iMilliDbPerStep;
     TUint iUpstreamVolume;
     TUint iPendingVolume;
