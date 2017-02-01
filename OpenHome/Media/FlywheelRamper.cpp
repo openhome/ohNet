@@ -174,12 +174,19 @@ TUint FlywheelRamper::InputJiffies() const
 void FlywheelRamper::Initialise(const Brx& aSamples, TUint aSampleRate)
 {
     ASSERT(aSampleRate<=kMaxSampleRate);
-    ASSERT(aSamples.Bytes()==(Jiffies::ToSamples(iInputJiffies, aSampleRate)*kBytesPerSample));
+    const TUint expectedBytes = Jiffies::ToSamples(iInputJiffies, aSampleRate) * kBytesPerSample;
+    ASSERT(aSamples.Bytes() >= expectedBytes);
 
     // copy input samples out of buffer into memory
     TUint decFactor = DecimationFactor(aSampleRate);
     TInt16* inputSamplesPtr = iInputSamples;
     const TByte* bufPtr = aSamples.Ptr();
+    if (aSamples.Bytes() > expectedBytes) {
+        /* rounding errors in samples -> jiffy calculations may result in us being
+           given slightly too much data.  Skip the start of aSamples (the oldest
+           audio data) in this case. */
+        bufPtr += (aSamples.Bytes() - expectedBytes);
+    }
 
     TUint sampleCount = aSamples.Bytes()/(kBytesPerSample*decFactor);
     TUint ptrInc = 4*decFactor;
