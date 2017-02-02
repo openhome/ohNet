@@ -933,7 +933,6 @@ VolumeManager::VolumeManager(VolumeConsumer& aVolumeConsumer, IMute* aMute, Volu
         aProduct.AddAttribute("Volume");
     }
     else {
-        iVolumeRamper = nullptr;
         iVolumeSourceUnityGain = nullptr;
         iVolumeUnityGain = nullptr;
         iVolumeSourceOffset = nullptr;
