@@ -940,7 +940,7 @@ VolumeManager::VolumeManager(VolumeConsumer& aVolumeConsumer, IMute* aMute, Volu
         iVolumeLimiter = nullptr;
         iVolumeUser = nullptr;
         iProviderVolume = nullptr;
-        static_cast<IVolume*>(iVolumeRamper)->SetVolume(volumeUnity);
+        static_cast<IVolume*>(iAnalogBypassRamper)->SetVolume(volumeUnity);
     }
 }
 
