@@ -107,9 +107,8 @@
         "archive-filename": "FTDataPublic-${version}.zip",
         "dest": "dependencies/AnyPlatform/FunctionalTestData",
         "platform-ignore": {
-            "Linux-ppc32": true,
-            "Linux-armhf": true,
-            "*": false },
+            "Windows-x86": false,
+            "*": true },
         "ignore":           "${platform-ignore[$platform]}"
     },
     {
@@ -121,9 +120,8 @@
         "archive-filename": "FTDataPrivate-${version}.zip",
         "dest": "dependencies/AnyPlatform/FunctionalTestData",
         "platform-ignore": {
-            "Linux-ppc32": true,
-            "Linux-armhf": true,
-            "*": false },
+            "Windows-x86": false,
+            "*": true },
         "ignore":           "${platform-ignore[$platform]}"
     }
 ]
