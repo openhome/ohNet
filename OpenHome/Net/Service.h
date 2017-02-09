@@ -14,6 +14,7 @@
 #include <OpenHome/Private/Network.h>
 #include <OpenHome/Private/Ascii.h>
 
+#include <cstdint>
 #include <vector>
 #include <map>
 
