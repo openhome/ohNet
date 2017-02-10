@@ -73,10 +73,10 @@ private:
     void TestWriteBool();
 };
 
-class SuiteWriterJsonDocument : public SuiteUnitTest
+class SuiteWriterJsonObject : public SuiteUnitTest
 {
 public:
-    SuiteWriterJsonDocument();
+    SuiteWriterJsonObject();
 public: // from SuiteUnitTest
     void Setup() override;
     void TearDown() override;
@@ -85,6 +85,7 @@ private:
     void TestWriteInt();
     void TestWriteString();
     void TestWriteBool();
+    void TestWriteStringStreamed();
     void TestWriteArray();
     void TestWriteObject();
     void TestWriteMixed();
@@ -510,118 +511,140 @@ void SuiteWriterJson::TestWriteBool()
 }
 
 
-// SuiteWriterJsonDocument
+// SuiteWriterJsonObject
 
-SuiteWriterJsonDocument::SuiteWriterJsonDocument()
-    : SuiteUnitTest("SuiteWriterJsonDocument")
+SuiteWriterJsonObject::SuiteWriterJsonObject()
+    : SuiteUnitTest("SuiteWriterJsonObject")
 {
-    AddTest(MakeFunctor(*this, &SuiteWriterJsonDocument::TestWriteEmptyObject), "TestWriteEmptyObject");
-    AddTest(MakeFunctor(*this, &SuiteWriterJsonDocument::TestWriteInt), "TestWriteInt");
-    AddTest(MakeFunctor(*this, &SuiteWriterJsonDocument::TestWriteString), "TestWriteString");
-    AddTest(MakeFunctor(*this, &SuiteWriterJsonDocument::TestWriteBool), "TestWriteBool");
-    AddTest(MakeFunctor(*this, &SuiteWriterJsonDocument::TestWriteArray), "TestWriteArray");
-    AddTest(MakeFunctor(*this, &SuiteWriterJsonDocument::TestWriteObject), "TestWriteObject");
-    AddTest(MakeFunctor(*this, &SuiteWriterJsonDocument::TestWriteMixed), "TestWriteMixed");
+    AddTest(MakeFunctor(*this, &SuiteWriterJsonObject::TestWriteEmptyObject), "TestWriteEmptyObject");
+    AddTest(MakeFunctor(*this, &SuiteWriterJsonObject::TestWriteInt), "TestWriteInt");
+    AddTest(MakeFunctor(*this, &SuiteWriterJsonObject::TestWriteString), "TestWriteString");
+    AddTest(MakeFunctor(*this, &SuiteWriterJsonObject::TestWriteBool), "TestWriteBool");
+    AddTest(MakeFunctor(*this, &SuiteWriterJsonObject::TestWriteStringStreamed), "TestWriteStringStreamed");
+    AddTest(MakeFunctor(*this, &SuiteWriterJsonObject::TestWriteArray), "TestWriteArray");
+    AddTest(MakeFunctor(*this, &SuiteWriterJsonObject::TestWriteObject), "TestWriteObject");
+    AddTest(MakeFunctor(*this, &SuiteWriterJsonObject::TestWriteMixed), "TestWriteMixed");
 }
 
-void SuiteWriterJsonDocument::Setup()
+void SuiteWriterJsonObject::Setup()
 {
     iWriterBuf = new WriterBuffer(iBuf);
 }
 
-void SuiteWriterJsonDocument::TearDown()
+void SuiteWriterJsonObject::TearDown()
 {
     delete iWriterBuf;
     iBuf.SetBytes(0);
 }
 
-void SuiteWriterJsonDocument::TestWriteEmptyObject()
+void SuiteWriterJsonObject::TestWriteEmptyObject()
 {
-    WriterJsonDocument jsonWriter1(*iWriterBuf);
+    WriterJsonObject jsonWriter1(*iWriterBuf);
     jsonWriter1.WriteEnd();
-    TEST(iBuf == Brn("{}"));
+    TEST(iBuf == Brn("null"));
 }
 
-void SuiteWriterJsonDocument::TestWriteInt()
+void SuiteWriterJsonObject::TestWriteInt()
 {
     // Write key using const TChar*.
-    WriterJsonDocument jsonWriter1(*iWriterBuf);
+    WriterJsonObject jsonWriter1(*iWriterBuf);
     jsonWriter1.WriteInt("key1", 256);
     jsonWriter1.WriteEnd();
     TEST(iBuf == Brn("{\"key1\":256}"));
 
     iBuf.SetBytes(0);
     // Write key using const Brx&.
-    WriterJsonDocument jsonWriter2(*iWriterBuf);
+    WriterJsonObject jsonWriter2(*iWriterBuf);
     jsonWriter2.WriteInt(Brn("key2"), 256);
     jsonWriter2.WriteEnd();
     TEST(iBuf == Brn("{\"key2\":256}"));
 }
 
-void SuiteWriterJsonDocument::TestWriteString()
+void SuiteWriterJsonObject::TestWriteString()
 {
     // Write key using const TChar*, val using const TChar*.
-    WriterJsonDocument jsonWriter1(*iWriterBuf);
+    WriterJsonObject jsonWriter1(*iWriterBuf);
     jsonWriter1.WriteString("key1", "val1");
     jsonWriter1.WriteEnd();
     TEST(iBuf == Brn("{\"key1\":\"val1\"}"));
 
     iBuf.SetBytes(0);
     // Write key using const TChar*, val using const Brx&.
-    WriterJsonDocument jsonWriter2(*iWriterBuf);
+    WriterJsonObject jsonWriter2(*iWriterBuf);
     jsonWriter2.WriteString("key2", Brn("val2"));
     jsonWriter2.WriteEnd();
     TEST(iBuf == Brn("{\"key2\":\"val2\"}"));
 
     iBuf.SetBytes(0);
     // Write key using const Brx&, val using const Brx&.
-    WriterJsonDocument jsonWriter3(*iWriterBuf);
+    WriterJsonObject jsonWriter3(*iWriterBuf);
     jsonWriter3.WriteString(Brn("key3"), Brn("val3"));
     jsonWriter3.WriteEnd();
     TEST(iBuf == Brn("{\"key3\":\"val3\"}"));
 
     iBuf.SetBytes(0);
     // Write empty key and val.
-    WriterJsonDocument jsonWriter4(*iWriterBuf);
+    WriterJsonObject jsonWriter4(*iWriterBuf);
     jsonWriter4.WriteString(Brn(""), Brn(""));
     jsonWriter4.WriteEnd();
     TEST(iBuf == Brn("{\"\":\"\"}"));
 }
 
-void SuiteWriterJsonDocument::TestWriteBool()
+void SuiteWriterJsonObject::TestWriteBool()
 {
     // Write key using const TChar*, val false.
-    WriterJsonDocument jsonWriter1(*iWriterBuf);
+    WriterJsonObject jsonWriter1(*iWriterBuf);
     jsonWriter1.WriteBool("key1", false);
     jsonWriter1.WriteEnd();
     TEST(iBuf == Brn("{\"key1\":false}"));
 
     iBuf.SetBytes(0);
     // Write key using const Brx&, val false.
-    WriterJsonDocument jsonWriter2(*iWriterBuf);
+    WriterJsonObject jsonWriter2(*iWriterBuf);
     jsonWriter2.WriteBool(Brn("key2"), false);
     jsonWriter2.WriteEnd();
     TEST(iBuf == Brn("{\"key2\":false}"));
 
     iBuf.SetBytes(0);
     // Write key using const TChar*, val true.
-    WriterJsonDocument jsonWriter3(*iWriterBuf);
+    WriterJsonObject jsonWriter3(*iWriterBuf);
     jsonWriter3.WriteBool("key3", true);
     jsonWriter3.WriteEnd();
     TEST(iBuf == Brn("{\"key3\":true}"));
 
     iBuf.SetBytes(0);
     // Write key using const Brx&, val true.
-    WriterJsonDocument jsonWriter4(*iWriterBuf);
+    WriterJsonObject jsonWriter4(*iWriterBuf);
     jsonWriter4.WriteBool(Brn("key4"), true);
     jsonWriter4.WriteEnd();
     TEST(iBuf == Brn("{\"key4\":true}"));
 }
 
-void SuiteWriterJsonDocument::TestWriteArray()
+void SuiteWriterJsonObject::TestWriteStringStreamed()
+{
+    WriterJsonObject jsonWriter1(*iWriterBuf);
+    WriterJsonValueString jsonWriter2 = jsonWriter1.CreateStringStreamed("key1");
+    jsonWriter2.Write(Brn("123"));
+    jsonWriter2.Write(Brn("4567"));
+    jsonWriter2.Write(Brn("89"));
+    jsonWriter2.WriteEnd();
+    jsonWriter1.WriteEnd();
+    TEST(iBuf == Brn("{\"key1\":\"123456789\"}"));
+
+    iBuf.SetBytes(0);
+    WriterJsonObject jsonWriter3(*iWriterBuf);
+    WriterJsonValueString jsonWriter4 = jsonWriter3.CreateStringStreamed("key2");
+    jsonWriter4.WriteEscaped(Brn("\r\n"));
+    jsonWriter4.WriteEscaped(Brn("\t"));
+    jsonWriter4.WriteEnd();
+    jsonWriter3.WriteEnd();
+    TEST(iBuf == Brn("{\"key2\":\"\\r\\n\\t\"}"));
+}
+
+void SuiteWriterJsonObject::TestWriteArray()
 {
     // Write key using const TChar*.
-    WriterJsonDocument jsonWriter1(*iWriterBuf);
+    WriterJsonObject jsonWriter1(*iWriterBuf);
     WriterJsonArray array1 = jsonWriter1.CreateArray("key1");
     array1.WriteInt(256);
     array1.WriteString(Brn("val2"));
@@ -632,7 +655,7 @@ void SuiteWriterJsonDocument::TestWriteArray()
 
     iBuf.SetBytes(0);
     // Write key using const TChar*.
-    WriterJsonDocument jsonWriter2(*iWriterBuf);
+    WriterJsonObject jsonWriter2(*iWriterBuf);
     WriterJsonArray array2 = jsonWriter2.CreateArray("key2");
     array2.WriteInt(256);
     array2.WriteString(Brn("val2"));
@@ -643,17 +666,17 @@ void SuiteWriterJsonDocument::TestWriteArray()
 
     // Write empty array.
     iBuf.SetBytes(0);
-    WriterJsonDocument jsonWriter3(*iWriterBuf);
+    WriterJsonObject jsonWriter3(*iWriterBuf);
     WriterJsonArray array3 = jsonWriter3.CreateArray("key3");
     array3.WriteEnd();
     jsonWriter3.WriteEnd();
     TEST(iBuf == Brn("{\"key3\":null}"));
 }
 
-void SuiteWriterJsonDocument::TestWriteObject()
+void SuiteWriterJsonObject::TestWriteObject()
 {
     // Write key using const TChar*.
-    WriterJsonDocument jsonWriter1(*iWriterBuf);
+    WriterJsonObject jsonWriter1(*iWriterBuf);
     WriterJsonObject obj1 = jsonWriter1.CreateObject("key1");
     obj1.WriteInt("key2", 256);
     obj1.WriteEnd();
@@ -662,7 +685,7 @@ void SuiteWriterJsonDocument::TestWriteObject()
 
     iBuf.SetBytes(0);
     // Write key using const TChar*.
-    WriterJsonDocument jsonWriter2(*iWriterBuf);
+    WriterJsonObject jsonWriter2(*iWriterBuf);
     WriterJsonObject obj2 = jsonWriter2.CreateObject("key1");
     obj2.WriteInt("key2", 256);
     obj2.WriteEnd();
@@ -671,16 +694,16 @@ void SuiteWriterJsonDocument::TestWriteObject()
 
     // Write empty object.
     iBuf.SetBytes(0);
-    WriterJsonDocument jsonWriter3(*iWriterBuf);
+    WriterJsonObject jsonWriter3(*iWriterBuf);
     WriterJsonObject obj3 = jsonWriter3.CreateObject("key3");
     obj3.WriteEnd();
     jsonWriter3.WriteEnd();
     TEST(iBuf == Brn("{\"key3\":null}"));   // FIXME - why is this "null" and not an empty object (i.e., {})? TestWriteEmptyObject() writes {}.
 }
 
-void SuiteWriterJsonDocument::TestWriteMixed()
+void SuiteWriterJsonObject::TestWriteMixed()
 {
-    WriterJsonDocument jsonWriter(*iWriterBuf);
+    WriterJsonObject jsonWriter(*iWriterBuf);
     jsonWriter.WriteInt("key1", -128);
     jsonWriter.WriteString("key2", "str1");
     jsonWriter.WriteBool("key3", false);
@@ -832,7 +855,7 @@ void TestJson()
     runner.Add(new SuiteJsonDecode());
     runner.Add(new SuiteJsonParser());
     runner.Add(new SuiteWriterJson());
-    runner.Add(new SuiteWriterJsonDocument());
+    runner.Add(new SuiteWriterJsonObject());
     runner.Add(new SuiteWriterJsonArray());
     runner.Run();
 }

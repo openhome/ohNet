@@ -77,14 +77,15 @@ public:
 };
 
 class WriterJsonArray;
+class WriterJsonValueString;
 
 class WriterJsonObject
 {
     friend class WriterJsonArray;
 public:
-    // FIXME - why are these WriteKey() methods public, as it appears keys are created when writing a particular entry type?
-    void WriteKey(const TChar* aKey);
-    void WriteKey(const Brx& aKey);
+    WriterJsonObject();
+    WriterJsonObject(IWriter& aWriter);
+    void Set(IWriter& aWriter);
     void WriteInt(const TChar* aKey, TInt aValue);
     void WriteInt(const Brx& aKey, TInt aValue);
     void WriteString(const TChar* aKey, const TChar* aValue);
@@ -96,11 +97,15 @@ public:
     WriterJsonArray CreateArray(const Brx& aKey);
     WriterJsonObject CreateObject(const TChar* aKey);
     WriterJsonObject CreateObject(const Brx& aKey);
+    WriterJsonValueString CreateStringStreamed(const TChar* aKey);
+    WriterJsonValueString CreateStringStreamed(const Brx& aKey);
     void WriteEnd();
-protected:
-    WriterJsonObject(IWriter& aWriter);
+private:
+    void Set(IWriter* aWriter);
+    void WriteKey(const TChar* aKey);
+    void WriteKey(const Brx& aKey);
     void CheckStarted();
-protected:
+private:
     static const Brn kObjectStart;
     static const Brn kObjectEnd;
     IWriter* iWriter;
@@ -109,17 +114,8 @@ protected:
     TBool iWrittenFirstKey;
 };
 
-// FIXME - a JSON document does not necessarily need to be enclosed within an object (it may, for example, be enclosed in an array).
-class WriterJsonDocument : public WriterJsonObject
-{
-public:
-    WriterJsonDocument(IWriter& aWriter);
-    void WriteEnd();
-};
-
 class WriterJsonArray
 {
-    friend class WriterJsonObject;
 public:
     WriterJsonArray(IWriter& aWriter);
     void WriteInt(TInt aValue);
@@ -133,6 +129,25 @@ private:
 private:
     static const Brn kArrayStart;
     static const Brn kArrayEnd;
+    IWriter* iWriter;
+    TBool iStarted;
+    TBool iEnded;
+};
+
+class WriterJsonValueString : public OpenHome::IWriter
+{
+public:
+    WriterJsonValueString();
+    WriterJsonValueString(IWriter& aWriter);
+    void WriteEscaped(const Brx& aFragment);
+    void WriteEnd();
+public: // from OpenHome::IWriter
+    void Write(TByte aValue) override;
+    void Write(const Brx& aBuffer) override;
+    void WriteFlush() override;
+private:
+    void CheckStarted();
+private:
     IWriter* iWriter;
     TBool iStarted;
     TBool iEnded;
