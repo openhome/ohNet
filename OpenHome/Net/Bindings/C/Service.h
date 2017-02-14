@@ -4,7 +4,7 @@
 #include <OpenHome/Defines.h>
 #include <OpenHome/OsTypes.h>
 #include <OpenHome/Net/C/OhNet.h>
-#include <cstdint>
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
