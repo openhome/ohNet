@@ -5,7 +5,7 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Private/Printer.h>
-#include <OpenHome/Private/Debug.h>
+#include <OpenHome/Debug-ohMediaPlayer.h>
 
 #include "openssl/bio.h"
 #include "openssl/ssl.h"
@@ -15,8 +15,6 @@
 #include <stdlib.h>
 
 namespace OpenHome {
-
-#define kSsl  kApplication6
 
 class SslContext
 {

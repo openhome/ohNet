@@ -6,6 +6,7 @@
 
 namespace OpenHome {
 
+#define kSsl  kApplication6
 #define kPowerManager     kApplication13
 
 } // namespace OpenHome
