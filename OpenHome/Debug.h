@@ -9,10 +9,10 @@
 class AutoLog
 {
 public:
-    AutoLog(OpenHome::TUint aLevel, const OpenHome::TChar* aString);
+    AutoLog(OpenHome::TUint64 aLevel, const OpenHome::TChar* aString);
     ~AutoLog();
 private:
-    OpenHome::TUint  iLevel;
+    OpenHome::TUint64  iLevel;
     const OpenHome::TChar* iString;
 };
 

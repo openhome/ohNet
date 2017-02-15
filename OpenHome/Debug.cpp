@@ -28,7 +28,7 @@ void Debug::RemoveLevel(TUint64 aLevel)
 }
 
 
-AutoLog::AutoLog(TUint aLevel, const TChar* aString)
+AutoLog::AutoLog(TUint64 aLevel, const TChar* aString)
     : iLevel(aLevel)
     , iString(aString)
 {
