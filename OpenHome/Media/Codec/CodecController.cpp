@@ -680,6 +680,11 @@ TUint64 CodecController::OutputAudioPcm(const Brx& aData, TUint aChannels, TUint
     ASSERT(aSampleRate == iSampleRate);
     ASSERT(aBitDepth == iBitDepth);
 
+    if (aData.Bytes() == 0) {
+        // allow for codecs which had a tiny bit of data which was later rounded down to 0 samples
+        return 0;
+    }
+
     Brn data(aData);
     const TUint64 offsetBefore = aTrackOffset;
     const TByte* p = data.Ptr();

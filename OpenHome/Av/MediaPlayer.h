@@ -17,12 +17,10 @@ namespace OpenHome {
 namespace Net {
     class DvStack;
     class DvDeviceStandard;
-    class DvProvider;
 }
 namespace Media {
     class PipelineManager;
     class PipelineInitParams;
-    class IPipelineAnimator;
     class IMute;
     class UriProvider;
     class Protocol;
@@ -30,7 +28,6 @@ namespace Media {
         class ContainerBase;
         class CodecBase;
     }
-    class LoggingPipelineObserver;
     class TrackFactory;
 }
 namespace Configuration {
@@ -49,8 +46,6 @@ class FriendlyNameManager;
 class IReadStore;
 class ISource;
 class IStaticDataSource;
-class IPersister;
-class IProvider;
 class Product;
 class ProviderTime;
 class ProviderInfo;
@@ -90,7 +85,7 @@ public:
     virtual IUnixTimestamp& UnixTimestamp() = 0;
 };
 
-class MediaPlayer : public IMediaPlayer , private INonCopyable
+class MediaPlayer : public IMediaPlayer, private INonCopyable
 {
     static const TUint kTrackCount = 1200;
 public:
@@ -132,7 +127,6 @@ public: // from IMediaPlayer
     void AddAttribute(const TChar* aAttribute) override;
     ILoggerSerial& BufferLogOutput(TUint aBytes, IShell& aShell, Optional<ILogPoster> aLogPoster) override; // must be called before Start()
     IUnixTimestamp& UnixTimestamp() override;
-private: // from IVolumeRamper
 private:
     Net::DvStack& iDvStack;
     Net::DvDeviceStandard& iDevice;
