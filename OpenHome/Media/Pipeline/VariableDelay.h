@@ -138,6 +138,9 @@ private:
     TUint iDelayJiffiesTotal;
     std::atomic<TBool> iPostPipelineLatencyChanged;
     TUint iAnimatorLatency;
+    TUint iSampleRate;
+    TUint iBitDepth;
+    TUint iNumChannels;
 };
 
 } // namespace Media

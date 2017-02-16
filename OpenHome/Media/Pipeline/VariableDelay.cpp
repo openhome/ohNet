@@ -590,6 +590,9 @@ VariableDelayRight::VariableDelayRight(MsgFactory& aMsgFactory,
     , iDelayJiffiesTotal(0)
     , iPostPipelineLatencyChanged(false)
     , iAnimatorLatency(0)
+    , iSampleRate(0)
+    , iBitDepth(0)
+    , iNumChannels(0)
 {
     ASSERT(iPostPipelineLatencyChanged.is_lock_free());
 }
@@ -623,8 +626,8 @@ Msg* VariableDelayRight::ProcessMsg(MsgDelay* aMsg)
     aMsg->RemoveRef();
     delayJiffies = (iAnimatorLatency >= delayJiffies? 0 : delayJiffies - iAnimatorLatency);
     delayJiffies = std::max(delayJiffies, iMinDelay);
-    LOG(kMedia, "VariableDelayRight::ProcessMsg(MsgDelay(%u, %u): delay=%u(%u), downstream=%u(%u), prev=%u(%u), iStatus=%s\n",
-        msgDelayJiffies, iAnimatorLatency,
+    LOG(kMedia, "VariableDelayRight::ProcessMsg(MsgDelay(%u): delay=%u(%u), downstream=%u(%u), prev=%u(%u), iStatus=%s\n",
+                msgDelayJiffies,
                 delayJiffies, Jiffies::ToMs(delayJiffies),
                 iAnimatorLatency, Jiffies::ToMs(iAnimatorLatency),
                 iDelayJiffies, Jiffies::ToMs(iDelayJiffies),
@@ -638,6 +641,10 @@ Msg* VariableDelayRight::ProcessMsg(MsgDelay* aMsg)
 Msg* VariableDelayRight::ProcessMsg(MsgDecodedStream* aMsg)
 {
     Msg* msg = VariableDelayBase::ProcessMsg(aMsg);
+    auto stream = aMsg->StreamInfo();
+    iSampleRate = stream.SampleRate();
+    iBitDepth = stream.BitDepth();
+    iNumChannels = stream.NumChannels();
     AdjustDelayForAnimatorLatency();
     return msg;
 }
@@ -663,12 +670,10 @@ void VariableDelayRight::PostPipelineLatencyChanged()
 void VariableDelayRight::AdjustDelayForAnimatorLatency()
 {
     try {
-        if (iDecodedStream != nullptr) {
+        if (iSampleRate != 0) {
             auto streamInfo = iDecodedStream->StreamInfo();
             ASSERT(iAnimator != nullptr);
-            iAnimatorLatency = iAnimator->PipelineAnimatorDelayJiffies(streamInfo.SampleRate(),
-                                                                       streamInfo.BitDepth(),
-                                                                       streamInfo.NumChannels());
+            iAnimatorLatency = iAnimator->PipelineAnimatorDelayJiffies(iSampleRate, iBitDepth, iNumChannels);
             TUint delayJiffies = (iAnimatorLatency >= iDelayJiffiesTotal? 0 : iDelayJiffiesTotal - iAnimatorLatency);
             delayJiffies = std::max(delayJiffies, iMinDelay);
             HandleDelayChange(delayJiffies);
