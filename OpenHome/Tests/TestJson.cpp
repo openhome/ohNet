@@ -249,27 +249,37 @@ void SuiteJsonParser::TearDown()
 
 void SuiteJsonParser::TestParseUnescapeInPlace()
 {
-    // FIXME - fails; bad parsing of escaped double quote.
+    Bwh json1("{\"key\":\"\\\"\"}");
+    iParser->ParseAndUnescape(json1);
+    TEST(iParser->HasKey("key"));
+    TEST(iParser->String("key") == Brn("\""));
 
-    //const TBool unescapeInPlace = true;
-    //Bwh json("{\"key1\":\"line1\\\"\\\\\\/\\b\\f\\n\\r\\tline2\"}");
-    ////Bwh json("{\"key1\":\"line1\\\\\\/\\b\\f\\n\\r\\tline2\"}"); // This works - bad parsing of double quotes?
+    Bwh json2("{\"key1\":\"line1\\\"\\\\\\/\\b\\f\\n\\r\\tline2\"}");
+    iParser->ParseAndUnescape(json2);
+    TEST(iParser->HasKey("key1"));
+    TEST(iParser->String("key1") == Brn("line1\"\\/\b\f\n\r\tline2"));
 
-    //iParser->Parse(json, unescapeInPlace);
-    //TEST(iParser->HasKey("key1"));
-    //TEST(iParser->String("key1") == Brn("line1\"\\/\b\f\n\r\tline2"));
+    Bwh json3("{\"key1\":\"foo\",\"stringified\":\"{\\\"bool1\\\":true,\\\"bool2\\\":false}\"}");
+    iParser->ParseAndUnescape(json3);
+    TEST(iParser->HasKey("key1"));
+    TEST(iParser->String("key1") == Brn("foo"));
+    TEST(iParser->HasKey("stringified"));
+    JsonParser parser2;
+    Brn stringified(iParser->String("stringified"));
+    Bwn json4(stringified.Ptr(), stringified.Bytes(), stringified.Bytes());
+    parser2.ParseAndUnescape(json4);
+    TEST(parser2.HasKey("bool1"));
+    TEST(parser2.HasKey("bool2"));
+    TEST(parser2.Bool("bool1"));
+    TEST(!parser2.Bool("bool2"));
 }
 
 void SuiteJsonParser::TestParseNoUnescapeInPlace()
 {
-    // FIXME - fails; bad parsing of escaped double quote.
-
-    //const TBool unescapeInPlace = false;
-    //Bwh json("{\"key1\":\"line1\\\"\\\\\\/\\b\\f\\n\\r\\tline2\"}");
-
-    //iParser->Parse(json, unescapeInPlace);
-    //TEST(iParser->HasKey("key1"));
-    //TEST(iParser->String("key1") == Brn("line1\\\"\\\\\\/\\b\\f\\n\\r\\tline2"));
+    Bwh json("{\"key1\":\"line1\\\"\\\\\\/\\b\\f\\n\\r\\tline2\"}");
+    iParser->Parse(json);
+    TEST(iParser->HasKey("key1"));
+    TEST(iParser->String("key1") == Brn("line1\\\"\\\\\\/\\b\\f\\n\\r\\tline2"));
 }
 
 void SuiteJsonParser::TestParseArray()

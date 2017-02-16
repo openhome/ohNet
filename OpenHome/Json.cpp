@@ -185,6 +185,7 @@ void JsonParser::Parse(const Brx& aJson, TBool aUnescapeInPlace)
     const TByte* valStart = nullptr;
     Brn key;
     TUint nestCount = 0;
+    TBool escapeChar = false;
 
     while (state != Complete && ptr < end) {
         TChar ch = (TChar)*ptr++;
@@ -262,17 +263,23 @@ void JsonParser::Parse(const Brx& aJson, TBool aUnescapeInPlace)
             }
             break;
         case StringEnd:
-            if (ch == '\"') {
-                const TUint bytes = ptr - valStart - 1;
-                if (!aUnescapeInPlace) {
-                    Add(key, valStart, bytes);
+            if (ch == '\\') {
+                escapeChar = !escapeChar;
+            }
+            else if (ch == '\"') {
+                if (!escapeChar) {
+                    const TUint bytes = ptr - valStart - 1;
+                    if (!aUnescapeInPlace) {
+                        Add(key, valStart, bytes);
+                    }
+                    else {
+                        Bwn buf(valStart, bytes, bytes);
+                        Json::Unescape(buf);
+                        Add(key, buf.Ptr(), buf.Bytes());
+                    }
+                    state = KeyStart;
                 }
-                else {
-                    Bwn buf(valStart, bytes, bytes);
-                    Json::Unescape(buf);
-                    Add(key, buf.Ptr(), buf.Bytes());
-                }
-                state = KeyStart;
+                escapeChar = false;
             }
             break;
         case ArrayEnd:
