@@ -2508,6 +2508,7 @@ MsgReservoir::MsgReservoir()
     ASSERT(iDecodedStreamCount.is_lock_free());
     ASSERT(iEncodedAudioCount.is_lock_free());
     ASSERT(iDecodedAudioCount.is_lock_free());
+    (void)memset(iPadding, 0, sizeof iPadding);
 }
 
 MsgReservoir::~MsgReservoir()
