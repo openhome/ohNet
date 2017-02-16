@@ -114,7 +114,7 @@
     {
         "name": "FTDataPrivate",
         "type": "internal",
-        "version": "0.0.33",
+        "version": "0.0.38",
         "cross-check": false,
         "platform-specific": false,
         "archive-filename": "FTDataPrivate-${version}.zip",
