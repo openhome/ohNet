@@ -274,10 +274,9 @@ void CodecAiffBase::ProcessCommChunk()
 void CodecAiffBase::ProcessSsndChunk()
 {
     // Find the sound chunk
-    TUint ssndChunkBytes = FindChunk(Brn("SSND"));
-    TUint chunkDataBytes = ssndChunkBytes - 8;
+    const TUint ssndChunkBytes = FindChunk(Brn("SSND"));
 
-    if (iAudioBytesTotal > chunkDataBytes) {
+    if (iAudioBytesTotal > ssndChunkBytes) {
         THROW(CodecStreamCorrupt);
     }
 
