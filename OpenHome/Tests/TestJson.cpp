@@ -293,54 +293,27 @@ void SuiteJsonParser::TestParseArray()
 
 void SuiteJsonParser::TestParseObject()
 {
-    const Brn json("{\"key1\":{\"key2\":{\"key3\": 3, \"key4\":\"val4\"}}}");
+    const Brn json("{\"key1\":{\"key2\":{\"key3\": 3, \"key4\":4}, \"key5\":\"val5\"}}");
 
     iParser->Parse(json);
     TEST(iParser->HasKey("key1"));
     Brn nextObject = iParser->String("key1");
-    TEST(nextObject == Brn("{\"key2\":{\"key3\": 3, \"key4\":\"val4\"}}"));
+    TEST(nextObject == Brn("{\"key2\":{\"key3\": 3, \"key4\":4}, \"key5\":\"val5\"}"));
 
     iParser->Parse(nextObject);
     TEST(iParser->HasKey("key2"));
     nextObject = iParser->String("key2");
-    TEST(nextObject == Brn("{\"key3\": 3, \"key4\":\"val4\"}"));
+    TEST(nextObject == Brn("{\"key3\": 3, \"key4\":4}"));
+
+    TEST(iParser->HasKey("key5"));
+    TEST(iParser->String("key5") == Brn("val5"));
 
     iParser->Parse(nextObject);
     TEST(iParser->HasKey("key3"));
     TEST(iParser->Num("key3") == 3);
 
     TEST(iParser->HasKey("key4"));
-    TEST(iParser->String("key4") == Brn("val4"));
-
-
-
-
-    // FIXME - this fails - looks like it's due to integer as last value in nested object.
-
-    //const TBool unescapeInPlace = false;
-    //const Brn json("{\"key1\":{\"key2\":{\"key3\": 3, \"key4\":4}, \"key5\":\"val5\"}}");
-
-    //iParser->Parse(json, unescapeInPlace);
-    //TEST(iParser->HasKey("key1"));
-    //Brn nextObject = iParser->String("key1");
-    //TEST(nextObject == Brn("{\"key2\":{\"key3\": 3, \"key4\":4}, \"key5\":\"val5\"}}"));
-
-    //iParser->Parse(nextObject, unescapeInPlace);
-    //TEST(iParser->HasKey("key2"));
-    //nextObject = iParser->String("key2");
-    //TEST(nextObject == Brn("{\"key3\": 3, \"key4\":\"val4\"}"));
-
-    //TEST(iParser->HasKey("key5"));
-    //TEST(iParser->String("key5") == Brn("\"val5\""));
-
-    //iParser->Parse(nextObject, unescapeInPlace);
-    //TEST(iParser->HasKey("key3"));
-    //TEST(iParser->Num("key3") == 3);
-
-    //TEST(iParser->HasKey("key4"));
-    //TEST(iParser->String("key4") == Brn("val4"));
-
-
+    TEST(iParser->Num("key4") == 4);
 }
 
 void SuiteJsonParser::TestValidKey()
