@@ -84,7 +84,7 @@ private: // from IVolume
 private: // from IVolumeSourceOffset
     void SetVolumeOffset(TInt aValue) override;
 private: // from IVolumeSurroundAttenuator
-    void SetVolumeAttenuation(TInt aValue) override;
+    void SetVolumeBoost(TUint aValue) override;
 private: // from IVolumeSourceUnityGain
     void SetUnityGain(TBool aEnable) override;
     void AddUnityGainObserver(IUnityGainObserver& aObserver) override;
@@ -224,7 +224,7 @@ TUint DummyVolumeManager::OffsetMax() const                          { return 3;
 TBool DummyVolumeManager::AlwaysOn() const                           { return false; }
 void DummyVolumeManager::SetVolume(TUint /*aValue*/)                 {}
 void DummyVolumeManager::SetVolumeOffset(TInt /*aValue*/)            {}
-void DummyVolumeManager::SetVolumeAttenuation(TInt /*aValue*/)       {}
+void DummyVolumeManager::SetVolumeBoost(TUint /*aValue*/)            {}
 void DummyVolumeManager::SetUnityGain(TBool /*aEnable*/)             {}
 void DummyVolumeManager::AddUnityGainObserver(IUnityGainObserver&)   {}
 void DummyVolumeManager::ApplyVolumeMultiplier(TUint /*aValue*/)     {}

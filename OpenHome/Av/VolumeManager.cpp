@@ -290,17 +290,17 @@ void VolumeSourceOffset::DoSetVolume(TUint aValue)
 }
 
 
-// VolumeSurroundAttenuator
+// VolumeSurroundBoost
 
-VolumeSurroundAttenuator::VolumeSurroundAttenuator(IVolume& aVolume)
+VolumeSurroundBoost::VolumeSurroundBoost(IVolume& aVolume)
     : iLock("VSOF")
     , iVolume(aVolume)
     , iUpstreamVolume(0)
-    , iAttenuation(0)
+    , iBoost(0)
 {
 }
 
-void VolumeSurroundAttenuator::SetVolume(TUint aValue)
+void VolumeSurroundBoost::SetVolume(TUint aValue)
 {
     LOG(kVolume, "VolumeSurroundAttenuator::SetVolume aValue: %u\n", aValue);
     AutoMutex _(iLock);
@@ -308,27 +308,21 @@ void VolumeSurroundAttenuator::SetVolume(TUint aValue)
     iUpstreamVolume = aValue;
 }
 
-void VolumeSurroundAttenuator::SetVolumeAttenuation(TInt aOffset)
+void VolumeSurroundBoost::SetVolumeBoost(TUint aBoost)
 {
     AutoMutex _(iLock);
-    iAttenuation = aOffset;
+    iBoost = aBoost;
     try {
         DoSetVolume(iUpstreamVolume);
     }
     catch (VolumeNotSupported&) {}
 }
 
-void VolumeSurroundAttenuator::DoSetVolume(TUint aValue)
+void VolumeSurroundBoost::DoSetVolume(TUint aValue)
 {
-    TUint volume = aValue + iAttenuation;
+    TUint volume = aValue + iBoost;
     if (aValue == 0) {
         volume = 0; // upstream volume of 0 should mean we output silence
-    }
-    if (volume > aValue && iAttenuation < 0) {
-        volume = 0;
-    }
-    else if (volume < aValue && iAttenuation > 0) {
-        volume = aValue;
     }
     iVolume.SetVolume(volume);
 }
@@ -967,8 +961,8 @@ VolumeManager::VolumeManager(VolumeConsumer& aVolumeConsumer, IMute* aMute, Volu
             iVolumeUnityGain = new VolumeUnityGain(*iAnalogBypassRamper, aConfigReader, volumeUnity);
             iVolumeSourceUnityGain = new VolumeSourceUnityGain(*iVolumeUnityGain, volumeUnity);
         }
-        iVolumeSurroundAttenuator = new VolumeSurroundAttenuator(*iVolumeSourceUnityGain);
-        iVolumeSourceOffset = new VolumeSourceOffset(*iVolumeSurroundAttenuator);
+        iVolumeSurroundBoost = new VolumeSurroundBoost(*iVolumeSourceUnityGain);
+        iVolumeSourceOffset = new VolumeSourceOffset(*iVolumeSurroundBoost);
         iVolumeReporter = new VolumeReporter(*iVolumeSourceOffset, milliDbPerStep);
         iVolumeLimiter = new VolumeLimiter(*iVolumeReporter, milliDbPerStep, aConfigReader);
         iVolumeUser = new VolumeUser(*iVolumeLimiter, aConfigReader, aPowerManager,
@@ -980,7 +974,7 @@ VolumeManager::VolumeManager(VolumeConsumer& aVolumeConsumer, IMute* aMute, Volu
     else {
         iVolumeSourceUnityGain = nullptr;
         iVolumeUnityGain = nullptr;
-        iVolumeSurroundAttenuator = nullptr;
+        iVolumeSurroundBoost = nullptr;
         iVolumeSourceOffset = nullptr;
         iVolumeReporter = nullptr;
         iVolumeLimiter = nullptr;
@@ -1001,7 +995,7 @@ VolumeManager::~VolumeManager()
     delete iVolumeLimiter;
     delete iVolumeReporter;
     delete iVolumeSourceOffset;
-    delete iVolumeSurroundAttenuator;
+    delete iVolumeSurroundBoost;
     delete iVolumeUnityGain;
     delete iVolumeSourceUnityGain;
     delete iAnalogBypassRamper;
@@ -1045,10 +1039,10 @@ void VolumeManager::SetVolumeOffset(TInt aValue)
     }
 }
 
-void VolumeManager::SetVolumeAttenuation(TInt aValue)
+void VolumeManager::SetVolumeBoost(TUint aValue)
 {
-    if (iVolumeSurroundAttenuator != nullptr) {
-        iVolumeSurroundAttenuator->SetVolumeAttenuation(aValue);
+    if (iVolumeSurroundBoost != nullptr) {
+        iVolumeSurroundBoost->SetVolumeBoost(aValue);
     }
 }
 
