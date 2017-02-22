@@ -262,6 +262,30 @@ private:
     TInt iSourceOffset;
 };
 
+class IVolumeSurroundBoost
+{
+public:
+    virtual void SetVolumeBoost(TUint aBoost) = 0;
+    virtual ~IVolumeSurroundBoost() {}
+};
+
+class VolumeSurroundBoost : public IVolume, public IVolumeSurroundBoost, private INonCopyable
+{
+public:
+    VolumeSurroundBoost(IVolume& aVolume);
+public:  // from IVolume
+    void SetVolume(TUint aValue) override;
+public: // from IVolumeSurroundBoost
+    void SetVolumeBoost(TUint aBoost) override;
+private:
+    void DoSetVolume(TUint aValue);
+private:
+    Mutex iLock;
+    IVolume& iVolume;
+    TUint iUpstreamVolume;
+    TUint iBoost;
+};
+
 class VolumeUnityGainBase : public IVolume, private INonCopyable
 {
 public:
@@ -516,6 +540,7 @@ class IVolumeManager : public IVolumeReporter
                      , public IVolume
                      , public IVolumeProfile
                      , public IVolumeSourceOffset
+                     , public IVolumeSurroundBoost
                      , public IVolumeSourceUnityGain
                      , public Media::IAnalogBypassVolumeRamper
                      , public Media::IVolumeRamper
@@ -541,6 +566,8 @@ public: // from IMuteReporter
     void AddMuteObserver(Media::IMuteObserver& aObserver) override;
 public: // from IVolumeSourceOffset
     void SetVolumeOffset(TInt aValue) override;
+public: // from IVolumeSurroundBoost
+    void SetVolumeBoost(TUint aValue) override;
 public: // from IVolumeSourceUnityGain
     void SetUnityGain(TBool aEnable) override;
     void AddUnityGainObserver(IUnityGainObserver& aObserver) override;
@@ -580,6 +607,7 @@ private:
     AnalogBypassRamper* iAnalogBypassRamper;
     VolumeSourceUnityGain* iVolumeSourceUnityGain;
     VolumeUnityGain* iVolumeUnityGain;
+    VolumeSurroundBoost* iVolumeSurroundBoost;
     VolumeSourceOffset* iVolumeSourceOffset;
     VolumeReporter* iVolumeReporter;
     VolumeLimiter* iVolumeLimiter;
