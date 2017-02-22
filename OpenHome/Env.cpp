@@ -19,7 +19,7 @@
 # include <time.h>
 #endif // PLATFORM_MACOSX_GNU
 #include <stdlib.h>
-#include <cstdint>
+#include <stdint.h>
 
 namespace OpenHome {
 

@@ -12,7 +12,7 @@
 
 #include <vector>
 #include <stdlib.h>
-#include <cstdint>
+#include <stdint.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
