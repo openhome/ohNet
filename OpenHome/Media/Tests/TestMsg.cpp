@@ -710,6 +710,14 @@ void SuiteMsgAudioEncoded::Test()
     TEST(consumed == EncodedAudio::kMaxBytes % buf.Bytes());
     msg->RemoveRef();
 
+    // validate ref counting of chained msgs (see #5167)
+    msg = iMsgFactory->CreateMsgAudioEncoded(buf);
+    msg->AddRef();
+    msg2 = iMsgFactory->CreateMsgAudioEncoded(buf);
+    msg->Add(msg2);
+    msg->RemoveRef();
+    msg->RemoveRef();
+
     // clean shutdown implies no leaked msgs
 }
 

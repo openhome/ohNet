@@ -158,26 +158,16 @@ void AllocatorBase::QueryInfo(const Brx& aQuery, IWriter& aWriter)
 void Allocated::AddRef()
 {
     iRefCount++;
-    RefAdded();
 }
 
 void Allocated::RemoveRef()
 {
     ASSERT(iRefCount != 0);
     TBool free = (--iRefCount == 0);
-    RefRemoved();
     if (free) {
         Clear();
         iAllocator.Free(this);
     }
-}
-
-void Allocated::RefAdded()
-{
-}
-
-void Allocated::RefRemoved()
-{
 }
 
 void Allocated::Clear()
@@ -1388,25 +1378,11 @@ void MsgAudioEncoded::Initialise(EncodedAudio* aEncodedAudio)
     iNextAudio = nullptr;
 }
 
-void MsgAudioEncoded::RefAdded()
-{
-    /* FIXME - not clear that its correct to Add/Remove refs down a chain like this
-       it might be better to modify the head msg only then RemoveRef down the chain when
-       the head is Clear()ed */
-    if (iNextAudio != nullptr) {
-        iNextAudio->AddRef();
-    }
-}
-
-void MsgAudioEncoded::RefRemoved()
+void MsgAudioEncoded::Clear()
 {
     if (iNextAudio != nullptr) {
         iNextAudio->RemoveRef();
     }
-}
-
-void MsgAudioEncoded::Clear()
-{
     iAudioData->RemoveRef();
 }
 
@@ -2104,20 +2080,6 @@ void MsgPlayable::Initialise(TUint aSizeBytes, TUint aSampleRate, TUint aBitDept
     iPipelineBufferObserver = aPipelineBufferObserver.Ptr();
 }
 
-void MsgPlayable::RefAdded()
-{
-    if (iNextPlayable != nullptr) {
-        iNextPlayable->AddRef();
-    }
-}
-
-void MsgPlayable::RefRemoved()
-{
-    if (iNextPlayable != nullptr) {
-        iNextPlayable->RemoveRef();
-    }
-}
-
 Msg* MsgPlayable::Process(IMsgProcessor& aProcessor)
 {
     return aProcessor.ProcessMsg(this);
@@ -2130,7 +2092,10 @@ void MsgPlayable::Clear()
         iPipelineBufferObserver->Update(-jiffies);
         iPipelineBufferObserver = nullptr;
     }
-    iNextPlayable = nullptr;
+    if (iNextPlayable != nullptr) {
+        iNextPlayable->RemoveRef();
+        iNextPlayable = nullptr;
+    }
     iSize = iSampleRate = iBitDepth = iNumChannels = iOffset = 0;
     iRamp.Reset();
 }

@@ -90,8 +90,6 @@ protected:
 protected:
     virtual ~Allocated();
 private:
-    virtual void RefAdded();
-    virtual void RefRemoved();
     virtual void Clear();
 protected:
     AllocatorBase& iAllocator;
@@ -527,8 +525,6 @@ public:
 private:
     void Initialise(EncodedAudio* aEncodedAudio);
 private: // from Msg
-    void RefAdded() override;
-    void RefRemoved() override;
     void Clear() override;
     Msg* Process(IMsgProcessor& aProcessor) override;
 private:
@@ -796,8 +792,6 @@ protected:
                     TUint aNumChannels, TUint aOffsetBytes, const Media::Ramp& aRamp,
                     Optional<IPipelineBufferObserver> aPipelineBufferObserver);
 protected: // from Msg
-    void RefAdded() override;
-    void RefRemoved() override;
     Msg* Process(IMsgProcessor& aProcessor) override;
     void Clear() override;
 private:
