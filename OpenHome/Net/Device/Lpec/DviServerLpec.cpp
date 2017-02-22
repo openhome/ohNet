@@ -405,6 +405,7 @@ void DviSessionLpec::Run()
             iWriteBuffer->Write(Lpec::kMsgTerminator);
             iWriteBuffer->WriteFlush();
         }
+        iDvStack.NotifyControlPointUsed(Brn("Lpec/none"));
         for (;;) {
             Brn req = Ascii::Trim(iReaderUntil->ReadUntil(Ascii::kLf));
             iRequestBuf.Set(req);

@@ -25,8 +25,15 @@
 namespace OpenHome {
 namespace Net {
 
+class IControlPointChangedObserver
+{
+public:
+    virtual void NotifyControlPointChanged(const OpenHome::Brx& aControlPoint) = 0; // not allowed to throw
+};
+
 class DvStack : private IStack, private INonCopyable
 {
+    static const TUint kMaxControlPointBytes = 1024;
 public:
     DvStack(Environment& aEnv);
     Environment& Env() { return iEnv; }
@@ -40,6 +47,9 @@ public:
     DviPropertyUpdateCollection& PropertyUpdateCollection();
     DviSsdpNotifierManager& SsdpNotifierManager();
     DviServerLpec& LpecServer();
+    void AddControlPointChangedObserver(IControlPointChangedObserver& aObserver);
+    void RemoveControlPointChangedObserver(IControlPointChangedObserver& aObserver);
+    void NotifyControlPointUsed(const OpenHome::Brx& aControlPoint);
 private:
     ~DvStack();
 private:
@@ -54,6 +64,8 @@ private:
     DviPropertyUpdateCollection* iPropertyUpdateCollection;
     DviSsdpNotifierManager* iSsdpNotifierManager;
     DviServerLpec* iLpecServer;
+    std::vector<IControlPointChangedObserver*> iControlPointChangedObservers;
+    Bws<kMaxControlPointBytes> iControlPoint;
 };
 
 } // namespace Net

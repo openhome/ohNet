@@ -663,6 +663,8 @@ void DviSessionUpnp::Run()
         reqUri.Set(iReaderRequest->Uri());
         LOG(kDvDevice, "Method: %.*s, uri: %.*s\n", PBUF(method), PBUF(reqUri));
 
+        iDvStack.NotifyControlPointUsed(iHeaderUserAgent.UserAgent());
+
         if (method == Http::kMethodGet) {
             Get();
         }

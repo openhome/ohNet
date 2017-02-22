@@ -20,6 +20,7 @@ DvStack::DvStack(OpenHome::Environment& aEnv)
     , iBootId(1)
     , iNextBootId(2)
     , iMdns(NULL)
+    , iControlPoint(OpenHome::Brx::Empty())
 {
     iEnv.SetDvStack(this);
     iSsdpNotifierManager = new DviSsdpNotifierManager(*this);
@@ -57,6 +58,7 @@ DvStack::~DvStack()
     delete iSubscriptionManager;
     delete iPropertyUpdateCollection;
     delete iSsdpNotifierManager;
+    ASSERT(iControlPointChangedObservers.size() == 0);
 }
 
 TUint DvStack::BootId()
@@ -84,6 +86,31 @@ void DvStack::UpdateBootId()
     iBootId = iNextBootId;
     iNextBootId++;
     lock.Signal();
+}
+
+void DvStack::AddControlPointChangedObserver(IControlPointChangedObserver& aObserver)
+{
+    iControlPointChangedObservers.push_back(&aObserver);
+}
+
+void DvStack::RemoveControlPointChangedObserver(IControlPointChangedObserver& aObserver)
+{
+    for (TUint i=0; i<iControlPointChangedObservers.size(); i++) {
+        if (iControlPointChangedObservers[i] == &aObserver) {
+            iControlPointChangedObservers.erase(iControlPointChangedObservers.begin() + i);
+            break;
+        }
+    }
+}
+
+void DvStack::NotifyControlPointUsed(const OpenHome::Brx& aControlPoint)
+{
+    if (iControlPoint != aControlPoint) {
+        iControlPoint.Replace(aControlPoint);
+        for (TUint i=0; i<iControlPointChangedObservers.size(); i++) {
+            iControlPointChangedObservers[i]->NotifyControlPointChanged(aControlPoint);
+        }
+    }
 }
 
 DviServerUpnp& DvStack::ServerUpnp()

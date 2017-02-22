@@ -42,6 +42,7 @@ CpiDevice& CpiDeviceDv::Device()
 
 void CpiDeviceDv::InvokeAction(Invocation& aInvocation)
 {
+    iDeviceDv.GetDvStack().NotifyControlPointUsed(Brn("Device/local"));
     aInvocation.SetInvoker(*iInvocable);
     iDeviceCp->GetCpStack().InvocationManager().Invoke(&aInvocation);
 }
