@@ -16,6 +16,8 @@
 EXCEPTION(SampleRateInvalid);
 EXCEPTION(SampleRateUnsupported);
 
+#undef TIMESTAMP_LOGGING_ENABLE
+
 namespace OpenHome {
 namespace Media {
 
@@ -112,10 +114,32 @@ public:
     AudioData(AllocatorBase& aAllocator);
     const TByte* Ptr(TUint aOffsetBytes) const;
     TUint Bytes() const;
+#ifdef TIMESTAMP_LOGGING_ENABLE
+    void SetTimestamp(const TChar* aId);
+    TBool TryLogTimestamps();
+#endif
 private: // from Allocated
     void Clear() override;
 protected:
     Bws<kMaxBytes> iData;
+#ifdef TIMESTAMP_LOGGING_ENABLE
+private:
+    class Timestamp
+    {
+    public:
+        Timestamp();
+        void Reset();
+        void Set(const TChar* aId, TUint64 aTimestamp);
+        TBool TryLog();
+    private:
+        const TChar* iId;
+        TUint64 iTimestamp;
+    };
+    static const TUint kMaxTimestamps = 20;
+    Timestamp iTimestamps[kMaxTimestamps];
+    TUint iNextTimestampIndex;
+    OsContext* iOsCtx;
+#endif // TIMESTAMP_LOGGING_ENABLE
 };
 
 class EncodedAudio : public AudioData
@@ -161,10 +185,10 @@ public:
     static void RoundUp(TUint& aJiffies, TUint aSampleRate);
     static TUint ToSongcastTime(TUint aJiffies, TUint aSampleRate);
     static TUint64 FromSongcastTime(TUint64 aSongcastTime, TUint aSampleRate);
-    static TUint ToMs(TUint aJiffies) { return aJiffies / kPerMs; }
-    static TUint ToMs(TUint64 aJiffies) { return static_cast<TUint>(aJiffies / kPerMs); }
-    static TUint ToSamples(TUint aJiffies, TUint aSampleRate) { return aJiffies / PerSample(aSampleRate); }
-    static TUint64 ToSamples(TUint64 aJiffies, TUint aSampleRate) { return aJiffies / PerSample(aSampleRate); }
+    static inline TUint ToMs(TUint aJiffies);
+    static inline TUint ToMs(TUint64 aJiffies);
+    static inline TUint ToSamples(TUint aJiffies, TUint aSampleRate);
+    inline static TUint64 ToSamples(TUint64 aJiffies, TUint aSampleRate);
     static TUint SongcastTicksPerSecond(TUint aSampleRate);
 private:
     //Number of jiffies per sample
@@ -223,10 +247,10 @@ public:
     TBool Set(TUint aStart, TUint aFragmentSize, TUint aRemainingDuration, EDirection aDirection, Ramp& aSplit, TUint& aSplitPos); // returns true iff aSplit is set
     void SetMuted();
     Ramp Split(TUint aNewSize, TUint aCurrentSize);
-    TUint Start() const { return iStart; }
-    TUint End() const { return iEnd; }
-    EDirection Direction() const { return iDirection; }
-    TBool IsEnabled() const { return iEnabled; }
+    inline TUint Start() const;
+    inline TUint End() const;
+    inline EDirection Direction() const;
+    inline TBool IsEnabled() const;
 private:
     void SelectLowerRampPoints(TUint aRequestedStart, TUint aRequestedEnd);
     void Validate(const TChar* aId);
@@ -295,9 +319,9 @@ class ModeInfo
 {
     friend class MsgMode;
 public:
-    TBool SupportsLatency() const { return iSupportsLatency; }
-    TBool SupportsNext() const    { return iSupportsNext; }
-    TBool SupportsPrev() const    { return iSupportsPrev; }
+    inline TBool SupportsLatency() const;
+    inline TBool SupportsNext() const;
+    inline TBool SupportsPrev() const;
 private:
     ModeInfo();
     void Set(TBool aSupportsLatency, TBool aSupportsNext, TBool aSupportsPrev);
@@ -522,6 +546,7 @@ public:
     TUint Bytes() const;
     void CopyTo(TByte* aPtr);
     MsgAudioEncoded* Clone();
+    inline void AddLogPoint(const TChar* aId);
 private:
     void Initialise(EncodedAudio* aEncodedAudio);
 private: // from Msg
@@ -596,21 +621,21 @@ class DecodedStreamInfo
 {
     friend class MsgDecodedStream;
 public:
-    TUint StreamId() const { return iStreamId; }
-    TUint BitRate() const { return iBitRate; }
-    TUint BitDepth() const { return iBitDepth; }
-    TUint SampleRate() const { return iSampleRate; }
-    TUint NumChannels() const { return iNumChannels; }
-    const Brx& CodecName() const { return iCodecName; }
-    TUint64 TrackLength() const { return iTrackLength; }
-    TUint64 SampleStart() const { return iSampleStart; }
-    TBool Lossless() const { return iLossless; }
-    TBool Seekable() const { return iSeekable; }
-    TBool Live() const { return iLive; }
-    TBool AnalogBypass() const { return iAnalogBypass; }
-    Media::Multiroom Multiroom() const { return iMultiroom; }
-    const SpeakerProfile& Profile() const { return iProfile; }
-    IStreamHandler* StreamHandler() const { return iStreamHandler;}
+    inline TUint StreamId() const;
+    inline TUint BitRate() const;
+    inline TUint BitDepth() const;
+    inline TUint SampleRate() const;
+    inline TUint NumChannels() const;
+    inline const Brx& CodecName() const;
+    inline TUint64 TrackLength() const;
+    inline TUint64 SampleStart() const;
+    inline TBool Lossless() const;
+    inline TBool Seekable() const;
+    inline TBool Live() const;
+    inline TBool AnalogBypass() const;
+    inline Media::Multiroom Multiroom() const;
+    inline const SpeakerProfile& Profile() const;
+    inline IStreamHandler* StreamHandler() const;
 private:
     DecodedStreamInfo();
     void Set(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive, TBool aAnalogBypass, Media::Multiroom aMultiroom, const SpeakerProfile& aProfile, IStreamHandler* aStreamHandler);
@@ -719,6 +744,7 @@ public:
     MsgPlayable* CreatePlayable(); // removes ref, transfer ownership of DecodedAudio
     void Aggregate(MsgAudioPcm* aMsg); // append aMsg to the end of this msg, removes ref on aMsg
     void SetAttenuation(TUint aAttenuation);
+    inline void AddLogPoint(const TChar* aId);
 public: // from MsgAudio
     MsgAudio* Clone() override; // create new MsgAudio, take ref to DecodedAudio, copy size/offset
 private:
@@ -786,6 +812,7 @@ public:
      *                             padding around each sample) or if a ramp is being applied.
      */
     void Read(IPcmProcessor& aProcessor);
+    virtual TBool TryLogTimestamps();
 protected:
     MsgPlayable(AllocatorBase& aAllocator);
     void Initialise(TUint aSizeBytes, TUint aSampleRate, TUint aBitDepth,
@@ -823,6 +850,7 @@ private: // from MsgPlayable
     MsgPlayable* Allocate() override;
     void SplitCompleted(MsgPlayable& aRemaining) override;
     void ReadBlock(IPcmProcessor& aProcessor) override;
+    TBool TryLogTimestamps() override;
 private: // from Msg
     void Clear() override;
 private:
@@ -949,12 +977,12 @@ private:
 class MsgQueueLite : public MsgQueueBase
 {
 public:
-    void Enqueue(Msg* aMsg)         { DoEnqueue(aMsg); }
-    Msg* Dequeue()                  { return DoDequeue(); }
-    void EnqueueAtHead(Msg* aMsg)   { DoEnqueueAtHead(aMsg); }
-    TBool IsEmpty() const           { return MsgQueueBase::IsEmpty(); }
-    void Clear()                    { MsgQueueBase::DoClear(); }
-    TUint NumMsgs() const           { return MsgQueueBase::NumMsgs(); }
+    inline void Enqueue(Msg* aMsg);
+    inline Msg* Dequeue();
+    inline void EnqueueAtHead(Msg* aMsg);
+    inline TBool IsEmpty() const;
+    inline void Clear();
+    inline TUint NumMsgs() const;
 };
 
 class MsgQueue : public MsgQueueBase
@@ -1522,45 +1550,24 @@ class MsgFactoryInitParams
 {
     friend class MsgFactory;
 public:
-    MsgFactoryInitParams()
-        : iMsgModeCount(1)
-        , iMsgTrackCount(1)
-        , iMsgDrainCount(1)
-        , iMsgDelayCount(1)
-        , iMsgEncodedStreamCount(1)
-        , iEncodedAudioCount(1)
-        , iMsgAudioEncodedCount(1)
-        , iMsgMetaTextCount(1)
-        , iMsgStreamInterruptedCount(1)
-        , iMsgHaltCount(1)
-        , iMsgFlushCount(1)
-        , iMsgWaitCount(1)
-        , iMsgDecodedStreamCount(1)
-        , iMsgBitRateCount(1)
-        , iDecodedAudioCount(1)
-        , iMsgAudioPcmCount(1)
-        , iMsgSilenceCount(1)
-        , iMsgPlayablePcmCount(1)
-        , iMsgPlayableSilenceCount(1)
-        , iMsgQuitCount(1)
-    {}
-    void SetMsgModeCount(TUint aCount)                                      { iMsgModeCount = aCount; }
-    void SetMsgTrackCount(TUint aCount)                                     { iMsgTrackCount = aCount; }
-    void SetMsgDrainCount(TUint aCount)                                     { iMsgDrainCount = aCount; }
-    void SetMsgDelayCount(TUint aCount)                                     { iMsgDelayCount = aCount; }
-    void SetMsgEncodedStreamCount(TUint aCount)                             { iMsgEncodedStreamCount = aCount; }
-    void SetMsgAudioEncodedCount(TUint aCount, TUint aEncodedAudioCount)    { iMsgAudioEncodedCount = aCount; iEncodedAudioCount = aEncodedAudioCount; }
-    void SetMsgMetaTextCount(TUint aCount)                                  { iMsgMetaTextCount = aCount; }
-    void SetMsgStreamInterruptedCount(TUint aCount)                         { iMsgStreamInterruptedCount = aCount; }
-    void SetMsgHaltCount(TUint aCount)                                      { iMsgHaltCount = aCount; }
-    void SetMsgFlushCount(TUint aCount)                                     { iMsgFlushCount = aCount; }
-    void SetMsgWaitCount(TUint aCount)                                      { iMsgWaitCount = aCount; }
-    void SetMsgDecodedStreamCount(TUint aCount)                             { iMsgDecodedStreamCount = aCount; }
-    void SetMsgBitRateCount(TUint aCount)                                   { iMsgBitRateCount = aCount; }
-    void SetMsgAudioPcmCount(TUint aCount, TUint aDecodedAudioCount)        { iMsgAudioPcmCount = aCount; iDecodedAudioCount = aDecodedAudioCount; }
-    void SetMsgSilenceCount(TUint aCount)                                   { iMsgSilenceCount = aCount; }
-    void SetMsgPlayableCount(TUint aPcmCount, TUint aSilenceCount)          { iMsgPlayablePcmCount = aPcmCount; iMsgPlayableSilenceCount = aSilenceCount; }
-    void SetMsgQuitCount(TUint aCount)                                      { iMsgQuitCount = aCount; }
+    inline MsgFactoryInitParams();
+    inline void SetMsgModeCount(TUint aCount);
+    inline void SetMsgTrackCount(TUint aCount);
+    inline void SetMsgDrainCount(TUint aCount);
+    inline void SetMsgDelayCount(TUint aCount);
+    inline void SetMsgEncodedStreamCount(TUint aCount);
+    inline void SetMsgAudioEncodedCount(TUint aCount, TUint aEncodedAudioCount);
+    inline void SetMsgMetaTextCount(TUint aCount);
+    inline void SetMsgStreamInterruptedCount(TUint aCount);
+    inline void SetMsgHaltCount(TUint aCount);
+    inline void SetMsgFlushCount(TUint aCount);
+    inline void SetMsgWaitCount(TUint aCount);
+    inline void SetMsgDecodedStreamCount(TUint aCount);
+    inline void SetMsgBitRateCount(TUint aCount);
+    inline void SetMsgAudioPcmCount(TUint aCount, TUint aDecodedAudioCount);
+    inline void SetMsgSilenceCount(TUint aCount);
+    inline void SetMsgPlayableCount(TUint aPcmCount, TUint aSilenceCount);
+    inline void SetMsgQuitCount(TUint aCount);
 private:
     TUint iMsgModeCount;
     TUint iMsgTrackCount;
@@ -1636,6 +1643,8 @@ private:
     Allocator<MsgPlayableSilence> iAllocatorMsgPlayableSilence;
     Allocator<MsgQuit> iAllocatorMsgQuit;
 };
+
+#include <OpenHome/Media/Pipeline/Msg.inl>
 
 } // namespace Media
 } // namespace OpenHome

@@ -12,6 +12,7 @@
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Media/Debug.h>
+#include <OpenHome/Net/Private/Globals.h>
 
 #include <string.h>
 #include <climits>
@@ -191,6 +192,11 @@ Allocated::~Allocated()
 AudioData::AudioData(AllocatorBase& aAllocator)
     : Allocated(aAllocator)
 {
+#ifdef TIMESTAMP_LOGGING_ENABLE
+    iOsCtx = gEnv->OsCtx();
+    iNextTimestampIndex = 0;
+    (void)memset(iTimestamps, 0, sizeof iTimestamps);
+#endif
 }
 
 const TByte* AudioData::Ptr(TUint aBytes) const
@@ -204,6 +210,28 @@ TUint AudioData::Bytes() const
     return iData.Bytes();
 }
 
+#ifdef TIMESTAMP_LOGGING_ENABLE
+void AudioData::SetTimestamp(const TChar* aId)
+{
+    if (iNextTimestampIndex < kMaxTimestamps-1) {
+        const TUint64 ts = OsTimeInUs(iOsCtx);
+        iTimestamps[iNextTimestampIndex++].Set(aId, ts);
+    }
+}
+
+TBool AudioData::TryLogTimestamps()
+{
+    if (iNextTimestampIndex == 0) {
+        return false;
+    }
+    Log::Print("Timestamps:\n");
+    for (TUint i=0; i<iNextTimestampIndex; i++) {
+        (void)iTimestamps[i].TryLog();
+    }
+    return true;
+}
+#endif // TIMESTAMP_LOGGING_ENABLE
+
 void AudioData::Clear()
 {
 #ifdef DEFINE_DEBUG
@@ -211,7 +239,41 @@ void AudioData::Clear()
     memset(const_cast<TByte*>(iData.Ptr()), 0xde, iData.Bytes());
 #endif // DEFINE_DEBUG
     iData.SetBytes(0);
+#ifdef TIMESTAMP_LOGGING_ENABLE
+    for (TUint i=0; i<iNextTimestampIndex; i++) {
+        iTimestamps[i].Reset();
+    }
+    iNextTimestampIndex = 0;
+#endif
 }
+
+#ifdef TIMESTAMP_LOGGING_ENABLE
+AudioData::Timestamp::Timestamp()
+{
+    Reset();
+}
+
+void AudioData::Timestamp::Reset()
+{
+    iId = nullptr;
+    iTimestamp = 0;
+}
+
+void AudioData::Timestamp::Set(const TChar* aId, TUint64 aTimestamp)
+{
+    iId = aId;
+    iTimestamp = aTimestamp;
+}
+
+TBool AudioData::Timestamp::TryLog()
+{
+    if (iId == nullptr) {
+        return false;
+    }
+    Log::Print("\t%s: \t%llu\n", iId, iTimestamp);
+    return true;
+}
+#endif
 
 
 // EncodedAudio
@@ -2061,6 +2123,11 @@ void MsgPlayable::Read(IPcmProcessor& aProcessor)
     aProcessor.EndBlock();
 }
 
+TBool MsgPlayable::TryLogTimestamps()
+{
+    return false;
+}
+
 MsgPlayable::MsgPlayable(AllocatorBase& aAllocator)
     : Msg(aAllocator)
 {
@@ -2218,6 +2285,15 @@ void MsgPlayablePcm::ReadBlock(IPcmProcessor& aProcessor)
         }
     }
 
+}
+
+TBool MsgPlayablePcm::TryLogTimestamps()
+{
+#ifdef TIMESTAMP_LOGGING_ENABLE
+    return iAudioData->TryLogTimestamps();
+#else
+    return true;
+#endif
 }
 
 MsgPlayable* MsgPlayablePcm::Allocate()
