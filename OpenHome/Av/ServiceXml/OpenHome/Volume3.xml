@@ -189,6 +189,36 @@
                 </argument>
             </argumentList>
         </action>
+        <action>
+            <name>Trim</name>
+            <argumentList>
+                <argument>
+                    <name>Channel</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>Channel</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>TrimBinaryMilliDb</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>TrimBinaryMilliDb</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        <action>
+            <name>SetTrim</name>
+            <argumentList>
+                <argument>
+                    <name>Channel</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>Channel</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>TrimBinaryMilliDb</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>TrimBinaryMilliDb</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
     </actionList>
     <serviceStateTable>
         <stateVariable sendEvents="yes">
@@ -254,6 +284,14 @@
         <stateVariable sendEvents="yes">
             <name>VolumeOffsetMax</name>
             <dataType>ui4</dataType>
+        </stateVariable>
+        <stateVariable sendEvents="no">
+            <name>TrimBinaryMilliDb</name>
+            <dataType>i4</dataType>
+        </stateVariable>
+        <stateVariable sendEvents="yes">
+            <name>Trim</name>
+            <dataType>string</dataType>
         </stateVariable>
     </serviceStateTable>
 </scpd>

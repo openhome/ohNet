@@ -53,6 +53,7 @@ namespace Net {
     class DvDevice;
 }
 namespace Av {
+    class ITrim;
     class IVolumeOffsetter;
     class Product;
     class ProviderVolume;
@@ -105,15 +106,18 @@ public:
     void SetBalance(IBalance& aBalance);
     void SetFade(IFade& aFade);
     void SetVolumeOffsetter(IVolumeOffsetter& aVolumeOffsetter);
+    void SetTrim(ITrim& aTrim);
     IVolume* Volume();
     IBalance* Balance();
     IFade* Fade();
     IVolumeOffsetter* VolumeOffsetter();
+    ITrim* Trim();
 private:
     IVolume* iVolume;
     IBalance* iBalance;
     IFade* iFade;
     IVolumeOffsetter* iVolumeOffsetter;
+    ITrim* iTrim;
 };
 
 class VolumeNull : public IVolume
