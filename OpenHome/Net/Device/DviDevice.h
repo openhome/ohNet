@@ -170,6 +170,7 @@ public:
     DviDevice* Find(const Brx& aUdn);
     void WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter);
     std::map<Brn,DviDevice*,BufferCmp> CopyMap() const;
+    void ClearMap(std::map<Brn, DviDevice*, BufferCmp>& aMap);
 private:
     typedef std::map<Brn,DviDevice*,BufferCmp> Map;
     Mutex iLock;

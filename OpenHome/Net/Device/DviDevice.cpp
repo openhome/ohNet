@@ -723,6 +723,14 @@ std::map<Brn,DviDevice*,BufferCmp> DviDeviceMap::CopyMap() const
     return iMap;
 }
 
+void DviDeviceMap::ClearMap(std::map<Brn, DviDevice*, BufferCmp>& aMap)
+{
+    for (Map::iterator it=aMap.begin(); it!=aMap.end(); ++it) {
+        it->second->RemoveWeakRef();
+    }
+    aMap.clear();
+}
+
 void DviDeviceMap::WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter)
 {
     iLock.Wait();
