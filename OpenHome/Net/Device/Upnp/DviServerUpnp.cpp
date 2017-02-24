@@ -465,10 +465,11 @@ TUint PropertyWriterFactory::Adapter() const
 
 void PropertyWriterFactory::SubscriptionAdded(DviSubscription& aSubscription)
 {
-    iSubscriptionMapLock.Wait();
-    Brn sidBuf(aSubscription.Sid());
-    iSubscriptionMap.insert(std::pair<Brn,DviSubscription*>(sidBuf, &aSubscription));
-    iSubscriptionMapLock.Signal();
+    {
+        AutoMutex _(iSubscriptionMapLock);
+        Brn sidBuf(aSubscription.Sid());
+        iSubscriptionMap.insert(std::pair<Brn, DviSubscription*>(sidBuf, &aSubscription));
+    }
     AddRef();
 }
 
@@ -478,17 +479,18 @@ void PropertyWriterFactory::Disable()
     lock.Wait();
     iEnabled = false;
     lock.Signal();
-    iSubscriptionMapLock.Wait();
     std::vector<DviSubscription*> subscriptions;
-    SubscriptionMap::iterator it = iSubscriptionMap.begin();
-    if (it != iSubscriptionMap.end()) {
-        DviSubscription* subscription = it->second;
-        if (subscription->TryAddRef()) {
-            subscriptions.push_back(subscription);
+    {
+        AutoMutex _(iSubscriptionMapLock);
+        SubscriptionMap::iterator it = iSubscriptionMap.begin();
+        if (it != iSubscriptionMap.end()) {
+            DviSubscription* subscription = it->second;
+            if (subscription->TryAddRef()) {
+                subscriptions.push_back(subscription);
+            }
+            it++;
         }
-        it++;
     }
-    iSubscriptionMapLock.Signal();
     for (TUint i=0; i<(TUint)subscriptions.size(); i++) {
         DviSubscription* subscription = subscriptions[i];
         subscription->Remove();
@@ -527,14 +529,15 @@ void PropertyWriterFactory::NotifySubscriptionCreated(const Brx& /*aSid*/)
 void PropertyWriterFactory::NotifySubscriptionDeleted(const Brx& aSid)
 {
     AddRef();
-    iSubscriptionMapLock.Wait();
-    Brn sid(aSid);
-    SubscriptionMap::iterator it = iSubscriptionMap.find(sid);
-    if (it != iSubscriptionMap.end()) {
-        iSubscriptionMap.erase(it);
-        RemoveRef();
+    {
+        AutoMutex _(iSubscriptionMapLock);
+        Brn sid(aSid);
+        SubscriptionMap::iterator it = iSubscriptionMap.find(sid);
+        if (it != iSubscriptionMap.end()) {
+            iSubscriptionMap.erase(it);
+            RemoveRef();
+        }
     }
-    iSubscriptionMapLock.Signal();
     RemoveRef();
 }
 

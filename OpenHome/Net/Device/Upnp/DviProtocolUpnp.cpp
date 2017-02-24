@@ -296,44 +296,46 @@ const Brx& DviProtocolUpnp::ProtocolName() const
 
 void DviProtocolUpnp::Enable()
 {
-    iLock.Wait();
+    {
+        AutoMutex _(iLock);
 
-    // check we have at least the basic attributes requried for advertisement
-    ASSERT(Domain().Bytes() > 0);
-    ASSERT(Type().Bytes() > 0);
-    ASSERT(Version() > 0);
+        // check we have at least the basic attributes requried for advertisement
+        ASSERT(Domain().Bytes() > 0);
+        ASSERT(Type().Bytes() > 0);
+        ASSERT(Version() > 0);
 
-    for (TUint i=0; i<iAdapters.size(); i++) {
-        DviProtocolUpnpAdapterSpecificData* adapter = iAdapters[i];
-        Bws<Uri::kMaxUriBytes> uriBase;
-        DviDevice* root = (iDevice.IsRoot()? &iDevice : iDevice.Root());
-        adapter->UpdateServerPort(*iServer);
-        root->GetUriBase(uriBase, adapter->Interface(), adapter->ServerPort(), *this);
-        adapter->UpdateUriBase(uriBase);
-        adapter->ClearDeviceXml();
-        if (iDevice.ResourceManager() != NULL) {
-            const TChar* name = 0;
-            GetAttribute("FriendlyName", &name);
-            adapter->BonjourRegister(name, iDevice.Udn(), kProtocolName, iDevice.kResourceDir);
-            /*GetAttribute("MdnsHostName", &name);
-            if (name != NULL) {
-                iDvStack.MdnsProvider()->MdnsSetHostName(name);
-                Bwh redirectedPath(iDevice.Udn().Bytes() + kProtocolName.Bytes() + iDevice.kResourceDir.Bytes() + 4);
-                redirectedPath.Append('/');
-                Uri::Escape(redirectedPath, iDevice.Udn());
-                redirectedPath.Append('/');
-                redirectedPath.Append(kProtocolName);
-                redirectedPath.Append('/');
-                redirectedPath.Append(iDevice.kResourceDir);
-                redirectedPath.Append('/');
-                iDvStack.ServerUpnp().Redirect(Brn("/"), redirectedPath);
-            }*/
+        for (TUint i=0; i<iAdapters.size(); i++) {
+            DviProtocolUpnpAdapterSpecificData* adapter = iAdapters[i];
+            Bws<Uri::kMaxUriBytes> uriBase;
+            DviDevice* root = (iDevice.IsRoot()? &iDevice : iDevice.Root());
+            Log::Print("  adapter=%p, iServer=%p\n", (void*)adapter, (void*)iServer);
+            adapter->UpdateServerPort(*iServer);
+            root->GetUriBase(uriBase, adapter->Interface(), adapter->ServerPort(), *this);
+            adapter->UpdateUriBase(uriBase);
+            adapter->ClearDeviceXml();
+            if (iDevice.ResourceManager() != NULL) {
+                const TChar* name = 0;
+                GetAttribute("FriendlyName", &name);
+                adapter->BonjourRegister(name, iDevice.Udn(), kProtocolName, iDevice.kResourceDir);
+                /*GetAttribute("MdnsHostName", &name);
+                if (name != NULL) {
+                    iDvStack.MdnsProvider()->MdnsSetHostName(name);
+                    Bwh redirectedPath(iDevice.Udn().Bytes() + kProtocolName.Bytes() + iDevice.kResourceDir.Bytes() + 4);
+                    redirectedPath.Append('/');
+                    Uri::Escape(redirectedPath, iDevice.Udn());
+                    redirectedPath.Append('/');
+                    redirectedPath.Append(kProtocolName);
+                    redirectedPath.Append('/');
+                    redirectedPath.Append(iDevice.kResourceDir);
+                    redirectedPath.Append('/');
+                    iDvStack.ServerUpnp().Redirect(Brn("/"), redirectedPath);
+                }*/
+            }
+        }
+        for (TUint i=0; i<iAdapters.size(); i++) {
+            iAdapters[i]->SendByeByeThenAlive(*this);
         }
     }
-    for (TUint i=0; i<iAdapters.size(); i++) {
-        iAdapters[i]->SendByeByeThenAlive(*this);
-    }
-    iLock.Signal();
     QueueAliveTimer();
 }
 
