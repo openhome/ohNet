@@ -492,7 +492,6 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     //iLoggerRouter->SetEnabled(true);
     //iLoggerAttenuator->SetEnabled(true);
     //iLoggerDrainer->SetEnabled(true);
-    //iLoggerDelayReservoir->SetEnabled(true);
     //iLoggerVariableDelay2->SetEnabled(true);
     //iLoggerPruner->SetEnabled(true);
     //iLoggerStarvationRamper->SetEnabled(true);
@@ -522,7 +521,6 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     //iLoggerRouter->SetFilter(Logger::EMsgAll);
     //iLoggerAttenuator->SetFilter(Logger::EMsgAll);
     //iLoggerDrainer->SetFilter(Logger::EMsgAll);
-    //iLoggerDelayReservoir->SetFilter(Logger::EMsgAll);
     //iLoggerVariableDelay2->SetFilter(Logger::EMsgAll);
     //iLoggerPruner->SetFilter(Logger::EMsgAll);
     //iLoggerStarvationRamper->SetFilter(Logger::EMsgAll);
