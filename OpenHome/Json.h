@@ -83,7 +83,7 @@ public:
 class WriterJsonObject;
 class WriterJsonValueString;
 
-class WriterJsonArray
+class WriterJsonArray : private INonCopyable
 {
 public:
     enum class WriteOnEmpty
@@ -93,6 +93,7 @@ public:
     };
 public:
     WriterJsonArray(IWriter& aWriter, WriteOnEmpty aWriteOnEmpty = WriteOnEmpty::eNull);
+    WriterJsonArray(const WriterJsonArray& aWriter);
     void WriteInt(TInt aValue);
     void WriteString(const Brx& aValue);
     void WriteBool(TBool aValue);
