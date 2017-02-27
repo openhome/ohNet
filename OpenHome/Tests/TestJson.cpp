@@ -102,7 +102,8 @@ public: // from SuiteUnitTest
     void Setup() override;
     void TearDown() override;
 private:
-    void TestWriteEmpty();
+    void TestWriteEmptyNull();
+    void TestWriteEmptyArray();
     void TestWriteInt();
     void TestWriteString();
     void TestWriteBool();
@@ -714,7 +715,8 @@ void SuiteWriterJsonObject::TestWriteMixed()
 SuiteWriterJsonArray::SuiteWriterJsonArray()
     : SuiteUnitTest("SuiteWriterJsonArray")
 {
-    AddTest(MakeFunctor(*this, &SuiteWriterJsonArray::TestWriteEmpty), "TestWriteEmpty");
+    AddTest(MakeFunctor(*this, &SuiteWriterJsonArray::TestWriteEmptyNull), "TestWriteEmptyNull");
+    AddTest(MakeFunctor(*this, &SuiteWriterJsonArray::TestWriteEmptyArray), "TestWriteEmptyArray");
     AddTest(MakeFunctor(*this, &SuiteWriterJsonArray::TestWriteInt), "TestWriteInt");
     AddTest(MakeFunctor(*this, &SuiteWriterJsonArray::TestWriteString), "TestWriteString");
     AddTest(MakeFunctor(*this, &SuiteWriterJsonArray::TestWriteBool), "TestWriteBool");
@@ -734,11 +736,27 @@ void SuiteWriterJsonArray::TearDown()
     iBuf.SetBytes(0);
 }
 
-void SuiteWriterJsonArray::TestWriteEmpty()
+void SuiteWriterJsonArray::TestWriteEmptyNull()
 {
-    WriterJsonArray jsonArray(*iWriterBuf);
+    // By default, WriterJsonArray writes a "null" object when no array entries
+    // written.
+    WriterJsonArray jsonArray1(*iWriterBuf);
+    jsonArray1.WriteEnd();
+    TEST(iBuf == Brn("null"));
+
+    iBuf.SetBytes(0);
+    // Check behaviour is the same when writing of "null" object is
+    // specifically requested.
+    WriterJsonArray jsonArray2(*iWriterBuf, WriterJsonArray::WriteOnEmpty::eNull);
+    jsonArray2.WriteEnd();
+    TEST(iBuf == Brn("null"));
+}
+
+void SuiteWriterJsonArray::TestWriteEmptyArray()
+{
+    WriterJsonArray jsonArray(*iWriterBuf, WriterJsonArray::WriteOnEmpty::eEmptyArray);
     jsonArray.WriteEnd();
-    TEST(iBuf == Brn("null"));  // FIXME - why is this null and not []? TestWriteEmptyObject() writes {} instead of null.
+    TEST(iBuf == Brn("[]"));
 }
 
 void SuiteWriterJsonArray::TestWriteInt()

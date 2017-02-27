@@ -419,6 +419,85 @@ void WriterJson::WriteValueBool(IWriter& aWriter, TBool aValue)
 }
 
 
+// WriterJsonArray
+
+const Brn WriterJsonArray::kArrayStart("[");
+const Brn WriterJsonArray::kArrayEnd("]");
+
+WriterJsonArray::WriterJsonArray(IWriter& aWriter, WriteOnEmpty aWriteOnEmpty)
+    : iWriter(&aWriter)
+    , iWriteOnEmpty(aWriteOnEmpty)
+    , iStarted(false)
+    , iEnded(false)
+{
+}
+
+void WriterJsonArray::WriteInt(TInt aValue)
+{
+    WriteStartOrSeparator();
+    WriterJson::WriteValueInt(*iWriter, aValue);
+}
+
+void WriterJsonArray::WriteString(const Brx& aValue)
+{
+    WriteStartOrSeparator();
+    WriterJson::WriteValueString(*iWriter, aValue);
+}
+
+void WriterJsonArray::WriteBool(TBool aValue)
+{
+    WriteStartOrSeparator();
+    WriterJson::WriteValueBool(*iWriter, aValue);
+}
+
+WriterJsonArray WriterJsonArray::CreateArray(WriterJsonArray::WriteOnEmpty aWriteOnEmpty)
+{
+    WriteStartOrSeparator();
+    WriterJsonArray writer(*iWriter, aWriteOnEmpty);
+    return writer;
+}
+
+WriterJsonObject WriterJsonArray::CreateObject()
+{
+    WriteStartOrSeparator();
+    WriterJsonObject writer(*iWriter);
+    return writer;
+}
+
+void WriterJsonArray::WriteEnd()
+{
+    if (iStarted) {
+        iWriter->Write(kArrayEnd);
+    }
+    else {
+        if (iWriteOnEmpty == WriteOnEmpty::eNull) {
+            iWriter->Write(WriterJson::kNull);
+        }
+        else if (iWriteOnEmpty == WriteOnEmpty::eEmptyArray) {
+            iWriter->Write(kArrayStart);
+            iWriter->Write(kArrayEnd);
+        }
+        else {
+            // Unhandled WriteOnEmpty value.
+            ASSERTS();
+        }
+    }
+    iEnded = true;
+}
+
+void WriterJsonArray::WriteStartOrSeparator()
+{
+    ASSERT(!iEnded);
+    if (iStarted) {
+        iWriter->Write(WriterJson::kSeparator);
+    }
+    else {
+        iWriter->Write(kArrayStart);
+        iStarted = true;
+    }
+}
+
+
 // WriterJsonObject
 
 const Brn WriterJsonObject::kObjectStart("{");
@@ -504,16 +583,16 @@ void WriterJsonObject::WriteBool(const Brx& aKey, TBool aValue)
     WriterJson::WriteValueBool(*iWriter, aValue);
 }
 
-WriterJsonArray WriterJsonObject::CreateArray(const TChar* aKey)
+WriterJsonArray WriterJsonObject::CreateArray(const TChar* aKey, WriterJsonArray::WriteOnEmpty aWriteOnEmpty)
 {
-    return CreateArray(Brn(aKey));
+    return CreateArray(Brn(aKey), aWriteOnEmpty);
 }
 
-WriterJsonArray WriterJsonObject::CreateArray(const Brx& aKey)
+WriterJsonArray WriterJsonObject::CreateArray(const Brx& aKey, WriterJsonArray::WriteOnEmpty aWriteOnEmpty)
 {
     CheckStarted();
     WriteKey(aKey);
-    WriterJsonArray writer(*iWriter);
+    WriterJsonArray writer(*iWriter, aWriteOnEmpty);
     return writer;
 }
 
@@ -560,74 +639,6 @@ void WriterJsonObject::CheckStarted()
     ASSERT(!iEnded);
     if (!iStarted) {
         iWriter->Write(kObjectStart);
-        iStarted = true;
-    }
-}
-
-
-// WriterJsonArray
-
-const Brn WriterJsonArray::kArrayStart("[");
-const Brn WriterJsonArray::kArrayEnd("]");
-
-WriterJsonArray::WriterJsonArray(IWriter& aWriter)
-    : iWriter(&aWriter)
-    , iStarted(false)
-    , iEnded(false)
-{
-}
-
-void WriterJsonArray::WriteInt(TInt aValue)
-{
-    WriteStartOrSeparator();
-    WriterJson::WriteValueInt(*iWriter, aValue);
-}
-
-void WriterJsonArray::WriteString(const Brx& aValue)
-{
-    WriteStartOrSeparator();
-    WriterJson::WriteValueString(*iWriter, aValue);
-}
-
-void WriterJsonArray::WriteBool(TBool aValue)
-{
-    WriteStartOrSeparator();
-    WriterJson::WriteValueBool(*iWriter, aValue);
-}
-
-WriterJsonArray WriterJsonArray::CreateArray()
-{
-    WriteStartOrSeparator();
-    WriterJsonArray writer(*iWriter);
-    return writer;
-}
-
-WriterJsonObject WriterJsonArray::CreateObject()
-{
-    WriteStartOrSeparator();
-    WriterJsonObject writer(*iWriter);
-    return writer;
-}
-
-void WriterJsonArray::WriteEnd()
-{
-    if (iStarted) {
-        iWriter->Write(kArrayEnd);
-    }
-    else {
-        iWriter->Write(WriterJson::kNull);
-    }
-    iEnded = true;
-}
-
-void WriterJsonArray::WriteStartOrSeparator()
-{
-    ASSERT(!iEnded);
-    if (iStarted) {
-        iWriter->Write(WriterJson::kSeparator);
-    }
-    else {
-        iWriter->Write(kArrayStart);
         iStarted = true;
     }
 }

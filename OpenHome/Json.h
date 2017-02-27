@@ -76,8 +76,35 @@ public:
     static void WriteValueBool(IWriter& aWriter, TBool aValue);
 };
 
-class WriterJsonArray;
+class WriterJsonObject;
 class WriterJsonValueString;
+
+class WriterJsonArray
+{
+public:
+    enum class WriteOnEmpty
+    {
+        eNull,          // "null"
+        eEmptyArray     // "[]"
+    };
+public:
+    WriterJsonArray(IWriter& aWriter, WriteOnEmpty aWriteOnEmpty = WriteOnEmpty::eNull);
+    void WriteInt(TInt aValue);
+    void WriteString(const Brx& aValue);
+    void WriteBool(TBool aValue);
+    WriterJsonArray CreateArray(WriterJsonArray::WriteOnEmpty aWriteOnEmpty = WriterJsonArray::WriteOnEmpty::eNull);
+    WriterJsonObject CreateObject();
+    void WriteEnd();
+private:
+    void WriteStartOrSeparator();
+private:
+    static const Brn kArrayStart;
+    static const Brn kArrayEnd;
+    IWriter* iWriter;
+    const WriteOnEmpty iWriteOnEmpty;
+    TBool iStarted;
+    TBool iEnded;
+};
 
 class WriterJsonObject
 {
@@ -93,8 +120,8 @@ public:
     void WriteString(const Brx& aKey, const Brx& aValue);
     void WriteBool(const TChar* aKey, TBool aValue);
     void WriteBool(const Brx& aKey, TBool aValue);
-    WriterJsonArray CreateArray(const TChar* aKey);
-    WriterJsonArray CreateArray(const Brx& aKey);
+    WriterJsonArray CreateArray(const TChar* aKey, WriterJsonArray::WriteOnEmpty aWriteOnEmpty = WriterJsonArray::WriteOnEmpty::eNull);
+    WriterJsonArray CreateArray(const Brx& aKey, WriterJsonArray::WriteOnEmpty aWriteOnEmpty = WriterJsonArray::WriteOnEmpty::eNull);
     WriterJsonObject CreateObject(const TChar* aKey);
     WriterJsonObject CreateObject(const Brx& aKey);
     WriterJsonValueString CreateStringStreamed(const TChar* aKey);
@@ -112,26 +139,6 @@ private:
     TBool iStarted;
     TBool iEnded;
     TBool iWrittenFirstKey;
-};
-
-class WriterJsonArray
-{
-public:
-    WriterJsonArray(IWriter& aWriter);
-    void WriteInt(TInt aValue);
-    void WriteString(const Brx& aValue);
-    void WriteBool(TBool aValue);
-    WriterJsonArray CreateArray();
-    WriterJsonObject CreateObject();
-    void WriteEnd();
-private:
-    void WriteStartOrSeparator();
-private:
-    static const Brn kArrayStart;
-    static const Brn kArrayEnd;
-    IWriter* iWriter;
-    TBool iStarted;
-    TBool iEnded;
 };
 
 class WriterJsonValueString : public OpenHome::IWriter
