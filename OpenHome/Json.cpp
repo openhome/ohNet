@@ -2,6 +2,7 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Ascii.h>
+#include <OpenHome/Private/Converter.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Private/Stream.h>
 
@@ -325,13 +326,9 @@ TBool JsonParser::HasKey(const TChar* aKey) const
 
 TBool JsonParser::HasKey(const Brx& aKey) const
 {
-    try {
-        (void)Value(aKey);
-        return true;
-    }
-    catch (JsonKeyNotFound&) {
-        return false;
-    }
+    Brn key(aKey);
+    const auto it = iPairs.find(key);
+    return it != iPairs.end();
 }
 
 Brn JsonParser::String(const TChar* aKey) const
@@ -380,12 +377,31 @@ TBool JsonParser::Bool(const Brx& aKey) const
     THROW(JsonCorrupt);
 }
 
+TBool JsonParser::IsNull(const TChar* aKey) const
+{
+    return IsNull(Brn(aKey));
+}
+
+TBool JsonParser::IsNull(const Brx& aKey) const
+{
+    try {
+        (void)Value(aKey);
+        return false;
+    }
+    catch (JsonValueNull&) {
+        return true;
+    }
+}
+
 Brn JsonParser::Value(const Brx& aKey) const
 {
     Brn key(aKey);
     const auto it = iPairs.find(key);
     if (it == iPairs.end()) {
         THROW(JsonKeyNotFound);
+    }
+    if (it->second == WriterJson::kNull) {
+        THROW(JsonValueNull);
     }
     return it->second;
 }
@@ -410,6 +426,13 @@ void WriterJson::WriteValueString(IWriter& aWriter, const Brx& aValue)
 { // static
     aWriter.Write(kQuote);
     Json::Escape(aWriter, aValue);
+    aWriter.Write(kQuote);
+}
+
+void WriterJson::WriteValueBinary(IWriter& aWriter, const Brx& aValue)
+{ // static
+    aWriter.Write(kQuote);
+    Converter::ToBase64(aWriter, aValue);
     aWriter.Write(kQuote);
 }
 
@@ -569,6 +592,18 @@ void WriterJsonObject::WriteString(const Brx& aKey, const Brx& aValue)
     CheckStarted();
     WriteKey(aKey);
     WriterJson::WriteValueString(*iWriter, aValue);
+}
+
+void WriterJsonObject::WriteBinary(const TChar* aKey, const Brx& aValue)
+{
+    WriteBinary(Brn(aKey), aValue);
+}
+
+void WriterJsonObject::WriteBinary(const Brx& aKey, const Brx& aValue)
+{
+    CheckStarted();
+    WriteKey(aKey);
+    WriterJson::WriteValueBinary(*iWriter, aValue);
 }
 
 void WriterJsonObject::WriteBool(const TChar* aKey, TBool aValue)

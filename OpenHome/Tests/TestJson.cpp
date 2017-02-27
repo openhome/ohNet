@@ -56,6 +56,7 @@ private:
     void TestGetNumAsString();
     void TestGetValidBool();
     void TestCorruptInput();
+    void TestParseNull();
 private:
     JsonParser* iParser;
 };
@@ -236,6 +237,8 @@ SuiteJsonParser::SuiteJsonParser()
     AddTest(MakeFunctor(*this, &SuiteJsonParser::TestGetNumAsString), "TestGetNumAsString");
     AddTest(MakeFunctor(*this, &SuiteJsonParser::TestGetValidBool), "TestGetValidBool");
     AddTest(MakeFunctor(*this, &SuiteJsonParser::TestCorruptInput), "TestCorruptInput");
+    AddTest(MakeFunctor(*this, &SuiteJsonParser::TestParseNull), "TestParseNull");
+
 }
 
 void SuiteJsonParser::Setup()
@@ -418,6 +421,22 @@ void SuiteJsonParser::TestCorruptInput()
     TEST_THROWS(iParser->Parse(Brn("{\"key1\" 1")), JsonCorrupt);  // No separator.
     TEST_THROWS(iParser->Parse(Brn("{1:2}")), JsonCorrupt);        // Number as key.
     TEST_THROWS(iParser->Parse(Brn("{true:2}")), JsonCorrupt);     // Boolean as key.
+}
+
+void SuiteJsonParser::TestParseNull()
+{
+    const Brn json("{\"obj\":null,\"str\":null,\"foo\":\"bar\"}");
+    iParser->Parse(json);
+
+    TEST(iParser->HasKey("obj"));
+    TEST(iParser->HasKey("str"));
+    TEST(iParser->HasKey("foo"));
+    TEST(iParser->IsNull("obj"));
+    TEST(iParser->IsNull("str"));
+    TEST(!iParser->IsNull("foo"));
+    TEST_THROWS(iParser->String("obj"), JsonValueNull);
+    TEST_THROWS(iParser->String("str"), JsonValueNull);
+    TEST(iParser->String("foo") == Brn("bar"));
 }
 
 

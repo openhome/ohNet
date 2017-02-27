@@ -68,6 +68,7 @@ Product::Product(Environment& aEnv, Net::DvDeviceStandard& aDevice, IReadStore& 
     , iConfigAutoPlay(nullptr)
     , iListenerIdAutoPlay(IConfigManager::kSubscriptionIdInvalid)
     , iAdapterChangeListenerId(NetworkAdapterList::kListenerIdNull)
+    , iObserverLock("PRDM2")
 {
     iStandbyObserver = aPowerManager.RegisterStandbyHandler(*this, kStandbyHandlerPriorityLowest, "Product");
     iLastSelectedSource = new StoreText(aReadWriteStore, aPowerManager, kPowerPriorityHighest, kKeyLastSelectedSource, Brx::Empty(), ISource::kMaxSourceTypeBytes);
@@ -103,11 +104,13 @@ Product::~Product()
 
 void Product::AddObserver(IProductObserver& aObserver)
 {
+    AutoMutex amx(iObserverLock);
     iObservers.push_back(&aObserver);
 }
 
 void Product::AddAttributesObserver(IProductAttributesObserver& aObserver)
 {
+    AutoMutex amx(iObserverLock);
     iAttributeObservers.push_back(&aObserver);
 }
 
@@ -154,8 +157,11 @@ void Product::Start()
 
     iStarted = true;
     iSourceXmlChangeCount++;
-    for (auto it=iObservers.begin(); it!=iObservers.end(); ++it) {
-        (*it)->Started();
+    {
+        AutoMutex amx(iObserverLock);
+        for (auto observer : iObservers) {
+            observer->Started();
+        }
     }
 }
 
@@ -195,8 +201,9 @@ void Product::SetConfigAppUrl(const Brx& aUrl)
     iLock.Wait();
     iConfigAppUrlTail.Replace(aUrl);
     iLock.Signal();
-    for (auto it=iAttributeObservers.begin(); it!=iAttributeObservers.end(); ++it) {
-        (*it)->AttributesChanged();
+    AutoMutex amx(iObserverLock);
+    for (auto attributeObserver : iAttributeObservers) {
+        attributeObserver->AttributesChanged();
     }
 }
 
@@ -323,11 +330,14 @@ void Product::CurrentAdapterChanged()
         }
     }
 
-    for (auto it=iObservers.begin(); it!=iObservers.end(); ++it) {
-        (*it)->ProductUrisChanged();
-    }
-    for (auto it=iAttributeObservers.begin(); it!=iAttributeObservers.end(); ++it) {
-        (*it)->AttributesChanged();
+    {
+        AutoMutex amx(iObserverLock);
+        for (auto observer : iObservers) {
+            observer->ProductUrisChanged();
+        }
+        for (auto attributeObserver : iAttributeObservers) {
+            attributeObserver->AttributesChanged();
+        }
     }
 }
 
@@ -370,8 +380,11 @@ TBool Product::DoSetCurrentSourceLocked(TUint aIndex)
         iSources[iCurrentSource]->Activate(iAutoPlay);
     }
 
-    for (auto it=iObservers.begin(); it!=iObservers.end(); ++it) {
-        (*it)->SourceIndexChanged();
+    {
+        AutoMutex amx(iObserverLock);
+        for (auto observer : iObservers) {
+            observer->SourceIndexChanged();
+        }
     }
     return true;
 }
@@ -495,8 +508,11 @@ void Product::Activate(ISource& aSource)
             iLastSelectedSource->Set(iSources[iCurrentSource]->SystemName());
             srcNew = iSources[i];
             srcNew->Activate(iAutoPlay);
-            for (auto it=iObservers.begin(); it!=iObservers.end(); ++it) {
-                (*it)->SourceIndexChanged();
+            {
+                AutoMutex amx(iObserverLock);
+                for (auto observer : iObservers) {
+                    observer->SourceIndexChanged();
+                }
             }
             return;
         }
@@ -509,8 +525,11 @@ void Product::NotifySourceChanged(ISource& /*aSource*/)
     iLock.Wait();
     iSourceXmlChangeCount++;
     iLock.Signal();
-    for (auto it=iObservers.begin(); it!=iObservers.end(); ++it) {
-        (*it)->SourceXmlChanged();
+    {
+        AutoMutex amx(iObserverLock);
+        for (auto observer : iObservers) {
+            observer->SourceXmlChanged();
+        }
     }
 }
 
