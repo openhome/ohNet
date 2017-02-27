@@ -179,6 +179,7 @@ private:
     TUint iListenerIdAutoPlay;
     TUint iAdapterChangeListenerId;
     Brh iUriPrefix;
+    mutable Mutex iObserverLock;
 };
 
 class IFriendlyNameObservable

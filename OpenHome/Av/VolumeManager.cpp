@@ -25,6 +25,7 @@ VolumeConsumer::VolumeConsumer()
     , iBalance(nullptr)
     , iFade(nullptr)
     , iVolumeOffsetter(nullptr)
+    , iTrim(nullptr)
 {
 }
 
@@ -48,6 +49,11 @@ void VolumeConsumer::SetVolumeOffsetter(IVolumeOffsetter& aVolumeOffsetter)
     iVolumeOffsetter = &aVolumeOffsetter;
 }
 
+void VolumeConsumer::SetTrim(ITrim& aTrim)
+{
+    iTrim = &aTrim;
+}
+
 IVolume* VolumeConsumer::Volume()
 {
     return iVolume;
@@ -66,6 +72,11 @@ IFade* VolumeConsumer::Fade()
 IVolumeOffsetter* VolumeConsumer::VolumeOffsetter()
 {
     return iVolumeOffsetter;
+}
+
+ITrim* VolumeConsumer::Trim()
+{
+    return iTrim;
 }
 
 
@@ -968,7 +979,7 @@ VolumeManager::VolumeManager(VolumeConsumer& aVolumeConsumer, IMute* aMute, Volu
         iVolumeUser = new VolumeUser(*iVolumeLimiter, aConfigReader, aPowerManager,
                                      aVolumeConfig.StoreUserVolume(),
                                      iVolumeConfig.VolumeMax() * milliDbPerStep, milliDbPerStep);
-        iProviderVolume = new ProviderVolume(aDevice, aConfigReader, *this, iBalanceUser, iFadeUser, aVolumeConsumer.VolumeOffsetter());
+        iProviderVolume = new ProviderVolume(aDevice, aConfigReader, *this, iBalanceUser, iFadeUser, aVolumeConsumer.VolumeOffsetter(), aVolumeConsumer.Trim());
         aProduct.AddAttribute("Volume");
     }
     else {
