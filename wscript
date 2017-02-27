@@ -1022,7 +1022,7 @@ def build(bld):
 # Bundles
 def bundle(ctx):
     print 'bundle binaries'
-    header_files = gather_files(ctx, '{top}', ['OpenHome/**/*.h'])
+    header_files = gather_files(ctx, '{top}', ['OpenHome/**/*.h', 'OpenHome/**/*.inl'])
     lib_names = ['ohPipeline',
                  'ohMediaPlayer',
                  'ohMediaPlayerTestUtils',
