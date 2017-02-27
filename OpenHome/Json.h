@@ -11,6 +11,7 @@ EXCEPTION(JsonInvalid);
 EXCEPTION(JsonUnsupported);
 EXCEPTION(JsonKeyNotFound);
 EXCEPTION(JsonCorrupt);
+EXCEPTION(JsonValueNull);
 
 namespace OpenHome {
 
@@ -53,6 +54,8 @@ public:
     TInt Num(const Brx& aKey) const;
     TBool Bool(const TChar* aKey) const;
     TBool Bool(const Brx& aKey) const;
+    TBool IsNull(const TChar* aKey) const;
+    TBool IsNull(const Brx& aKey) const;
 private:
     void Reset();
     void Parse(const Brx& aJson, TBool aUnescapeInPlace);
@@ -73,6 +76,7 @@ public:
 public:
     static void WriteValueInt(IWriter& aWriter, TInt aValue);
     static void WriteValueString(IWriter& aWriter, const Brx& aValue);
+    static void WriteValueBinary(IWriter& aWriter, const Brx& aValue);
     static void WriteValueBool(IWriter& aWriter, TBool aValue);
 };
 
@@ -93,6 +97,8 @@ public:
     void WriteString(const Brx& aKey, const Brx& aValue);
     void WriteBool(const TChar* aKey, TBool aValue);
     void WriteBool(const Brx& aKey, TBool aValue);
+    void WriteBinary(const TChar* aKey, const Brx& aValue);
+    void WriteBinary(const Brx& aKey, const Brx& aValue);
     WriterJsonArray CreateArray(const TChar* aKey);
     WriterJsonArray CreateArray(const Brx& aKey);
     WriterJsonObject CreateObject(const TChar* aKey);
