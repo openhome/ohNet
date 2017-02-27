@@ -49,7 +49,7 @@ const TChar* OffsetsWriterJson::kKeyChannel = "channel";
 const TChar* OffsetsWriterJson::kKeyOffset = "offset";
 
 OffsetsWriterJson::OffsetsWriterJson(IWriter& aWriter)
-    : iWriter(aWriter)
+    : iWriter(aWriter, WriterJsonArray::WriteOnEmpty::eEmptyArray)
 {
 }
 
@@ -80,7 +80,7 @@ const TChar* TrimWriterJson::kKeyMax = "max";
 const TChar* TrimWriterJson::kKeyTrim = "trim";
 
 TrimWriterJson::TrimWriterJson(IWriter& aWriter)
-    : iWriter(aWriter)
+    : iWriter(aWriter, WriterJsonArray::WriteOnEmpty::eEmptyArray)
 {
 }
 
