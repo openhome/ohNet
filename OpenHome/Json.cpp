@@ -455,6 +455,14 @@ WriterJsonArray::WriterJsonArray(IWriter& aWriter, WriteOnEmpty aWriteOnEmpty)
 {
 }
 
+WriterJsonArray::WriterJsonArray(const WriterJsonArray& aWriter)
+    : iWriter(aWriter.iWriter)
+    , iWriteOnEmpty(aWriter.iWriteOnEmpty)
+    , iStarted(aWriter.iStarted)
+    , iEnded(aWriter.iEnded)
+{
+}
+
 void WriterJsonArray::WriteInt(TInt aValue)
 {
     WriteStartOrSeparator();
