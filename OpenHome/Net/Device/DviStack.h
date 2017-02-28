@@ -17,7 +17,6 @@
 #include <OpenHome/Net/Private/Bonjour.h>
 #include <OpenHome/Net/Private/DviPropertyUpdateCollection.h>
 #include <OpenHome/Net/Private/DviSsdpNotifier.h>
-#include <OpenHome/Net/Private/DviServerLpec.h>
 #include <OpenHome/Private/Standard.h>
 
 #include <vector>
@@ -30,6 +29,8 @@ class IControlPointChangedObserver
 public:
     virtual void NotifyControlPointChanged(const OpenHome::Brx& aControlPoint) = 0; // not allowed to throw
 };
+
+class IDvProtocolFactory;
 
 class DvStack : private IStack, private INonCopyable
 {
@@ -46,7 +47,8 @@ public:
     IMdnsProvider* MdnsProvider();
     DviPropertyUpdateCollection& PropertyUpdateCollection();
     DviSsdpNotifierManager& SsdpNotifierManager();
-    DviServerLpec& LpecServer();
+    void AddProtocolFactory(IDvProtocolFactory* aProtocolFactory);
+    std::vector<IDvProtocolFactory*>& ProtocolFactories();
     void AddControlPointChangedObserver(IControlPointChangedObserver& aObserver);
     void RemoveControlPointChangedObserver(IControlPointChangedObserver& aObserver);
     void NotifyControlPointUsed(const OpenHome::Brx& aControlPoint);
@@ -63,7 +65,7 @@ private:
     IMdnsProvider* iMdns;
     DviPropertyUpdateCollection* iPropertyUpdateCollection;
     DviSsdpNotifierManager* iSsdpNotifierManager;
-    DviServerLpec* iLpecServer;
+    std::vector<IDvProtocolFactory*> iProtocolFactories;
     std::vector<IControlPointChangedObserver*> iControlPointChangedObservers;
     Bws<kMaxControlPointBytes> iControlPoint;
 };

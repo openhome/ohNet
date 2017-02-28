@@ -2,18 +2,36 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Private/DviDevice.h>
-#include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Net/Private/DviServerLpec.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
+// DviProtocolFactoryLpec
+
+DviProtocolFactoryLpec::DviProtocolFactoryLpec(DvStack& aDvStack, TUint aServerPort)
+{
+    iServer = new DviServerLpec(aDvStack, aServerPort);
+}
+
+DviProtocolFactoryLpec::~DviProtocolFactoryLpec()
+{
+    delete iServer;
+}
+
+IDvProtocol* DviProtocolFactoryLpec::CreateProtocol(DviDevice& aDevice)
+{
+    return new DviProtocolLpec(aDevice, *iServer);
+}
+
+
 // DviProtocolLpec
 
 const Brn DviProtocolLpec::kProtocolName("Lpec");
 
-DviProtocolLpec::DviProtocolLpec(DviDevice& aDevice)
+DviProtocolLpec::DviProtocolLpec(DviDevice& aDevice, DviServerLpec& aServer)
     : iDevice(aDevice)
+    , iServer(aServer)
 {
 }
 
@@ -36,7 +54,7 @@ void DviProtocolLpec::Disable(Functor& aComplete)
     const TChar* name = NULL;
     GetAttribute("Name", &name);
     if (name != NULL) {
-        iDevice.GetDvStack().LpecServer().NotifyDeviceDisabled(Brn(name), iDevice.Udn());
+        iServer.NotifyDeviceDisabled(Brn(name), iDevice.Udn());
     }
     aComplete();
 }

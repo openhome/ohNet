@@ -15,6 +15,16 @@
 namespace OpenHome {
 namespace Net {
 
+class IDvProtocol;
+class DviDevice;
+
+class IDvProtocolFactory
+{
+public:
+    virtual IDvProtocol* CreateProtocol(DviDevice& aDevice) = 0;
+    virtual ~IDvProtocolFactory() {}
+};
+
 class IDvProtocol : public IResourceManager
 {
 public:

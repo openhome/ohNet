@@ -12,11 +12,22 @@ namespace Net {
 class DvStack;
 class DviServerLpec;
 
+class DviProtocolFactoryLpec : public IDvProtocolFactory
+{
+public:
+    DviProtocolFactoryLpec(DvStack& aDvStack, TUint aServerPort);
+    ~DviProtocolFactoryLpec();
+private: // from IDvProtocolFactory
+    IDvProtocol* CreateProtocol(DviDevice& aDevice);
+private:
+    DviServerLpec* iServer;
+};
+
 class DviProtocolLpec : public IDvProtocol
 {
     static const Brn kProtocolName;
 public:
-    DviProtocolLpec(DviDevice& aDevice);
+    DviProtocolLpec(DviDevice& aDevice, DviServerLpec& aServer);
 private: // from IResourceManager
     void WriteResource(const Brx& aUriTail, TIpAddress aAdapter, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter);
 private: // from IDvProtocol
@@ -29,6 +40,7 @@ private: // from IDvProtocol
     void GetResourceManagerUri(const NetworkAdapter& aAdapter, Brh& aUri);
 private:
     DviDevice& iDevice;
+    DviServerLpec& iServer;
     AttributeMap iAttributeMap;
 };
 

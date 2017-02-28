@@ -7,7 +7,6 @@
 #include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Net/Private/DviProviderSubscriptionLongPoll.h>
 #include <OpenHome/Net/Private/DviProtocolUpnp.h> // for DviProtocolUpnp ctor only
-#include <OpenHome/Net/Private/DviProtocolLpec.h> // for DviProtocolLpec ctor only
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -623,8 +622,9 @@ DviDeviceStandard::DviDeviceStandard(OpenHome::Net::DvStack& aDvStack, const Brx
 void DviDeviceStandard::Construct()
 {
     AddProtocol(new DviProtocolUpnp(*this));
-    if (iDvStack.Env().InitParams()->DvNumLpecThreads() > 0) {
-        AddProtocol(new DviProtocolLpec(*this));
+    std::vector<IDvProtocolFactory*>& protocolFactories = iDvStack.ProtocolFactories();
+    for (TUint i=0; i<protocolFactories.size(); i++) {
+        AddProtocol(protocolFactories[i]->CreateProtocol(*this));
     }
 }
 

@@ -8,7 +8,7 @@
 #include <OpenHome/Net/Private/Bonjour.h>
 #include <OpenHome/Net/Private/MdnsProvider.h> // replace this to allow clients to set an alternative Bonjour implementation
 #include <OpenHome/Net/Private/DviPropertyUpdateCollection.h>
-#include <OpenHome/Net/Private/DviServerLpec.h>
+#include <OpenHome/Net/Private/DviProtocolLpec.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -37,18 +37,17 @@ DvStack::DvStack(OpenHome::Environment& aEnv)
         iMdns = new OpenHome::Net::MdnsProvider(iEnv, hostName);
 #endif
     }
-    if (initParams->DvNumLpecThreads() == 0) {
-        iLpecServer = NULL;
-    }
-    else {
+    if (initParams->DvNumLpecThreads() > 0) {
         port = initParams->DvLpecServerPort();
-        iLpecServer = new DviServerLpec(*this, port);
+        AddProtocolFactory(new DviProtocolFactoryLpec(*this, port));
     }
 }
 
 DvStack::~DvStack()
 {
-    delete iLpecServer;
+    for (TUint i=0; i<iProtocolFactories.size(); i++) {
+        delete iProtocolFactories[i];
+    }
 #ifndef DEFINE_WINDOWS_UNIVERSAL
     delete iMdns;
 #endif
@@ -143,8 +142,12 @@ DviSsdpNotifierManager& DvStack::SsdpNotifierManager()
     return *iSsdpNotifierManager;
 }
 
-DviServerLpec& DvStack::LpecServer()
+void DvStack::AddProtocolFactory(IDvProtocolFactory* aProtocolFactory)
 {
-    ASSERT(iLpecServer != NULL);
-    return *iLpecServer;
+    iProtocolFactories.push_back(aProtocolFactory);
+}
+
+std::vector<IDvProtocolFactory*>& DvStack::ProtocolFactories()
+{
+    return iProtocolFactories;
 }

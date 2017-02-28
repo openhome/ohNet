@@ -293,7 +293,7 @@ void TestDvLpec(CpStack& aCpStack, DvStack& aDvStack)
     DeviceLpec* device = new DeviceLpec(aDvStack);
     NetworkAdapter* nif = UpnpLibrary::CurrentSubnetAdapter("TestDvLpec");
     ASSERT(nif != NULL);
-    const TUint port = aDvStack.LpecServer().Port();
+    const TUint port = aDvStack.Env().InitParams()->DvLpecServerPort();
     Endpoint location(port, nif->Address());
     nif->RemoveRef("TestDvLpec");
     TestLpec* cpDevice = new TestLpec(aCpStack, location, device->LpecDeviceName(), *sem);
