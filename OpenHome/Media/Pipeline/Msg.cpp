@@ -2534,7 +2534,8 @@ TUint MsgQueue::NumMsgs() const
 // MsgReservoir
 
 MsgReservoir::MsgReservoir()
-    : iEncodedBytes(0)
+    : iLockEncoded("MSGR")
+    , iEncodedBytes(0)
     , iJiffies(0)
     , iTrackCount(0)
     , iEncodedStreamCount(0)
@@ -2542,14 +2543,11 @@ MsgReservoir::MsgReservoir()
     , iEncodedAudioCount(0)
     , iDecodedAudioCount(0)
 {
-    ASSERT(iEncodedBytes.is_lock_free());
     ASSERT(iJiffies.is_lock_free());
     ASSERT(iTrackCount.is_lock_free());
     ASSERT(iEncodedStreamCount.is_lock_free());
     ASSERT(iDecodedStreamCount.is_lock_free());
-    ASSERT(iEncodedAudioCount.is_lock_free());
     ASSERT(iDecodedAudioCount.is_lock_free());
-    (void)memset(iPadding, 0, sizeof iPadding);
 }
 
 MsgReservoir::~MsgReservoir()
@@ -2589,6 +2587,7 @@ TUint MsgReservoir::Jiffies() const
 
 TUint MsgReservoir::EncodedBytes() const
 {
+    AutoMutex _(iLockEncoded);
     return iEncodedBytes;
 }
 
@@ -2614,6 +2613,7 @@ TUint MsgReservoir::DecodedStreamCount() const
 
 TUint MsgReservoir::EncodedAudioCount() const
 {
+    AutoMutex _(iLockEncoded);
     return iEncodedAudioCount;
 }
 
@@ -2683,6 +2683,7 @@ Msg* MsgReservoir::ProcessorEnqueue::ProcessMsg(MsgEncodedStream* aMsg)
 
 Msg* MsgReservoir::ProcessorEnqueue::ProcessMsg(MsgAudioEncoded* aMsg)
 {
+    AutoMutex _(iQueue.iLockEncoded);
     iQueue.iEncodedAudioCount++;
     iQueue.iEncodedBytes += aMsg->Bytes();
     return aMsg;
@@ -2877,8 +2878,11 @@ Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgEncodedStream* aMsg)
 
 Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgAudioEncoded* aMsg)
 {
-    iQueue.iEncodedAudioCount--;
-    iQueue.iEncodedBytes -= aMsg->Bytes();
+    {
+        AutoMutex _(iQueue.iLockEncoded);
+        iQueue.iEncodedAudioCount--;
+        iQueue.iEncodedBytes -= aMsg->Bytes();
+    }
     return iQueue.ProcessMsgOut(aMsg);
 }
 
