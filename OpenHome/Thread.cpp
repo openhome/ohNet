@@ -417,3 +417,16 @@ AutoSemaphore::~AutoSemaphore()
 {
     iSem.Signal();
 }
+
+
+// AutoSemaphoreSignal
+
+AutoSemaphoreSignal::AutoSemaphoreSignal(Semaphore& aSemaphore)
+    : iSem(aSemaphore)
+{
+}
+
+AutoSemaphoreSignal::~AutoSemaphoreSignal()
+{
+    iSem.Signal();
+}

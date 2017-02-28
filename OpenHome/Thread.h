@@ -273,15 +273,31 @@ private:
 /**
  * Utility class.
  *
- * Create an AutoSemaphore on the stack using a reference to a Semaphore. It will
- * automatically be signalled on stack cleanup (ie on return or when an
- * exception passes up).
+ * Create an AutoSemaphore on the stack using a reference to a Semaphore.
+ * Acquire (Wait() for) the semaphore on construction, release (Signal())
+ * automatically on stack cleanup (ie on return or when an exception passes up).
  */
 class DllExportClass AutoSemaphore : public INonCopyable
 {
 public:
     DllExport AutoSemaphore(Semaphore& aSemaphore);
     DllExport ~AutoSemaphore();
+private:
+    Semaphore& iSem;
+};
+
+/**
+ * Utility class.
+ *
+ * Create an AutoSemaphore on the stack using a reference to a Semaphore.
+ * Does not acquire (Wait() for) the semaphore on construction, releases (Signal())
+ * automatically on stack cleanup (ie on return or when an exception passes up).
+ */
+class DllExportClass AutoSemaphoreSignal : public INonCopyable
+{
+public:
+    DllExport AutoSemaphoreSignal(Semaphore& aSemaphore);
+    DllExport ~AutoSemaphoreSignal();
 private:
     Semaphore& iSem;
 };
