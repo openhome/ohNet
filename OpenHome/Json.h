@@ -6,6 +6,7 @@
 #include <OpenHome/Private/Stream.h>
 
 #include <map>
+#include <vector>
 
 EXCEPTION(JsonInvalid);
 EXCEPTION(JsonUnsupported);
@@ -56,6 +57,7 @@ public:
     TBool Bool(const Brx& aKey) const;
     TBool IsNull(const TChar* aKey) const;
     TBool IsNull(const Brx& aKey) const;
+    void GetKeys(std::vector<Brn>& aKeys) const;
 private:
     void Reset();
     void Parse(const Brx& aJson, TBool aUnescapeInPlace);
