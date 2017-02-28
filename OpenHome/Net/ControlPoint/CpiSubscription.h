@@ -64,6 +64,7 @@ public:
      * Locks subscription iff true is returned.
      */
     TBool UpdateSequenceNumber(TUint aSequenceNumber);
+    TBool UpdateSequenceNumber();
 
     /**
      * Inform the subscription of an error in processing an update.

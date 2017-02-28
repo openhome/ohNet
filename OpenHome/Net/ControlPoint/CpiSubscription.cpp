@@ -71,6 +71,11 @@ TBool CpiSubscription::UpdateSequenceNumber(TUint aSequenceNumber)
     return true;
 }
 
+TBool CpiSubscription::UpdateSequenceNumber()
+{
+    return UpdateSequenceNumber(iNextSequenceNumber);
+}
+
 void CpiSubscription::Unlock()
 {
     iLock.Signal();
