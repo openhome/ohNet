@@ -201,6 +201,7 @@ copy_build_includes:
 	if not exist $(inc_build)\OpenHome\Private mkdir $(inc_build)\OpenHome\Private
 	if not exist $(inc_build)\OpenHome\Net mkdir $(inc_build)\OpenHome\Net
 	if not exist $(inc_build)\OpenHome\Net\Private mkdir $(inc_build)\OpenHome\Net\Private
+	if not exist $(inc_build)\OpenHome\Net\Private\Tests mkdir $(inc_build)\OpenHome\Net\Private\Tests
 	if not exist $(inc_build)\OpenHome\Net\Core mkdir $(inc_build)\OpenHome\Net\Core
 	if not exist $(inc_build)\OpenHome\Net\C mkdir $(inc_build)\OpenHome\Net\C
 	if not exist $(inc_build)\OpenHome\Net\Cpp mkdir $(inc_build)\OpenHome\Net\Cpp
@@ -253,6 +254,7 @@ copy_build_includes:
 	copy OpenHome\Net\Device\DviServer.h $(inc_build)\OpenHome\Net\Private > nul
 	copy OpenHome\Net\Device\DviService.h $(inc_build)\OpenHome\Net\Private > nul
 	copy OpenHome\Net\Device\DviStack.h $(inc_build)\OpenHome\Net\Private > nul
+	copy OpenHome\Net\Device\Tests\TestBasicDv.h $(inc_build)\OpenHome\Net\Private\Tests > nul
 	copy OpenHome\Net\Device\DviSubscription.h $(inc_build)\OpenHome\Net\Private > nul
 	copy OpenHome\Net\Device\DviPropertyUpdateCollection.h $(inc_build)\OpenHome\Net\Private > nul
 	copy OpenHome\Net\Device\DviProviderSubscriptionLongPoll.h $(inc_build)\OpenHome\Net\Private > nul

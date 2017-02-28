@@ -446,6 +446,7 @@ copy_build_includes:
 	$(mkdir) $(inc_build)/OpenHome/Private
 	$(mkdir) $(inc_build)/OpenHome/Net
 	$(mkdir) $(inc_build)/OpenHome/Net/Private
+	$(mkdir) $(inc_build)/OpenHome/Net/Private/Tests
 	$(mkdir) $(inc_build)/OpenHome/Net/Core
 	$(mkdir) $(inc_build)/OpenHome/Net/C
 	$(mkdir) $(inc_build)/OpenHome/Net/Cpp
@@ -509,6 +510,7 @@ copy_build_includes:
 	$(cp) OpenHome/Net/Device/DviServer.h $(inc_build)/OpenHome/Net/Private
 	$(cp) OpenHome/Net/Device/DviService.h $(inc_build)/OpenHome/Net/Private
 	$(cp) OpenHome/Net/Device/DviStack.h $(inc_build)/OpenHome/Net/Private
+	$(cp) OpenHome/Net/Device/Tests/TestBasicDv.h $(inc_build)/OpenHome/Net/Private/Tests
 	$(cp) OpenHome/Net/Device/DviSubscription.h $(inc_build)/OpenHome/Net/Private
 	$(cp) OpenHome/Net/Device/DviPropertyUpdateCollection.h $(inc_build)/OpenHome/Net/Private
 	$(cp) OpenHome/Net/Device/FunctorDviInvocation.h $(inc_build)/OpenHome/Net/Private
