@@ -315,25 +315,30 @@ void VolumeSurroundBoost::SetVolume(TUint aValue)
 {
     LOG(kVolume, "VolumeSurroundAttenuator::SetVolume aValue: %u\n", aValue);
     AutoMutex _(iLock);
-    DoSetVolume(aValue);
     iUpstreamVolume = aValue;
+    DoSetVolume();
 }
 
-void VolumeSurroundBoost::SetVolumeBoost(TUint aBoost)
+void VolumeSurroundBoost::SetVolumeBoost(TInt aBoost)
 {
     AutoMutex _(iLock);
     iBoost = aBoost;
     try {
-        DoSetVolume(iUpstreamVolume);
+        DoSetVolume();
     }
     catch (VolumeNotSupported&) {}
 }
 
-void VolumeSurroundBoost::DoSetVolume(TUint aValue)
+void VolumeSurroundBoost::DoSetVolume()
 {
-    TUint volume = aValue + iBoost;
-    if (aValue == 0) {
-        volume = 0; // upstream volume of 0 should mean we output silence
+    TUint volume = iUpstreamVolume;
+    if (volume != 0) {
+        if (iBoost < 0 && (TUint)-iBoost > volume) {
+            volume = 0;
+        }
+        else {
+            volume += iBoost;
+        }
     }
     iVolume.SetVolume(volume);
 }
@@ -1050,10 +1055,10 @@ void VolumeManager::SetVolumeOffset(TInt aValue)
     }
 }
 
-void VolumeManager::SetVolumeBoost(TUint aValue)
+void VolumeManager::SetVolumeBoost(TInt aBoost)
 {
     if (iVolumeSurroundBoost != nullptr) {
-        iVolumeSurroundBoost->SetVolumeBoost(aValue);
+        iVolumeSurroundBoost->SetVolumeBoost(aBoost);
     }
 }
 
