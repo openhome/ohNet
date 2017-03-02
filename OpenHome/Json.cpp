@@ -7,6 +7,7 @@
 #include <OpenHome/Private/Stream.h>
 
 #include <map>
+#include <vector>
 
 using namespace OpenHome;
 
@@ -390,6 +391,14 @@ TBool JsonParser::IsNull(const Brx& aKey) const
     }
     catch (JsonValueNull&) {
         return true;
+    }
+}
+
+void JsonParser::GetKeys(std::vector<Brn>& aKeys) const
+{
+    aKeys.reserve(iPairs.size());
+    for (auto it=iPairs.begin(); it!=iPairs.end(); ++it) {
+        aKeys.push_back(it->first);
     }
 }
 

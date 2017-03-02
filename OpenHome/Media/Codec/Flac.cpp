@@ -417,7 +417,6 @@ void CodecFlac::CallbackMetadata(const FLAC__StreamDecoder * /*aDecoder*/,
                                  const FLAC__StreamMetadata* aMetadata)
 {
     ASSERT(aMetadata->type == FLAC__METADATA_TYPE_STREAMINFO);
-    ASSERT(iStreamMsgDue);
     const FLAC__StreamMetadata_StreamInfo* streamInfo = &aMetadata->data.stream_info;
 
     iSampleRate = streamInfo->sample_rate;

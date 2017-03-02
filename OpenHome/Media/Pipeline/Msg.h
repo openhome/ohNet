@@ -1131,13 +1131,13 @@ private:
     };
 private:
     MsgQueue iQueue;
-    std::atomic<TUint> iEncodedBytes;
+    mutable Mutex iLockEncoded; // see #5098
+    TUint iEncodedBytes;
     std::atomic<TUint> iJiffies;
     std::atomic<TUint> iTrackCount;
     std::atomic<TUint> iEncodedStreamCount;
     std::atomic<TUint> iDecodedStreamCount;
-    TByte iPadding[512]; // see #5098
-    std::atomic<TUint> iEncodedAudioCount;
+    TUint iEncodedAudioCount;
     std::atomic<TUint> iDecodedAudioCount;
 };
 
