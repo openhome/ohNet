@@ -687,6 +687,11 @@ TBool ProtocolHttp::IsCurrentStream(TUint aStreamId) const
 void ProtocolHttp::ExtractMetadata()
 {
     Brn metadata = iContentRecogBuf.Read(1);
+    if (metadata.Bytes() == 0) {
+        // EoS
+        return;
+    }
+
     iOffset++;
     TUint metadataBytes = metadata[0] * 16;
 
