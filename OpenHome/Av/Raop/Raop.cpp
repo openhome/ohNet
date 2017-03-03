@@ -383,14 +383,14 @@ void RaopDiscoverySession::Run()
                     iWriterResponse->WriteFlush();
                 }
                 else if(method == RtspMethod::kAnnounce) {
-                    LOG(kMedia, "RaopDiscoverySession::Run kAnnounce %u, iActive: %u\n", iInstance, iActive);
+                    LOG(kPipeline, "RaopDiscoverySession::Run kAnnounce %u, iActive: %u\n", iInstance, iActive);
                     if(!iActive && iDiscovery.Active()) { /*i.e. the other connection is active */
                         /* if already actively connected to another device respond with:
                         RTSP/1.0 453 Not Enough Bandwidth
                         Server: AirTunes/102.2
                         CSeq: 1
                         */
-                        LOG(kMedia, "RaopDiscoverySession::Run %u. Reject second connection\n", iInstance);
+                        LOG(kPipeline, "RaopDiscoverySession::Run %u. Reject second connection\n", iInstance);
                         iWriterResponse->WriteStatus(RtspStatus::kNotEnoughBandwidth, Http::eRtsp10);
                         iWriterResponse->WriteHeader(Brn("Server"), Brn("AirTunes/102.2"));
                         WriteSeq(1);
@@ -398,7 +398,7 @@ void RaopDiscoverySession::Run()
                     else {
                         iDiscovery.Deactivate();     // deactivate both streams (effectively the other one!)
                         iActive = true;     // don't allow second stream to connect
-                        LOG(kMedia, "RaopDiscoverySession::Run %u kAnnounce\n", iInstance);
+                        LOG(kPipeline, "RaopDiscoverySession::Run %u kAnnounce\n", iInstance);
                         ReadSdp(iSdpInfo); //get encoded aes key
                         DecryptAeskey();
                         iWriterResponse->WriteStatus(HttpStatus::kOk, Http::eRtsp10);
@@ -452,7 +452,7 @@ void RaopDiscoverySession::Run()
 
                     // activate RAOP source
                     iDiscovery.NotifySessionStart(iClientControlPort, iClientTimingPort);
-                    LOG(kMedia, "RaopDiscoverySession::Run %u. Playing\n", iInstance);
+                    LOG(kPipeline, "RaopDiscoverySession::Run %u. Playing\n", iInstance);
                 }
                 else if(method == RtspMethod::kSetParameter) {
                     if(iHeaderContentType.Type() == Brn("text/parameters")) {
@@ -512,7 +512,7 @@ void RaopDiscoverySession::Run()
                             }
                             catch (RaopVolumeInvalid&) {
                                 // Invalid volume passed in.
-                                LOG(kMedia, "RaopDiscoverySession::Run %u/ RaopVolumeInvalid %d\n", iInstance, vol);
+                                LOG(kMedia, "RaopDiscoverySession::Run %u. RaopVolumeInvalid %d\n", iInstance, vol);
                             }
                         }
                     }
@@ -546,7 +546,7 @@ void RaopDiscoverySession::Run()
                     iWriterResponse->WriteFlush();
                     Deactivate();
                     //iDiscovery.NotifySessionEnd();    // Happens in Deactivate() call above.
-                    LOG(kMedia, "RaopDiscoverySession::Run %u. kTeardown\n", iInstance);
+                    LOG(kPipeline, "RaopDiscoverySession::Run %u. kTeardown\n", iInstance);
                     break;
                 }
             }
@@ -568,7 +568,7 @@ void RaopDiscoverySession::Run()
 
 void RaopDiscoverySession::Close()
 {
-    LOG(kMedia, "RaopDiscoverySession::Close iActive = %d, instance %d\n", iActive, iInstance);
+    LOG(kPipeline, "RaopDiscoverySession::Close iActive = %d, instance %d\n", iActive, iInstance);
     // Set timeout and deactivate on expiry.
     KeepAlive();
 }
@@ -589,14 +589,14 @@ void RaopDiscoverySession::KeepAlive()
 
 void RaopDiscoverySession::DeactivateCallback()
 {
-    LOG(kMedia, "RaopDiscoverySession::DeactivateCallback %u\n", iInstance);
+    LOG(kPipeline, "RaopDiscoverySession::DeactivateCallback %u\n", iInstance);
     Deactivate();
     iReaderRequest->Interrupt();    // terminate run()
 }
 
 void RaopDiscoverySession::Deactivate()
 {
-    LOG(kMedia, "RaopDiscoverySession::Deactivate %u, iActive: %u\n", iInstance, iActive);
+    LOG(kPipeline, "RaopDiscoverySession::Deactivate %u, iActive: %u\n", iInstance, iActive);
     iDeactivateTimer->Cancel();     // reset timeout
     iActive = false;
     iDiscovery.NotifySessionEnd();  // Notify observers that session has timed-out (ended).
@@ -866,7 +866,7 @@ TBool RaopDiscoveryServer::Active()
 
 void RaopDiscoveryServer::Deactivate()
 {
-    LOG(kMedia, "RaopDiscoveryServer::Deactivate\n");
+    LOG(kPipeline, "RaopDiscoveryServer::Deactivate\n");
     // Deactivate RAOP source.
     iRaopDiscoverySession1->Deactivate();
     iRaopDiscoverySession2->Deactivate();
@@ -894,7 +894,7 @@ TUint RaopDiscoveryServer::AesSid()
 
 void RaopDiscoveryServer::Close()
 {
-    LOG(kMedia, "RaopDiscoveryServer::Close\n");
+    LOG(kPipeline, "RaopDiscoveryServer::Close\n");
     iRaopDiscoverySession1->Close();
     iRaopDiscoverySession2->Close();
 }
