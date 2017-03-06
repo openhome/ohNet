@@ -405,14 +405,14 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                 if (stopped) {
                     WaitForDrain();
                     iDiscovery.Close();
-                    LOG(kMedia, "<ProtocolRaop::Stream iStopped\n");
+                    LOG(kPipeline, "<ProtocolRaop::Stream iStopped\n");
                     return EProtocolStreamStopped;
                 }
                 else if (waiting) {
-                    LOG(kMedia, "ProtocolRaop::Stream waiting.\n");
+                    LOG(kPipeline, "ProtocolRaop::Stream waiting.\n");
                     OutputDiscontinuity();
                     // Resume normal operation.
-                    LOG(kMedia, "ProtocolRaop::Stream signalled end of wait.\n");
+                    LOG(kPipeline, "ProtocolRaop::Stream signalled end of wait.\n");
                 }
                 else {
                     ASSERTS();  // Shouldn't be flushing in any other state.
@@ -422,10 +422,10 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
             }
 
             if (discontinuity) {
-                LOG(kMedia, "ProtocolRaop::Stream discontinuity.\n");
+                LOG(kPipeline, "ProtocolRaop::Stream discontinuity.\n");
                 OutputDiscontinuity();
                 RepairReset();
-                LOG(kMedia, "ProtocolRaop::Stream signalled end of starvation.\n");
+                LOG(kPipeline, "ProtocolRaop::Stream signalled end of starvation.\n");
             }
 
             if (interrupted) {
@@ -444,7 +444,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
             //LOG(kMedia, "ProcotolRaop::Stream after ReadPacket(): %u\n", audioPacket.Header().Seq());
 
             if (!iDiscovery.Active()) {
-                LOG(kMedia, "ProtocolRaop::Stream() no active session\n");
+                LOG(kPipeline, "ProtocolRaop::Stream() no active session\n");
                 TUint flushId = MsgFlush::kIdInvalid;
                 {
                     AutoMutex a(iLockRaop);
@@ -476,7 +476,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
             const TBool resumePending = iResumePending;
             iLockRaop.Signal();
             if (start || resumePending) {
-                LOG(kMedia, "ProtocolRaop::Stream starting new stream start: %u, resumePending: %u\n", start, resumePending);
+                LOG(kPipeline, "ProtocolRaop::Stream starting new stream start: %u, resumePending: %u\n", start, resumePending);
                 UpdateSessionId(audioPacket.Ssrc());
                 iAudioDecryptor.Init(iDiscovery.Aeskey(), iDiscovery.Aesiv());
 
@@ -529,14 +529,14 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                     iRepairer.OutputAudio(*repairable);
                 }
                 catch (RepairerBufferFull&) {
-                    LOG(kMedia, "ProtocolRaop::Stream RepairerBufferFull\n");
+                    LOG(kPipeline, "ProtocolRaop::Stream RepairerBufferFull\n");
                     // Set state so that no more audio is output until a MsgDrain followed by a MsgEncodedStream.
                     AutoMutex a(iLockRaop);
                     iDiscontinuity = true;
                     //OutputDiscontinuity();
                 }
                 catch (RepairerStreamRestarted&) {
-                    LOG(kMedia, "ProtocolRaop::Stream RepairerStreamRestarted\n");
+                    LOG(kPipeline, "ProtocolRaop::Stream RepairerStreamRestarted\n");
                     AutoMutex a(iLockRaop);
                     iDiscontinuity = true;
                     //OutputDiscontinuity();
@@ -544,24 +544,24 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
             }
         }
         catch (InvalidRaopPacket&) {
-            LOG(kMedia, "ProtocolRaop::Stream Invalid Header\n");
+            LOG(kPipeline, "ProtocolRaop::Stream Invalid Header\n");
             //break;
         }
         catch (NetworkError&) {
-            LOG(kMedia, "ProtocolRaop::Stream Network error\n");
+            LOG(kPipeline, "ProtocolRaop::Stream Network error\n");
             //break;
         }
         catch (ReaderError&) {
-            LOG(kMedia, "ProtocolRaop::Stream Reader error\n");
+            LOG(kPipeline, "ProtocolRaop::Stream Reader error\n");
             // This can indicate an interrupt (caused by, e.g., a TryStop)
             // Continue around loop and see if iStopped has been set.
         }
         catch (HttpError&) {
-            LOG(kMedia, "ProtocolRaop::Stream sdp not received\n");
+            LOG(kPipeline, "ProtocolRaop::Stream sdp not received\n");
             // ignore and continue - sender should stop on a closed connection! wait for sender to re-select device
         }
         catch (RaopError&) {
-            LOG(kMedia, "ProtocolRaop::Stream RaopError\n");
+            LOG(kPipeline, "ProtocolRaop::Stream RaopError\n");
         }
     }
 }
@@ -684,7 +684,7 @@ void ProtocolRaop::OutputAudio(const Brx& aAudio)
 
 void ProtocolRaop::OutputDiscontinuity()
 {
-    LOG(kMedia, ">ProtocolRaop::OutputDiscontinuity\n");
+    LOG(kPipeline, ">ProtocolRaop::OutputDiscontinuity\n");
     iAudioServer.Close();
     iControlServer.Close();
 
@@ -715,7 +715,7 @@ void ProtocolRaop::OutputDiscontinuity()
     }
 
     // FIXME - if doing lots of skips, don't seem to return from this. See #4348.
-    LOG(kMedia, "<ProtocolRaop::OutputDiscontinuity\n");
+    LOG(kPipeline, "<ProtocolRaop::OutputDiscontinuity\n");
 }
 
 void ProtocolRaop::WaitForDrain()
@@ -739,7 +739,7 @@ TUint ProtocolRaop::Delay(TUint aSamples)
 
 TUint ProtocolRaop::TryStop(TUint aStreamId)
 {
-    LOG(kMedia, "ProtocolRaop::TryStop\n");
+    LOG(kPipeline, "ProtocolRaop::TryStop\n");
     TBool stop = false;
     AutoMutex a(iLockRaop);
     if (!iStopped && iActive) {
@@ -783,7 +783,7 @@ void ProtocolRaop::NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStar
      *   ever want to stop pipeline in Net Aux mode when swithcing to
      *   different source).
      */
-    LOG(kMedia, ">ProtocolRaop::NotifyStarving mode: %.*s, sid: %u, starving: %u\n", PBUF(aMode), aStreamId, aStarving);
+    LOG(kPipeline, ">ProtocolRaop::NotifyStarving mode: %.*s, sid: %u, starving: %u\n", PBUF(aMode), aStreamId, aStarving);
     AutoMutex a(iLockRaop);
     if (aStarving) {
         //iDiscontinuity = true;    // FIXME - if enabling this and, say, forcing Repairer to throw a RepairerBufferFull after every 1000 packets, protocol goes into an infinite restart loop as it ends up blocked waiting for MsgDrain to reach end up pipeline before it can output anymore audio.
@@ -794,7 +794,7 @@ void ProtocolRaop::NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStar
 
 void ProtocolRaop::ResendReceive(const RaopPacketResendResponse& aPacket)
 {
-    LOG(kMedia, ">ProtocolRaop::ResendReceive timestamp: %u, seq: %u\n", aPacket.AudioPacket().Timestamp(), aPacket.AudioPacket().Header().Seq());
+    LOG(kPipeline, ">ProtocolRaop::ResendReceive timestamp: %u, seq: %u\n", aPacket.AudioPacket().Timestamp(), aPacket.AudioPacket().Header().Seq());
     IRepairable* repairable = iRepairableAllocator.Allocate(aPacket);
     try {
         iRepairer.OutputAudio(*repairable);
@@ -813,7 +813,7 @@ void ProtocolRaop::ResendReceive(const RaopPacketResendResponse& aPacket)
 
 TUint ProtocolRaop::SendFlush(TUint aSeq, TUint aTime)
 {
-    LOG(kMedia, "ProtocolRaop::SendFlush\n");
+    LOG(kPipeline, "ProtocolRaop::SendFlush\n");
     AutoMutex a(iLockRaop);
 
     if (!iActive) {
@@ -946,19 +946,19 @@ void RaopControlServer::Run()
                 iServer.ReadFlush();
             }
             catch (InvalidRaopPacket&) {
-                LOG(kMedia, "RaopControlServer::Run caught InvalidRtpHeader\n");
+                LOG(kPipeline, "RaopControlServer::Run caught InvalidRtpHeader\n");
                 iServer.ReadFlush();    // Unexpected, so ignore.
             }
         }
         catch (ReaderError&) {
-            LOG(kMedia, "RaopControlServer::Run caught ReaderError\n");
+            LOG(kPipeline, "RaopControlServer::Run caught ReaderError\n");
             iServer.ReadFlush();
             if (!iServer.IsOpen()) {
                 iServer.WaitForOpen();
             }
         }
         catch (NetworkError&) {
-            LOG(kMedia, "RaopControlServer::Run caught NetworkError\n");
+            LOG(kPipeline, "RaopControlServer::Run caught NetworkError\n");
             iServer.ReadFlush();
             if (!iServer.IsOpen()) {
                 iServer.WaitForOpen();
@@ -975,7 +975,7 @@ TUint RaopControlServer::Latency() const
 
 void RaopControlServer::RequestResend(TUint aSeqStart, TUint aCount)
 {
-    LOG(kMedia, "RaopControlServer::RequestResend aSeqStart: %u, aCount: %u\n", aSeqStart, aCount);
+    LOG(kPipeline, "RaopControlServer::RequestResend aSeqStart: %u, aCount: %u\n", aSeqStart, aCount);
 
     RaopPacketResendRequest resendPacket(aSeqStart, aCount);
     Bws<RaopPacketResendRequest::kBytes> resendBuf;
@@ -1003,15 +1003,15 @@ RaopResendRangeRequester::RaopResendRangeRequester(IRaopResendRequester& aResend
 
 void RaopResendRangeRequester::RequestResendSequences(const std::vector<const IResendRange*> aRanges)
 {
-    LOG(kMedia, ">RaopResendRangeRequester::RequestResendSequences");
+    LOG(kPipeline, ">RaopResendRangeRequester::RequestResendSequences");
     for (auto range : aRanges) {
         const TUint start = range->Start();
         const TUint end = range->End();
         const TUint count = (end-start)+1;  // +1 to include start packet.
-        LOG(kMedia, " %d->%d", start, end);
+        LOG(kPipeline, " %d->%d", start, end);
         iResendRequester.RequestResend(start, count);
     }
-    LOG(kMedia, "\n");
+    LOG(kPipeline, "\n");
 }
 
 
