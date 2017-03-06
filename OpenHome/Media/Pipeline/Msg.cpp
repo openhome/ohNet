@@ -12,6 +12,7 @@
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Media/Debug.h>
+#include <OpenHome/Net/Private/Globals.h>
 
 #include <string.h>
 #include <climits>
@@ -109,7 +110,7 @@ Allocated* AllocatorBase::DoAllocate()
 {
     iLock.Wait();
     Allocated* cell = Read();
-    ASSERT_DEBUG(cell->iRefCount == 0);
+    ASSERT_VA(cell->iRefCount == 0, "%s has count %u\n", iName, cell->iRefCount);
     cell->iRefCount = 1;
     iCellsUsed++;
     if (iCellsUsed > iCellsUsedMax) {
@@ -162,7 +163,7 @@ void Allocated::AddRef()
 
 void Allocated::RemoveRef()
 {
-    ASSERT(iRefCount != 0);
+    ASSERT_VA(iRefCount != 0, "Allocated::RemoveRef() for %s - already freed\n", iAllocator.Name());
     TBool free = (--iRefCount == 0);
     if (free) {
         Clear();
@@ -191,6 +192,11 @@ Allocated::~Allocated()
 AudioData::AudioData(AllocatorBase& aAllocator)
     : Allocated(aAllocator)
 {
+#ifdef TIMESTAMP_LOGGING_ENABLE
+    iOsCtx = gEnv->OsCtx();
+    iNextTimestampIndex = 0;
+    (void)memset(iTimestamps, 0, sizeof iTimestamps);
+#endif
 }
 
 const TByte* AudioData::Ptr(TUint aBytes) const
@@ -204,6 +210,28 @@ TUint AudioData::Bytes() const
     return iData.Bytes();
 }
 
+#ifdef TIMESTAMP_LOGGING_ENABLE
+void AudioData::SetTimestamp(const TChar* aId)
+{
+    if (iNextTimestampIndex < kMaxTimestamps-1) {
+        const TUint64 ts = OsTimeInUs(iOsCtx);
+        iTimestamps[iNextTimestampIndex++].Set(aId, ts);
+    }
+}
+
+TBool AudioData::TryLogTimestamps()
+{
+    if (iNextTimestampIndex == 0) {
+        return false;
+    }
+    Log::Print("Timestamps:\n");
+    for (TUint i=0; i<iNextTimestampIndex; i++) {
+        (void)iTimestamps[i].TryLog();
+    }
+    return true;
+}
+#endif // TIMESTAMP_LOGGING_ENABLE
+
 void AudioData::Clear()
 {
 #ifdef DEFINE_DEBUG
@@ -211,7 +239,41 @@ void AudioData::Clear()
     memset(const_cast<TByte*>(iData.Ptr()), 0xde, iData.Bytes());
 #endif // DEFINE_DEBUG
     iData.SetBytes(0);
+#ifdef TIMESTAMP_LOGGING_ENABLE
+    for (TUint i=0; i<iNextTimestampIndex; i++) {
+        iTimestamps[i].Reset();
+    }
+    iNextTimestampIndex = 0;
+#endif
 }
+
+#ifdef TIMESTAMP_LOGGING_ENABLE
+AudioData::Timestamp::Timestamp()
+{
+    Reset();
+}
+
+void AudioData::Timestamp::Reset()
+{
+    iId = nullptr;
+    iTimestamp = 0;
+}
+
+void AudioData::Timestamp::Set(const TChar* aId, TUint64 aTimestamp)
+{
+    iId = aId;
+    iTimestamp = aTimestamp;
+}
+
+TBool AudioData::Timestamp::TryLog()
+{
+    if (iId == nullptr) {
+        return false;
+    }
+    Log::Print("\t%s: \t%llu\n", iId, iTimestamp);
+    return true;
+}
+#endif
 
 
 // EncodedAudio
@@ -2061,6 +2123,11 @@ void MsgPlayable::Read(IPcmProcessor& aProcessor)
     aProcessor.EndBlock();
 }
 
+TBool MsgPlayable::TryLogTimestamps()
+{
+    return false;
+}
+
 MsgPlayable::MsgPlayable(AllocatorBase& aAllocator)
     : Msg(aAllocator)
 {
@@ -2218,6 +2285,15 @@ void MsgPlayablePcm::ReadBlock(IPcmProcessor& aProcessor)
         }
     }
 
+}
+
+TBool MsgPlayablePcm::TryLogTimestamps()
+{
+#ifdef TIMESTAMP_LOGGING_ENABLE
+    return iAudioData->TryLogTimestamps();
+#else
+    return true;
+#endif
 }
 
 MsgPlayable* MsgPlayablePcm::Allocate()
@@ -2458,7 +2534,8 @@ TUint MsgQueue::NumMsgs() const
 // MsgReservoir
 
 MsgReservoir::MsgReservoir()
-    : iEncodedBytes(0)
+    : iLockEncoded("MSGR")
+    , iEncodedBytes(0)
     , iJiffies(0)
     , iTrackCount(0)
     , iEncodedStreamCount(0)
@@ -2466,14 +2543,11 @@ MsgReservoir::MsgReservoir()
     , iEncodedAudioCount(0)
     , iDecodedAudioCount(0)
 {
-    ASSERT(iEncodedBytes.is_lock_free());
     ASSERT(iJiffies.is_lock_free());
     ASSERT(iTrackCount.is_lock_free());
     ASSERT(iEncodedStreamCount.is_lock_free());
     ASSERT(iDecodedStreamCount.is_lock_free());
-    ASSERT(iEncodedAudioCount.is_lock_free());
     ASSERT(iDecodedAudioCount.is_lock_free());
-    (void)memset(iPadding, 0, sizeof iPadding);
 }
 
 MsgReservoir::~MsgReservoir()
@@ -2513,6 +2587,7 @@ TUint MsgReservoir::Jiffies() const
 
 TUint MsgReservoir::EncodedBytes() const
 {
+    AutoMutex _(iLockEncoded);
     return iEncodedBytes;
 }
 
@@ -2538,6 +2613,7 @@ TUint MsgReservoir::DecodedStreamCount() const
 
 TUint MsgReservoir::EncodedAudioCount() const
 {
+    AutoMutex _(iLockEncoded);
     return iEncodedAudioCount;
 }
 
@@ -2607,6 +2683,7 @@ Msg* MsgReservoir::ProcessorEnqueue::ProcessMsg(MsgEncodedStream* aMsg)
 
 Msg* MsgReservoir::ProcessorEnqueue::ProcessMsg(MsgAudioEncoded* aMsg)
 {
+    AutoMutex _(iQueue.iLockEncoded);
     iQueue.iEncodedAudioCount++;
     iQueue.iEncodedBytes += aMsg->Bytes();
     return aMsg;
@@ -2801,8 +2878,11 @@ Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgEncodedStream* aMsg)
 
 Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgAudioEncoded* aMsg)
 {
-    iQueue.iEncodedAudioCount--;
-    iQueue.iEncodedBytes -= aMsg->Bytes();
+    {
+        AutoMutex _(iQueue.iLockEncoded);
+        iQueue.iEncodedAudioCount--;
+        iQueue.iEncodedBytes -= aMsg->Bytes();
+    }
     return iQueue.ProcessMsgOut(aMsg);
 }
 

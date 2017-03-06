@@ -53,6 +53,7 @@ namespace Net {
     class DvDevice;
 }
 namespace Av {
+    class ITrim;
     class IVolumeOffsetter;
     class Product;
     class ProviderVolume;
@@ -105,15 +106,18 @@ public:
     void SetBalance(IBalance& aBalance);
     void SetFade(IFade& aFade);
     void SetVolumeOffsetter(IVolumeOffsetter& aVolumeOffsetter);
+    void SetTrim(ITrim& aTrim);
     IVolume* Volume();
     IBalance* Balance();
     IFade* Fade();
     IVolumeOffsetter* VolumeOffsetter();
+    ITrim* Trim();
 private:
     IVolume* iVolume;
     IBalance* iBalance;
     IFade* iFade;
     IVolumeOffsetter* iVolumeOffsetter;
+    ITrim* iTrim;
 };
 
 class VolumeNull : public IVolume
@@ -265,7 +269,7 @@ private:
 class IVolumeSurroundBoost
 {
 public:
-    virtual void SetVolumeBoost(TUint aBoost) = 0;
+    virtual void SetVolumeBoost(TInt aBoost) = 0;
     virtual ~IVolumeSurroundBoost() {}
 };
 
@@ -276,14 +280,14 @@ public:
 public:  // from IVolume
     void SetVolume(TUint aValue) override;
 public: // from IVolumeSurroundBoost
-    void SetVolumeBoost(TUint aBoost) override;
+    void SetVolumeBoost(TInt aBoost) override;
 private:
-    void DoSetVolume(TUint aValue);
+    void DoSetVolume();
 private:
     Mutex iLock;
     IVolume& iVolume;
     TUint iUpstreamVolume;
-    TUint iBoost;
+    TInt iBoost;
 };
 
 class VolumeUnityGainBase : public IVolume, private INonCopyable
@@ -567,7 +571,7 @@ public: // from IMuteReporter
 public: // from IVolumeSourceOffset
     void SetVolumeOffset(TInt aValue) override;
 public: // from IVolumeSurroundBoost
-    void SetVolumeBoost(TUint aValue) override;
+    void SetVolumeBoost(TInt aValue) override;
 public: // from IVolumeSourceUnityGain
     void SetUnityGain(TBool aEnable) override;
     void AddUnityGainObserver(IUnityGainObserver& aObserver) override;

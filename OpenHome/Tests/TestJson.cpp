@@ -56,6 +56,7 @@ private:
     void TestGetNumAsString();
     void TestGetValidBool();
     void TestCorruptInput();
+    void TestParseNull();
 private:
     JsonParser* iParser;
 };
@@ -102,7 +103,8 @@ public: // from SuiteUnitTest
     void Setup() override;
     void TearDown() override;
 private:
-    void TestWriteEmpty();
+    void TestWriteEmptyNull();
+    void TestWriteEmptyArray();
     void TestWriteInt();
     void TestWriteString();
     void TestWriteBool();
@@ -235,6 +237,8 @@ SuiteJsonParser::SuiteJsonParser()
     AddTest(MakeFunctor(*this, &SuiteJsonParser::TestGetNumAsString), "TestGetNumAsString");
     AddTest(MakeFunctor(*this, &SuiteJsonParser::TestGetValidBool), "TestGetValidBool");
     AddTest(MakeFunctor(*this, &SuiteJsonParser::TestCorruptInput), "TestCorruptInput");
+    AddTest(MakeFunctor(*this, &SuiteJsonParser::TestParseNull), "TestParseNull");
+
 }
 
 void SuiteJsonParser::Setup()
@@ -417,6 +421,22 @@ void SuiteJsonParser::TestCorruptInput()
     TEST_THROWS(iParser->Parse(Brn("{\"key1\" 1")), JsonCorrupt);  // No separator.
     TEST_THROWS(iParser->Parse(Brn("{1:2}")), JsonCorrupt);        // Number as key.
     TEST_THROWS(iParser->Parse(Brn("{true:2}")), JsonCorrupt);     // Boolean as key.
+}
+
+void SuiteJsonParser::TestParseNull()
+{
+    const Brn json("{\"obj\":null,\"str\":null,\"foo\":\"bar\"}");
+    iParser->Parse(json);
+
+    TEST(iParser->HasKey("obj"));
+    TEST(iParser->HasKey("str"));
+    TEST(iParser->HasKey("foo"));
+    TEST(iParser->IsNull("obj"));
+    TEST(iParser->IsNull("str"));
+    TEST(!iParser->IsNull("foo"));
+    TEST_THROWS(iParser->String("obj"), JsonValueNull);
+    TEST_THROWS(iParser->String("str"), JsonValueNull);
+    TEST(iParser->String("foo") == Brn("bar"));
 }
 
 
@@ -714,7 +734,8 @@ void SuiteWriterJsonObject::TestWriteMixed()
 SuiteWriterJsonArray::SuiteWriterJsonArray()
     : SuiteUnitTest("SuiteWriterJsonArray")
 {
-    AddTest(MakeFunctor(*this, &SuiteWriterJsonArray::TestWriteEmpty), "TestWriteEmpty");
+    AddTest(MakeFunctor(*this, &SuiteWriterJsonArray::TestWriteEmptyNull), "TestWriteEmptyNull");
+    AddTest(MakeFunctor(*this, &SuiteWriterJsonArray::TestWriteEmptyArray), "TestWriteEmptyArray");
     AddTest(MakeFunctor(*this, &SuiteWriterJsonArray::TestWriteInt), "TestWriteInt");
     AddTest(MakeFunctor(*this, &SuiteWriterJsonArray::TestWriteString), "TestWriteString");
     AddTest(MakeFunctor(*this, &SuiteWriterJsonArray::TestWriteBool), "TestWriteBool");
@@ -734,11 +755,27 @@ void SuiteWriterJsonArray::TearDown()
     iBuf.SetBytes(0);
 }
 
-void SuiteWriterJsonArray::TestWriteEmpty()
+void SuiteWriterJsonArray::TestWriteEmptyNull()
 {
-    WriterJsonArray jsonArray(*iWriterBuf);
+    // By default, WriterJsonArray writes a "null" object when no array entries
+    // written.
+    WriterJsonArray jsonArray1(*iWriterBuf);
+    jsonArray1.WriteEnd();
+    TEST(iBuf == Brn("null"));
+
+    iBuf.SetBytes(0);
+    // Check behaviour is the same when writing of "null" object is
+    // specifically requested.
+    WriterJsonArray jsonArray2(*iWriterBuf, WriterJsonArray::WriteOnEmpty::eNull);
+    jsonArray2.WriteEnd();
+    TEST(iBuf == Brn("null"));
+}
+
+void SuiteWriterJsonArray::TestWriteEmptyArray()
+{
+    WriterJsonArray jsonArray(*iWriterBuf, WriterJsonArray::WriteOnEmpty::eEmptyArray);
     jsonArray.WriteEnd();
-    TEST(iBuf == Brn("null"));  // FIXME - why is this null and not []? TestWriteEmptyObject() writes {} instead of null.
+    TEST(iBuf == Brn("[]"));
 }
 
 void SuiteWriterJsonArray::TestWriteInt()

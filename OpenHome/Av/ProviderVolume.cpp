@@ -36,6 +36,12 @@ const Brn  kInvalidChannelMsg("Channel invalid");
 const TInt kVolumeOffsetOutOfRangeCode = 817;
 const Brn  kVolumeOffsetOutOfRangeMsg("Volume offset out of range");
 
+const TInt kTrimNotSupportedCode = 818;
+const Brn  kTrimNotSupportedMsg("Trim not supported");
+
+const TInt kTrimOutOfRangeCode = 819;
+const Brn  kTrimOutOfRangeMsg("Trim out of range");
+
 
 // OffsetsWriterJson
 
@@ -43,7 +49,7 @@ const TChar* OffsetsWriterJson::kKeyChannel = "channel";
 const TChar* OffsetsWriterJson::kKeyOffset = "offset";
 
 OffsetsWriterJson::OffsetsWriterJson(IWriter& aWriter)
-    : iWriter(aWriter)
+    : iWriter(aWriter, WriterJsonArray::WriteOnEmpty::eEmptyArray)
 {
 }
 
@@ -66,13 +72,93 @@ void OffsetsWriterJson::Visit(const Brx& aChannel, TInt aOffsetBinaryMilliDb)
 }
 
 
-ProviderVolume::ProviderVolume(DvDevice& aDevice, IConfigManager& aConfigReader, IVolumeManager& aVolumeManager, IBalance* aBalance, IFade* aFade, IVolumeOffsetter* aVolumeOffsetter)
+// TrimWriterJson
+
+const TChar* TrimWriterJson::kKeyChannel = "channel";
+const TChar* TrimWriterJson::kKeyMin = "min";
+const TChar* TrimWriterJson::kKeyMax = "max";
+const TChar* TrimWriterJson::kKeyTrim = "trim";
+
+TrimWriterJson::TrimWriterJson(IWriter& aWriter)
+    : iWriter(aWriter, WriterJsonArray::WriteOnEmpty::eEmptyArray)
+{
+}
+
+void TrimWriterJson::WriteStart()
+{
+    // WriterJsonArray automatically writes appropriate start.
+}
+
+void TrimWriterJson::WriteEnd()
+{
+    iWriter.WriteEnd();
+}
+
+TUint TrimWriterJson::MaxArrayBytes(TUint aChannelCount)
+{
+    const TUint kArrayEnclosingBytes = 2;
+    const TUint kObjectEnclosingBytes = 2;
+    const TUint kObjectSeparatorBytes = 1;
+    const TUint kEntrySeparatorBytes = 1;
+    const TUint kStringEnclosingBytes = 2;
+    const TUint kKvpSeparatorBytes = 1;
+
+    if (aChannelCount == 0) {
+        return kArrayEnclosingBytes;
+    }
+
+    /*
+     * An entry is of the form:
+     * {"channel":"<channel>","min":<int>,"max":<int>,"trim":<int>}
+     */
+    const TUint kChannelBytes = kStringEnclosingBytes + Brn(kKeyChannel).Bytes()
+                              + kKvpSeparatorBytes
+                              + kStringEnclosingBytes + 3;
+    const TUint kMinBytes = kStringEnclosingBytes + Brn(kKeyMin).Bytes()
+                          + kKvpSeparatorBytes
+                          + Ascii::kMaxIntStringBytes;
+    const TUint kMaxBytes = kStringEnclosingBytes + Brn(kKeyMax).Bytes()
+                          + kKvpSeparatorBytes
+                          + Ascii::kMaxIntStringBytes;
+    const TUint kTrimBytes = kStringEnclosingBytes + Brn(kKeyTrim).Bytes()
+                           + kKvpSeparatorBytes
+                           + Ascii::kMaxIntStringBytes;
+
+    const TUint kEntryBytes = kObjectEnclosingBytes
+                            + kChannelBytes + kEntrySeparatorBytes
+                            + kMinBytes + kEntrySeparatorBytes
+                            + kMaxBytes + kEntrySeparatorBytes
+                            + kTrimBytes;
+
+    const TUint kArrayBytes = kArrayEnclosingBytes
+                            + kEntryBytes * aChannelCount
+                            + kObjectSeparatorBytes * (aChannelCount-1);
+
+    return kArrayBytes;
+}
+
+void TrimWriterJson::Visit(const Brx& aChannel, TInt aMinBinaryMilliDb, TInt aMaxBinaryMilliDb, TInt aTrimBinaryMilliDb)
+{
+    WriterJsonObject obj = iWriter.CreateObject();
+    obj.WriteString(kKeyChannel, aChannel);
+    obj.WriteInt(kKeyMin, aMinBinaryMilliDb);
+    obj.WriteInt(kKeyMax, aMaxBinaryMilliDb);
+    obj.WriteInt(kKeyTrim, aTrimBinaryMilliDb);
+    obj.WriteEnd();
+}
+
+
+// ProviderVolume
+
+ProviderVolume::ProviderVolume(DvDevice& aDevice, IConfigManager& aConfigReader, IVolumeManager& aVolumeManager, IBalance* aBalance, IFade* aFade, IVolumeOffsetter* aVolumeOffsetter, ITrim* aTrim)
     : DvProviderAvOpenhomeOrgVolume3(aDevice)
     , iLock("PVOL")
     , iVolume(aVolumeManager)
     , iBalance(aBalance)
     , iFade(aFade)
     , iVolumeOffsetter(aVolumeOffsetter)
+    , iTrim(aTrim)
+    , iTrims(nullptr)
     , iUserMute(aVolumeManager)
     , iVolumeMax(aVolumeManager.VolumeMax())
 {
@@ -90,6 +176,7 @@ ProviderVolume::ProviderVolume(DvDevice& aDevice, IConfigManager& aConfigReader,
     EnablePropertyUnityGain();
     EnablePropertyVolumeOffsets();
     EnablePropertyVolumeOffsetMax();
+    EnablePropertyTrim();
 
     EnableActionCharacteristics();
     EnableActionSetVolume();
@@ -110,6 +197,8 @@ ProviderVolume::ProviderVolume(DvDevice& aDevice, IConfigManager& aConfigReader,
     EnableActionUnityGain();
     EnableActionVolumeOffset();
     EnableActionSetVolumeOffset();
+    EnableActionTrim();
+    EnableActionSetTrim();
 
     aVolumeManager.AddVolumeObserver(*this);
     aVolumeManager.AddMuteObserver(*this);
@@ -140,6 +229,16 @@ ProviderVolume::ProviderVolume(DvDevice& aDevice, IConfigManager& aConfigReader,
         // Registering with the IVolumeOffsetterObservable will result in
         // initial callback, which will call SetPropertyVolumeOffsets().
         iVolumeOffsetter->AddVolumeOffsetterObserver(*this);
+    }
+
+    if (iTrim == nullptr) {
+        SetPropertyTrim(Brn("[]"));
+    }
+    else {
+        iTrims = new Bwh(TrimWriterJson::MaxArrayBytes(iTrim->TrimChannelCount()));
+        // Will receive initial callback into TrimsChanged(), which will call
+        // SetPropertyTrim().
+        iTrim->AddTrimObserver(*this);
     }
 
     SetPropertyVolumeMax(aVolumeManager.VolumeMax());
@@ -354,6 +453,44 @@ void ProviderVolume::SetVolumeOffset(IDvInvocation& aInvocation, const Brx& aCha
     }
 }
 
+void ProviderVolume::Trim(IDvInvocation& aInvocation, const Brx& aChannel, IDvInvocationResponseInt& aTrimBinaryMilliDb)
+{
+    if (iTrim == nullptr) {
+        aInvocation.Error(kTrimNotSupportedCode, kTrimNotSupportedMsg);
+        return;
+    }
+
+    try {
+        const TInt trim = iTrim->GetTrim(aChannel);
+        aInvocation.StartResponse();
+        aTrimBinaryMilliDb.Write(trim);
+        aInvocation.EndResponse();
+    }
+    catch (TrimChannelInvalid&) {
+        aInvocation.Error(kInvalidChannelCode, kInvalidChannelMsg);
+    }
+}
+
+void ProviderVolume::SetTrim(IDvInvocation& aInvocation, const Brx& aChannel, TInt aTrimBinaryMilliDb)
+{
+    if (iTrim == nullptr) {
+        aInvocation.Error(kTrimNotSupportedCode, kTrimNotSupportedMsg);
+        return;
+    }
+
+    try {
+        iTrim->SetTrim(aChannel, aTrimBinaryMilliDb);
+        aInvocation.StartResponse();
+        aInvocation.EndResponse();
+    }
+    catch (TrimChannelInvalid&) {
+        aInvocation.Error(kInvalidChannelCode, kInvalidChannelMsg);
+    }
+    catch (TrimOutOfRange&) {
+        aInvocation.Error(kTrimOutOfRangeCode, kTrimOutOfRangeMsg);
+    }
+}
+
 void ProviderVolume::VolumeChanged(const IVolumeValue& aVolume)
 {
     SetPropertyVolume(aVolume.VolumeUser());
@@ -380,6 +517,20 @@ void ProviderVolume::VolumeOffsetsChanged(IVolumeOffsetterVisitable& aVisitable)
     writerJson.WriteEnd();
 
     SetPropertyVolumeOffsets(offsets);
+}
+
+void ProviderVolume::TrimsChanged(ITrimVisitable& aVisitable)
+{
+    ASSERT(iTrims != nullptr);
+    iTrims->SetBytes(0);
+    WriterBuffer writerBuffer(*iTrims);
+    TrimWriterJson writerJson(writerBuffer);
+
+    writerJson.WriteStart();
+    aVisitable.AcceptTrimVisitor(writerJson);
+    writerJson.WriteEnd();
+
+    SetPropertyTrim(*iTrims);
 }
 
 void ProviderVolume::HelperSetVolume(IDvInvocation& aInvocation, TUint aVolume, ErrorOutOfRange aReportOutOfRange)
