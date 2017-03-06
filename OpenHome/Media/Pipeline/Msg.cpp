@@ -110,7 +110,7 @@ Allocated* AllocatorBase::DoAllocate()
 {
     iLock.Wait();
     Allocated* cell = Read();
-    ASSERT_DEBUG(cell->iRefCount == 0);
+    ASSERT(cell->iRefCount == 0);
     cell->iRefCount = 1;
     iCellsUsed++;
     if (iCellsUsed > iCellsUsedMax) {
