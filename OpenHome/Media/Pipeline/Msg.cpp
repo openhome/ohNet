@@ -110,7 +110,7 @@ Allocated* AllocatorBase::DoAllocate()
 {
     iLock.Wait();
     Allocated* cell = Read();
-    ASSERT_VA(cell->iRefCount == 0, "%s has count %u\n", iName, cell->iRefCount);
+    ASSERT_VA(cell->iRefCount == 0, "%s has count %u\n", iName, cell->iRefCount.load());
     cell->iRefCount = 1;
     iCellsUsed++;
     if (iCellsUsed > iCellsUsedMax) {
