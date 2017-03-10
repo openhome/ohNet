@@ -969,16 +969,16 @@ VolumeManager::VolumeManager(VolumeConsumer& aVolumeConsumer, IMute* aMute, Volu
     const TUint volumeUnity = iVolumeConfig.VolumeUnity() * milliDbPerStep;
     iVolumeRamper = new VolumeRamper(*aVolumeConsumer.Volume(), milliDbPerStep, iVolumeConfig.ThreadPriority());
     iAnalogBypassRamper = new AnalogBypassRamper(*iVolumeRamper);
+    iVolumeSurroundBoost = new VolumeSurroundBoost(*iAnalogBypassRamper);
     if (aVolumeConfig.VolumeControlEnabled() && aVolumeConsumer.Volume() != nullptr) {
         if (iVolumeConfig.AlwaysOn()) {
-            iVolumeSourceUnityGain = new VolumeSourceUnityGain(*iAnalogBypassRamper, volumeUnity);
+            iVolumeSourceUnityGain = new VolumeSourceUnityGain(*iVolumeSurroundBoost, volumeUnity);
         }
         else {
-            iVolumeUnityGain = new VolumeUnityGain(*iAnalogBypassRamper, aConfigReader, volumeUnity);
+            iVolumeUnityGain = new VolumeUnityGain(*iVolumeSurroundBoost, aConfigReader, volumeUnity);
             iVolumeSourceUnityGain = new VolumeSourceUnityGain(*iVolumeUnityGain, volumeUnity);
         }
-        iVolumeSurroundBoost = new VolumeSurroundBoost(*iVolumeSourceUnityGain);
-        iVolumeSourceOffset = new VolumeSourceOffset(*iVolumeSurroundBoost);
+        iVolumeSourceOffset = new VolumeSourceOffset(*iVolumeSourceUnityGain);
         iVolumeReporter = new VolumeReporter(*iVolumeSourceOffset, milliDbPerStep);
         iVolumeLimiter = new VolumeLimiter(*iVolumeReporter, milliDbPerStep, aConfigReader);
         iVolumeUser = new VolumeUser(*iVolumeLimiter, aConfigReader, aPowerManager,
@@ -990,13 +990,12 @@ VolumeManager::VolumeManager(VolumeConsumer& aVolumeConsumer, IMute* aMute, Volu
     else {
         iVolumeSourceUnityGain = nullptr;
         iVolumeUnityGain = nullptr;
-        iVolumeSurroundBoost = nullptr;
         iVolumeSourceOffset = nullptr;
         iVolumeReporter = nullptr;
         iVolumeLimiter = nullptr;
         iVolumeUser = nullptr;
         iProviderVolume = nullptr;
-        static_cast<IVolume*>(iAnalogBypassRamper)->SetVolume(volumeUnity);
+        static_cast<IVolume*>(iVolumeSurroundBoost)->SetVolume(volumeUnity);
     }
 }
 
