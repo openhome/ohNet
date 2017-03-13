@@ -313,7 +313,7 @@ VolumeSurroundBoost::VolumeSurroundBoost(IVolume& aVolume)
 
 void VolumeSurroundBoost::SetVolume(TUint aValue)
 {
-    LOG(kVolume, "VolumeSurroundAttenuator::SetVolume aValue: %u\n", aValue);
+    LOG(kVolume, "VolumeSurroundBoost::SetVolume aValue: %u\n", aValue);
     AutoMutex _(iLock);
     iUpstreamVolume = aValue;
     DoSetVolume();
@@ -321,6 +321,7 @@ void VolumeSurroundBoost::SetVolume(TUint aValue)
 
 void VolumeSurroundBoost::SetVolumeBoost(TInt aBoost)
 {
+    LOG(kVolume, "VolumeSurroundBoost::SetVolumeBoost aBoost: %d\n", aBoost);
     AutoMutex _(iLock);
     iBoost = aBoost;
     try {
