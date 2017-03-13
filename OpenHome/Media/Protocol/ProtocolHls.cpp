@@ -65,6 +65,12 @@ public:
 
 class ProtocolHls : public Protocol
 {
+private:
+    /* Time delay before retrying connections after some kind of recoverable
+     * failure. Avoids busy loop consuming CPU time if there is a period of
+     * network issues, and also avoids hammering servers during that time.
+     */
+    static const TUint kRetryBackOffMs = 1000;
 public:
     ProtocolHls(Environment& aEnv, IHlsReader* aReaderM3u, IHlsReader* aReaderSegment, IHlsTimer* aTimer, ISemaphore* aM3uReaderSem);
     ~ProtocolHls();
@@ -924,6 +930,11 @@ ProtocolStreamResult ProtocolHls::Stream(const Brx& aUri)
         }
         else {
             ASSERT(res == EProtocolStreamErrorRecoverable);
+
+            // Don't go into a busy loop if period of network issues, and don't
+            // hammer servers.
+            Thread::Sleep(kRetryBackOffMs);
+
             // Retry entire stream indefinitely.
             // Arrive here for intermittent problems, such as:
             // - connection/socket errors (for playlist/segments)
@@ -935,15 +946,24 @@ ProtocolStreamResult ProtocolHls::Stream(const Brx& aUri)
             iSegmentStreamer.Close();
             iM3uReader.Close();
 
-            // Output any pending flush.
+            // Check for a pending flush (i.e., check if TryStop() has been
+            // called).
             {
                 AutoMutex a(iLock);
+                // This stream has ended. Clear iStreamId to prevent TryStop()
+                // returning a valid flush id from this point.
+                iStreamId = IPipelineIdProvider::kStreamIdInvalid;
+
                 if (iNextFlushId != MsgFlush::kIdInvalid) {
-                    // Cleanup code will output flush before exiting this method.
+                    // A successful TryStop() call has already come in. Don't
+                    // attempt to retry stream. Break from stream loop here and
+                    // cleanup code will output flush before exiting.
                     break;
                 }
             }
 
+            // There is no flush pending, and iStreamId has been cleared (so no
+            // further TryStop() call will succeed). Safe to drain pipeline now.
             WaitForDrain();
 
             Reinitialise();
@@ -961,14 +981,18 @@ ProtocolStreamResult ProtocolHls::Stream(const Brx& aUri)
     iSegmentStreamer.Close();
     iM3uReader.Close();
 
+    TUint flushId = MsgFlush::kIdInvalid;
     {
         AutoMutex a(iLock);
         if (iNextFlushId != MsgFlush::kIdInvalid) {
-            iSupply->OutputFlush(iNextFlushId);
+            flushId = iNextFlushId;
             iNextFlushId = MsgFlush::kIdInvalid;
         }
         // Clear iStreamId to prevent TrySeek or TryStop returning a valid flush id.
         iStreamId = IPipelineIdProvider::kStreamIdInvalid;
+    }
+    if (flushId != MsgFlush::kIdInvalid) {
+        iSupply->OutputFlush(flushId);
     }
 
     LOG(kMedia, "<ProtocolHls::Stream res: %d\n", res);
