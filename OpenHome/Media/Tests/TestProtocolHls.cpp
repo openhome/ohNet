@@ -11,33 +11,14 @@
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Private/SuiteUnitTest.h>
 #include <OpenHome/Media/Tests/TestProtocolHls.h>
+#include <OpenHome/Tests/TestPipe.h>
+#include <OpenHome/Tests/Mock.h>
 
 #include <limits>
 
 namespace OpenHome {
 namespace Media {
 namespace Test {
-
-class TestTimer : public IHlsTimer
-{
-public:
-    TestTimer();
-    void Clear();
-    void Fire();
-    IHlsTimerHandler* LastHandler() const; // NOT passing ownership; may return nullptr
-    TUint LastDurationMs() const;
-    TUint StartCount() const;
-    TUint CancelCount() const;
-public: // from IHlsTimer
-    void Start(TUint aDurationMs, IHlsTimerHandler& aHandler) override;
-    void Cancel() override;
-private:
-    IHlsTimerHandler* iHandler;
-    TUint iDurationMs;
-    TUint iStartCount;
-    TUint iCancelCount;
-    mutable Mutex iLock;
-};
 
 class TestSemaphore : public ISemaphore
 {
@@ -213,10 +194,11 @@ private:
     void TestInvalidAttributes();
 private:
     const Uri iUriDefault;
+    OpenHome::Test::TestPipeDynamic* iTestPipe;
     Semaphore* iSemReader;
     Semaphore* iSemWait;
     TestHttpReader* iHttpReader;
-    TestTimer* iTimer;
+    OpenHome::Test::MockTimerFactory* iTimerFactory;
     Semaphore* iSem;
     Semaphore* iThreadSem;
     TestSemaphore* iTestSem;
@@ -283,6 +265,7 @@ private:
     TestElementDownstream* iElementDownstream;
     ProtocolManager* iProtocolManager;
 
+    OpenHome::Test::TestPipeDynamic* iTestPipe;
     Semaphore* iThreadSem;
     Semaphore* iM3uSem;
     Semaphore* iM3uWaitSem;
@@ -290,7 +273,7 @@ private:
     Semaphore* iSegmentSem;
     Semaphore* iSegmentWaitSem;
     TestHttpReader* iSegmentReader;
-    TestTimer* iTimer;
+    OpenHome::Test::MockTimerFactory* iTimerFactory;
     Semaphore* iM3uReloadSem;
     TestSemaphore* iTestSem;
     Protocol* iProtocolHls;
@@ -307,72 +290,8 @@ private:
 using namespace OpenHome;
 using namespace OpenHome::Media;
 using namespace OpenHome::Media::Test;
+using namespace OpenHome::Test;
 using namespace OpenHome::TestFramework;
-
-
-// TestTimer
-
-TestTimer::TestTimer()
-    : iHandler(nullptr)
-    , iDurationMs(0)
-    , iStartCount(0)
-    , iCancelCount(0)
-    , iLock("TTIL")
-{
-}
-
-void TestTimer::Clear()
-{
-    iHandler = nullptr;
-    iDurationMs = 0;
-    iStartCount = 0;
-    iCancelCount = 0;
-}
-
-void TestTimer::Fire()
-{
-    AutoMutex a(iLock);
-    ASSERT(iHandler != nullptr);
-    iHandler->TimerFired();
-}
-
-IHlsTimerHandler* TestTimer::LastHandler() const
-{
-    AutoMutex a(iLock);
-    return iHandler;
-}
-
-TUint TestTimer::LastDurationMs() const
-{
-    AutoMutex a(iLock);
-    return iDurationMs;
-}
-
-TUint TestTimer::StartCount() const
-{
-    AutoMutex a(iLock);
-    return iStartCount;
-}
-
-TUint TestTimer::CancelCount() const
-{
-    AutoMutex a(iLock);
-    return iCancelCount;
-}
-
-void TestTimer::Start(TUint aDurationMs, IHlsTimerHandler& aHandler)
-{
-    AutoMutex a(iLock);
-    iStartCount++;
-    iDurationMs = aDurationMs;
-    iHandler = &aHandler;
-};
-
-void TestTimer::Cancel()
-{
-    AutoMutex a(iLock);
-    iCancelCount++;
-}
 
 
 // TestSemaphore
@@ -839,14 +758,15 @@ SuiteHlsM3uReader::SuiteHlsM3uReader()
 
 void SuiteHlsM3uReader::Setup()
 {
+    iTestPipe = new TestPipeDynamic();
     iSemReader = new Semaphore("SHRS", 0);
     iSemWait = new Semaphore("SHWS", 0);
     iHttpReader = new TestHttpReader(*iSemReader, *iSemWait);
-    iTimer = new TestTimer();
+    iTimerFactory = new MockTimerFactory(*iTestPipe);
     iSem = new Semaphore("SHMS", 0);
     iThreadSem = new Semaphore("SHTS", 0);
     iTestSem = new TestSemaphore(*iSem);
-    iM3uReader = new HlsM3uReader(*iHttpReader, *iHttpReader, *iTimer, *iTestSem);
+    iM3uReader = new HlsM3uReader(*iHttpReader, *iHttpReader, *iTimerFactory, *iTestSem);
     iSegmentUri.Clear();
     iDuration = 0;
 }
@@ -858,10 +778,12 @@ void SuiteHlsM3uReader::TearDown()
     delete iTestSem;
     delete iThreadSem;
     delete iSem;
-    delete iTimer;
+    delete iTimerFactory;
     delete iHttpReader;
     delete iSemWait;
     delete iSemReader;
+    TEST(iTestPipe->ExpectEmpty());
+    delete iTestPipe;
 }
 
 void SuiteHlsM3uReader::NextSegmentErrorThread()
@@ -894,6 +816,7 @@ void SuiteHlsM3uReader::TestSetUri()
 
     TEST(duration == kExpectedDuration);
     TEST(segmentUri.AbsoluteUri() == kExpectedUri);
+    TEST(iTestPipe->Expect(Brn("MT::FireIn HlsM3uReader 8000")));
 
 
     // Call SetUri() again and ensure everything is reset correctly.
@@ -913,6 +836,7 @@ void SuiteHlsM3uReader::TestSetUri()
     );
 
     iM3uReader->Interrupt();
+    TEST(iTestPipe->Expect(Brn("MT::Cancel HlsM3uReader")));
     iM3uReader->Close();
     TestHttpReader::UriList uriList2;
     uriList2.push_back(TestHttpReader::UriConnectPair(&kUri2, TestHttpReader::eSuccess));
@@ -928,6 +852,7 @@ void SuiteHlsM3uReader::TestSetUri()
 
     TEST(duration2 == kExpectedDuration2);
     TEST(segmentUri2.AbsoluteUri() == kExpectedUri2);
+    TEST(iTestPipe->Expect(Brn("MT::FireIn HlsM3uReader 6000")));
 }
 
 void SuiteHlsM3uReader::TestPlaylistNoMediaSequence()
@@ -984,6 +909,7 @@ void SuiteHlsM3uReader::TestPlaylistNoMediaSequence()
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 6000);
     TEST(segmentUri.AbsoluteUri() == Brn("https://priv.example.com/a.ts"));
+    TEST(iTestPipe->Expect(Brn("MT::FireIn HlsM3uReader 6000")));
 
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 5000);
@@ -993,16 +919,12 @@ void SuiteHlsM3uReader::TestPlaylistNoMediaSequence()
     TEST(duration == 4000);
     TEST(segmentUri.AbsoluteUri() == Brn("https://priv.example.com/c.ts"));
 
-    TEST(iTimer->StartCount() == 1);
-    TEST(iTimer->CancelCount() == 0);
-    TEST(iTimer->LastDurationMs() == 6000);
-    TEST(iTimer->LastHandler() == iM3uReader);
-
-    iM3uReader->TimerFired();
+    iTimerFactory->FireTimer("HlsM3uReader");
 
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 3000);
     TEST(segmentUri.AbsoluteUri() == Brn("https://priv.example.com/d.ts"));
+    TEST(iTestPipe->Expect(Brn("MT::FireIn HlsM3uReader 6000")));
 
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 2000);
@@ -1060,6 +982,7 @@ void SuiteHlsM3uReader::TestPlaylistMediaSequenceStartZero()
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 6000);
     TEST(segmentUri.AbsoluteUri() == Brn("https://priv.example.com/a.ts"));
+    TEST(iTestPipe->Expect(Brn("MT::FireIn HlsM3uReader 6000")));
 
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 5000);
@@ -1069,16 +992,12 @@ void SuiteHlsM3uReader::TestPlaylistMediaSequenceStartZero()
     TEST(duration == 4000);
     TEST(segmentUri.AbsoluteUri() == Brn("https://priv.example.com/c.ts"));
 
-    TEST(iTimer->StartCount() == 1);
-    TEST(iTimer->CancelCount() == 0);
-    TEST(iTimer->LastDurationMs() == 6000);
-    TEST(iTimer->LastHandler() == iM3uReader);
-
-    iM3uReader->TimerFired();
+    iTimerFactory->FireTimer("HlsM3uReader");
 
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 3000);
     TEST(segmentUri.AbsoluteUri() == Brn("https://priv.example.com/d.ts"));
+    TEST(iTestPipe->Expect(Brn("MT::FireIn HlsM3uReader 6000")));
 
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 2000);
@@ -1133,6 +1052,7 @@ void SuiteHlsM3uReader::TestPlaylistMediaSequenceStartNonZero()
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 6000);
     TEST(segmentUri.AbsoluteUri() == Brn("https://priv.example.com/a.ts"));
+    TEST(iTestPipe->Expect(Brn("MT::FireIn HlsM3uReader 6000")));
 
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 5000);
@@ -1142,16 +1062,12 @@ void SuiteHlsM3uReader::TestPlaylistMediaSequenceStartNonZero()
     TEST(duration == 4000);
     TEST(segmentUri.AbsoluteUri() == Brn("https://priv.example.com/c.ts"));
 
-    TEST(iTimer->StartCount() == 1);
-    TEST(iTimer->CancelCount() == 0);
-    TEST(iTimer->LastDurationMs() == 6000);
-    TEST(iTimer->LastHandler() == iM3uReader);
-
-    iM3uReader->TimerFired();
+    iTimerFactory->FireTimer("HlsM3uReader");
 
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 3000);
     TEST(segmentUri.AbsoluteUri() == Brn("https://priv.example.com/d.ts"));
+    TEST(iTestPipe->Expect(Brn("MT::FireIn HlsM3uReader 6000")));
 
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 2000);
@@ -1191,6 +1107,7 @@ void SuiteHlsM3uReader::TestPlaylistRelativeUris()
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 6000);
     TEST(segmentUri.AbsoluteUri() == Brn("http://example.com/some/path/a.ts"));
+    TEST(iTestPipe->Expect(Brn("MT::FireIn HlsM3uReader 6000")));
 
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 5000);
@@ -1199,11 +1116,6 @@ void SuiteHlsM3uReader::TestPlaylistRelativeUris()
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 4000);
     TEST(segmentUri.AbsoluteUri() == Brn("http://example.com/some/path/c.ts"));
-
-    TEST(iTimer->StartCount() == 1);
-    TEST(iTimer->CancelCount() == 0);
-    TEST(iTimer->LastDurationMs() == 6000);
-    TEST(iTimer->LastHandler() == iM3uReader);
 }
 
 void SuiteHlsM3uReader::TestReloadNonContinuous()
@@ -1256,6 +1168,7 @@ void SuiteHlsM3uReader::TestReloadNonContinuous()
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 6000);
     TEST(segmentUri.AbsoluteUri() == Brn("https://priv.example.com/a.ts"));
+    TEST(iTestPipe->Expect(Brn("MT::FireIn HlsM3uReader 6000")));
 
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 5000);
@@ -1265,21 +1178,18 @@ void SuiteHlsM3uReader::TestReloadNonContinuous()
     TEST(duration == 4000);
     TEST(segmentUri.AbsoluteUri() == Brn("https://priv.example.com/c.ts"));
 
-    TEST(iTimer->StartCount() == 1);
-    TEST(iTimer->CancelCount() == 0);
-    TEST(iTimer->LastDurationMs() == 6000);
-    TEST(iTimer->LastHandler() == iM3uReader);
-
-    iM3uReader->TimerFired();
+    iTimerFactory->FireTimer("HlsM3uReader");
 
     TEST_THROWS(iM3uReader->NextSegmentUri(segmentUri), HlsDiscontinuityError);
     iM3uReader->Interrupt();
+    TEST(iTestPipe->Expect(Brn("MT::Cancel HlsM3uReader")));
     iM3uReader->Close();
     iM3uReader->SetUri(kUriMediaSeqNonContinuous);
 
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 4000);
     TEST(segmentUri.AbsoluteUri() == Brn("https://priv.example.com/f.ts"));
+    TEST(iTestPipe->Expect(Brn("MT::FireIn HlsM3uReader 6000")));
 
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 3000);
@@ -1342,6 +1252,7 @@ void SuiteHlsM3uReader::TestReloadNoChange()
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 6000);
     TEST(segmentUri.AbsoluteUri() == Brn("https://priv.example.com/a.ts"));
+    TEST(iTestPipe->Expect(Brn("MT::FireIn HlsM3uReader 6000")));
 
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 5000);
@@ -1351,11 +1262,6 @@ void SuiteHlsM3uReader::TestReloadNoChange()
     TEST(duration == 4000);
     TEST(segmentUri.AbsoluteUri() == Brn("https://priv.example.com/c.ts"));
 
-    TEST(iTimer->StartCount() == 1);
-    TEST(iTimer->CancelCount() == 0);
-    TEST(iTimer->LastDurationMs() == 6000);
-    TEST(iTimer->LastHandler() == iM3uReader);
-
     // Now, call NextSegmentUri() in another thread.
     // iM3uReader will block while waiting for timer to fire.
     // From this thread, call TimerFired() twice; once to reload unchanged playlist,
@@ -1363,15 +1269,15 @@ void SuiteHlsM3uReader::TestReloadNoChange()
     ThreadFunctor functor("ThreadHlsM3uReader", MakeFunctor(*this, &SuiteHlsM3uReader::NextSegmentSuccessThread));
     iSem->Clear();
     functor.Start();
-    iSem->Wait(kSemWaitMs);                 // iM3uReader->NextSegmentUri() has been called in other thread.
-    iM3uReader->TimerFired();               // Should still be blocking after this.
-    iSem->Wait(kSemWaitMs);                 // Attempt from iM3uReader to reload playlist again.
-    TEST(iTimer->LastDurationMs() == 3000); // Check timer was set with half-duration.
-    TEST(iDuration == 0);                   // No change should be detected in playlist.
+    iSem->Wait(kSemWaitMs);                     // iM3uReader->NextSegmentUri() has been called in other thread.
+    iTimerFactory->FireTimer("HlsM3uReader");   // Should still be blocking after this.
+    iSem->Wait(kSemWaitMs);                     // Attempt from iM3uReader to reload playlist again.
+    TEST(iTestPipe->Expect(Brn("MT::FireIn HlsM3uReader 3000")));   // Check timer was set with half-duration.
+    TEST(iDuration == 0);                       // No change should be detected in playlist.
     TEST(iSegmentUri.AbsoluteUri().Bytes() == 0);
-    iM3uReader->TimerFired();               // Playlist with updates should now be retrieved.
-    iThreadSem->Wait(kSemWaitMs);           // Wait on iM3uReader->NextSegmentUri() returning.
-    TEST(iTimer->LastDurationMs() == 6000); // Check timer duration returned to normal.
+    iTimerFactory->FireTimer("HlsM3uReader");   // Playlist with updates should now be retrieved.
+    iThreadSem->Wait(kSemWaitMs);               // Wait on iM3uReader->NextSegmentUri() returning.
+    TEST(iTestPipe->Expect(Brn("MT::FireIn HlsM3uReader 6000")));   // Check timer duration returned to normal.
 
     // Check URI that was set in other thread.
     TEST(iDuration == 3000);
@@ -1380,9 +1286,6 @@ void SuiteHlsM3uReader::TestReloadNoChange()
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 2000);
     TEST(segmentUri.AbsoluteUri() == Brn("https://priv.example.com/e.ts"));
-
-    TEST(iTimer->StartCount() == 3);
-    TEST(iTimer->CancelCount() == 0);
 
     iM3uReader->Close();
 }
@@ -1419,6 +1322,7 @@ void SuiteHlsM3uReader::TestEndlist()
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 9009);
     TEST(segmentUri.AbsoluteUri() == Brn("http://media.example.com/first.ts"));
+    TEST(iTestPipe->Expect(Brn("MT::FireIn HlsM3uReader 10000")));
 
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 9009);
@@ -1427,11 +1331,6 @@ void SuiteHlsM3uReader::TestEndlist()
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 3003);
     TEST(segmentUri.AbsoluteUri() == Brn("http://media.example.com/third.ts"));
-
-    TEST(iTimer->StartCount() == 1);
-    TEST(iTimer->CancelCount() == 0);
-    TEST(iTimer->LastDurationMs() == 10000);
-    TEST(iTimer->LastHandler() == iM3uReader);
 
     const TUint connectCount1 = iHttpReader->ConnectCount();
     segmentUri.Clear();
@@ -1455,6 +1354,7 @@ void SuiteHlsM3uReader::TestEndlist()
     );
 
     iM3uReader->Interrupt();
+    TEST(iTestPipe->Expect(Brn("MT::Cancel HlsM3uReader")));
     iM3uReader->Close();
     TestHttpReader::UriList uriList2;
     uriList2.push_back(TestHttpReader::UriConnectPair(&kUriEndlistStart, TestHttpReader::eSuccess));
@@ -1466,6 +1366,7 @@ void SuiteHlsM3uReader::TestEndlist()
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 9009);
     TEST(segmentUri.AbsoluteUri() == Brn("http://media.example.com/first.ts"));
+    TEST(iTestPipe->Expect(Brn("MT::FireIn HlsM3uReader 10000")));
 
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 9009);
@@ -1474,11 +1375,6 @@ void SuiteHlsM3uReader::TestEndlist()
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 3003);
     TEST(segmentUri.AbsoluteUri() == Brn("http://media.example.com/third.ts"));
-
-    TEST(iTimer->StartCount() == 2);
-    TEST(iTimer->CancelCount() == 1);
-    TEST(iTimer->LastDurationMs() == 10000);
-    TEST(iTimer->LastHandler() == iM3uReader);
 
     const TUint connectCount2 = iHttpReader->ConnectCount();
     segmentUri.Clear();
@@ -1518,6 +1414,7 @@ void SuiteHlsM3uReader::TestPlaylistCrLf()
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 6000);
     TEST(segmentUri.AbsoluteUri() == Brn("https://priv.example.com/a.ts"));
+    TEST(iTestPipe->Expect(Brn("MT::FireIn HlsM3uReader 6000")));
 
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 5000);
@@ -1526,11 +1423,6 @@ void SuiteHlsM3uReader::TestPlaylistCrLf()
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 4000);
     TEST(segmentUri.AbsoluteUri() == Brn("https://priv.example.com/c.ts"));
-
-    TEST(iTimer->StartCount() == 1);
-    TEST(iTimer->CancelCount() == 0);
-    TEST(iTimer->LastDurationMs() == 6000);
-    TEST(iTimer->LastHandler() == iM3uReader);
 }
 
 void SuiteHlsM3uReader::TestUnsupportedVersion()
@@ -1564,6 +1456,7 @@ void SuiteHlsM3uReader::TestUnsupportedVersion()
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 7975);
     TEST(segmentUri.AbsoluteUri() == Brn("https://priv.example.com/fileSequence2680.ts"));
+    TEST(iTestPipe->Expect(Brn("MT::FireIn HlsM3uReader 8000")));
 
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 7941);
@@ -1572,11 +1465,6 @@ void SuiteHlsM3uReader::TestUnsupportedVersion()
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 7975);
     TEST(segmentUri.AbsoluteUri() == Brn("https://priv.example.com/fileSequence2682.ts"));
-
-    TEST(iTimer->StartCount() == 1);
-    TEST(iTimer->CancelCount() == 0);
-    TEST(iTimer->LastDurationMs() == 8000);
-    TEST(iTimer->LastHandler() == iM3uReader);
 
     // Test same file as above, but with another version #.
     const Uri kUriVersion4(Brn("http://example.com/hls_v4.m3u8"));
@@ -1595,6 +1483,7 @@ void SuiteHlsM3uReader::TestUnsupportedVersion()
     );
 
     iM3uReader->Interrupt();
+    TEST(iTestPipe->Expect(Brn("MT::Cancel HlsM3uReader")));
     iM3uReader->Close();
     TestHttpReader::UriList uriList2;
     uriList2.push_back(TestHttpReader::UriConnectPair(&kUriVersion4, TestHttpReader::eSuccess));
@@ -1606,6 +1495,7 @@ void SuiteHlsM3uReader::TestUnsupportedVersion()
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 7975);
     TEST(segmentUri.AbsoluteUri() == Brn("https://priv.example.com/fileSequence2680.ts"));
+    TEST(iTestPipe->Expect(Brn("MT::FireIn HlsM3uReader 8000")));
 
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 7941);
@@ -1614,11 +1504,6 @@ void SuiteHlsM3uReader::TestUnsupportedVersion()
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 7975);
     TEST(segmentUri.AbsoluteUri() == Brn("https://priv.example.com/fileSequence2682.ts"));
-
-    TEST(iTimer->StartCount() == 2);
-    TEST(iTimer->CancelCount() == 1);
-    TEST(iTimer->LastDurationMs() == 8000);
-    TEST(iTimer->LastHandler() == iM3uReader);
 
 
     // Test version 3 playlist with EXT-X-KEY tags. Should skip over tags
@@ -1646,6 +1531,7 @@ void SuiteHlsM3uReader::TestUnsupportedVersion()
     "http://media.example.com/fileSequence53-A.ts\n");
 
     iM3uReader->Interrupt();
+    TEST(iTestPipe->Expect(Brn("MT::Cancel HlsM3uReader")));
     iM3uReader->Close();
     TestHttpReader::UriList uriList3;
     uriList3.push_back(TestHttpReader::UriConnectPair(&kUriVersion3Encrypted, TestHttpReader::eSuccess));
@@ -1657,6 +1543,7 @@ void SuiteHlsM3uReader::TestUnsupportedVersion()
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 2833);
     TEST(segmentUri.AbsoluteUri() == Brn("http://media.example.com/fileSequence52-A.ts"));
+    TEST(iTestPipe->Expect(Brn("MT::FireIn HlsM3uReader 15000")));
 
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 15000);
@@ -1669,11 +1556,6 @@ void SuiteHlsM3uReader::TestUnsupportedVersion()
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 15000);
     TEST(segmentUri.AbsoluteUri() == Brn("http://media.example.com/fileSequence53-A.ts"));
-
-    TEST(iTimer->StartCount() == 3);
-    TEST(iTimer->CancelCount() == 2);
-    TEST(iTimer->LastDurationMs() == 15000);
-    TEST(iTimer->LastHandler() == iM3uReader);
 }
 
 void SuiteHlsM3uReader::TestInterrupt()
@@ -1710,6 +1592,7 @@ void SuiteHlsM3uReader::TestInterrupt()
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 6000);
     TEST(segmentUri.AbsoluteUri() == Brn("https://priv.example.com/a.ts"));
+    TEST(iTestPipe->Expect(Brn("MT::FireIn HlsM3uReader 6000")));
 
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 5000);
@@ -1727,6 +1610,7 @@ void SuiteHlsM3uReader::TestInterrupt()
     functor.Start();
     iSem->Wait(kSemWaitMs);    // iM3uReader->NextSegmentUri() has been called in other thread.
     iM3uReader->Interrupt();
+    TEST(iTestPipe->Expect(Brn("MT::Cancel HlsM3uReader")));
     iThreadSem->Wait(kSemWaitMs);   // Wait on iM3uReader->NextSegmentUri() returning.
     iM3uReader->Close();
 
@@ -1744,6 +1628,7 @@ void SuiteHlsM3uReader::TestInterrupt()
     functor2.Start();
     iSemReader->Wait(kSemWaitMs);   // iReader has blocked at above offset in other thread.
     iM3uReader->Interrupt();
+    TEST(iTestPipe->Expect(Brn("MT::Cancel HlsM3uReader")));
     iThreadSem->Wait(kSemWaitMs);   // Wait on iM3uReader->NextSegmentUri() returning.
     iM3uReader->Close();
 
@@ -2039,6 +1924,7 @@ SuiteProtocolHls::SuiteProtocolHls(Environment& aEnv)
 
 void SuiteProtocolHls::Setup()
 {
+    iTestPipe = new TestPipeDynamic();
     iThreadSem = new Semaphore("HLTS", 0);
     iM3uSem = new Semaphore("HLMS", 0);
     iM3uWaitSem = new Semaphore("HMWS", 0);
@@ -2046,10 +1932,10 @@ void SuiteProtocolHls::Setup()
     iSegmentSem = new Semaphore("HLSS", 0);
     iSegmentWaitSem = new Semaphore("HSWS", 0);
     iSegmentReader = new TestHttpReader(*iSegmentSem, *iSegmentWaitSem);
-    iTimer = new TestTimer();
+    iTimerFactory = new MockTimerFactory(*iTestPipe);
     iM3uReloadSem = new Semaphore("M3RS", 0);
     iTestSem = new TestSemaphore(*iM3uReloadSem);
-    iProtocolHls = HlsTestFactory::NewTestableHls(iEnv, iM3uReader, iSegmentReader, iTimer, iTestSem);    // takes ownership of iM3uReader, iSegmentReader, iTimer, iTestSem.
+    iProtocolHls = HlsTestFactory::NewTestableHls(iEnv, iM3uReader, iSegmentReader, iTimerFactory, iTestSem);  // Takes ownership of iM3uReader, iSegmentReader, iTimerFactory, iTestSem.
 
     iInfoAggregator = new AllocatorInfoLogger();
     iTrackFactory= new TrackFactory(*iInfoAggregator, 1);
@@ -2082,6 +1968,7 @@ void SuiteProtocolHls::TearDown()
     delete iInfoAggregator;
 
     delete iM3uReloadSem;
+    //delete iTimerFactory;     // owned by ProtocolHls
 
     //delete iSegmentReader;    // owned by ProtocolHls
     delete iSegmentWaitSem;
@@ -2090,6 +1977,8 @@ void SuiteProtocolHls::TearDown()
     delete iM3uWaitSem;
     delete iM3uSem;
     delete iThreadSem;
+    TEST(iTestPipe->ExpectEmpty());
+    delete iTestPipe;
 }
 
 void SuiteProtocolHls::StreamThread()
@@ -2148,6 +2037,9 @@ void SuiteProtocolHls::TestStreamSuccessful()
     TEST(iElementDownstream->StreamId() == 1);
     TEST(iElementDownstream->TrackCount() == 1);
     TEST(iElementDownstream->StreamCount() == 1);
+
+    TEST(iTestPipe->Expect(Brn("MT::FireIn HlsM3uReader 10000")));
+    TEST(iTestPipe->Expect(Brn("MT::Cancel HlsM3uReader")));
 }
 
 void SuiteProtocolHls::TestStreamErrorRecoverable()
@@ -2214,6 +2106,11 @@ void SuiteProtocolHls::TestStreamErrorRecoverable()
     TEST(iElementDownstream->TrackCount() == 1);
     TEST(iElementDownstream->StreamCount() == 2);
     TEST(iElementDownstream->FlushCount() == 0);
+
+    TEST(iTestPipe->Expect(Brn("MT::FireIn HlsM3uReader 10000")));
+    TEST(iTestPipe->Expect(Brn("MT::Cancel HlsM3uReader")));
+    TEST(iTestPipe->Expect(Brn("MT::FireIn HlsM3uReader 10000")));
+    TEST(iTestPipe->Expect(Brn("MT::Cancel HlsM3uReader")));
 }
 
 void SuiteProtocolHls::TestStreamM3uError()
@@ -2266,6 +2163,8 @@ void SuiteProtocolHls::TestStreamM3uError()
     TEST(iElementDownstream->StreamId() == 1);
     TEST(iElementDownstream->TrackCount() == 1);
     TEST(iElementDownstream->StreamCount() == 1);
+
+    TEST(iTestPipe->Expect(Brn("MT::Cancel HlsM3uReader")));
 }
 
 void SuiteProtocolHls::TestRestreamAfterM3uError()
@@ -2319,6 +2218,8 @@ void SuiteProtocolHls::TestRestreamAfterM3uError()
     TEST(iElementDownstream->TrackCount() == 1);
     TEST(iElementDownstream->StreamCount() == 1);
 
+    TEST(iTestPipe->Expect(Brn("MT::Cancel HlsM3uReader")));
+
 
 
     // Now, attempt to restream.
@@ -2353,6 +2254,9 @@ void SuiteProtocolHls::TestRestreamAfterM3uError()
     TEST(iElementDownstream->StreamId() == 2);
     TEST(iElementDownstream->TrackCount() == 2);
     TEST(iElementDownstream->StreamCount() == 2);
+
+    TEST(iTestPipe->Expect(Brn("MT::FireIn HlsM3uReader 3000")));
+    TEST(iTestPipe->Expect(Brn("MT::Cancel HlsM3uReader")));
 }
 
 void SuiteProtocolHls::TestStreamSegmentNotFound()
@@ -2405,6 +2309,9 @@ void SuiteProtocolHls::TestStreamSegmentNotFound()
     TEST(iElementDownstream->StreamId() == 1);
     TEST(iElementDownstream->TrackCount() == 1);
     TEST(iElementDownstream->StreamCount() == 1);
+
+    TEST(iTestPipe->Expect(Brn("MT::FireIn HlsM3uReader 10000")));
+    TEST(iTestPipe->Expect(Brn("MT::Cancel HlsM3uReader")));
 }
 
 void SuiteProtocolHls::TestStreamM3uConnectionError()
@@ -2467,14 +2374,16 @@ void SuiteProtocolHls::TestStreamM3uConnectionError()
     ThreadFunctor functor("ProtocolHls", MakeFunctor(*this, &SuiteProtocolHls::StreamThread));
     iM3uReloadSem->Clear();
     functor.Start();
-    iM3uReloadSem->Wait();                  // Ignore first; signalled upon initialisation.
-    iM3uReloadSem->Wait();                 // iM3uReader is waiting on timer.
-    iTimer->Fire();               // Should still be blocking after this.
-    iM3uReloadSem->Wait();                 // iM3uReader is waiting on timer.
-    TEST(iTimer->LastDurationMs() == 10000); // Check timer was set.
-    iTimer->Fire();               // Playlist with updates should now be retrieved.
-    iThreadSem->Wait(kSemWaitMs);           // Wait on iM3uReader->NextSegmentUri() returning.
-    TEST(iTimer->LastDurationMs() == 10000); // Check timer was set.
+    iM3uReloadSem->Wait();                      // Ignore first; signalled upon initialisation.
+    iM3uReloadSem->Wait();                      // iM3uReader is waiting on timer.
+    iTimerFactory->FireTimer("HlsM3uReader");   // Should still be blocking after this.
+    iM3uReloadSem->Wait();                      // iM3uReader is waiting on timer.
+    TEST(iTestPipe->Expect(Brn("MT::FireIn HlsM3uReader 10000")));  // Check timer was set.
+    TEST(iTestPipe->Expect(Brn("MT::Cancel HlsM3uReader")));
+    iTimerFactory->FireTimer("HlsM3uReader");   // Playlist with updates should now be retrieved.
+    iThreadSem->Wait(kSemWaitMs);               // Wait on iM3uReader->NextSegmentUri() returning.
+    TEST(iTestPipe->Expect(Brn("MT::FireIn HlsM3uReader 10000")));  // Check timer was set.
+    TEST(iTestPipe->Expect(Brn("MT::Cancel HlsM3uReader")));
 
     iTrack->RemoveRef();
     TEST(iResult == EProtocolStreamSuccess);
@@ -2543,14 +2452,16 @@ void SuiteProtocolHls::TestSegmentDiscontinuity()
     ThreadFunctor functor("ProtocolHls", MakeFunctor(*this, &SuiteProtocolHls::StreamThread));
     iM3uReloadSem->Clear();
     functor.Start();
-    iM3uReloadSem->Wait();                  // Ignore first; signalled upon initialisation.
-    iM3uReloadSem->Wait();                 // iM3uReader is waiting on timer.
-    iTimer->Fire();               // Should still be blocking after this.
-    iM3uReloadSem->Wait();                 // iM3uReader is waiting on timer.
-    TEST(iTimer->LastDurationMs() == 10000); // Check timer was set.
-    iTimer->Fire();               // Playlist with updates should now be retrieved.
-    iThreadSem->Wait(kSemWaitMs);           // Wait on iM3uReader->NextSegmentUri() returning.
-    TEST(iTimer->LastDurationMs() == 10000); // Check timer was set.
+    iM3uReloadSem->Wait();                      // Ignore first; signalled upon initialisation.
+    iM3uReloadSem->Wait();                      // iM3uReader is waiting on timer.
+    iTimerFactory->FireTimer("HlsM3uReader");   // Should still be blocking after this.
+    iM3uReloadSem->Wait();                      // iM3uReader is waiting on timer.
+    TEST(iTestPipe->Expect(Brn("MT::FireIn HlsM3uReader 10000")));  // Check timer was set.
+    TEST(iTestPipe->Expect(Brn("MT::Cancel HlsM3uReader")));
+    iTimerFactory->FireTimer("HlsM3uReader");   // Playlist with updates should now be retrieved.
+    iThreadSem->Wait(kSemWaitMs);               // Wait on iM3uReader->NextSegmentUri() returning.
+    TEST(iTestPipe->Expect(Brn("MT::FireIn HlsM3uReader 10000")));  // Check timer was set.
+    TEST(iTestPipe->Expect(Brn("MT::Cancel HlsM3uReader")));
 
     iTrack->RemoveRef();
     TEST(iResult == EProtocolStreamSuccess);
@@ -2623,6 +2534,11 @@ void SuiteProtocolHls::TestStreamSegmentConnectionError()
     TEST(iElementDownstream->StreamId() == 2);  // Could potentially have recovered without discontinuity by trying to reload segment, but more straightforward to handle problems at a higher level than individual segments and just restart stream.
     TEST(iElementDownstream->TrackCount() == 1);
     TEST(iElementDownstream->StreamCount() == 2);
+
+    TEST(iTestPipe->Expect(Brn("MT::FireIn HlsM3uReader 10000")));
+    TEST(iTestPipe->Expect(Brn("MT::Cancel HlsM3uReader")));
+    TEST(iTestPipe->Expect(Brn("MT::FireIn HlsM3uReader 10000")));
+    TEST(iTestPipe->Expect(Brn("MT::Cancel HlsM3uReader")));
 }
 
 void SuiteProtocolHls::TestGet()
@@ -2683,6 +2599,7 @@ void SuiteProtocolHls::TestTrySeek()
     thread.Start();
 
     iSegmentSem->Wait();//kSemWaitMs);
+    TEST(iTestPipe->Expect(Brn("MT::FireIn HlsM3uReader 10000")));
 
     static const TUint kExpectedStreamId = 1;
     IStreamHandler* streamHandler = iElementDownstream->StreamHandler();
@@ -2692,6 +2609,7 @@ void SuiteProtocolHls::TestTrySeek()
 
     iSegmentWaitSem->Signal();//kSemWaitMs);
     iThreadSem->Wait();//kSemWaitMs);
+    TEST(iTestPipe->Expect(Brn("MT::Cancel HlsM3uReader")));
 
     iTrack->RemoveRef();
     TEST(iResult == EProtocolStreamSuccess);
@@ -2750,6 +2668,7 @@ void SuiteProtocolHls::TestTryStop()
     thread.Start();
 
     iSegmentSem->Wait();//kSemWaitMs);
+    TEST(iTestPipe->Expect(Brn("MT::FireIn HlsM3uReader 10000")));
 
     static const TUint kExpectedStreamId = 1;
     IStreamHandler* streamHandler = iElementDownstream->StreamHandler();
@@ -2759,6 +2678,7 @@ void SuiteProtocolHls::TestTryStop()
 
     iSegmentWaitSem->Signal();//kSemWaitMs);
     iThreadSem->Wait();//kSemWaitMs);
+    TEST(iTestPipe->Expect(Brn("MT::Cancel HlsM3uReader")));
 
     iTrack->RemoveRef();
     TEST(iResult == EProtocolStreamStopped);
@@ -2818,11 +2738,13 @@ void SuiteProtocolHls::TestInterrupt()
     thread.Start();
 
     iSegmentSem->Wait();//kSemWaitMs);
+    TEST(iTestPipe->Expect(Brn("MT::FireIn HlsM3uReader 10000")));
 
     iProtocolManager->Interrupt(true);
 
     iSegmentWaitSem->Signal();//kSemWaitMs);
     iThreadSem->Wait();//kSemWaitMs);
+    TEST(iTestPipe->Expect(Brn("MT::Cancel HlsM3uReader")));
 
     iTrack->RemoveRef();
     TEST(iResult == EProtocolStreamStopped);
