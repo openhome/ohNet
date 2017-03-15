@@ -416,6 +416,32 @@ private:
     TBool iMuted;
 };
 
+class IVolumeMuter
+{
+public:
+    virtual void SetVolumeMuted(TBool aMuted) = 0;
+    virtual ~IVolumeMuter() {}
+};
+
+class VolumeMuter : public IVolume
+                  , public IVolumeMuter
+                  , private INonCopyable
+{
+public:
+    VolumeMuter(IVolume& aVolume);
+private: // from IVolume
+    void SetVolume(TUint aValue) override;
+private: // from IVolumeMuter
+    void SetVolumeMuted(TBool aMuted) override;
+private:
+    void DoSetVolume();
+private:
+    IVolume& iVolume;
+    Mutex iLock;
+    TUint iUpstreamVolume;
+    TBool iMuted;
+};
+
 class BalanceUser : public IBalance, private INonCopyable
 {
 public:
@@ -548,6 +574,7 @@ class IVolumeManager : public IVolumeReporter
                      , public IVolumeSourceUnityGain
                      , public Media::IAnalogBypassVolumeRamper
                      , public Media::IVolumeRamper
+                     , public IVolumeMuter
                      , public Media::IMute
 {
 public:
@@ -602,11 +629,14 @@ private: // from Media::IVolumeRamper
     Media::IVolumeRamper::Status BeginUnmute() override;
     Media::IVolumeRamper::Status StepUnmute(TUint aJiffies) override;
     void SetUnmuted() override;
+private: // from IVolumeMuter
+    void SetVolumeMuted(TBool aMuted) override;
 private: // from Media::IMute
     void Mute() override;
     void Unmute() override;
 private:
     VolumeConfig& iVolumeConfig;
+    VolumeMuter* iVolumeMuter;
     VolumeRamper* iVolumeRamper;
     AnalogBypassRamper* iAnalogBypassRamper;
     VolumeSourceUnityGain* iVolumeSourceUnityGain;

@@ -638,6 +638,39 @@ void VolumeRamper::Run()
 }
 
 
+// VolumeMuter
+
+VolumeMuter::VolumeMuter(IVolume& aVolume)
+    : iVolume(aVolume)
+    , iLock("VMUT")
+    , iUpstreamVolume(0)
+    , iMuted(false)
+{
+}
+
+void VolumeMuter::SetVolume(TUint aValue)
+{
+    LOG(kVolume, "VolumeMuter::SetVolume(%u)\n", aValue);
+    AutoMutex _(iLock);
+    iUpstreamVolume = aValue;
+    DoSetVolume();
+}
+
+void VolumeMuter::SetVolumeMuted(TBool aMuted)
+{
+    LOG(kVolume, "VolumeMuter::SetVolumeMuted(%u)\n", aMuted);
+    AutoMutex _(iLock);
+    iMuted = aMuted;
+    DoSetVolume();
+}
+
+void VolumeMuter::DoSetVolume()
+{
+    const TUint volume = (iMuted? 0 : iUpstreamVolume);
+    iVolume.SetVolume(volume);
+}
+
+
 // BalanceUser
 
 BalanceUser::BalanceUser(IBalance& aBalance, IConfigManager& aConfigReader)
@@ -968,7 +1001,8 @@ VolumeManager::VolumeManager(VolumeConsumer& aVolumeConsumer, IMute* aMute, Volu
     }
     const TUint milliDbPerStep = iVolumeConfig.VolumeMilliDbPerStep();
     const TUint volumeUnity = iVolumeConfig.VolumeUnity() * milliDbPerStep;
-    iVolumeRamper = new VolumeRamper(*aVolumeConsumer.Volume(), milliDbPerStep, iVolumeConfig.ThreadPriority());
+    iVolumeMuter = new VolumeMuter(*aVolumeConsumer.Volume());
+    iVolumeRamper = new VolumeRamper(*iVolumeMuter, milliDbPerStep, iVolumeConfig.ThreadPriority());
     iAnalogBypassRamper = new AnalogBypassRamper(*iVolumeRamper);
     iVolumeSurroundBoost = new VolumeSurroundBoost(*iAnalogBypassRamper);
     if (aVolumeConfig.VolumeControlEnabled() && aVolumeConsumer.Volume() != nullptr) {
@@ -1016,6 +1050,7 @@ VolumeManager::~VolumeManager()
     delete iVolumeSourceUnityGain;
     delete iAnalogBypassRamper;
     delete iVolumeRamper;
+    delete iVolumeMuter;
 }
 
 void VolumeManager::AddVolumeObserver(IVolumeObserver& aObserver)
@@ -1191,6 +1226,11 @@ Media::IVolumeRamper::Status VolumeManager::StepUnmute(TUint aJiffies)
 void VolumeManager::SetUnmuted()
 {
     static_cast<IVolumeRamper*>(iVolumeRamper)->SetUnmuted();
+}
+
+void VolumeManager::SetVolumeMuted(TBool aMuted)
+{
+    static_cast<IVolumeMuter*>(iVolumeMuter)->SetVolumeMuted(aMuted);
 }
 
 void VolumeManager::Mute()
