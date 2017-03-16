@@ -37,8 +37,8 @@ protected:
      * and StreamCompleted(), respectively, to avoid memory leaks.
      */
     ALACDecoder* iDecoder;
-    Bws<kMaxSamplesPerFrame*kMaxByteDepth*kMaxChannels> iInBuf;
-    Bws<kMaxSamplesPerFrame*kMaxByteDepth*kMaxChannels> iDecodedBuf;
+    Bws<kMaxSamplesPerFrame*kMaxByteDepth*kMaxChannels+kALACMaxEscapeHeaderBytes> iInBuf;
+    Bws<kMaxSamplesPerFrame*kMaxByteDepth*kMaxChannels+kALACMaxEscapeHeaderBytes> iDecodedBuf;
     TUint iFrameLength;
     TUint iChannels;
     TUint iBitDepth;

@@ -66,6 +66,15 @@ void CodecAlacAppleBase::Decode()
 {
     //LOG(kCodec, "CodecAlacAppleBase::Process\n");
 
+    if (iChannels > kMaxChannels) {
+        // Buffer capacity is only allocated for kMaxChannels.
+        THROW(CodecStreamCorrupt);
+    }
+    if (iFrameLength > kMaxSamplesPerFrame) {
+        // Buffer capacity is only allocated for kMaxSamplesPerFrame.
+        THROW(CodecStreamCorrupt);
+    }
+
     // Decode samples.
     TUint outSamples = 0;
     BitBuffer bitBuffer;
