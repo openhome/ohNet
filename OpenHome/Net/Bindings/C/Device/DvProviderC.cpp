@@ -5,6 +5,7 @@
 #include <OpenHome/Net/Core/DvDevice.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
 #include <OpenHome/Private/Printer.h>
+#include <OpenHome/Os.h>
 
 #include <string.h>
 
@@ -34,39 +35,88 @@ static DvProviderWrapper* ProviderFromHandle(DvProviderC aProvider)
 
 DvProviderC STDCALL DvProviderCreate(DvDeviceC aDevice, const char* aDomain, const char* aType, uint32_t aVersion)
 {
-    DvDevice* d = DviDeviceC::DeviceFromHandle(aDevice);
-    DviDevice& device = d->Device();
-    return (DvProviderC)new DvProviderWrapper(device, aDomain, aType, aVersion);
+    try {
+        DvDevice* d = DviDeviceC::DeviceFromHandle(aDevice);
+        DviDevice& device = d->Device();
+        return (DvProviderC)new DvProviderWrapper(device, aDomain, aType, aVersion);
+    }
+    catch (Exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
+    catch (std::exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
+    return kHandleNull;
 }
 
 void STDCALL DvProviderDestroy(DvProviderC aProvider)
 {
-    delete reinterpret_cast<DvProviderWrapper*>(aProvider);
+    try {
+        delete reinterpret_cast<DvProviderWrapper*>(aProvider);
+    }
+    catch (Exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
+    catch (std::exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
 }
 
 void STDCALL DvProviderAddAction(DvProviderC aProvider, ServiceAction aAction, OhNetCallbackDvInvocation aCallback, void* aPtr)
 {
-    OhNetFunctorDviInvocation cb = reinterpret_cast<OhNetFunctorDviInvocation>(aCallback);
-    FunctorDviInvocation functor = MakeFunctorDviInvocation(aPtr, cb);
-    OpenHome::Net::Action* action = reinterpret_cast<OpenHome::Net::Action*>(aAction);
-    ProviderFromHandle(aProvider)->AddAction(action, functor);
+    try {
+        OhNetFunctorDviInvocation cb = reinterpret_cast<OhNetFunctorDviInvocation>(aCallback);
+        FunctorDviInvocation functor = MakeFunctorDviInvocation(aPtr, cb);
+        OpenHome::Net::Action* action = reinterpret_cast<OpenHome::Net::Action*>(aAction);
+        ProviderFromHandle(aProvider)->AddAction(action, functor);
+    }
+    catch (Exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
+    catch (std::exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
 }
 
 void STDCALL DvProviderPropertiesLock(DvProviderC aProvider)
 {
-    ProviderFromHandle(aProvider)->PropertiesLock();
+    try {
+        ProviderFromHandle(aProvider)->PropertiesLock();
+    }
+    catch (Exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
+    catch (std::exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
 }
 
 void STDCALL DvProviderPropertiesUnlock(DvProviderC aProvider)
 {
-    ProviderFromHandle(aProvider)->PropertiesUnlock();
+    try {
+        ProviderFromHandle(aProvider)->PropertiesUnlock();
+    }
+    catch (Exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
+    catch (std::exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
 }
 
 void STDCALL DvProviderAddProperty(DvProviderC aProvider, ServiceProperty aProperty)
 {
-    OpenHome::Net::Property* prop = reinterpret_cast<OpenHome::Net::Property*>(aProperty);
-    ASSERT(prop != NULL);
-    ProviderFromHandle(aProvider)->AddProperty(prop);
+    try {
+        OpenHome::Net::Property* prop = reinterpret_cast<OpenHome::Net::Property*>(aProperty);
+        ASSERT(prop != NULL);
+        ProviderFromHandle(aProvider)->AddProperty(prop);
+    }
+    catch (Exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
+    catch (std::exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
 }
 
 int32_t STDCALL DvProviderSetPropertyInt(DvProviderC aProvider, ServiceProperty aProperty, int32_t aValue, uint32_t* aChanged)
@@ -79,6 +129,12 @@ int32_t STDCALL DvProviderSetPropertyInt(DvProviderC aProvider, ServiceProperty 
     }
     catch (ParameterValidationError&) {
         return -1;
+    }
+    catch (Exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
+    catch (std::exception& ex) {
+        UnhandledExceptionHandler(ex);
     }
     return 0;
 }
@@ -93,6 +149,12 @@ int32_t STDCALL DvProviderSetPropertyUint(DvProviderC aProvider, ServiceProperty
     }
     catch (ParameterValidationError&) {
         return -1;
+    }
+    catch (Exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
+    catch (std::exception& ex) {
+        UnhandledExceptionHandler(ex);
     }
     return 0;
 }
@@ -109,6 +171,12 @@ int32_t STDCALL DvProviderSetPropertyBool(DvProviderC aProvider, ServiceProperty
     catch (ParameterValidationError&) {
         return -1;
     }
+    catch (Exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
+    catch (std::exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
     return 0;
 }
 
@@ -124,6 +192,12 @@ int32_t STDCALL DvProviderSetPropertyString(DvProviderC aProvider, ServiceProper
     catch (ParameterValidationError&) {
         return -1;
     }
+    catch (Exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
+    catch (std::exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
     return 0;
 }
 
@@ -133,12 +207,10 @@ int32_t STDCALL DvProviderSetPropertyBinary(DvProviderC aProvider, ServiceProper
         PropertyBinary* prop = reinterpret_cast<PropertyBinary*>(aProperty);
         ASSERT(prop != NULL);
         TBool changed;
-        if (aLen == 0)
-        {
+        if (aLen == 0) {
             changed = ProviderFromHandle(aProvider)->SetPropertyBinary(*prop, Brx::Empty());
         }
-        else
-        {
+        else {
             Brn data(aData, aLen);
             changed = ProviderFromHandle(aProvider)->SetPropertyBinary(*prop, data);
         }
@@ -146,6 +218,12 @@ int32_t STDCALL DvProviderSetPropertyBinary(DvProviderC aProvider, ServiceProper
     }
     catch (ParameterValidationError&) {
         return -1;
+    }
+    catch (Exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
+    catch (std::exception& ex) {
+        UnhandledExceptionHandler(ex);
     }
     return 0;
 }
@@ -161,34 +239,66 @@ static IDviInvocation* InvocationFromHandle(DvInvocationC aInvocation)
 
 void STDCALL DvInvocationGetVersion(DvInvocationC aInvocation, uint32_t* aVersion)
 {
-    IDviInvocation* invocation = InvocationFromHandle(aInvocation);
-    *aVersion = invocation->Version();
+    try {
+        IDviInvocation* invocation = InvocationFromHandle(aInvocation);
+        *aVersion = invocation->Version();
+    }
+    catch (Exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
+    catch (std::exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
 }
 
 void STDCALL DvInvocationGetAdapter(DvInvocationC aInvocation, TIpAddress* aAdapter)
 {
-    IDviInvocation* invocation = InvocationFromHandle(aInvocation);
-    *aAdapter = invocation->Adapter();
+    try {
+        IDviInvocation* invocation = InvocationFromHandle(aInvocation);
+        *aAdapter = invocation->Adapter();
+    }
+    catch (Exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
+    catch (std::exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
 }
 
 void STDCALL DvInvocationGetResourceUriPrefix(DvInvocationC aInvocation, const char** aPrefix, uint32_t* aLen)
 {
-    IDviInvocation* invocation = InvocationFromHandle(aInvocation);
-    *aPrefix = invocation->ResourceUriPrefix();
-    if (*aPrefix == NULL) {
-        *aLen = 0;
+    try {
+        IDviInvocation* invocation = InvocationFromHandle(aInvocation);
+        *aPrefix = invocation->ResourceUriPrefix();
+        if (*aPrefix == NULL) {
+            *aLen = 0;
+        }
+        else {
+            *aLen = (uint32_t)strlen(*aPrefix);
+        }
     }
-    else {
-        *aLen = (uint32_t)strlen(*aPrefix);
+    catch (Exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
+    catch (std::exception& ex) {
+        UnhandledExceptionHandler(ex);
     }
 }
 
 void STDCALL DvInvocationGetClientEndpoint(DvInvocationC aInvocation, TIpAddress* aAddress, uint32_t* aPort)
 {
-    IDviInvocation* invocation = InvocationFromHandle(aInvocation);
-    Endpoint ep = invocation->ClientEndpoint();
-    *aAddress = ep.Address();
-    *aPort = ep.Port();
+    try {
+        IDviInvocation* invocation = InvocationFromHandle(aInvocation);
+        Endpoint ep = invocation->ClientEndpoint();
+        *aAddress = ep.Address();
+        *aPort = ep.Port();
+    }
+    catch (Exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
+    catch (std::exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
 }
 
 int32_t STDCALL DvInvocationReadStart(DvInvocationC aInvocation)
@@ -199,6 +309,12 @@ int32_t STDCALL DvInvocationReadStart(DvInvocationC aInvocation)
     }
     catch (InvocationError&) {
         return -1;
+    }
+    catch (Exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
+    catch (std::exception& ex) {
+        UnhandledExceptionHandler(ex);
     }
     return 0;
 }
@@ -212,6 +328,12 @@ int32_t STDCALL DvInvocationReadInt(DvInvocationC aInvocation, const char* aName
     catch (InvocationError&) {
         return -1;
     }
+    catch (Exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
+    catch (std::exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
     return 0;
 }
 
@@ -223,6 +345,12 @@ int32_t STDCALL DvInvocationReadUint(DvInvocationC aInvocation, const char* aNam
     }
     catch (InvocationError&) {
         return -1;
+    }
+    catch (Exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
+    catch (std::exception& ex) {
+        UnhandledExceptionHandler(ex);
     }
     return 0;
 }
@@ -237,6 +365,12 @@ int32_t STDCALL DvInvocationReadBool(DvInvocationC aInvocation, const char* aNam
     catch (InvocationError&) {
         return -1;
     }
+    catch (Exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
+    catch (std::exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
     return 0;
 }
 
@@ -250,6 +384,12 @@ int32_t STDCALL DvInvocationReadString(DvInvocationC aInvocation, const char* aN
     }
     catch (InvocationError&) {
         return -1;
+    }
+    catch (Exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
+    catch (std::exception& ex) {
+        UnhandledExceptionHandler(ex);
     }
     return 0;
 }
@@ -272,6 +412,12 @@ int32_t STDCALL DvInvocationReadStringAsBuffer(DvInvocationC aInvocation, const 
     catch (InvocationError&) {
         return -1;
     }
+    catch (Exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
+    catch (std::exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
     return 0;
 }
 
@@ -287,6 +433,12 @@ int32_t STDCALL DvInvocationReadBinary(DvInvocationC aInvocation, const char* aN
     catch (InvocationError&) {
         return -1;
     }
+    catch (Exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
+    catch (std::exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
     return 0;
 }
 
@@ -298,6 +450,12 @@ int32_t STDCALL DvInvocationReadEnd(DvInvocationC aInvocation)
     }
     catch (InvocationError&) {
         return -1;
+    }
+    catch (Exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
+    catch (std::exception& ex) {
+        UnhandledExceptionHandler(ex);
     }
     return 0;
 }
@@ -313,6 +471,12 @@ int32_t STDCALL DvInvocationReportError(DvInvocationC aInvocation, uint32_t aCod
         return -1;
     }
     catch (InvocationError&) {}
+    catch (Exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
+    catch (std::exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
     return 0;
 }
 
@@ -324,6 +488,12 @@ int32_t STDCALL DvInvocationWriteStart(DvInvocationC aInvocation)
     }
     catch (WriterError&) {
         return -1;
+    }
+    catch (Exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
+    catch (std::exception& ex) {
+        UnhandledExceptionHandler(ex);
     }
     return 0;
 }
@@ -337,6 +507,12 @@ int32_t STDCALL DvInvocationWriteInt(DvInvocationC aInvocation, const char* aNam
     catch (WriterError&) {
         return -1;
     }
+    catch (Exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
+    catch (std::exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
     return 0;
 }
 
@@ -348,6 +524,12 @@ int32_t STDCALL DvInvocationWriteUint(DvInvocationC aInvocation, const char* aNa
     }
     catch (WriterError&) {
         return -1;
+    }
+    catch (Exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
+    catch (std::exception& ex) {
+        UnhandledExceptionHandler(ex);
     }
     return 0;
 }
@@ -362,6 +544,12 @@ int32_t STDCALL DvInvocationWriteBool(DvInvocationC aInvocation, const char* aNa
     catch (WriterError&) {
         return -1;
     }
+    catch (Exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
+    catch (std::exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
     return 0;
 }
 
@@ -373,6 +561,12 @@ int32_t STDCALL DvInvocationWriteStringStart(DvInvocationC aInvocation, const ch
     }
     catch (WriterError&) {
         return -1;
+    }
+    catch (Exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
+    catch (std::exception& ex) {
+        UnhandledExceptionHandler(ex);
     }
     return 0;
 }
@@ -390,6 +584,12 @@ int32_t STDCALL DvInvocationWriteString(DvInvocationC aInvocation, const char* a
     catch (ParameterValidationError&) {
         return -1;
     }
+    catch (Exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
+    catch (std::exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
     return 0;
 }
 
@@ -406,6 +606,12 @@ int32_t STDCALL DvInvocationWriteStringAsBuffer(DvInvocationC aInvocation, const
     catch (ParameterValidationError&) {
         return -1;
     }
+    catch (Exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
+    catch (std::exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
     return 0;
 }
 
@@ -418,6 +624,12 @@ int32_t STDCALL DvInvocationWriteStringEnd(DvInvocationC aInvocation, const char
     catch (WriterError&) {
         return -1;
     }
+    catch (Exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
+    catch (std::exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
     return 0;
 }
 
@@ -429,6 +641,12 @@ int32_t STDCALL DvInvocationWriteBinaryStart(DvInvocationC aInvocation, const ch
     }
     catch (WriterError&) {
         return -1;
+    }
+    catch (Exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
+    catch (std::exception& ex) {
+        UnhandledExceptionHandler(ex);
     }
     return 0;
 }
@@ -443,6 +661,12 @@ int32_t STDCALL DvInvocationWriteBinary(DvInvocationC aInvocation, const uint8_t
     catch (WriterError&) {
         return -1;
     }
+    catch (Exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
+    catch (std::exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
     return 0;
 }
 
@@ -455,6 +679,12 @@ int32_t STDCALL DvInvocationWriteBinaryEnd(DvInvocationC aInvocation, const char
     catch (WriterError&) {
         return -1;
     }
+    catch (Exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
+    catch (std::exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
     return 0;
 }
 
@@ -466,6 +696,12 @@ int32_t STDCALL DvInvocationWriteEnd(DvInvocationC aInvocation)
     }
     catch (WriterError&) {
         return -1;
+    }
+    catch (Exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
+    catch (std::exception& ex) {
+        UnhandledExceptionHandler(ex);
     }
     return 0;
 }
