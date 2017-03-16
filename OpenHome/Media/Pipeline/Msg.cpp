@@ -110,7 +110,7 @@ Allocated* AllocatorBase::DoAllocate()
 {
     iLock.Wait();
     Allocated* cell = Read();
-    ASSERT_DEBUG(cell->iRefCount == 0);
+    ASSERT_VA(cell->iRefCount == 0, "%s has count %u\n", iName, cell->iRefCount.load());
     cell->iRefCount = 1;
     iCellsUsed++;
     if (iCellsUsed > iCellsUsedMax) {
@@ -163,7 +163,7 @@ void Allocated::AddRef()
 
 void Allocated::RemoveRef()
 {
-    ASSERT(iRefCount != 0);
+    ASSERT_VA(iRefCount != 0, "Allocated::RemoveRef() for %s - already freed\n", iAllocator.Name());
     TBool free = (--iRefCount == 0);
     if (free) {
         Clear();

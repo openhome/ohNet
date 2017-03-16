@@ -136,7 +136,6 @@ private:
     TBool iUserEnabled; // user config allows songcast sending
     TBool iUserEnabledInitialised;
     TBool iStreamForbidden; // current stream does not allow broadcast to other players
-    Mutex iEnabledLock; // for iConfigEnabled + iStreamForbidden
     TUint iFirstChannelIndex;
 };
 

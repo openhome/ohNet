@@ -1803,6 +1803,7 @@ Msg* Mpeg4BoxMdat::Process()
                 iState = eRetrieveMetadata;
             }
             else {
+                iMetadataProvider.ResetProvider();
                 iState = eTransmitMetadata;
             }
         }
@@ -1818,14 +1819,16 @@ Msg* Mpeg4BoxMdat::Process()
                 return nullptr;
             }
 
+            iMetadataProvider.ResetProvider();
             iState = eTransmitMetadata;
         }
         else if (iState == eTransmitMetadata) {
             MsgAudioEncoded* msg = iMetadataProvider.GetMetadata();
-
-            iChunk = 0;
-            iChunkBytesRemaining = ChunkBytes();
-            iState = eChunkReadSetup;
+            if (iMetadataProvider.Complete()) {
+                iChunk = 0;
+                iChunkBytesRemaining = ChunkBytes();
+                iState = eChunkReadSetup;
+            }
             return msg;
         }
         else if (iState == eChunkReadSetup) {
@@ -2001,6 +2004,7 @@ TUint Mpeg4BoxMdat::BytesToRead() const
 
 SampleSizeTable::SampleSizeTable()
 {
+    WriteInit();
 }
 
 SampleSizeTable::~SampleSizeTable()
@@ -2041,11 +2045,42 @@ TUint32 SampleSizeTable::Count() const
     return iTable.size();
 }
 
+void SampleSizeTable::WriteInit()
+{
+    iWriteIndex = 0;
+}
+
+void SampleSizeTable::Write(IWriter& aWriter, TUint aMaxBytes)
+{
+    TUint bytesLeftToWrite = aMaxBytes;
+    WriterBinary writerBin(aWriter);
+
+    if (iWriteIndex == 0) {
+        if (bytesLeftToWrite < sizeof(TUint32)) {
+           return;
+       }
+       writerBin.WriteUint32Be(Count());
+       bytesLeftToWrite -= sizeof(TUint32);
+    }
+
+    while ((iWriteIndex < Count()) && (bytesLeftToWrite >= sizeof(TUint32))) {
+       writerBin.WriteUint32Be(SampleSize(iWriteIndex));
+       bytesLeftToWrite -= sizeof(TUint32);
+       iWriteIndex++;
+    }
+}
+
+TBool SampleSizeTable::WriteComplete() const
+{
+    return (iWriteIndex == Count());
+}
+
 // SeekTable
 // Table of samples->chunk->offset required for seeking
 
 SeekTable::SeekTable()
 {
+    WriteInit();
 }
 
 SeekTable::~SeekTable()
@@ -2198,30 +2233,81 @@ TUint64 SeekTable::GetOffset(TUint aChunkIndex) const
     return iOffsets[aChunkIndex];
 }
 
-void SeekTable::Write(IWriter& aWriter) const
+void SeekTable::WriteInit()
 {
+    iSpcWriteIndex = 0;
+    iAspsWriteIndex = 0;
+    iOffsetsWriteIndex = 0;
+}
+
+void SeekTable::Write(IWriter& aWriter, TUint aMaxBytes)
+{
+    TUint bytesLeftToWrite = aMaxBytes;
     WriterBinary writerBin(aWriter);
 
     const TUint samplesPerChunkCount = iSamplesPerChunk.size();
-    writerBin.WriteUint32Be(samplesPerChunkCount);
-    for (TUint i = 0; i < samplesPerChunkCount; i++) {
-        writerBin.WriteUint32Be(iSamplesPerChunk[i].iFirstChunk);
-        writerBin.WriteUint32Be(iSamplesPerChunk[i].iSamples);
-        writerBin.WriteUint32Be(iSamplesPerChunk[i].iSampleDescriptionIndex);
+    if (iSpcWriteIndex == 0) {
+        if (bytesLeftToWrite < sizeof(TUint32)) {
+            return;
+        }
+        writerBin.WriteUint32Be(samplesPerChunkCount);
+        bytesLeftToWrite -= sizeof(TUint32);
+    }
+
+    while (iSpcWriteIndex < samplesPerChunkCount) {
+        if (bytesLeftToWrite < 3*sizeof(TUint32)) {
+            return;
+        }
+        writerBin.WriteUint32Be(iSamplesPerChunk[iSpcWriteIndex].iFirstChunk);
+        writerBin.WriteUint32Be(iSamplesPerChunk[iSpcWriteIndex].iSamples);
+        writerBin.WriteUint32Be(iSamplesPerChunk[iSpcWriteIndex].iSampleDescriptionIndex);
+        bytesLeftToWrite -= 3*sizeof(TUint32);
+        iSpcWriteIndex++;
     }
 
     const TUint audioSamplesPerSampleCount = iAudioSamplesPerSample.size();
-    writerBin.WriteUint32Be(audioSamplesPerSampleCount);
-    for (TUint i = 0; i < audioSamplesPerSampleCount; i++) {
-        writerBin.WriteUint32Be(iAudioSamplesPerSample[i].iSampleCount);
-        writerBin.WriteUint32Be(iAudioSamplesPerSample[i].iAudioSamples);
+    if (iAspsWriteIndex == 0) {
+        if (bytesLeftToWrite < sizeof(TUint32)) {
+            return;
+        }
+        writerBin.WriteUint32Be(audioSamplesPerSampleCount);
+        bytesLeftToWrite -= sizeof(TUint32);
+    }
+
+    while (iAspsWriteIndex < audioSamplesPerSampleCount) {
+        if (bytesLeftToWrite < 2*sizeof(TUint32)) {
+            return;
+        }
+        writerBin.WriteUint32Be(iAudioSamplesPerSample[iAspsWriteIndex].iSampleCount);
+        writerBin.WriteUint32Be(iAudioSamplesPerSample[iAspsWriteIndex].iAudioSamples);
+        bytesLeftToWrite -= 2*sizeof(TUint32);
+        iAspsWriteIndex++;
     }
 
     const TUint chunkCount = iOffsets.size();
-    writerBin.WriteUint32Be(chunkCount);
-    for (TUint i = 0; i < chunkCount; i++) {
-        writerBin.WriteUint64Be(iOffsets[i]);
+    if (iOffsetsWriteIndex == 0) {
+        if (bytesLeftToWrite < sizeof(TUint32)) {
+            return;
+        }
+        writerBin.WriteUint32Be(chunkCount);
+        bytesLeftToWrite -= sizeof(TUint32);
     }
+
+    while (iOffsetsWriteIndex < chunkCount) {
+        if (bytesLeftToWrite < sizeof(TUint64)) {
+            return;
+        }
+        writerBin.WriteUint64Be(iOffsets[iOffsetsWriteIndex]);
+        bytesLeftToWrite -= sizeof(TUint64);
+        iOffsetsWriteIndex++;
+    }
+}
+
+TBool SeekTable::WriteComplete() const
+{
+    return (iSpcWriteIndex == iSamplesPerChunk.size()) &&
+           (iAspsWriteIndex == iAudioSamplesPerSample.size()) &&
+           (iOffsetsWriteIndex == iOffsets.size());
 }
 
 TUint64 SeekTable::CodecSample(TUint64 aAudioSample) const
@@ -2463,7 +2549,7 @@ MsgAudioEncoded* MsgAudioEncodedWriter::Msg()
 
 void MsgAudioEncodedWriter::Write(TByte aValue)
 {
-    const TUint bufCapacity = iBuf.MaxBytes() - iBuf.Bytes();
+    const TUint bufCapacity = iBuf.BytesRemaining();
     if (bufCapacity >= sizeof(TByte)) {
         iBuf.Append(aValue);
     }
@@ -2479,7 +2565,7 @@ void MsgAudioEncodedWriter::Write(const Brx& aBuffer)
     TUint offset = 0;
 
     while (remaining > 0) {
-        const TUint bufCapacity = iBuf.MaxBytes() - iBuf.Bytes();
+        const TUint bufCapacity = iBuf.BytesRemaining();
 
         // Do a partial append of aBuffer if space in iBuf.
         if (bufCapacity > 0) {
@@ -2812,68 +2898,84 @@ Msg* Mpeg4Container::Pull()
     }
 }
 
+void Mpeg4Container::ResetProvider()
+{
+    iMdataState = eMdataNone;
+}
+
 MsgAudioEncoded* Mpeg4Container::GetMetadata()
 {
-    // FIXME - should be able to pass codec info msg on directly without copying into buffer here.
-    // However, need to know size of it for codecs to unpack it into a buffer, and it's generally small (< 50 bytes) and a one-off per stream so it isn't a huge performance hit.
-    MsgAudioEncoded* codecInfo = iCodecInfo.CodecInfo();
-    Bws<IMpeg4InfoWritable::kMaxStreamDescriptorBytes> codecInfoBuf;
-    ASSERT(codecInfoBuf.MaxBytes() >= codecInfo->Bytes());
-    codecInfo->CopyTo(const_cast<TByte*>(codecInfoBuf.Ptr()));
-    codecInfoBuf.SetBytes(codecInfo->Bytes());
-    codecInfo->RemoveRef();
+    MsgAudioEncoded* msg = nullptr;
 
-    Mpeg4Info info(iStreamInfo.Codec(), iStreamInfo.SampleRate(),
-            iDurationInfo.Timescale(), iStreamInfo.Channels(),
-            iStreamInfo.BitDepth(), iDurationInfo.Duration(), codecInfoBuf);
+    switch (iMdataState) {
+    case eMdataNone:
+        {
+            // FIXME - should be able to pass codec info msg on directly without copying into buffer here.
+            // However, need to know size of it for codecs to unpack it into a buffer, and it's generally small (< 50 bytes) and a one-off per stream so it isn't a huge performance hit.
+            MsgAudioEncoded* codecInfo = iCodecInfo.CodecInfo();
+            Bws<IMpeg4InfoWritable::kMaxStreamDescriptorBytes> codecInfoBuf;
+            ASSERT(codecInfoBuf.MaxBytes() >= codecInfo->Bytes());
+            codecInfo->CopyTo(const_cast<TByte*>(codecInfoBuf.Ptr()));
+            codecInfoBuf.SetBytes(codecInfo->Bytes());
+            codecInfo->RemoveRef();
 
-    Mpeg4InfoWriter writer(info);
-    Bws<Mpeg4InfoWriter::kMaxBytes> infoBuf;
-    WriterBuffer writerBuf(infoBuf);
-    writer.Write(writerBuf);
+            Mpeg4Info info(iStreamInfo.Codec(), iStreamInfo.SampleRate(),
+                    iDurationInfo.Timescale(), iStreamInfo.Channels(),
+                    iStreamInfo.BitDepth(), iDurationInfo.Duration(), codecInfoBuf);
 
-    // Need to create MsgAudioEncoded w/ data for codec.
-    MsgAudioEncoded* msg = iMsgFactory->CreateMsgAudioEncoded(infoBuf);
+            Mpeg4InfoWriter writer(info);
+            Bws<Mpeg4InfoWriter::kMaxBytes> infoBuf;
+            WriterBuffer writerBuf(infoBuf);
+            writer.Write(writerBuf);
 
-    // Write sample size table so decoder knows how many bytes to read for each sample (MPEG4 term)/frame (AAC term).
-    MsgAudioEncoded* msgSampleSizeTable = WriteSampleSizeTable();
-    msg->Add(msgSampleSizeTable);
+            // Need to create MsgAudioEncoded w/ data for codec.
+            msg = iMsgFactory->CreateMsgAudioEncoded(infoBuf);
 
-    // Write seek table so that codec can determine correct byte position that it should request to seek to.
-    MsgAudioEncoded* msgSeekTable = WriteSeekTable();
-    msg->Add(msgSeekTable);
+            iSampleSizeTable.WriteInit();
+            iMdataState = eMdataSizeTab;
+        }
+        break;
+
+    case eMdataSizeTab:
+        {
+            MsgAudioEncodedWriter writerMsg(*iMsgFactory);
+            iSampleSizeTable.Write(writerMsg, EncodedAudio::kMaxBytes);
+            writerMsg.WriteFlush();
+            msg = writerMsg.Msg();
+            if (iSampleSizeTable.WriteComplete()) {
+                iSeekTable.WriteInit();
+                iMdataState = eMdataSeekTab;
+            }
+        }
+        break;
+
+    case eMdataSeekTab:
+        {
+            MsgAudioEncodedWriter writerMsg(*iMsgFactory);
+            iSeekTable.Write(writerMsg, EncodedAudio::kMaxBytes);
+            writerMsg.WriteFlush();
+            msg = writerMsg.Msg();
+            if (iSeekTable.WriteComplete()) {
+                iMdataState = eMdataComplete;
+            }
+        }
+        break;
+
+    case eMdataComplete:
+        // Should not be called again after complete, without resetting first
+        ASSERTS();
+    }
 
     return msg;
+}
+
+TBool Mpeg4Container::Complete()
+{
+    return (iMdataState == eMdataComplete);
 }
 
 void Mpeg4Container::RegisterChunkSeekObserver(
         IMpeg4ChunkSeekObserver& aChunkSeekObserver)
 {
     iSeekObserver = &aChunkSeekObserver;
-}
-
-MsgAudioEncoded* Mpeg4Container::WriteSampleSizeTable() const
-{
-    MsgAudioEncodedWriter writerMsg(*iMsgFactory);
-    WriterBinary writerBin(writerMsg);
-
-    const TUint count = iSampleSizeTable.Count();
-    writerBin.WriteUint32Be(count);
-    for (TUint i = 0; i < count; i++) {
-        writerBin.WriteUint32Be(iSampleSizeTable.SampleSize(i));
-    }
-    writerMsg.WriteFlush();
-
-    MsgAudioEncoded* msg = writerMsg.Msg();
-    return msg;
-}
-
-MsgAudioEncoded* Mpeg4Container::WriteSeekTable() const
-{
-    MsgAudioEncodedWriter writerMsg(*iMsgFactory);
-    iSeekTable.Write(writerMsg);
-    writerMsg.WriteFlush();
-
-    MsgAudioEncoded* msg = writerMsg.Msg();
-    return msg;
 }

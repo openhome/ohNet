@@ -33,6 +33,7 @@ public:
     TUint CellsUsed() const;
     TUint CellsUsedMax() const;
     void GetStats(TUint& aCellsTotal, TUint& aCellBytes, TUint& aCellsUsed, TUint& aCellsUsedMax) const;
+    inline const TChar* Name() const;
     static const Brn kQueryMemory;
 protected:
     AllocatorBase(const TChar* aName, TUint aNumCells, TUint aCellBytes, IInfoAggregator& aInfoAggregator);

@@ -1,3 +1,11 @@
+// AllocatorBase
+
+inline const TChar* AllocatorBase::Name() const
+{
+    return iName;
+}
+
+
 // Jiffies
 
 inline TUint Jiffies::ToMs(TUint aJiffies)

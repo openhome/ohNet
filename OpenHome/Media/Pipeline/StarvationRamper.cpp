@@ -446,6 +446,7 @@ void StarvationRamper::PullerThread()
 
 void StarvationRamper::StartFlywheelRamp()
 {
+    LOG(kPipeline, "StarvationRamper::StartFlywheelRamp()\n");
 //    const TUint startTime = Time::Now(*gEnv);
     if (iRecentAudioJiffies > kTrainingJiffies) {
         TInt excess = iRecentAudioJiffies - kTrainingJiffies;
@@ -482,7 +483,6 @@ void StarvationRamper::StartFlywheelRamp()
     /*if (rampStart == Ramp::kMax) {
         rampStart = iLastPulledAudioRampValue;
     }*/
-    LOG(kPipeline, "StarvationRamper::StartFlywheelRamp rampStart=%08x\n", rampStart);
     iRampGenerator->Start(recentSamples, iSampleRate, iNumChannels, rampStart);
 //    const TUint flywheelEnd = Time::Now(*gEnv);
     iState = State::RampingDown;
