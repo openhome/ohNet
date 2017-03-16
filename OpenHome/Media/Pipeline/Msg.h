@@ -33,6 +33,7 @@ public:
     TUint CellsUsed() const;
     TUint CellsUsedMax() const;
     void GetStats(TUint& aCellsTotal, TUint& aCellBytes, TUint& aCellsUsed, TUint& aCellsUsedMax) const;
+    inline const TChar* Name() const;
     static const Brn kQueryMemory;
 protected:
     AllocatorBase(const TChar* aName, TUint aNumCells, TUint aCellBytes, IInfoAggregator& aInfoAggregator);
@@ -1131,13 +1132,13 @@ private:
     };
 private:
     MsgQueue iQueue;
-    std::atomic<TUint> iEncodedBytes;
+    mutable Mutex iLockEncoded; // see #5098
+    TUint iEncodedBytes;
     std::atomic<TUint> iJiffies;
     std::atomic<TUint> iTrackCount;
     std::atomic<TUint> iEncodedStreamCount;
     std::atomic<TUint> iDecodedStreamCount;
-    TByte iPadding[512]; // see #5098
-    std::atomic<TUint> iEncodedAudioCount;
+    TUint iEncodedAudioCount;
     std::atomic<TUint> iDecodedAudioCount;
 };
 

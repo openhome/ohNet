@@ -269,7 +269,7 @@ private:
 class IVolumeSurroundBoost
 {
 public:
-    virtual void SetVolumeBoost(TUint aBoost) = 0;
+    virtual void SetVolumeBoost(TInt aBoost) = 0;
     virtual ~IVolumeSurroundBoost() {}
 };
 
@@ -280,14 +280,14 @@ public:
 public:  // from IVolume
     void SetVolume(TUint aValue) override;
 public: // from IVolumeSurroundBoost
-    void SetVolumeBoost(TUint aBoost) override;
+    void SetVolumeBoost(TInt aBoost) override;
 private:
-    void DoSetVolume(TUint aValue);
+    void DoSetVolume();
 private:
     Mutex iLock;
     IVolume& iVolume;
     TUint iUpstreamVolume;
-    TUint iBoost;
+    TInt iBoost;
 };
 
 class VolumeUnityGainBase : public IVolume, private INonCopyable
@@ -413,6 +413,32 @@ private:
     TUint iCurrentVolume;
     TUint iJiffiesUntilStep;
     Status iStatus;
+    TBool iMuted;
+};
+
+class IVolumeMuter
+{
+public:
+    virtual void SetVolumeMuted(TBool aMuted) = 0;
+    virtual ~IVolumeMuter() {}
+};
+
+class VolumeMuter : public IVolume
+                  , public IVolumeMuter
+                  , private INonCopyable
+{
+public:
+    VolumeMuter(IVolume& aVolume);
+private: // from IVolume
+    void SetVolume(TUint aValue) override;
+private: // from IVolumeMuter
+    void SetVolumeMuted(TBool aMuted) override;
+private:
+    void DoSetVolume();
+private:
+    IVolume& iVolume;
+    Mutex iLock;
+    TUint iUpstreamVolume;
     TBool iMuted;
 };
 
@@ -548,6 +574,7 @@ class IVolumeManager : public IVolumeReporter
                      , public IVolumeSourceUnityGain
                      , public Media::IAnalogBypassVolumeRamper
                      , public Media::IVolumeRamper
+                     , public IVolumeMuter
                      , public Media::IMute
 {
 public:
@@ -571,7 +598,7 @@ public: // from IMuteReporter
 public: // from IVolumeSourceOffset
     void SetVolumeOffset(TInt aValue) override;
 public: // from IVolumeSurroundBoost
-    void SetVolumeBoost(TUint aValue) override;
+    void SetVolumeBoost(TInt aValue) override;
 public: // from IVolumeSourceUnityGain
     void SetUnityGain(TBool aEnable) override;
     void AddUnityGainObserver(IUnityGainObserver& aObserver) override;
@@ -602,11 +629,14 @@ private: // from Media::IVolumeRamper
     Media::IVolumeRamper::Status BeginUnmute() override;
     Media::IVolumeRamper::Status StepUnmute(TUint aJiffies) override;
     void SetUnmuted() override;
+private: // from IVolumeMuter
+    void SetVolumeMuted(TBool aMuted) override;
 private: // from Media::IMute
     void Mute() override;
     void Unmute() override;
 private:
     VolumeConfig& iVolumeConfig;
+    VolumeMuter* iVolumeMuter;
     VolumeRamper* iVolumeRamper;
     AnalogBypassRamper* iAnalogBypassRamper;
     VolumeSourceUnityGain* iVolumeSourceUnityGain;

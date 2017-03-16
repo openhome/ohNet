@@ -213,6 +213,12 @@ void AnimatorBasic::PullClock(TUint aMultiplier)
     LOG(kPipeline, "AnimatorBasic::PullClock now at %u%%\n", (TUint)((iPullValue * 100) / IPullableClock::kNominalFreq));
 }
 
+TUint AnimatorBasic::MaxPull() const
+{
+    static const TUint kMaxPull = (kNominalFreq / 100) * 4; // 4% of nominal
+    return kMaxPull;
+}
+
 TUint AnimatorBasic::PipelineAnimatorBufferJiffies()
 {
     return 0;

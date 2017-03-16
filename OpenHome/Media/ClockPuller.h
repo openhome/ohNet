@@ -28,6 +28,10 @@ public:
      *                         kNominalFreq implies no pull - i.e. run at nominal frequency.
      */
     virtual void PullClock(TUint aMultiplier) = 0;
+    /**
+     * Report the maximum deviation from nominal a particular clock supports.
+     */
+    virtual TUint MaxPull() const = 0;
 };
 
 } // namespace Media

@@ -171,7 +171,9 @@ public:
 class IMpeg4MetadataProvider
 {
 public:
+    virtual void ResetProvider() = 0;
     virtual MsgAudioEncoded* GetMetadata() = 0;
+    virtual TBool Complete() = 0;
     virtual ~IMpeg4MetadataProvider() {}
 };
 
@@ -755,8 +757,12 @@ public:
     void AddSampleSize(TUint aSampleSize);
     TUint SampleSize(TUint aIndex) const;
     TUint Count() const;
+    void WriteInit();
+    void Write(IWriter& aWriter, TUint aMaxBytes);
+    TBool WriteComplete() const;
 private:
     std::vector<TUint> iTable;
+    TUint iWriteIndex;
 };
 
 // FIXME - should probably also include stss here.
@@ -783,7 +789,9 @@ public:
     TUint64 Offset(TUint64& aAudioSample, TUint64& aSample);    // FIXME - aSample should be TUint.
     // FIXME - See if it's possible to split this class into its 3 separate components, to simplify it.
     TUint64 GetOffset(TUint aChunkIndex) const;
-    void Write(IWriter& aWriter) const;   // Serialise.
+    void WriteInit();
+    void Write(IWriter& aWriter, TUint aMaxBytes);   // Serialise.
+    TBool WriteComplete() const;
 private:
     // Find the codec sample that contains the given audio sample.
     TUint64 CodecSample(TUint64 aAudioSample) const;
@@ -807,6 +815,9 @@ private:
     std::vector<TSamplesPerChunkEntry> iSamplesPerChunk;
     std::vector<TAudioSamplesPerSampleEntry> iAudioSamplesPerSample;
     std::vector<TUint64> iOffsets;
+    TUint iSpcWriteIndex;
+    TUint iAspsWriteIndex;
+    TUint iOffsetsWriteIndex;
 };
 
 class SeekTableInitialiser : public INonCopyable
@@ -894,12 +905,11 @@ public: // from ContainerBase
     TBool TrySeek(TUint aStreamId, TUint64 aOffset) override;
     Msg* Pull() override;
 private: // from IMpeg4MetadataProvider
+    void ResetProvider() override;
     MsgAudioEncoded* GetMetadata() override;
+    TBool Complete() override;
 private: // from IMpeg4ChunkSeekObservable
     void RegisterChunkSeekObserver(IMpeg4ChunkSeekObserver& aChunkSeekObserver) override;
-private:
-    MsgAudioEncoded* WriteSampleSizeTable() const;
-    MsgAudioEncoded* WriteSeekTable() const;    // FIXME - require this until CodecController/IStreamHandler can pass a seek pos in samples instead of, or as well as, in bytes.
 private:
     Mpeg4BoxProcessorFactory iProcessorFactory;
     Mpeg4BoxSwitcherRoot iBoxRoot;  // Pull directly from this. All other processors should reside inside a factory that lives within this.
@@ -916,6 +926,15 @@ private:
     TBool iRecognitionStarted;
     TBool iRecognitionSuccess;
     mutable Mutex iLock;
+private:
+    enum EMdataState
+    {
+        eMdataNone,
+        eMdataSizeTab,
+        eMdataSeekTab,
+        eMdataComplete
+    };
+    EMdataState iMdataState;
 };
 
 } // namespace Codec

@@ -51,7 +51,6 @@ Sender::Sender(Environment& aEnv,
     , iEnabled(true)
     , iUserEnabledInitialised(false)
     , iStreamForbidden(false)
-    , iEnabledLock("SSND")
     , iFirstChannelIndex(0)
 {
     const TInt defaultChannel = (TInt)aEnv.Random(kChannelMax, kChannelMin);
@@ -212,18 +211,7 @@ Msg* Sender::ProcessMsg(MsgDecodedStream* aMsg)
 
     const DecodedStreamInfo& streamInfo = aMsg->StreamInfo();
     iSampleRate = streamInfo.SampleRate();
-    {
-        AutoMutex _(iEnabledLock);
-        const TBool streamForbidden = (streamInfo.Multiroom() == Multiroom::Forbidden);
-        if (streamForbidden != iStreamForbidden) {
-            iStreamForbidden = streamForbidden;
-            const TBool enabled = iUserEnabled && !iStreamForbidden;
-            iOhmSender->SetEnabled(enabled);
-            if (iStreamForbidden) {
-                return aMsg;
-            }
-        }
-    }
+    iStreamForbidden = (streamInfo.Multiroom() == Multiroom::Forbidden);
 
     const TUint bitDepth = std::min(streamInfo.BitDepth(), (TUint)24); /* 32-bit audio is assumed to be padded
                                                                           and converted to 24-bit before transmission */
@@ -273,6 +261,10 @@ Msg* Sender::ProcessMsg(MsgQuit* aMsg)
 
 void Sender::ProcessAudio(MsgAudio* aMsg)
 {
+    if (iStreamForbidden) {
+        aMsg->RemoveRef();
+        return;
+    }
     TUint jiffies = 0;
     for (TUint i=0; i<iPendingAudio.size(); i++) {
         jiffies += iPendingAudio[i]->Jiffies();
@@ -315,13 +307,11 @@ void Sender::SendPendingAudio(TBool aHalt)
 
 void Sender::ConfigEnabledChanged(KeyValuePair<TUint>& aStringId)
 {
-    AutoMutex _(iEnabledLock);
     const TBool configEnabled = (aStringId.Value() == eStringIdYes);
     if (!iUserEnabledInitialised || configEnabled != iUserEnabled) {
         iUserEnabledInitialised = true;
         iUserEnabled = configEnabled;
-        const TBool enabled = iUserEnabled && !iStreamForbidden;
-        iOhmSender->SetEnabled(enabled);
+        iOhmSender->SetEnabled(configEnabled);
     }
 }
 
