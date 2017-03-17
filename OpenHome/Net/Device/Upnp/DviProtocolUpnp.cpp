@@ -83,7 +83,7 @@ DviProtocolUpnp::~DviProtocolUpnp()
     iSuppressScheduledEvents = true;
     iLock.Signal();
     for (TUint i=0; i<adapters.size(); i++) {
-        adapters[i]->Destroy();
+        adapters[i]->RemoveRef();
     }
     iDvStack.SsdpNotifierManager().Stop(iDevice.Udn());
 }
@@ -191,7 +191,7 @@ void DviProtocolUpnp::HandleInterfaceChange()
     }
 
     for (TUint i=0; i<pendingDelete.size(); i++) {
-        pendingDelete[i]->Destroy();
+        pendingDelete[i]->RemoveRef();
     }
 
     if (update) {
@@ -306,10 +306,16 @@ void DviProtocolUpnp::Enable()
 
         for (TUint i=0; i<iAdapters.size(); i++) {
             DviProtocolUpnpAdapterSpecificData* adapter = iAdapters[i];
+            adapter->AddRef();
             Bws<Uri::kMaxUriBytes> uriBase;
             DviDevice* root = (iDevice.IsRoot()? &iDevice : iDevice.Root());
             Log::Print("  adapter=%p, iServer=%p\n", (void*)adapter, (void*)iServer);
+            iLock.Signal();
+            /* UpdateServerPort can block if we're processing an adapter change and
+               destruction of previous servers is blocked waiting on a call to our
+               WriteResource (for device or service xml) completing */
             adapter->UpdateServerPort(*iServer);
+            iLock.Wait();
             root->GetUriBase(uriBase, adapter->Interface(), adapter->ServerPort(), *this);
             adapter->UpdateUriBase(uriBase);
             adapter->ClearDeviceXml();
@@ -331,6 +337,7 @@ void DviProtocolUpnp::Enable()
                     iDvStack.ServerUpnp().Redirect(Brn("/"), redirectedPath);
                 }*/
             }
+            adapter->RemoveRef();
         }
         for (TUint i=0; i<iAdapters.size(); i++) {
             iAdapters[i]->SendByeByeThenAlive(*this);
@@ -662,7 +669,8 @@ void DviProtocolUpnp::SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx
 // DviProtocolUpnpAdapterSpecificData
 
 DviProtocolUpnpAdapterSpecificData::DviProtocolUpnpAdapterSpecificData(DvStack& aDvStack, IUpnpMsearchHandler& aMsearchHandler, const NetworkAdapter& aAdapter, Bwx& aUriBase, TUint aServerPort)
-    : iRefCount(1)
+    : iLock("UASD")
+    , iRefCount(1)
     , iDvStack(aDvStack)
     , iMsearchHandler(&aMsearchHandler)
     , iId(0x7fffffff)
@@ -680,11 +688,22 @@ DviProtocolUpnpAdapterSpecificData::DviProtocolUpnpAdapterSpecificData(DvStack& 
     iId = iListener->AddMsearchHandler(this);
 }
 
-void DviProtocolUpnpAdapterSpecificData::Destroy()
+void DviProtocolUpnpAdapterSpecificData::AddRef()
 {
-    if (--iRefCount == 0) {
+    iLock.Wait();
+    ++iRefCount;
+    iLock.Signal();
+}
+
+TBool DviProtocolUpnpAdapterSpecificData::RemoveRef()
+{
+    iLock.Wait();
+    const TBool dead = (--iRefCount == 0);
+    iLock.Signal();
+    if (dead) {
         delete this;
     }
+    return dead;
     // if iRefCount>0 this object is now orphaned
     // ...there is a tiny risk of it being leaked if the stack is immediately shut down
 }
@@ -750,10 +769,9 @@ void DviProtocolUpnpAdapterSpecificData::ClearDeviceXml()
 
 void DviProtocolUpnpAdapterSpecificData::SetPendingDelete()
 {
-    Mutex& lock = iDvStack.Env().Mutex();
-    lock.Wait();
+    iLock.Wait();
     iMsearchHandler = 0;
-    lock.Signal();
+    iLock.Signal();
 }
 
 #ifdef DEFINE_WINDOWS_UNIVERSAL
@@ -805,17 +823,14 @@ void DviProtocolUpnpAdapterSpecificData::BonjourDeregister()
 void DviProtocolUpnpAdapterSpecificData::SendByeByeThenAlive(DviProtocolUpnp& aDevice)
 {
     iDevice = &aDevice;
-    iRefCount++;
+    AddRef();
     FunctorGeneric<TBool> functor = MakeFunctorGeneric<TBool>(*this, &DviProtocolUpnpAdapterSpecificData::ByeByesComplete);
     iDevice->SendByeByes(iAdapter, iUriBase, functor);
 }
 
 void DviProtocolUpnpAdapterSpecificData::ByeByesComplete(TBool aCancelled)
 {
-    if (--iRefCount == 0) {
-        delete this;
-    }
-    else {
+    if (!RemoveRef()) {
         if (!aCancelled) {
             iDevice->SendAlives(iAdapter, iUriBase);
         }
@@ -824,11 +839,8 @@ void DviProtocolUpnpAdapterSpecificData::ByeByesComplete(TBool aCancelled)
 
 IUpnpMsearchHandler* DviProtocolUpnpAdapterSpecificData::Handler()
 {
-    Mutex& lock = iDvStack.Env().Mutex();
-    lock.Wait();
-    IUpnpMsearchHandler* device = iMsearchHandler;
-    lock.Signal();
-    return device;
+    AutoMutex _(iLock);
+    return iMsearchHandler;
 }
 
 void DviProtocolUpnpAdapterSpecificData::SsdpSearchAll(const Endpoint& aEndpoint, TUint aMx)

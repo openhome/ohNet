@@ -122,7 +122,8 @@ class DviProtocolUpnpAdapterSpecificData : public ISsdpMsearchHandler, public IN
 //    friend class DviProtocolUpnp;
 public:
     DviProtocolUpnpAdapterSpecificData(DvStack& aDvStack, IUpnpMsearchHandler& aMsearchHandler, const NetworkAdapter& aAdapter, Bwx& aUriBase, TUint aServerPort);
-    void Destroy();
+    void AddRef();
+    TBool RemoveRef(); // returns true if deleted
     TIpAddress Interface() const;
     TIpAddress Subnet() const;
     const Brx& UriBase() const;
@@ -148,6 +149,7 @@ private: // from ISsdpMsearchHandler
     void SsdpSearchDeviceType(const Endpoint& aEndpoint, TUint aMx, const Brx& aDomain, const Brx& aType, TUint aVersion);
     void SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx, const Brx& aDomain, const Brx& aType, TUint aVersion);
 private:
+    Mutex iLock;
     TUint iRefCount;
     DvStack& iDvStack;
     IUpnpMsearchHandler* iMsearchHandler;
