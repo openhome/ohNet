@@ -41,6 +41,12 @@ public:
     virtual ProtocolStreamResult Stream(const Brx& aUri) = 0;
 };
 
+class IServerObserver
+{
+public:
+    virtual void NotifyServer(const OpenHome::Brx& aServer) = 0; // not allowed to throw
+};
+
 class ContentProcessor;
 class IProtocolManager : public IProtocolSet
 {

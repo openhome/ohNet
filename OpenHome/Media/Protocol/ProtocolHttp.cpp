@@ -28,6 +28,23 @@ private:
     TUint iBytes;
 };
 
+class HeaderServer : public HttpHeader
+{
+    static const TUint kMaxBytesHttpHeaderServer = 100;
+    static const Brn kKazooServerRecognise;
+    static const Brn kMinimServerRecognise;
+public:
+    void SetFromUri(const Brx& aUri);
+    void AddServerObserver(IServerObserver& aObserver);
+    void RemoveServerObserver(IServerObserver& aObserver);
+private: // from HttpHeader
+    TBool Recognise(const Brx& aHeader);
+    void Process(const Brx& aValue);
+private:
+    Bws<kMaxBytesHttpHeaderServer> iServer;
+    std::vector<IServerObserver*> iServerObservers;
+};
+
 class ProtocolHttp : public ProtocolNetwork, private IReader
 {
     static const TUint kIcyMetadataBytes = 255 * 16;
@@ -35,6 +52,7 @@ class ProtocolHttp : public ProtocolNetwork, private IReader
     static const TUint kMaxContentRecognitionBytes = 100;
 public:
     ProtocolHttp(Environment& aEnv, const Brx& aUserAgent);
+    ProtocolHttp(Environment& aEnv, const Brx& aUserAgent, Optional<IServerObserver> aServerObserver);
     ~ProtocolHttp();
 private: // from Protocol
     void Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream) override;
@@ -74,6 +92,7 @@ private:
     HttpHeaderLocation iHeaderLocation;
     HttpHeaderTransferEncoding iHeaderTransferEncoding;
     HeaderIcyMetadata iHeaderIcyMetadata;
+    HeaderServer iHeaderServer;
     Bws<kMaxUserAgentBytes> iUserAgent;
     Bws<kIcyMetadataBytes> iIcyMetadata;
     Bws<kIcyMetadataBytes> iNewIcyMetadata; // only used in a single function but too large to comfortably declare on the stack
@@ -96,6 +115,7 @@ private:
     ContentProcessor* iContentProcessor;
     TUint iNextFlushId;
     Semaphore iSem;
+    Optional<IServerObserver> iServerObserver;
 };
 
 };  // namespace Media
@@ -108,6 +128,11 @@ using namespace OpenHome::Media;
 Protocol* ProtocolFactory::NewHttp(Environment& aEnv, const Brx& aUserAgent)
 { // static
     return new ProtocolHttp(aEnv, aUserAgent);
+}
+
+Protocol* ProtocolFactory::NewHttp(Environment& aEnv, const Brx& aUserAgent, IServerObserver& aServerObserver)
+{ // static
+    return new ProtocolHttp(aEnv, aUserAgent, aServerObserver);
 }
 
 
@@ -142,10 +167,75 @@ void HeaderIcyMetadata::Process(const Brx& aValue)
     }
 }
 
+// HeaderServer
+
+const Brn HeaderServer::kKazooServerRecognise("kazooserver");
+const Brn HeaderServer::kMinimServerRecognise("minimserver");
+
+TBool HeaderServer::Recognise(const Brx& aHeader)
+{
+    return Ascii::CaseInsensitiveEquals(aHeader, Brn("Server"));
+}
+
+void HeaderServer::SetFromUri(const Brx& aUri)
+{
+    if (Ascii::Contains(aUri, kKazooServerRecognise)) {
+        Process(kKazooServerRecognise);
+    }
+    else if (Ascii::Contains(aUri, kMinimServerRecognise)) {
+        Process(kMinimServerRecognise);
+    }
+    else {
+        Process(Brn("other"));
+    }
+}
+
+void HeaderServer::Process(const Brx& aValue)
+{
+    try {
+        if (aValue.Bytes() > 0) {
+            if (aValue.Bytes() > kMaxBytesHttpHeaderServer) {
+                iServer.ReplaceThrow(aValue.Split(0, kMaxBytesHttpHeaderServer));
+            }
+            else {
+                iServer.ReplaceThrow(aValue);
+            }
+            // notify any observers
+            for (TUint i=0; i<iServerObservers.size(); i++) {
+                iServerObservers[i]->NotifyServer(iServer);
+            }
+        }
+        SetReceived();
+    }
+    catch (BufferOverflow&) {
+        THROW(HttpError);
+    }
+}
+
+void HeaderServer::AddServerObserver(IServerObserver& aObserver)
+{
+    iServerObservers.push_back(&aObserver);
+}
+
+void HeaderServer::RemoveServerObserver(IServerObserver& aObserver)
+{
+    for (TUint i=0; i<iServerObservers.size(); i++) {
+        if (iServerObservers[i] == &aObserver) {
+            iServerObservers.erase(iServerObservers.begin() + i);
+            break;
+        }
+    }
+}
+
 
 // ProtocolHttp
-
 ProtocolHttp::ProtocolHttp(Environment& aEnv, const Brx& aUserAgent)
+    : ProtocolHttp(aEnv, aUserAgent, nullptr)
+{
+
+}
+
+ProtocolHttp::ProtocolHttp(Environment& aEnv, const Brx& aUserAgent, Optional<IServerObserver> aServerObserver)
     : ProtocolNetwork(aEnv)
     , iSupply(nullptr)
     , iWriterRequest(iWriterBuf)
@@ -159,17 +249,25 @@ ProtocolHttp::ProtocolHttp(Environment& aEnv, const Brx& aUserAgent)
     , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
     , iSeekable(false)
     , iSem("PRTH", 0)
+    , iServerObserver(aServerObserver)
 {
     iReaderResponse.AddHeader(iHeaderContentType);
     iReaderResponse.AddHeader(iHeaderContentLength);
     iReaderResponse.AddHeader(iHeaderLocation);
     iReaderResponse.AddHeader(iHeaderTransferEncoding);
     iReaderResponse.AddHeader(iHeaderIcyMetadata);
+    iReaderResponse.AddHeader(iHeaderServer);
+    if (iServerObserver.Ok()) {
+        iHeaderServer.AddServerObserver(iServerObserver.Unwrap());
+    }
 }
 
 ProtocolHttp::~ProtocolHttp()
 {
     delete iSupply;
+    if (iServerObserver.Ok()) {
+        iHeaderServer.RemoveServerObserver(iServerObserver.Unwrap());
+    }
 }
 
 void ProtocolHttp::Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream)
@@ -439,6 +537,10 @@ ProtocolStreamResult ProtocolHttp::DoStream()
     if (iHeaderIcyMetadata.Received()) {
         iStreamIncludesMetaData = true;
         iDataChunkSize = iDataChunkRemaining = iHeaderIcyMetadata.Bytes();
+    }
+
+    if (!iHeaderServer.Received()) {
+        iHeaderServer.SetFromUri(iUri.AbsoluteUri());
     }
 
     iDechunker.SetChunked(iHeaderTransferEncoding.IsChunked());
