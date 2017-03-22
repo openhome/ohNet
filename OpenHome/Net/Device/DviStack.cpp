@@ -57,7 +57,7 @@ DvStack::~DvStack()
     delete iSubscriptionManager;
     delete iPropertyUpdateCollection;
     delete iSsdpNotifierManager;
-    ASSERT(iControlPointChangedObservers.size() == 0);
+    ASSERT(iControlPointObservers.size() == 0);
 }
 
 TUint DvStack::BootId()
@@ -87,16 +87,16 @@ void DvStack::UpdateBootId()
     lock.Signal();
 }
 
-void DvStack::AddControlPointChangedObserver(IControlPointChangedObserver& aObserver)
+void DvStack::AddControlPointObserver(IControlPointObserver& aObserver)
 {
-    iControlPointChangedObservers.push_back(&aObserver);
+    iControlPointObservers.push_back(&aObserver);
 }
 
-void DvStack::RemoveControlPointChangedObserver(IControlPointChangedObserver& aObserver)
+void DvStack::RemoveControlPointObserver(IControlPointObserver& aObserver)
 {
-    for (TUint i=0; i<iControlPointChangedObservers.size(); i++) {
-        if (iControlPointChangedObservers[i] == &aObserver) {
-            iControlPointChangedObservers.erase(iControlPointChangedObservers.begin() + i);
+    for (TUint i=0; i<iControlPointObservers.size(); i++) {
+        if (iControlPointObservers[i] == &aObserver) {
+            iControlPointObservers.erase(iControlPointObservers.begin() + i);
             break;
         }
     }
@@ -104,11 +104,9 @@ void DvStack::RemoveControlPointChangedObserver(IControlPointChangedObserver& aO
 
 void DvStack::NotifyControlPointUsed(const OpenHome::Brx& aControlPoint)
 {
-    if (iControlPoint != aControlPoint) {
-        iControlPoint.Replace(aControlPoint);
-        for (TUint i=0; i<iControlPointChangedObservers.size(); i++) {
-            iControlPointChangedObservers[i]->NotifyControlPointChanged(aControlPoint);
-        }
+    iControlPoint.Replace(aControlPoint);
+    for (TUint i=0; i<iControlPointObservers.size(); i++) {
+        iControlPointObservers[i]->NotifyControlPoint(aControlPoint);
     }
 }
 

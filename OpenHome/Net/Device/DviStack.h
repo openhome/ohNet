@@ -24,10 +24,10 @@
 namespace OpenHome {
 namespace Net {
 
-class IControlPointChangedObserver
+class IControlPointObserver
 {
 public:
-    virtual void NotifyControlPointChanged(const OpenHome::Brx& aControlPoint) = 0; // not allowed to throw
+    virtual void NotifyControlPoint(const OpenHome::Brx& aControlPoint) = 0; // not allowed to throw
 };
 
 class IDvProtocolFactory;
@@ -49,8 +49,8 @@ public:
     DviSsdpNotifierManager& SsdpNotifierManager();
     void AddProtocolFactory(IDvProtocolFactory* aProtocolFactory);
     std::vector<IDvProtocolFactory*>& ProtocolFactories();
-    void AddControlPointChangedObserver(IControlPointChangedObserver& aObserver);
-    void RemoveControlPointChangedObserver(IControlPointChangedObserver& aObserver);
+    void AddControlPointObserver(IControlPointObserver& aObserver);
+    void RemoveControlPointObserver(IControlPointObserver& aObserver);
     void NotifyControlPointUsed(const OpenHome::Brx& aControlPoint);
 private:
     ~DvStack();
@@ -66,7 +66,7 @@ private:
     DviPropertyUpdateCollection* iPropertyUpdateCollection;
     DviSsdpNotifierManager* iSsdpNotifierManager;
     std::vector<IDvProtocolFactory*> iProtocolFactories;
-    std::vector<IControlPointChangedObserver*> iControlPointChangedObservers;
+    std::vector<IControlPointObserver*> iControlPointObservers;
     Bws<kMaxControlPointBytes> iControlPoint;
 };
 
