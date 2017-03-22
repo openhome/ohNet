@@ -13,6 +13,8 @@ EXCEPTION(JsonUnsupported);
 EXCEPTION(JsonKeyNotFound);
 EXCEPTION(JsonCorrupt);
 EXCEPTION(JsonValueNull);
+EXCEPTION(JsonArrayEnumerationComplete);
+EXCEPTION(JsonWrongType);
 
 namespace OpenHome {
 
@@ -65,6 +67,40 @@ private:
     Brn Value(const Brx& aKey) const;
 private:
     std::map<Brn, Brn, BufferCmp> iPairs;
+};
+
+class JsonParserArray
+{
+public:
+    enum class ValType
+    {
+        Undefined,
+        Null,
+        Int,
+        Bool,
+        String,
+        Object,
+        Array
+    };
+public:
+    static JsonParserArray Create(const Brx& aArray);
+    ValType Type() const;
+    TInt NextInt();
+    TBool NextBool();
+    Brn NextString();
+    Brn NextStringEscaped(); // array passed to Set must be writable in this case
+    Brn NextArray();
+    Brn NextObject();
+private:
+    JsonParserArray(const Brx& aArray);
+    void StartParse();
+    Brn NextNumOrBool();
+    Brn NextCollection(TChar aStart, TChar aEnd);
+private:
+    Brn iBuf;
+    ValType iType;
+    const TByte* iPtr;
+    const TByte* iEnd;
 };
 
 class WriterJson
