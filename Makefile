@@ -208,23 +208,6 @@ ifeq ($(platform), Core-ppc32)
     ar = ${CROSS_COMPILE}ar rc $(objdir)
 endif
 
-ifeq ($(platform), Core-armv5)
-    # platform == Core2
-    openhome_system = Core
-    openhome_architecture = armv5
-    endian = LITTLE
-    platform_cflags = -mcpu=arm926ej-s -Wno-psabi -fexceptions -marm -mapcs -fno-omit-frame-pointer
-    platform_linkflags = -mcpu=arm926ej-s ${CROSS_LINKFLAGS}
-    linkopts_ohNet =
-    osdir = Core
-    osbuilddir = Core-armv5
-    objdir = Build/Obj/$(osbuilddir)/$(build_dir)/
-    native_only = yes
-    compiler = ${CROSS_COMPILE}gcc -o $(objdir)
-    link = ${CROSS_COMPILE}g++ $(platform_linkflags)
-    ar = ${CROSS_COMPILE}ar rc $(objdir)
-endif
-
 ifeq ($(platform), Core-armv6)
     # platform == Core2
     openhome_system = Core
