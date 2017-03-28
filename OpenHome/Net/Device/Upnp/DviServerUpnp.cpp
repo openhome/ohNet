@@ -414,7 +414,7 @@ void PropertyWriterUpnp::PropertyWriteEnd()
     }
     catch (NetworkTimeout&) {
         LOG2(kDvEvent, kError, "PropertyWriterUpnp - NetworkTimeout eventing to %.*s\n", PBUF(subscriberAddress));
-        THROW(WriterError);
+        throw;
     }
     catch (NetworkError&) {
         LOG2(kDvEvent, kError, "PropertyWriterUpnp - NetworkError eventing to %.*s\n", PBUF(subscriberAddress));
