@@ -724,6 +724,12 @@ void WriterJsonArray::WriteInt(TInt aValue)
     WriterJson::WriteValueInt(*iWriter, aValue);
 }
 
+void WriterJsonArray::WriteString(const TChar* aValue)
+{
+    Brn val(aValue);
+    WriteString(val);
+}
+
 void WriterJsonArray::WriteString(const Brx& aValue)
 {
     WriteStartOrSeparator();
@@ -879,6 +885,18 @@ void WriterJsonObject::WriteBool(const Brx& aKey, TBool aValue)
     CheckStarted();
     WriteKey(aKey);
     WriterJson::WriteValueBool(*iWriter, aValue);
+}
+
+void WriterJsonObject::WriteRaw(const TChar* aKey, const Brx& aValue)
+{
+    WriteRaw(Brn(aKey), aValue);
+}
+
+void WriterJsonObject::WriteRaw(const Brx& aKey, const Brx& aValue)
+{
+    CheckStarted();
+    WriteKey(aKey);
+    iWriter->Write(aValue);
 }
 
 WriterJsonArray WriterJsonObject::CreateArray(const TChar* aKey, WriterJsonArray::WriteOnEmpty aWriteOnEmpty)

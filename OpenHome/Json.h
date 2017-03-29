@@ -133,6 +133,7 @@ public:
     WriterJsonArray(IWriter& aWriter, WriteOnEmpty aWriteOnEmpty = WriteOnEmpty::eNull);
     WriterJsonArray(const WriterJsonArray& aWriter);
     void WriteInt(TInt aValue);
+    void WriteString(const TChar* aValue);
     void WriteString(const Brx& aValue);
     void WriteBool(TBool aValue);
     WriterJsonArray CreateArray(WriterJsonArray::WriteOnEmpty aWriteOnEmpty = WriterJsonArray::WriteOnEmpty::eNull);
@@ -156,6 +157,8 @@ public:
     WriterJsonObject();
     WriterJsonObject(IWriter& aWriter);
     void Set(IWriter& aWriter);
+    void WriteKey(const TChar* aKey);
+    void WriteKey(const Brx& aKey);
     void WriteInt(const TChar* aKey, TInt aValue);
     void WriteInt(const Brx& aKey, TInt aValue);
     void WriteString(const TChar* aKey, const TChar* aValue);
@@ -165,6 +168,8 @@ public:
     void WriteBool(const Brx& aKey, TBool aValue);
     void WriteBinary(const TChar* aKey, const Brx& aValue);
     void WriteBinary(const Brx& aKey, const Brx& aValue);
+    void WriteRaw(const TChar* aKey, const Brx& aValue);
+    void WriteRaw(const Brx& aKey, const Brx& aValue);
     WriterJsonArray CreateArray(const TChar* aKey, WriterJsonArray::WriteOnEmpty aWriteOnEmpty = WriterJsonArray::WriteOnEmpty::eNull);
     WriterJsonArray CreateArray(const Brx& aKey, WriterJsonArray::WriteOnEmpty aWriteOnEmpty = WriterJsonArray::WriteOnEmpty::eNull);
     WriterJsonObject CreateObject(const TChar* aKey);
@@ -174,8 +179,6 @@ public:
     void WriteEnd();
 private:
     void Set(IWriter* aWriter);
-    void WriteKey(const TChar* aKey);
-    void WriteKey(const Brx& aKey);
     void CheckStarted();
 private:
     static const Brn kObjectStart;
