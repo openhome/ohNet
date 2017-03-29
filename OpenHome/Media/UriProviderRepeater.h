@@ -21,15 +21,15 @@ private: // from UriProvider
     void BeginLater(TUint aTrackId) override;
     EStreamPlay GetNext(Track*& aTrack) override;
     TUint CurrentTrackId() const override;
-    TBool MoveNext() override;
-    TBool MovePrevious() override;
-    TBool MoveTo(const Brx& aCommand) override;
+    void MoveNext() override;
+    void MovePrevious() override;
+    void MoveTo(const Brx& aCommand) override;
 private: // from ITrackObserver
     void NotifyTrackPlay(Track& aTrack) override;
     void NotifyTrackFail(Track& aTrack) override;
 private:
     void DoBegin(TUint aTrackId, TBool aLater);
-    TBool MoveCursor();
+    void MoveCursor();
 private:
     mutable Mutex iLock;
     TrackFactory& iTrackFactory;

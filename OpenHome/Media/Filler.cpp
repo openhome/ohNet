@@ -43,7 +43,7 @@ TBool UriProvider::IsValid(TUint /*aTrackId*/) const
     return true;
 }
 
-TBool UriProvider::MoveTo(const Brx& /*aCommand*/)
+void UriProvider::MoveTo(const Brx& /*aCommand*/)
 {
     THROW(FillerInvalidCommand);
 }
@@ -144,15 +144,14 @@ void Filler::PlayLater(const Brx& aMode, TUint aTrackId)
     Signal();
 }
 
-TBool Filler::Play(const Brx& aMode, const Brx& aCommand)
+void Filler::Play(const Brx& aMode, const Brx& aCommand)
 {
     LOG(kMedia, "Filler::Play(%.*s, %.*s)\n", PBUF(aMode), PBUF(aCommand));
     AutoMutex _(iLock);
     UpdateActiveUriProvider(aMode);
-    const TBool ret = iActiveUriProvider->MoveTo(aCommand);
+    iActiveUriProvider->MoveTo(aCommand);
     iStopped = false;
     Signal();
-    return ret;
 }
 
 TUint Filler::Stop()
@@ -175,32 +174,28 @@ TUint Filler::Flush()
     return iNextFlushId;
 }
 
-TBool Filler::Next(const Brx& aMode)
+void Filler::Next(const Brx& aMode)
 {
     LOG(kMedia, "Filler::Next(%.*s)\n", PBUF(aMode));
-    TBool ret = false;
     iLock.Wait();
     if (iActiveUriProvider != nullptr && iActiveUriProvider->Mode() == aMode) {
-        ret = iActiveUriProvider->MoveNext();
+        iActiveUriProvider->MoveNext();
         iStopped = false;
         Signal();
     }
     iLock.Signal();
-    return ret;
 }
 
-TBool Filler::Prev(const Brx& aMode)
+void Filler::Prev(const Brx& aMode)
 {
     LOG(kMedia, "Filler::Prev(%.*s)\n", PBUF(aMode));
-    TBool ret = false;
     iLock.Wait();
     if (iActiveUriProvider != nullptr && iActiveUriProvider->Mode() == aMode) {
-        ret = iActiveUriProvider->MovePrevious();
+        iActiveUriProvider->MovePrevious();
         iStopped = false;
         Signal();
     }
     iLock.Signal();
-    return ret;
 }
 
 TBool Filler::IsStopped() const

@@ -12,6 +12,7 @@
 EXCEPTION(FillerInvalidMode);
 EXCEPTION(FillerInvalidCommand);
 EXCEPTION(UriProviderInvalidId);
+EXCEPTION(UriProviderNotSupported);
 
 namespace OpenHome {
 namespace Media {
@@ -32,9 +33,9 @@ public:
     virtual void BeginLater(TUint aTrackId) = 0; // Queue a track but return ePlayLater when OkToPlay() is called
     virtual EStreamPlay GetNext(Track*& aTrack) = 0;
     virtual TUint CurrentTrackId() const = 0; // Id of last delivered track.  Or of pending track requested via Begin or Move[After|Before]
-    virtual TBool MoveNext() = 0; // returns true if GetNext would return a non-nullptr track and ePlayYes
-    virtual TBool MovePrevious() = 0; // returns true if GetNext would return a non-nullptr track and ePlayYes
-    virtual TBool MoveTo(const Brx& aCommand); // returns true if GetNext would return a non-nullptr track and ePlayYes
+    virtual void MoveNext() = 0;
+    virtual void MovePrevious() = 0;
+    virtual void MoveTo(const Brx& aCommand);
 protected:
     enum class Latency  { Supported, NotSupported };
     enum class Next     { Supported, NotSupported };
@@ -63,11 +64,11 @@ public:
     void Quit();
     void Play(const Brx& aMode, TUint aTrackId);
     void PlayLater(const Brx& aMode, TUint aTrackId);
-    TBool Play(const Brx& aMode, const Brx& aCommand);
+    void Play(const Brx& aMode, const Brx& aCommand);
     TUint Stop(); // Stops filler and encourages protocols to stop.  Returns haltId iff filler was active
     TUint Flush(); // Stops filler, encourages protocols to stop.  Returns flushId.  MsgFlush will be delivered once protocol is stopped.
-    TBool Next(const Brx& aMode);
-    TBool Prev(const Brx& aMode);
+    void Next(const Brx& aMode);
+    void Prev(const Brx& aMode);
     TBool IsStopped() const;
     TUint NullTrackId() const;
 private:

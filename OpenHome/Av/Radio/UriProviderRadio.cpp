@@ -87,11 +87,11 @@ TUint UriProviderRadio::CurrentTrackId() const
     return id;
 }
 
-TBool UriProviderRadio::MoveNext()
+void UriProviderRadio::MoveNext()
 {
     AutoMutex _(iLock);
     if (iTrack == nullptr) {
-        return false;
+        return;
     }
     auto track = iDbReader.NextTrackRef(iTrack->Id());
     iPlayLater = (track == nullptr);
@@ -101,14 +101,13 @@ TBool UriProviderRadio::MoveNext()
     iIgnoreNext = false;
     iTrack->RemoveRef();
     iTrack = track;
-    return (iTrack != nullptr);
 }
 
-TBool UriProviderRadio::MovePrevious()
+void UriProviderRadio::MovePrevious()
 {
     AutoMutex _(iLock);
     if (iTrack == nullptr) {
-        return false;
+        return;
     }
     auto track = iDbReader.PrevTrackRef(iTrack->Id());
     iPlayLater = (track == nullptr);
@@ -118,10 +117,9 @@ TBool UriProviderRadio::MovePrevious()
     iIgnoreNext = false;
     iTrack->RemoveRef();
     iTrack = track;
-    return (iTrack != nullptr);
 }
 
-TBool UriProviderRadio::MoveTo(const Brx& aCommand)
+void UriProviderRadio::MoveTo(const Brx& aCommand)
 {
     if (!aCommand.BeginsWith(kCommandId)) {
         THROW(FillerInvalidCommand);
@@ -148,7 +146,6 @@ TBool UriProviderRadio::MoveTo(const Brx& aCommand)
     iTrack = track;
     iIgnoreNext = false;
     iPlayLater = false;
-    return true;
 }
 
 void UriProviderRadio::DoBegin(TUint aTrackId, TBool aLater)

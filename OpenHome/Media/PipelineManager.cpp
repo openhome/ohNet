@@ -259,7 +259,7 @@ void PipelineManager::Next()
     const TUint haltId = iFiller->Stop();
     iIdManager->InvalidatePending();
     iPipeline->RemoveAll(haltId);
-    (void)iFiller->Next(iMode);
+    iFiller->Next(iMode);
 }
 
 void PipelineManager::Prev()
@@ -272,7 +272,7 @@ void PipelineManager::Prev()
     const TUint haltId = iFiller->Stop();
     iIdManager->InvalidatePending();
     iPipeline->RemoveAll(haltId);
-    (void)iFiller->Prev(iMode);
+    iFiller->Prev(iMode);
 }
 
 IPipelineElementUpstream& PipelineManager::InsertElements(IPipelineElementUpstream& aTail)
