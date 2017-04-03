@@ -274,6 +274,7 @@ void DviService::RemoveSubscription(const Brx& aSid)
         }
     }
     iLock.Signal();
+    LOG(kDvEvent, "DviService::RemoveSubscription - failed to find sid %.*s\n", PBUF(aSid));
 }
 
 TBool DviService::AssertPropertiesInitialised() const
