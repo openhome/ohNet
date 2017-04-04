@@ -907,13 +907,13 @@ ProtocolStreamResult ProtocolHls::Stream(const Brx& aUri)
                 // returning a valid flush id from this point.
                 iStreamId = IPipelineIdProvider::kStreamIdInvalid;
 
-                // As a successful TryStop() call has come in, protocol should
-                // exit and return state should be EProtocolStreamStopped
-                // (i.e., not EProtocolStreamErrorRecoverable, which is not an
-                // allowed exit state for any protocol).
-                res = EProtocolStreamStopped;
-
                 if (iNextFlushId != MsgFlush::kIdInvalid) {
+                    // As a successful TryStop() call has come in, protocol should
+                    // exit and return state should be EProtocolStreamStopped
+                    // (i.e., not EProtocolStreamErrorRecoverable, which is not an
+                    // allowed exit state for any protocol).
+                    res = EProtocolStreamStopped;
+
                     // A successful TryStop() call has already come in. Don't
                     // attempt to retry stream. Break from stream loop here and
                     // cleanup code will output flush before exiting.
