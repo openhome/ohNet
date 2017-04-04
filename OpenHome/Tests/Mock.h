@@ -5,6 +5,8 @@
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Private/Timer.h>
 
+#include <functional>
+
 namespace OpenHome {
 
 namespace Test {
