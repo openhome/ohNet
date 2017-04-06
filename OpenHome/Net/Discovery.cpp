@@ -176,6 +176,12 @@ void SsdpListenerMulticast::Msearch(MsearchHandler& aHandler)
 void SsdpListenerMulticast::Msearch(ISsdpMsearchHandler& aMsearchHandler)
 {
     TUint mx = iHeaderMx.Mx();
+    if (mx == 0) {
+        mx = 1;
+    }
+    else if (mx > kMaxMxSecs) {
+        mx = kMaxMxSecs;
+    }
 
     if (mx && iHeaderHost.Received() && iHeaderMan.Received() && iHeaderSt.Received()) {
         switch(iHeaderSt.Target()) {

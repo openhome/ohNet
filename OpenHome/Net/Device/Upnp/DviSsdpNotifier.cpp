@@ -91,21 +91,15 @@ void SsdpNotifierScheduler::ScheduleNextTimer(TUint aRemainingMsgs) const
     const TUint timeNow = Os::TimeInMs(env.OsCtx());
     TInt remaining;
     if (timeNow > iEndTimeMs) {
-        if (timeNow-iEndTimeMs > UINT_MAX/2) {
-            // clock may wrap during this series of announcements but it hasn't wrapped yet
-            remaining = (UINT_MAX - timeNow) + iEndTimeMs;
-        }
-        else {
-            remaining = 20; /* we've taken more than DvMaxUpdateTimeSecs (e.g. the device is very
-                               heavily loaded, other Timer clients have blocked the TimerManager
-                               thread).  Hard-code a short time for remaining notifications. */
-        }
+        /* We've either taken longer than MX secs (e.g. the device is very
+           heavily loaded, other Timer clients have blocked the TimerManager
+          thread) or time has wrapped.
+          Hard-code a short time for remaining notifications. */
+        remaining = 20;
     }
     else {
         remaining = iEndTimeMs - timeNow;
     }
-    TInt maxUpdateTimeMs = (TInt)iDvStack.Env().InitParams()->DvMaxUpdateTimeSecs() * 1000;
-    ASSERT(remaining <= maxUpdateTimeMs);
     TInt maxInterval = remaining / (TInt)aRemainingMsgs;
     if (maxInterval < kMinTimerIntervalMs) {
         // we're running behind.  Schedule another timer to run immediately

@@ -74,6 +74,7 @@ protected:
 //                       - processes received messages and passes them on to either an IMsearchHandler or an INotifyHandler
 class SsdpListenerMulticast : public SsdpListener, private IResumeObserver
 {
+    static const TUint kMaxMxSecs = 5; // UPnP 1.0 allows [1..120]; 1.1 reduced this to a more sensible [1..5]
     static const TUint kMaxBufferBytes = 1024;
     static const TUint kRecvBufBytes = 32 * 1024;
     class Handler
