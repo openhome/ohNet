@@ -98,16 +98,20 @@ DviService::~DviService()
 
 void DviService::StopSubscriptions()
 {
-    AutoMutex _(iLock);
-    for (TUint i=0; i<iSubscriptions.size(); i++) {
-        DviSubscription* subscription = iSubscriptions[i];
-        iLock.Signal();
+    for (;;) {
+        DviSubscription* subscription = NULL;
+        {
+            AutoMutex _(iLock);
+            if (iSubscriptions.size() == 0) {
+                break;
+            }
+            subscription = iSubscriptions[0];
+            iSubscriptions.erase(iSubscriptions.begin());
+        }
         subscription->Stop();
-        iLock.Wait();
         iDvStack.SubscriptionManager().RemoveSubscription(*subscription);
         subscription->RemoveRef();
     }
-    iSubscriptions.clear();
 }
 
 void DviService::AddRef()
