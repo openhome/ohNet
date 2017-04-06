@@ -170,6 +170,7 @@ void DviSubscription::WriteChanges()
     if (iExpired) {
         // reads/writes of iExpired assumed not to require thread safety
         // ...if this later turns out wrong, DO NOT USE iLock to protect iExpired - it'll deadlock with TimeManager's lock
+        LOG(kDvEvent, "Subscription %.*s has expired. Don't publish changes\n", PBUF(iSid));
         Remove();
         return;
     }
@@ -181,17 +182,17 @@ void DviSubscription::WriteChanges()
             writer->PropertyWriteEnd();
         }
     }
-    catch(NetworkTimeout&) {
-        // we may block a publisher for a relatively long time failing to connect
-        // its reasonable to assume that later attempts are also likely to fail
-        // ...so its better if we don't keep blocking and instead remove the subscription
-        LOG2(kDvEvent, kError, "Timeout eventing update for %.*s\n", PBUF(iSid));
+    catch (AssertionFailed&) {
+        throw;
+    }
+    catch (Exception& ex) {
+        LOG2(kDvEvent, kError, "Exception - %s - eventing update for %.*s\n", ex.Message(), PBUF(iSid));
+        /* we may block a publisher for a relatively long time (e.g. failing to connect)
+           its reasonable to assume that later attempts are also likely to fail
+           ...so its better if we don't keep blocking and instead remove the subscription */
+        iExpired = true;
         Remove();
     }
-    catch(NetworkError&) {}
-    catch(HttpError&) {}
-    catch(WriterError&) {}
-    catch(ReaderError&) {}
     if (writer != NULL) {
         iWriterFactory.ReleaseWriter(writer);
     }
@@ -227,7 +228,7 @@ IPropertyWriter* DviSubscription::CreateWriter()
 
     }
     if (!changed) {
-        LOG(kDvEvent, "Found no changes to publish\n");
+        LOG(kDvEvent, "Found no changes to publish for %.*s\n", PBUF(iSid));
         return NULL;
     }
     IPropertyWriter* writer = iWriterFactory.ClaimWriter(iUserData, iSid, iSequenceNumber);
