@@ -855,25 +855,35 @@ void DviSessionUpnp::Subscribe()
     iDvStack.SubscriptionManager().AddSubscription(*subscription);
     subscription->SetDuration(duration);
 
-    if (iHeaderExpect.Continue()) {
-        iWriterResponse->WriteStatus(HttpStatus::kContinue, Http::eHttp11);
+    try {
+        if (iHeaderExpect.Continue()) {
+            iWriterResponse->WriteStatus(HttpStatus::kContinue, Http::eHttp11);
+            iWriterResponse->WriteFlush();
+        }
+        // respond to subscription request
+        iResponseStarted = true;
+        iWriterResponse->WriteStatus(HttpStatus::kOk, Http::eHttp11);
+        WriteServerHeader(*iWriterResponse);
+        IWriterAscii& writerSid = iWriterResponse->WriteHeaderField(HeaderSid::kHeaderSid);
+        writerSid.Write(HeaderSid::kFieldSidPrefix);
+        writerSid.Write(subscription->Sid());
+        writerSid.WriteFlush();
+        IWriterAscii& writerTimeout = iWriterResponse->WriteHeaderField(HeaderTimeout::kHeaderTimeout);
+        writerTimeout.Write(HeaderTimeout::kFieldTimeoutPrefix);
+        writerTimeout.WriteUint(duration);
+        writerTimeout.WriteFlush();
+        iWriterResponse->WriteHeader(Http::kHeaderConnection, Http::kConnectionClose);
         iWriterResponse->WriteFlush();
+        iResponseEnded = true;
     }
-    // respond to subscription request
-    iResponseStarted = true;
-    iWriterResponse->WriteStatus(HttpStatus::kOk, Http::eHttp11);
-    WriteServerHeader(*iWriterResponse);
-    IWriterAscii& writerSid = iWriterResponse->WriteHeaderField(HeaderSid::kHeaderSid);
-    writerSid.Write(HeaderSid::kFieldSidPrefix);
-    writerSid.Write(subscription->Sid());
-    writerSid.WriteFlush();
-    IWriterAscii& writerTimeout = iWriterResponse->WriteHeaderField(HeaderTimeout::kHeaderTimeout);
-    writerTimeout.Write(HeaderTimeout::kFieldTimeoutPrefix);
-    writerTimeout.WriteUint(duration);
-    writerTimeout.WriteFlush();
-    iWriterResponse->WriteHeader(Http::kHeaderConnection, Http::kConnectionClose);
-    iWriterResponse->WriteFlush();
-    iResponseEnded = true;
+    catch (AssertionFailed&) {
+        throw;
+    }
+    catch (Exception&) {
+        iDvStack.SubscriptionManager().RemoveSubscription(*subscription);
+        subscription->RemoveRef();
+        throw;
+    }
 
     {
         const Brx& callback2 = iHeaderCallback.Uri();
@@ -887,14 +897,13 @@ void DviSessionUpnp::Subscribe()
 
 void DviSessionUpnp::Unsubscribe()
 {
-    LOG(kDvEvent, "Unsubscribe request: ");
-    LOG(kDvEvent, iHeaderSid.Sid());
-    LOG(kDvEvent, "\n");
-
     if (!iHeaderSid.Received()) {
         LOG2(kDvEvent, kError, "Unsubscribe failed - no sid\n");
         Error(HttpStatus::kPreconditionFailed);
     }
+    const Brx& sid = iHeaderSid.Sid();
+    LOG(kDvEvent, "Unsubscribe request: %.*s in thread %.*s\n",
+                  PBUF(sid), PBUF(Thread::CurrentThreadName()));
 
     DviDevice* device;
     DviService* service;
@@ -905,14 +914,13 @@ void DviSessionUpnp::Unsubscribe()
         LOG2(kDvEvent, kError, "Unsubscribe failed - device=%p, service=%p\n", device, service);
         Error(HttpStatus::kPreconditionFailed);
     }
-    const Brx& sid = iHeaderSid.Sid();
     DviSubscription* subscription = iDvStack.SubscriptionManager().Find(sid);
     if (subscription == NULL) {
         LOG2(kDvEvent, kError, "Unsubscribe failed - couldn't match sid %.*s\n", PBUF(sid));
         Error(HttpStatus::kPreconditionFailed);
     }
+    service->RemoveSubscription(sid);
     subscription->RemoveRef();
-    service->RemoveSubscription(iHeaderSid.Sid());
 
     if (iHeaderExpect.Continue()) {
         iWriterResponse->WriteStatus(HttpStatus::kContinue, Http::eHttp11);
