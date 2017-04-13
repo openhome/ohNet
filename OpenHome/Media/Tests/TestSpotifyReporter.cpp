@@ -127,7 +127,6 @@ private:
     void TestMsgsPassedThroughSamplesInPipeline();
     void TestMsgModeResets();
     void TestSubSamples();
-    void TestSubSamplesDiff();
     void TestSampleRateChange();
     void TestNumChannelsChange();
     void TestInvalidSampleRate();
@@ -311,7 +310,6 @@ SuiteSpotifyReporter::SuiteSpotifyReporter()
     AddTest(MakeFunctor(*this, &SuiteSpotifyReporter::TestMsgsPassedThroughSamplesInPipeline), "TestMsgsPassedThroughSamplesInPipeline");
     AddTest(MakeFunctor(*this, &SuiteSpotifyReporter::TestMsgModeResets), "TestMsgModeResets");
     AddTest(MakeFunctor(*this, &SuiteSpotifyReporter::TestSubSamples), "TestSubSamples");
-    AddTest(MakeFunctor(*this, &SuiteSpotifyReporter::TestSubSamplesDiff), "TestSubSamplesDiff");
     AddTest(MakeFunctor(*this, &SuiteSpotifyReporter::TestSampleRateChange), "TestSampleRateChange");
     AddTest(MakeFunctor(*this, &SuiteSpotifyReporter::TestNumChannelsChange), "TestNumChannelsChange");
     AddTest(MakeFunctor(*this, &SuiteSpotifyReporter::TestInvalidSampleRate), "TestInvalidSampleRate");
@@ -453,7 +451,6 @@ void SuiteSpotifyReporter::TestMsgsPassedThroughNoSamplesInPipeline()
         Msg* msg = iReporter->Pull();
         msg->RemoveRef();
         TEST(iReporter->SubSamples() == 0);
-        TEST(iReporter->SubSamplesDiff(0) == 0);
     }
 }
 
@@ -473,7 +470,6 @@ void SuiteSpotifyReporter::TestMsgsPassedThroughSamplesInPipeline()
         msg->RemoveRef();
     }
     TEST(iReporter->SubSamples() == samplesExpected);
-    TEST(iReporter->SubSamplesDiff(0) == samplesExpected);
 
     // Now, test msg types that should have no effect on state of SpotifyReporter.
     EMsgType passThroughTypes[] = {
@@ -490,7 +486,6 @@ void SuiteSpotifyReporter::TestMsgsPassedThroughSamplesInPipeline()
         Msg* msg = iReporter->Pull();
         msg->RemoveRef();
         TEST(iReporter->SubSamples() == samplesExpected);
-        TEST(iReporter->SubSamplesDiff(0) == samplesExpected);
     }
 }
 
@@ -510,14 +505,12 @@ void SuiteSpotifyReporter::TestMsgModeResets()
         msg->RemoveRef();
     }
     TEST(iReporter->SubSamples() == samplesExpected);
-    TEST(iReporter->SubSamplesDiff(0) == samplesExpected);
 
     // Now, send a MsgMode, which should reset sample count.
     iNextGeneratedMsg = EMsgMode;
     Msg* msg = iReporter->Pull();
     msg->RemoveRef();
     TEST(iReporter->SubSamples() == 0);
-    TEST(iReporter->SubSamplesDiff(0) == 0);
 }
 
 void SuiteSpotifyReporter::TestSubSamples()
@@ -554,42 +547,6 @@ void SuiteSpotifyReporter::TestSubSamples()
         TEST(iReporter->SubSamples() == samplesExpected);
         samplesExpected += samplesExpectedPerMsg;
     }
-}
-
-void SuiteSpotifyReporter::TestSubSamplesDiff()
-{
-    TUint samplesExpectedPerMsg = kDataBytes/kByteDepth;
-    TUint samplesExpected = 0;
-
-    // Set up sequence.
-    EMsgType setupTypes[] = {
-        EMsgMode,
-        EMsgTrack,
-        EMsgDecodedStream,
-    };
-    for (TUint i=0; i<sizeof(setupTypes)/sizeof(setupTypes[0]); i++) {
-        iNextGeneratedMsg = setupTypes[i];
-        Msg* msg = iReporter->Pull();
-        msg->RemoveRef();
-    }
-    TEST(iReporter->SubSamplesDiff(0) == 0);
-
-    // Send audio.
-    EMsgType audioTypes[] = {
-        EMsgAudioPcm,
-        EMsgAudioPcm,
-        EMsgAudioPcm,
-    };
-    for (TUint i=0; i<sizeof(audioTypes)/sizeof(audioTypes[0]); i++) {
-        iNextGeneratedMsg = audioTypes[i];
-        samplesExpected += samplesExpectedPerMsg;
-        Msg* msg = iReporter->Pull();
-        msg->RemoveRef();
-        TEST(iReporter->SubSamplesDiff(0) == samplesExpected);
-    }
-
-    // Finally, test code asserts if passed in a subsample value greater than what SpotifyReporter has observed.
-    TEST_THROWS(iReporter->SubSamplesDiff(samplesExpected+1), AssertionFailed);
 }
 
 void SuiteSpotifyReporter::TestSampleRateChange()

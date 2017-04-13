@@ -12,7 +12,6 @@ class ISpotifyReporter
 {
 public:
     virtual TUint64 SubSamples() const = 0;
-    virtual TUint64 SubSamplesDiff(TUint64 aPrevSubSamples) const = 0;
     virtual ~ISpotifyReporter() {}
 };
 
@@ -97,7 +96,6 @@ public: // from IPipelineElementUpstream
     Msg* Pull() override;
 public: // from ISpotifyReporter
     TUint64 SubSamples() const override;
-    TUint64 SubSamplesDiff(TUint64 aPrevSamples) const override;
 public: // from ITrackChangeObserver
     void TrackChanged(const Brx& aUri, ISpotifyMetadata* aMetadata, TUint aStartMs) override;
     void NotifySeek(TUint aOffsetMs) override;

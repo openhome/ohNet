@@ -303,14 +303,6 @@ TUint64 SpotifyReporter::SubSamples() const
     return iSubSamples;
 }
 
-TUint64 SpotifyReporter::SubSamplesDiff(TUint64 aPrevSubSamples) const
-{
-    AutoMutex a(iLock);
-    const TUint64 subSamples = iSubSamples;
-    ASSERT(subSamples >= aPrevSubSamples);
-    return subSamples - aPrevSubSamples;
-}
-
 void SpotifyReporter::TrackChanged(const Brx& aUri, ISpotifyMetadata* aMetadata, TUint aStartMs)
 {
     AutoMutex a(iLock);
