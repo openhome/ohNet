@@ -74,11 +74,9 @@ class StartOffset
 public:
     StartOffset();
     void SetMs(TUint aOffsetMs);
-    void SetSample(TUint64 aOffsetSample);
     TUint64 OffsetSample(TUint aSampleRate) const;
 private:
     TUint iOffsetMs;
-    TUint64 iOffsetSample;
 };
 
 /*

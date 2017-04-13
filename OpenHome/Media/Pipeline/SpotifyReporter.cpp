@@ -157,42 +157,17 @@ void SpotifyDidlLiteWriter::WriteOptionalAttributes(IWriter& aWriter, TUint aBit
 
 StartOffset::StartOffset()
     : iOffsetMs(0)
-    , iOffsetSample(0)
 {
 }
 
 void StartOffset::SetMs(TUint aOffsetMs)
 {
     iOffsetMs = aOffsetMs;
-    iOffsetSample = 0;
-}
-
-void StartOffset::SetSample(TUint64 aOffsetSample)
-{
-    iOffsetMs = 0;
-    iOffsetSample = aOffsetSample;
 }
 
 TUint64 StartOffset::OffsetSample(TUint aSampleRate) const
 {
-    if (iOffsetMs == 0 && iOffsetSample == 0) {
-        return 0;
-    }
-
-    if (iOffsetMs > 0 && iOffsetSample == 0) {
-        // Offset was set as a ms value.
-        const TUint64 offsetSample = (static_cast<TUint64>(iOffsetMs)*aSampleRate)/1000;
-        return offsetSample;
-    }
-
-    if (iOffsetMs == 0 && iOffsetSample > 0) {
-        // Offset was set as a sample value.
-        return iOffsetSample;
-    }
-
-    // Unknown/unreachable condition.
-    ASSERTS();
-    return 0;
+    return (static_cast<TUint64>(iOffsetMs)*aSampleRate)/1000;
 }
 
 
