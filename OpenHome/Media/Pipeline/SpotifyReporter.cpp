@@ -301,18 +301,18 @@ void SpotifyReporter::NotifySeek(TUint aOffsetMs)
 
 Msg* SpotifyReporter::ProcessMsg(MsgMode* aMsg)
 {
-    AutoMutex a(iLock);
     if (aMsg->Mode() == kInterceptMode) {
         iInterceptMode = true;
     }
     else {
         iInterceptMode = false;
     }
+    ClearDecodedStream();
+
+    AutoMutex a(iLock);
     iPipelineTrackSeen = false;
     iMsgTrackPending = true;
     iMsgDecodedStreamPending = true;
-    ClearDecodedStream();
-
     iSubSamples = 0;
     return aMsg;
 }
@@ -322,7 +322,6 @@ Msg* SpotifyReporter::ProcessMsg(MsgTrack* aMsg)
     if (!iInterceptMode) {
         return aMsg;
     }
-    AutoMutex a(iLock);
     iPipelineTrackSeen = true;  // Only matters when in iInterceptMode. Ensures in-band MsgTrack is output before any are generated from out-of-band notifications.
     return aMsg;
 }
@@ -335,7 +334,7 @@ Msg* SpotifyReporter::ProcessMsg(MsgDecodedStream* aMsg)
     const DecodedStreamInfo& info = aMsg->StreamInfo();
     ASSERT(info.SampleRate() != 0);
     ASSERT(info.NumChannels() != 0);
-    AutoMutex a(iLock);
+
     // Clear any previous cached MsgDecodedStream and cache the one received.
     UpdateDecodedStream(*aMsg);
 
@@ -349,11 +348,12 @@ Msg* SpotifyReporter::ProcessMsg(MsgAudioPcm* aMsg)
     if (!iInterceptMode) {
         return aMsg;
     }
-    AutoMutex a(iLock);
+
     ASSERT(iDecodedStream != nullptr);  // Can't receive audio until MsgDecodedStream seen.
     const DecodedStreamInfo& info = iDecodedStream->StreamInfo();
     TUint samples = aMsg->Jiffies()/Jiffies::PerSample(info.SampleRate());
 
+    AutoMutex a(iLock);
     TUint64 subSamplesPrev = iSubSamples;
     iSubSamples += samples*info.NumChannels();
     ASSERT(iSubSamples >= subSamplesPrev); // Overflow not handled.
