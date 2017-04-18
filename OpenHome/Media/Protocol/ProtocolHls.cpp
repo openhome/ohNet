@@ -23,23 +23,6 @@
 namespace OpenHome {
 namespace Media {
 
-class TimerGeneric : public IHlsTimer
-{
-public:
-    TimerGeneric(Environment& aEnv, const TChar* aId);
-    ~TimerGeneric();
-private: // from IHlsTimer
-    void Start(TUint aDurationMs, IHlsTimerHandler& aHandler) override;
-    void Cancel() override;
-private:
-    void TimerFired();
-private:
-    Timer* iTimer;
-    IHlsTimerHandler* iHandler;
-    TBool iPending;
-    Mutex iLock;
-};
-
 class SemaphoreGeneric : public ISemaphore
 {
 public:
@@ -65,8 +48,14 @@ public:
 
 class ProtocolHls : public Protocol
 {
+private:
+    /* Time delay before retrying connections after some kind of recoverable
+     * failure. Avoids busy loop consuming CPU time if there is a period of
+     * network issues, and also avoids hammering servers during that time.
+     */
+    static const TUint kRetryBackOffMs = 1000;
 public:
-    ProtocolHls(Environment& aEnv, IHlsReader* aReaderM3u, IHlsReader* aReaderSegment, IHlsTimer* aTimer, ISemaphore* aM3uReaderSem);
+    ProtocolHls(Environment& aEnv, IHlsReader* aReaderM3u, IHlsReader* aReaderSegment, ITimerFactory* aTimerFactory, ISemaphore* aM3uReaderSem);
     ~ProtocolHls();
 private: // from Protocol
     void Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream) override;
@@ -74,7 +63,6 @@ private: // from Protocol
     ProtocolStreamResult Stream(const Brx& aUri) override;
     ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes) override;
     void Deactivated() override;
-public: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
@@ -86,8 +74,8 @@ private:
 private:
     IHlsReader* iHlsReaderM3u;
     IHlsReader* iHlsReaderSegment;
+    ITimerFactory* iTimerFactory;
     Supply* iSupply;
-    IHlsTimer* iTimer;
     ISemaphore* iSemReaderM3u;
     HlsM3uReader iM3uReader;
     SegmentStreamer iSegmentStreamer;
@@ -109,61 +97,27 @@ using namespace OpenHome::Media;
 
 Protocol* ProtocolFactory::NewHls(Environment& aEnv, const Brx& aUserAgent)
 { // static
+    /**
+     * It would be very desirable to pass references into ProtocolHls and to
+     * create a wrapper around it which owns those objects passed as references.
+     * However, due to Protocol being a base class, that is not possible.
+     * Instead, the best that can be done, short of moving Protocol methods
+     * into an IProtocol interface, is to require ProtocolHls to take ownership
+     * of objects passed in.
+     */
     HlsReader* readerM3u = new HlsReader(aEnv, aUserAgent);
     HlsReader* readerSegment = new HlsReader(aEnv, aUserAgent);
-    TimerGeneric* timer = new TimerGeneric(aEnv, "PHLS");
+    TimerFactory* timerFactory = new TimerFactory(aEnv);
     SemaphoreGeneric* semM3u = new SemaphoreGeneric("HMRS", 0);
-    return new ProtocolHls(aEnv, readerM3u, readerSegment, timer, semM3u);
+    return new ProtocolHls(aEnv, readerM3u, readerSegment, timerFactory, semM3u);
 }
 
 
 // For test purposes.
-Protocol* HlsTestFactory::NewTestableHls(Environment& aEnv, IHlsReader* aReaderM3u, IHlsReader* aReaderSegment, IHlsTimer* aTimer, ISemaphore* aSem)
+Protocol* HlsTestFactory::NewTestableHls(Environment& aEnv, IHlsReader* aReaderM3u, IHlsReader* aReaderSegment, ITimerFactory* aTimerFactory, ISemaphore* aSem)
 { // static
-    return new ProtocolHls(aEnv, aReaderM3u, aReaderSegment, aTimer, aSem);
+    return new ProtocolHls(aEnv, aReaderM3u, aReaderSegment, aTimerFactory, aSem);
 };
-
-
-// TimerGeneric
-
-TimerGeneric::TimerGeneric(Environment& aEnv, const TChar* aId)
-    : iHandler(nullptr)
-    , iPending(false)
-    , iLock("TIGL")
-{
-    iTimer = new Timer(aEnv, MakeFunctor(*this, &TimerGeneric::TimerFired), aId);
-}
-
-TimerGeneric::~TimerGeneric()
-{
-    delete iTimer;
-}
-
-void TimerGeneric::Start(TUint aDurationMs, IHlsTimerHandler& aHandler)
-{
-    AutoMutex a(iLock);
-    ASSERT(!iPending);  // Can't set timer when it's already pending.
-    iPending = true;
-    iHandler = &aHandler;
-    iTimer->FireIn(aDurationMs);
-}
-
-void TimerGeneric::Cancel()
-{
-    AutoMutex a(iLock);
-    //ASSERT(iPending);
-    iPending = false;
-    iTimer->Cancel();
-}
-
-void TimerGeneric::TimerFired()
-{
-    AutoMutex a(iLock);
-    if (iPending) {
-        iPending = false;
-        iHandler->TimerFired(); // FIXME - problem if iHandler calls back into ::Start() during TimerFired()
-    }
-}
 
 
 // SemaphoreGeneric
@@ -209,9 +163,8 @@ IReader& HlsReader::Reader()
 
 // HlsM3uReader
 
-HlsM3uReader::HlsM3uReader(IHttpSocket& aSocket, IReader& aReader, IHlsTimer& aTimer, ISemaphore& aSemaphore)
-    : iTimer(aTimer)
-    , iSocket(aSocket)
+HlsM3uReader::HlsM3uReader(IHttpSocket& aSocket, IReader& aReader, ITimerFactory& aTimer, ISemaphore& aSemaphore)
+    : iSocket(aSocket)
     , iReaderUntil(aReader)
     , iConnected(false)
     , iTotalBytes(0)
@@ -226,6 +179,12 @@ HlsM3uReader::HlsM3uReader(IHttpSocket& aSocket, IReader& aReader, IHlsTimer& aT
     , iInterrupted(true)
     , iError(false)
 {
+    iTimer = aTimer.CreateTimer(MakeFunctor(*this, &HlsM3uReader::TimerFired), "HlsM3uReader");
+}
+
+HlsM3uReader::~HlsM3uReader()
+{
+    delete iTimer;
 }
 
 void HlsM3uReader::SetUri(const Uri& aUri)
@@ -374,12 +333,6 @@ TUint HlsM3uReader::NextSegmentUri(Uri& aUri)
     return duration;
 }
 
-void HlsM3uReader::TimerFired()
-{
-    LOG(kMedia, "HlsM3uReader::TimerFired\n");
-    iSem.Signal();
-}
-
 void HlsM3uReader::Interrupt()
 {
     LOG(kMedia, "HlsM3uReader::Interrupt\n");
@@ -387,7 +340,7 @@ void HlsM3uReader::Interrupt()
     AutoMutex a(iLock);
     if (!iInterrupted) {
         iInterrupted = true;
-        iTimer.Cancel();
+        iTimer->Cancel();
         if (iConnected) {
             iReaderUntil.ReadInterrupt();
         }
@@ -478,7 +431,7 @@ TBool HlsM3uReader::ReloadVariantPlaylist()
         LOG(kMedia, "HlsM3uReader::ReloadVariantPlaylist interrupted while reloading playlist. Not setting timer.\n");
         return false;
     }
-    iTimer.Start(targetDuration, *this);
+    iTimer->FireIn(targetDuration);
     LOG(kMedia, "<HlsM3uReader::ReloadVariantPlaylist\n");
     return true;
 }
@@ -599,6 +552,12 @@ void HlsM3uReader::SetSegmentUri(Uri& aUri, const Brx& aSegmentUri)
         // May throw UriError.
         aUri.Replace(uriBuf, aSegmentUri);
     }
+}
+
+void HlsM3uReader::TimerFired()
+{
+    LOG(kMedia, "HlsM3uReader::TimerFired\n");
+    iSem.Signal();
 }
 
 
@@ -775,14 +734,14 @@ void SegmentStreamer::EnsureSegmentIsReady()
 
 // ProtocolHls
 
-ProtocolHls::ProtocolHls(Environment& aEnv, IHlsReader* aReaderM3u, IHlsReader* aReaderSegment, IHlsTimer* aTimer, ISemaphore* aM3uReaderSem)
+ProtocolHls::ProtocolHls(Environment& aEnv, IHlsReader* aReaderM3u, IHlsReader* aReaderSegment, ITimerFactory* aTimerFactory, ISemaphore* aM3uReaderSem)
     : Protocol(aEnv)
     , iHlsReaderM3u(aReaderM3u)
     , iHlsReaderSegment(aReaderSegment)
+    , iTimerFactory(aTimerFactory)
     , iSupply(nullptr)
-    , iTimer(aTimer)
     , iSemReaderM3u(aM3uReaderSem)
-    , iM3uReader(iHlsReaderM3u->Socket(), iHlsReaderM3u->Reader(), *iTimer, *iSemReaderM3u)
+    , iM3uReader(iHlsReaderM3u->Socket(), iHlsReaderM3u->Reader(), *iTimerFactory, *iSemReaderM3u)
     , iSegmentStreamer(iHlsReaderSegment->Socket(), iHlsReaderSegment->Reader())
     , iSem("PRTH", 0)
     , iLock("PRHL")
@@ -792,8 +751,8 @@ ProtocolHls::ProtocolHls(Environment& aEnv, IHlsReader* aReaderM3u, IHlsReader* 
 ProtocolHls::~ProtocolHls()
 {
     delete iSemReaderM3u;
-    delete iTimer;
     delete iSupply;
+    delete iTimerFactory;
     delete iHlsReaderSegment;
     delete iHlsReaderM3u;
 }
@@ -924,6 +883,11 @@ ProtocolStreamResult ProtocolHls::Stream(const Brx& aUri)
         }
         else {
             ASSERT(res == EProtocolStreamErrorRecoverable);
+
+            // Don't go into a busy loop if period of network issues, and don't
+            // hammer servers.
+            Thread::Sleep(kRetryBackOffMs);
+
             // Retry entire stream indefinitely.
             // Arrive here for intermittent problems, such as:
             // - connection/socket errors (for playlist/segments)
@@ -935,15 +899,30 @@ ProtocolStreamResult ProtocolHls::Stream(const Brx& aUri)
             iSegmentStreamer.Close();
             iM3uReader.Close();
 
-            // Output any pending flush.
+            // Check for a pending flush (i.e., check if TryStop() has been
+            // called).
             {
                 AutoMutex a(iLock);
+                // This stream has ended. Clear iStreamId to prevent TryStop()
+                // returning a valid flush id from this point.
+                iStreamId = IPipelineIdProvider::kStreamIdInvalid;
+
                 if (iNextFlushId != MsgFlush::kIdInvalid) {
-                    // Cleanup code will output flush before exiting this method.
+                    // As a successful TryStop() call has come in, protocol should
+                    // exit and return state should be EProtocolStreamStopped
+                    // (i.e., not EProtocolStreamErrorRecoverable, which is not an
+                    // allowed exit state for any protocol).
+                    res = EProtocolStreamStopped;
+
+                    // A successful TryStop() call has already come in. Don't
+                    // attempt to retry stream. Break from stream loop here and
+                    // cleanup code will output flush before exiting.
                     break;
                 }
             }
 
+            // There is no flush pending, and iStreamId has been cleared (so no
+            // further TryStop() call will succeed). Safe to drain pipeline now.
             WaitForDrain();
 
             Reinitialise();
@@ -961,14 +940,18 @@ ProtocolStreamResult ProtocolHls::Stream(const Brx& aUri)
     iSegmentStreamer.Close();
     iM3uReader.Close();
 
+    TUint flushId = MsgFlush::kIdInvalid;
     {
         AutoMutex a(iLock);
         if (iNextFlushId != MsgFlush::kIdInvalid) {
-            iSupply->OutputFlush(iNextFlushId);
+            flushId = iNextFlushId;
             iNextFlushId = MsgFlush::kIdInvalid;
         }
         // Clear iStreamId to prevent TrySeek or TryStop returning a valid flush id.
         iStreamId = IPipelineIdProvider::kStreamIdInvalid;
+    }
+    if (flushId != MsgFlush::kIdInvalid) {
+        iSupply->OutputFlush(flushId);
     }
 
     LOG(kMedia, "<ProtocolHls::Stream res: %d\n", res);

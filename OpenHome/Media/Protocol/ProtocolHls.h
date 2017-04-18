@@ -17,22 +17,9 @@ EXCEPTION(HlsDiscontinuityError);
 
 
 namespace OpenHome {
+    class ITimer;
+    class ITimerFactory;
 namespace Media {
-
-class IHlsTimerHandler
-{
-public:
-    virtual void TimerFired() = 0;
-    virtual ~IHlsTimerHandler() {}
-};
-
-class IHlsTimer
-{
-public:
-    virtual void Start(TUint aDurationMs, IHlsTimerHandler& aHandler) = 0;
-    virtual void Cancel() = 0;
-    virtual ~IHlsTimer() {}
-};
 
 class ISemaphore
 {
@@ -59,14 +46,15 @@ public:
     virtual ~IHlsReader() {}
 };
 
-class HlsM3uReader : public IHlsTimerHandler, public ISegmentUriProvider
+class HlsM3uReader : public ISegmentUriProvider
 {
 private:
     static const TUint kMaxM3uVersion = 2;
     static const TUint kMillisecondsPerSecond = 1000;
     static const TUint kMaxLineBytes = 2048;
 public:
-    HlsM3uReader(IHttpSocket& aSocket, IReader& aReader, IHlsTimer& aTimer, ISemaphore& aSemaphore);
+    HlsM3uReader(IHttpSocket& aSocket, IReader& aReader, ITimerFactory& aTimerFactory, ISemaphore& aSemaphore);
+    ~HlsM3uReader();
     void SetUri(const Uri& aUri);
     TUint Version() const;
     TBool StreamEnded() const;
@@ -74,8 +62,6 @@ public:
     TBool Discontinuity() const;
     void Interrupt();
     void Close();
-public: // from IHlsTimerHandler
-    void TimerFired() override;
 public: // from ISegmentUriProvider
     TUint NextSegmentUri(Uri& aUri) override;
 private:
@@ -83,8 +69,9 @@ private:
     TBool ReloadVariantPlaylist();
     TBool PreprocessM3u();
     void SetSegmentUri(Uri& aUri, const Brx& aSegmentUri);
+    void TimerFired();
 private:
-    IHlsTimer& iTimer;
+    ITimer* iTimer;
     IHttpSocket& iSocket;
     ReaderUntilS<kMaxLineBytes> iReaderUntil;
     OpenHome::Uri iUri;

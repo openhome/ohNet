@@ -694,7 +694,9 @@ void OhmSender::CurrentSubnetChanged()
     static const TChar* kNifCookie = "OhmSender";
     NetworkAdapter* current = iEnv.NetworkAdapterList().CurrentAdapter(kNifCookie);
     const TIpAddress addr = (current? current->Address() : 0);
-    current->RemoveRef(kNifCookie);
+    if (current != nullptr) {
+        current->RemoveRef(kNifCookie);
+    }
     if (iInterface != addr) {
         if (iStarted) {
             Stop();

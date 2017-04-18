@@ -4,6 +4,7 @@
 
 namespace OpenHome {
     class Environment;
+    class ITimerFactory;
 namespace Media {
 
 class Protocol;
@@ -11,7 +12,7 @@ class Protocol;
 class HlsTestFactory
 {
 public:
-    static Protocol* NewTestableHls(Environment& aEnv, IHlsReader* aReaderM3u, IHlsReader* aReaderSegment, IHlsTimer* aTimer, ISemaphore* aM3uReaderSem);
+    static Protocol* NewTestableHls(Environment& aEnv, IHlsReader* aReaderM3u, IHlsReader* aReaderSegment, ITimerFactory* aTimerFactory, ISemaphore* aM3uReaderSem);
 };
 
 } // namespace Media
