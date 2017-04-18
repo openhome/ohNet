@@ -568,6 +568,9 @@ void JsonParserArray::StartParse()
         else if (ch == '[') {
             iType = ValType::Array;
         }
+        else if (ch == ']') {
+            iType = ValType::Null;
+        }
         else if (ch == '\"') {
             iType = ValType::String;
         }

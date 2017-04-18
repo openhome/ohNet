@@ -929,6 +929,9 @@ void SuiteParserJsonArray::TestIdentifyType()
 
     auto parser8 = JsonParserArray::Create(Brn("[[1,2],[3,4,5]]"));
     TEST(parser8.Type() == JsonParserArray::ValType::Array);
+
+    auto parser9 = JsonParserArray::Create(Brn("[]"));
+    TEST(parser9.Type() == JsonParserArray::ValType::Null);
 }
 
 void SuiteParserJsonArray::TestIntArray()
