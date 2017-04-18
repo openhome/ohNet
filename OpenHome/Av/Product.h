@@ -12,6 +12,7 @@
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/PowerManager.h>
 #include <OpenHome/Av/Source.h>
+#include <OpenHome/Av/TransportControl.h>
 
 #include <map>
 #include <vector>
@@ -79,6 +80,7 @@ private:
 
 class Product : private IProduct
               , public IProductNameObservable
+              , public ITransportActivator
               , private IStandbyHandler
               , private INonCopyable
 {
@@ -139,6 +141,8 @@ private: // from IProduct
     void NotifySourceChanged(ISource& aSource) override;
 public: // from IProductNameObservable
     void AddNameObserver(IProductNameObserver& aObserver) override;
+public: // from ITransportActivator
+    TBool TryActivate(const Brx& aMode) override;
 private: // from IStandbyHandler
     void StandbyEnabled() override;
     void StandbyDisabled(StandbyDisableReason aReason) override;

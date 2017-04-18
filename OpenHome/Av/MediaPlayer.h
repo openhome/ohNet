@@ -49,7 +49,7 @@ class IStaticDataSource;
 class Product;
 class ProviderTime;
 class ProviderInfo;
-class ProviderVolume;
+class ProviderTransport;
 class KvpStore;
 class Credentials;
 class VolumeManager;
@@ -148,10 +148,10 @@ private:
     Media::MimeTypeList iMimeTypes;
     ProviderTime* iProviderTime;
     ProviderInfo* iProviderInfo;
+    ProviderTransport* iProviderTransport;
     Configuration::ProviderConfig* iProviderConfig;
     LoggerBuffered* iLoggerBuffered;
     IUnixTimestamp* iUnixTimestamp;
-    //TransportControl* iTransportControl;
 };
 
 } // namespace Av

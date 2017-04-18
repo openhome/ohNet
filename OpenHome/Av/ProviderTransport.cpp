@@ -1,7 +1,5 @@
 #include <OpenHome/Av/ProviderTransport.h>
 #include <Generated/DvAvOpenhomeOrgTransport1.h>
-#include <OpenHome/Av/TransportControl.h>
-#include <OpenHome/Private/Standard.h>
 #include <OpenHome/Media/PipelineObserver.h>
 #include <OpenHome/Media/PipelineManager.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
@@ -13,8 +11,8 @@ using namespace OpenHome::Av;
 using namespace OpenHome::Net;
 using namespace OpenHome::Media;
 
-//static const TUint kCodeNotSupportedByMode = 801;
-//static const Brn kMsgNotSupportedByMode("Action not supported by current mode");
+static const TUint kCodeNotSupportedByMode = 801;
+static const Brn kMsgNotSupportedByMode("Action not supported by current mode");
 static const TUint kCodeNotSupportedByStream = 802;
 static const Brn kMsgNotSupportedByStream("Action not supported by current stream");
 static const TUint kCodeBadStreamId = 803;
@@ -22,31 +20,25 @@ static const Brn kMsgBadStreamId("Stream id not current");
 static const TUint kSeekFailureCode = 804;
 static const Brn kSeekFailureMsg("Seek failed");
 
-ProviderTransport::ProviderTransport(Net::DvDevice& aDevice, PipelineManager& aPipeline)
+const TUint ProviderTransport::kModesGranularity = 1024;
+
+ProviderTransport::ProviderTransport(Net::DvDevice& aDevice,
+                                     PipelineManager& aPipeline,
+                                     ITransportActivator& aTransportActivator)
     : DvProviderAvOpenhomeOrgTransport1(aDevice)
     , iLock("PTPR")
     , iPipeline(aPipeline)
+    , iTransportActivator(aTransportActivator)
+    , iTransportState(EPipelineStopped)
     , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
+    , iModes(kModesGranularity)
 {
     EnablePropertyModes();
-    EnablePropertyModeCount();
-    EnablePropertyTrackCount();
-    EnablePropertyMode();
-    EnablePropertySequenceNumbers();
-    EnablePropertyStreamCount();
-    EnablePropertyMetatextCount();
     EnablePropertyNextAvailable();
     EnablePropertyPrevAvailable();
     EnablePropertyStreamId();
-    EnablePropertyDuration();
     EnablePropertySeekable();
     EnablePropertyPausable();
-    EnablePropertyBitRate();
-    EnablePropertyBitDepth();
-    EnablePropertySampleRate();
-    EnablePropertyLossless();
-    EnablePropertyCodecName();
-    EnablePropertyMetatext();
     EnablePropertyTransportState();
 
     EnableActionPlayAs();
@@ -59,13 +51,25 @@ ProviderTransport::ProviderTransport(Net::DvDevice& aDevice, PipelineManager& aP
     EnableActionSeekSecondsRelative();
     EnableActionTransportState();
     EnableActionModes();
-    EnableActionCounters();
     EnableActionModeInfo();
-    EnableActionTrackInfo();
     EnableActionStreamInfo();
     EnableActionStreamId();
 
-    // FIXME - can we rely on observer callbacks initialising all properties?
+    iPipeline.AddObserver(*static_cast<Media::IPipelineObserver*>(this));
+    iPipeline.AddObserver(*static_cast<Media::IModeObserver*>(this));
+
+    (void)SetPropertyNextAvailable(false);
+    (void)SetPropertyPrevAvailable(false);
+    (void)SetPropertyStreamId(iStreamId);
+    (void)SetPropertySeekable(false);
+    (void)SetPropertyPausable(false);
+    Brn state(TransportState::FromPipelineState(iTransportState));
+    (void)SetPropertyTransportState(state);
+}
+
+void ProviderTransport::Start()
+{
+    (void)SetPropertyModes(iModes.Buffer());
 }
 
 void ProviderTransport::NotifyPipelineState(EPipelineState aState)
@@ -104,10 +108,26 @@ void ProviderTransport::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
 {
     AutoMutex _(iLock);
     iStreamId = aStreamInfo.StreamId();
+    (void)SetPropertySeekable(aStreamInfo.Seekable());
+    (void)SetPropertyPausable(!aStreamInfo.Live());
 }
 
-void ProviderTransport::PlayAs(IDvInvocation& /*aInvocation*/, const Brx& /*aMode*/, const Brx& /*aCommand*/)
+void ProviderTransport::NotifyModeAdded(const Brx& aMode)
 {
+    if (iModes.Buffer().Bytes() > 0) {
+        iModes.Write(' ');
+    }
+    iModes.Write(aMode);
+}
+
+void ProviderTransport::PlayAs(IDvInvocation& aInvocation, const Brx& aMode, const Brx& aCommand)
+{
+    if (!iTransportActivator.TryActivate(aMode)) {
+        aInvocation.Error(kCodeNotSupportedByMode, kMsgNotSupportedByMode);
+    }
+    iPipeline.PlayAs(aMode, aCommand);
+    aInvocation.StartResponse();
+    aInvocation.EndResponse();
 }
 
 void ProviderTransport::Play(IDvInvocation& aInvocation)
@@ -204,40 +224,52 @@ void ProviderTransport::TransportState(IDvInvocation& aInvocation, IDvInvocation
     aInvocation.EndResponse();
 }
 
-void ProviderTransport::Modes(IDvInvocation& /*aInvocation*/, IDvInvocationResponseString& /*aModes*/)
+void ProviderTransport::Modes(IDvInvocation& aInvocation, IDvInvocationResponseString& aModes)
 {
+    aInvocation.StartResponse();
+    aModes.Write(iModes.Buffer());
+    aModes.WriteFlush();
+    aInvocation.EndResponse();
 }
 
-void ProviderTransport::Counters(IDvInvocation& /*aInvocation*/,
-                                 IDvInvocationResponseUint& /*aModeCount*/, IDvInvocationResponseUint& /*aTrackCount*/,
-                                 IDvInvocationResponseUint& /*aStreamCount*/, IDvInvocationResponseUint& /*aMetatextCount*/)
+void ProviderTransport::ModeInfo(IDvInvocation& aInvocation,
+                                 IDvInvocationResponseBool& aNextAvailable,
+                                 IDvInvocationResponseBool& aPrevAvailable)
 {
+    AutoMutex _(iLock);
+    TBool next, prev;
+    GetPropertyNextAvailable(next);
+    GetPropertyPrevAvailable(prev);
+    aInvocation.StartResponse();
+    aNextAvailable.Write(next);
+    aPrevAvailable.Write(prev);
+    aInvocation.EndResponse();
 }
 
-void ProviderTransport::ModeInfo(IDvInvocation& /*aInvocation*/,
-                                 IDvInvocationResponseBool& /*aNextAvailable*/, IDvInvocationResponseBool& /*aPrevAvailable*/)
+void ProviderTransport::StreamInfo(IDvInvocation& aInvocation,
+                                   IDvInvocationResponseUint& aStreamId,
+                                   IDvInvocationResponseBool& aSeekable,
+                                   IDvInvocationResponseBool& aPausable)
 {
+    AutoMutex _(iLock);
+    TUint streamId;
+    TBool seekable, pausable;
+    GetPropertyStreamId(streamId);
+    GetPropertySeekable(seekable);
+    GetPropertyPausable(pausable);
+    aInvocation.StartResponse();
+    aStreamId.Write(streamId);
+    aSeekable.Write(seekable);
+    aPausable.Write(pausable);
+    aInvocation.EndResponse();
 }
 
-void ProviderTransport::TrackInfo(IDvInvocation& /*aInvocation*/,
-                                  IDvInvocationResponseString& /*aUri*/, IDvInvocationResponseString& /*aMetadata*/)
+void ProviderTransport::StreamId(IDvInvocation& aInvocation, IDvInvocationResponseUint& aStreamId)
 {
-}
-
-void ProviderTransport::StreamInfo(IDvInvocation& /*aInvocation*/,
-                                   IDvInvocationResponseUint& /*aStreamId*/, IDvInvocationResponseString& /*aUri*/,
-                                   IDvInvocationResponseString& /*aMetadata*/, IDvInvocationResponseBool& /*aSeekable*/,
-                                   IDvInvocationResponseBool& /*aPausable*/, IDvInvocationResponseUint& /*aDuration*/,
-                                   IDvInvocationResponseUint& /*aBitRate*/, IDvInvocationResponseUint& /*aBitDepth*/,
-                                   IDvInvocationResponseUint& /*aSampleRate*/, IDvInvocationResponseBool& /*aLossless*/,
-                                   IDvInvocationResponseString& /*aCodecName*/)
-{
-}
-
-void ProviderTransport::StreamId(IDvInvocation& /*aInvocation*/, IDvInvocationResponseUint& /*aStreamId*/)
-{
-}
-
-void ProviderTransport::Metatext(IDvInvocation& /*aInvocation*/, IDvInvocationResponseString& /*aMetatext*/)
-{
+    AutoMutex _(iLock);
+    TUint streamId;
+    GetPropertyStreamId(streamId);
+    aInvocation.StartResponse();
+    aStreamId.Write(streamId);
+    aInvocation.EndResponse();
 }

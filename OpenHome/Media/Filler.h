@@ -36,6 +36,7 @@ public:
     virtual void MoveNext() = 0;
     virtual void MovePrevious() = 0;
     virtual void MoveTo(const Brx& aCommand);
+    virtual void Interrupt(TBool aInterrupt);
 protected:
     enum class Latency  { Supported, NotSupported };
     enum class Next     { Supported, NotSupported };
@@ -120,6 +121,7 @@ private:
     IFlushIdProvider& iFlushIdProvider;
     MsgFactory& iMsgFactory;
     std::vector<UriProvider*> iUriProviders;
+    Mutex iLockUriProvider;
     UriProvider* iActiveUriProvider;
     IUriStreamer* iUriStreamer;
     Track* iTrack;

@@ -12,6 +12,7 @@
 #include <OpenHome/Av/Product.h>
 #include <OpenHome/Av/ProviderTime.h>
 #include <OpenHome/Av/ProviderInfo.h>
+#include <OpenHome/Av/ProviderTransport.h>
 #include <OpenHome/Av/ProviderFactory.h>
 #include <OpenHome/Av/Songcast/ZoneHandler.h>
 #include <OpenHome/Configuration/IStore.h>
@@ -73,8 +74,12 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     iProviderInfo = new ProviderInfo(aDevice, *iPipeline);
     iProduct->AddAttribute("Info");
     iProviderConfig = new ProviderConfig(aDevice, *iConfigManager);
-    //iTransportControl = new TransportControl(aDevice, *iPipeline);
-    //iProduct->AddAttribute("TransportControl");
+#if 1
+    iProviderTransport = new ProviderTransport(aDevice, *iPipeline, *iProduct);
+    iProduct->AddAttribute("Transport");
+#else
+    iProviderTransport = nullptr;
+#endif
 }
 
 MediaPlayer::~MediaPlayer()
@@ -92,7 +97,7 @@ MediaPlayer::~MediaPlayer()
     delete iConfigStartupSource;
     delete iVolumeManager;
     delete iVolumeConfig;
-    //delete iTransportControl;
+    delete iProviderTransport;
     delete iProviderConfig;
     delete iProviderTime;
     delete iProviderInfo;
@@ -152,6 +157,9 @@ void MediaPlayer::Start()
 
     iConfigManager->Open();
     iPipeline->Start(*iVolumeManager, *iVolumeManager);
+    if (iProviderTransport != nullptr) {
+        iProviderTransport->Start();
+    }
     iCredentials->Start();
     iMimeTypes.Start();
     iProduct->Start();

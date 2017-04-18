@@ -29,6 +29,7 @@ public:
     virtual TBool IsVisible() const = 0;
     virtual void Activate(TBool aAutoPlay) = 0;
     virtual void Deactivate() = 0;
+    virtual TBool TryActivateNoPrefetch(const Brx& aMode) = 0; // returns true if derived Source owns a UriProvider whose mode matches aMode
     virtual void SetVisible(TBool aVisible) = 0;
     virtual void StandbyEnabled() = 0;
     virtual void PipelineStopped() = 0;
@@ -91,10 +92,13 @@ class Source : public SourceBase
 protected:
     Source(const Brx& aSystemName, const TChar* aType, Media::PipelineManager& aPipeline, IPowerManager& aPowerManager, TBool aIsVisibleByDefault = true);
     void DoPlay();
+    void EnsureActiveNoPrefetch();
 protected:
     Media::PipelineManager& iPipeline;
+    TBool iNoPipelinePrefetchOnActivation;
 private:
     IPowerManager& iPowerManager;
+    Mutex iLockActivation;
 };
 
 } // namespace Av

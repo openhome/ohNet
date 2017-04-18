@@ -148,7 +148,9 @@ void SourceRaop::Activate(TBool aAutoPlay)
     if (iSessionActive) {
         StartNewTrack();
         iLock.Signal();
-        iPipeline.Play();
+        if (!iNoPipelinePrefetchOnActivation) {
+            iPipeline.Play();
+        }
     }
     else {
         if (iTrack != nullptr) {
@@ -159,7 +161,9 @@ void SourceRaop::Activate(TBool aAutoPlay)
         iTrack = iUriProvider.SetTrack(iNextTrackUri, iDidlLite);
         const TUint trackId = (iTrack==nullptr? Track::kIdNone : iTrack->Id());
         iLock.Signal();
-        iPipeline.StopPrefetch(iUriProvider.Mode(), trackId);
+        if (!iNoPipelinePrefetchOnActivation) {
+            iPipeline.StopPrefetch(iUriProvider.Mode(), trackId);
+        }
     }
 }
 
@@ -170,6 +174,15 @@ void SourceRaop::Deactivate()
     iSessionActive = false; // If switching away from Net Aux, don't want to allow session to be re-initialised without user explicitly re-selecting device from a control point.
     iLock.Signal();
     Source::Deactivate();
+}
+
+TBool SourceRaop::TryActivateNoPrefetch(const Brx& aMode)
+{
+    if (iUriProvider.Mode() != aMode) {
+        return false;
+    }
+    EnsureActiveNoPrefetch();
+    return true;
 }
 
 void SourceRaop::StandbyEnabled()

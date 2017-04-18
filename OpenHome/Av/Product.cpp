@@ -11,6 +11,8 @@
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Private/NetworkAdapterList.h>
 #include <OpenHome/Net/Core/OhNet.h>
+#include <OpenHome/Optional.h>
+#include <OpenHome/Av/TransportControl.h>
 
 #include <limits.h>
 
@@ -540,6 +542,16 @@ void Product::AddNameObserver(IProductNameObserver& aObserver)
     // Notify new observer immediately with its initial values.
     aObserver.RoomChanged(iProductRoom);
     aObserver.NameChanged(iProductName);
+}
+
+TBool Product::TryActivate(const Brx& aMode)
+{
+    for (auto it=iSources.begin(); it!=iSources.end(); ++it) {
+        if ((*it)->TryActivateNoPrefetch(aMode)) {
+            return true;
+        }
+    }
+    return false;
 }
 
 void Product::StandbyEnabled()

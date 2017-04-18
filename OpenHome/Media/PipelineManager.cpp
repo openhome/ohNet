@@ -45,6 +45,7 @@ TUint PriorityArbitratorPipeline::HostRange() const
 PipelineManager::PipelineManager(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory)
     : iLock("PLM1")
     , iPublicLock("PLM2")
+    , iModeObserver(nullptr)
     , iPipelineState(EPipelineStopped)
     , iPipelineStoppedSem("PLM3", 1)
 {
@@ -144,6 +145,12 @@ void PipelineManager::AddObserver(ITrackObserver& aObserver)
     iPipeline->AddObserver(aObserver);
 }
 
+void PipelineManager::AddObserver(IModeObserver& aObserver)
+{
+    ASSERT(iModeObserver == nullptr); // multiple observers assumed not required
+    iModeObserver = &aObserver;
+}
+
 ISpotifyReporter& PipelineManager::SpotifyReporter() const
 {
     return iPipeline->SpotifyReporter();
@@ -169,6 +176,15 @@ void PipelineManager::Play()
 {
     AutoMutex _(iPublicLock);
     LOG(kPipeline, "PipelineManager::Play()\n");
+    iPipeline->Play();
+}
+
+void PipelineManager::PlayAs(const Brx& aMode, const Brx& aCommand)
+{
+    AutoMutex _(iPublicLock);
+    LOG(kPipeline, "PipelineManager::PlayAs(%.*s, %.*s)\n", PBUF(aMode), PBUF(aCommand));
+    RemoveAllLocked();
+    iFiller->Play(aMode, aCommand);
     iPipeline->Play();
 }
 

@@ -48,6 +48,10 @@ void UriProvider::MoveTo(const Brx& /*aCommand*/)
     THROW(FillerInvalidCommand);
 }
 
+void UriProvider::Interrupt(TBool /*aInterrupt*/)
+{
+}
+
 UriProvider::UriProvider(const TChar* aMode, Latency aLatency,
                         Next aNextSupported, Prev aPrevSupported)
     : iMode(aMode)
@@ -69,12 +73,13 @@ Filler::Filler(IPipelineElementDownstream& aPipeline, IPipelineIdTracker& aIdTra
                MsgFactory& aMsgFactory, TrackFactory& aTrackFactory, IStreamPlayObserver& aStreamPlayObserver,
                IPipelineIdProvider& aIdProvider, TUint aThreadPriority, TUint aDefaultDelay)
     : Thread("Filler", aThreadPriority)
-    , iLock("FILL")
+    , iLock("FIL1")
     , iPipeline(aPipeline)
     , iPipelineIdTracker(aIdTracker)
     , iPipelineIdManager(aPipelineIdManager)
     , iFlushIdProvider(aFlushIdProvider)
     , iMsgFactory(aMsgFactory)
+    , iLockUriProvider("FIL2")
     , iActiveUriProvider(nullptr)
     , iUriStreamer(nullptr)
     , iTrack(nullptr)
@@ -157,6 +162,12 @@ void Filler::Play(const Brx& aMode, const Brx& aCommand)
 TUint Filler::Stop()
 {
     LOG(kMedia, "Filler::Stop()\n");
+    {
+        AutoMutex _(iLockUriProvider);
+        if (iActiveUriProvider != nullptr) {
+            iActiveUriProvider->Interrupt(true);
+        }
+    }
     AutoMutex a(iLock);
     const TUint haltId = StopLocked();
     Signal();
@@ -165,6 +176,12 @@ TUint Filler::Stop()
 
 TUint Filler::Flush()
 {
+    {
+        AutoMutex _(iLockUriProvider);
+        if (iActiveUriProvider != nullptr) {
+            iActiveUriProvider->Interrupt(true);
+        }
+    }
     AutoMutex a(iLock);
     (void)StopLocked();
     if (iNextFlushId == MsgFlush::kIdInvalid) {
@@ -218,7 +235,12 @@ void Filler::UpdateActiveUriProvider(const Brx& aMode)
     for (TUint i=0; i<iUriProviders.size(); i++) {
         UriProvider* uriProvider = iUriProviders[i];
         if (uriProvider->Mode() == aMode) {
+            if (prevUriProvider != nullptr) {
+                prevUriProvider->Interrupt(false);
+            }
+            iLockUriProvider.Wait();
             iActiveUriProvider = uriProvider;
+            iLockUriProvider.Signal();
             break;
         }
     }
@@ -232,6 +254,12 @@ void Filler::UpdateActiveUriProvider(const Brx& aMode)
 TUint Filler::StopLocked()
 {
     LOG(kMedia, "Filler::StopLocked iStopped=%u\n", iStopped);
+    {
+        AutoMutex _(iLockUriProvider);
+        if (iActiveUriProvider != nullptr) {
+            iActiveUriProvider->Interrupt(false);
+        }
+    }
     if (iPendingHaltId == MsgHalt::kIdInvalid) {
         iPendingHaltId = ++iNextHaltId;
     }

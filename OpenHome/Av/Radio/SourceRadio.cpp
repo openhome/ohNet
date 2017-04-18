@@ -110,10 +110,12 @@ void SourceRadio::Activate(TBool aAutoPlay)
     iTrackPosSeconds = 0;
     iActive = true;
     iAutoPlay = aAutoPlay;
-    const TUint trackId = (iTrack==nullptr? Track::kIdNone : iTrack->Id());
-    iPipeline.StopPrefetch(iUriProvider->Mode(), trackId);
-    if (trackId != Track::kIdNone && aAutoPlay) {
-        iPipeline.Play();
+    if (!iNoPipelinePrefetchOnActivation) {
+        const TUint trackId = (iTrack==nullptr? Track::kIdNone : iTrack->Id());
+        iPipeline.StopPrefetch(iUriProvider->Mode(), trackId);
+        if (trackId != Track::kIdNone && aAutoPlay) {
+            iPipeline.Play();
+        }
     }
 }
 
@@ -122,6 +124,15 @@ void SourceRadio::Deactivate()
     iProviderRadio->SetTransportState(EPipelineStopped);
     iStorePresetNumber->Write();
     Source::Deactivate();
+}
+
+TBool SourceRadio::TryActivateNoPrefetch(const Brx& aMode)
+{
+    if (iUriProvider->Mode() != aMode) {
+        return false;
+    }
+    EnsureActiveNoPrefetch();
+    return true;
 }
 
 void SourceRadio::StandbyEnabled()
