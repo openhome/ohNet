@@ -59,6 +59,7 @@ public:
 private: // from ISource
     void Activate(TBool aAutoPlay) override;
     void Deactivate() override;
+    TBool TryActivateNoPrefetch(const Brx& aMode) override;
     void StandbyEnabled() override;
     void PipelineStopped() override;
 private: // from ISourceReceiver
@@ -76,7 +77,6 @@ private: // from Media::IPipelineObserver
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
     void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo) override;
 private:
-    void EnsureActive();
     void UriChanged();
     void ZoneChangeThread();
     void CurrentAdapterChanged();
@@ -97,7 +97,6 @@ private:
     TUint iTrackId;
     TBool iPlaying;
     TBool iQuit;
-    TBool iNoPipelinePrefetchOnActivation;
     Media::BwsTrackUri iPendingTrackUri;
     SongcastSender* iSender;
     StoreText* iStoreZone;
@@ -198,7 +197,6 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer,
     , iTrackId(Track::kIdNone)
     , iPlaying(false)
     , iQuit(false)
-    , iNoPipelinePrefetchOnActivation(false)
 {
     Environment& env = aMediaPlayer.Env();
     DvDeviceStandard& device = aMediaPlayer.Device();
@@ -268,6 +266,15 @@ void SourceReceiver::Deactivate()
     Source::Deactivate();
 }
 
+TBool SourceReceiver::TryActivateNoPrefetch(const Brx& aMode)
+{
+    if (iUriProvider->Mode() != aMode) {
+        return false;
+    }
+    EnsureActiveNoPrefetch();
+    return true;
+}
+
 void SourceReceiver::StandbyEnabled()
 {
     Stop();
@@ -283,7 +290,7 @@ void SourceReceiver::PipelineStopped()
 void SourceReceiver::Play()
 {
     LOG(kSongcast, "SourceReceiver::Play()\n");
-    EnsureActive();
+    EnsureActiveNoPrefetch();
     TBool doPlay = false;
     {
         AutoMutex a(iLock);
@@ -316,7 +323,7 @@ void SourceReceiver::Stop()
 void SourceReceiver::SetSender(const Brx& aUri, const Brx& aMetadata)
 {
     LOG(kSongcast, "SourceReceiver::SetSender(%.*s)\n", PBUF(aUri));
-    EnsureActive();
+    EnsureActiveNoPrefetch();
     AutoMutex a(iLock);
     if (aUri.Bytes() > 0) {
         iUri.Replace(aUri);
@@ -408,16 +415,6 @@ void SourceReceiver::NotifyTime(TUint /*aSeconds*/, TUint /*aTrackDurationSecond
 
 void SourceReceiver::NotifyStreamInfo(const DecodedStreamInfo& /*aStreamInfo*/)
 {
-}
-
-void SourceReceiver::EnsureActive()
-{
-    AutoMutex a(iActivationLock);
-    iNoPipelinePrefetchOnActivation = true;
-    if (!IsActive()) {
-        DoActivate();
-    }
-    iNoPipelinePrefetchOnActivation = false;
 }
 
 void SourceReceiver::UriChanged()

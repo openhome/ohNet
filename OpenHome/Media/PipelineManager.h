@@ -44,6 +44,13 @@ private:
     const TUint iOpenHomeMax;
 };
 
+class IModeObserver
+{
+public:
+    virtual void NotifyModeAdded(const Brx& aMode) = 0;
+    virtual ~IModeObserver() {}
+};
+
 /**
  * External interface to the pipeline.
  */
@@ -139,6 +146,7 @@ public:
      */
     void RemoveObserver(IPipelineObserver& aObserver);
     void AddObserver(ITrackObserver& aObserver);
+    void AddObserver(IModeObserver& aObserver);
     /**
      * Retrieve a sample reporter.
      *
@@ -174,6 +182,14 @@ public:
      * to be played.
      */
     void Play();
+    /**
+     * Halt the pipeline, instruct it what to play next then restart.
+     *
+     * @param[in] aMode            Identifier for the UriProvider
+     * @param[in] aCommand         Mode-specific string, telling the UriProvider
+     *                             what to play.
+     */
+    void PlayAs(const Brx& aMode, const Brx& aCommand);
     /**
      * Pause the pipeline.
      *
@@ -299,6 +315,7 @@ private:
     IdManager* iIdManager;
     std::vector<UriProvider*> iUriProviders;
     std::vector<IPipelineObserver*> iObservers;
+    IModeObserver* iModeObserver;
     EPipelineState iPipelineState;
     Semaphore iPipelineStoppedSem;
     BwsMode iMode;

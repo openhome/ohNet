@@ -33,9 +33,9 @@ public: // from UriProvider
     void BeginLater(TUint aTrackId) override;
     Media::EStreamPlay GetNext(Media::Track*& aTrack) override;
     TUint CurrentTrackId() const override;
-    TBool MoveNext() override;
-    TBool MovePrevious() override;
-    TBool MoveTo(const Brx& aCommand) override;
+    void MoveNext() override;
+    void MovePrevious() override;
+    void MoveTo(const Brx& aCommand) override;
 private: // from ITrackDatabaseObserver
     void NotifyTrackInserted(Media::Track& aTrack, TUint aIdBefore, TUint aIdAfter) override;
     void NotifyTrackDeleted(TUint aId, Media::Track* aBefore, Media::Track* aAfter) override;

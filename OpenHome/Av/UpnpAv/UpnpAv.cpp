@@ -42,7 +42,6 @@ SourceUpnpAv::SourceUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice, U
     , iTrack(nullptr)
     , iTransportState(Media::EPipelineStopped)
     , iPipelineTransportState(Media::EPipelineStopped)
-    , iNoPipelinePrefetchOnActivation(false)
     , iIgnorePipelineStateUpdates(false)
 {
     iStreamId.store(IPipelineIdProvider::kStreamIdInvalid);
@@ -65,16 +64,6 @@ SourceUpnpAv::~SourceUpnpAv()
     if (iTrack != nullptr) {
         iTrack->RemoveRef();
     }
-}
-
-void SourceUpnpAv::EnsureActive()
-{
-    AutoMutex a(iActivationLock);
-    iNoPipelinePrefetchOnActivation = true;
-    if (!IsActive()) {
-        DoActivate();
-    }
-    iNoPipelinePrefetchOnActivation = false;
 }
 
 void SourceUpnpAv::NotifyState(EPipelineState aState)
@@ -110,6 +99,15 @@ void SourceUpnpAv::Deactivate()
     Source::Deactivate();
 }
 
+TBool SourceUpnpAv::TryActivateNoPrefetch(const Brx& aMode)
+{
+    if (iUriProvider.Mode() != aMode) {
+        return false;
+    }
+    EnsureActiveNoPrefetch();
+    return true;
+}
+
 void SourceUpnpAv::StandbyEnabled()
 {
     Stop();
@@ -122,7 +120,7 @@ void SourceUpnpAv::PipelineStopped()
 
 void SourceUpnpAv::SetTrack(const Brx& aUri, const Brx& aMetaData)
 {
-    EnsureActive();
+    EnsureActiveNoPrefetch();
     TBool playNow = false;
     TUint trackId;
     {
@@ -154,7 +152,7 @@ void SourceUpnpAv::SetTrack(const Brx& aUri, const Brx& aMetaData)
 
 void SourceUpnpAv::Play()
 {
-    EnsureActive();
+    EnsureActiveNoPrefetch();
     TBool restartTrack;
     TUint trackId;
     {

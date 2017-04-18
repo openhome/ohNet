@@ -49,6 +49,7 @@ public:
 private: // from ISource
     void Activate(TBool aAutoPlay) override;
     void Deactivate() override;
+    TBool TryActivateNoPrefetch(const Brx& aMode) override;
     void StandbyEnabled() override;
     void PipelineStopped() override;
 private: // from ISourceRadio

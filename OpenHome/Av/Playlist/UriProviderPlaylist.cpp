@@ -106,7 +106,7 @@ TUint UriProviderPlaylist::CurrentTrackId() const
     return id;
 }
 
-TBool UriProviderPlaylist::MoveNext()
+void UriProviderPlaylist::MoveNext()
 {
     AutoMutex a(iLock);
     if (iPending != nullptr) {
@@ -125,10 +125,9 @@ TBool UriProviderPlaylist::MoveNext()
         iPendingCanPlay = (iPending == nullptr? ePlayNo : ePlayLater);
     }
     iPendingDirection = eForwards;
-    return (iPendingCanPlay == ePlayYes);
 }
 
-TBool UriProviderPlaylist::MovePrevious()
+void UriProviderPlaylist::MovePrevious()
 {
     AutoMutex a(iLock);
     if (iPending != nullptr) {
@@ -147,10 +146,9 @@ TBool UriProviderPlaylist::MovePrevious()
         iPendingCanPlay = (iPending == nullptr? ePlayNo : ePlayLater);
     }
     iPendingDirection = eBackwards;
-    return (iPendingCanPlay == ePlayYes);
 }
 
-TBool UriProviderPlaylist::MoveTo(const Brx& aCommand)
+void UriProviderPlaylist::MoveTo(const Brx& aCommand)
 {
     Track* track = nullptr;
     if (aCommand.BeginsWith(kCommandId)) {
@@ -170,7 +168,6 @@ TBool UriProviderPlaylist::MoveTo(const Brx& aCommand)
     iPending = track;
     iPendingCanPlay = ePlayYes;
     iPendingDirection = eJumpTo;
-    return true;
 }
 
 void UriProviderPlaylist::DoBegin(TUint aTrackId, EStreamPlay aPendingCanPlay)

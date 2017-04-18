@@ -29,8 +29,8 @@ private: // from UriProvider
     void BeginLater(TUint aTrackId) override;
     EStreamPlay GetNext(Track*& aTrack) override;
     TUint CurrentTrackId() const override;
-    TBool MoveNext() override;
-    TBool MovePrevious() override;
+    void MoveNext() override;
+    void MovePrevious() override;
 private:
     static const TInt kNumEntries = 3;
     TrackFactory& iTrackFactory;
@@ -224,22 +224,20 @@ TUint DummyUriProvider::CurrentTrackId() const
     return iTracks[iIndex]->Id();
 }
 
-TBool DummyUriProvider::MoveNext()
+void DummyUriProvider::MoveNext()
 {
     iPendingIndex = ++iIndex;
     if (iPendingIndex == kNumEntries) {
         iPendingIndex = 0;
     }
-    return true;
 }
 
-TBool DummyUriProvider::MovePrevious()
+void DummyUriProvider::MovePrevious()
 {
     iPendingIndex = --iIndex;
     if (iPendingIndex < 0) {
         iPendingIndex = kNumEntries-1;
     }
-    return true;
 }
 
 
@@ -529,10 +527,8 @@ void SuiteFiller::Test()
     // Stop/Next during second track.  Once track completes IUriStreamer should be passed uri for third track
     (void)iFiller->Stop();
     iTrackCompleteSem.Signal();
-    // test for invalid Next() arg
-    TEST(!iFiller->Next(Brn("InvalidMode")));
     //
-    TEST(iFiller->Next(iUriProvider->Mode()));
+    iFiller->Next(iUriProvider->Mode());
     iTrackAddedSem.Wait();
     TEST(iDummySupply->LastTrackUri() == iUriProvider->TrackUriByIndex(2));
     TEST(iDummySupply->LastTrackId() == iUriStreamer->TrackId());
@@ -546,7 +542,7 @@ void SuiteFiller::Test()
     // Stop/Prev during third track.  Once track completes IUriStreamer should be passed uri for second track
     (void)iFiller->Stop();
     iTrackCompleteSem.Signal();
-    TEST(iFiller->Prev(iUriProvider->Mode()));
+    iFiller->Prev(iUriProvider->Mode());
     iTrackAddedSem.Wait();
     TEST(iDummySupply->LastTrackUri() == iUriProvider->TrackUriByIndex(1));
     TEST(iDummySupply->LastTrackId() == iUriStreamer->TrackId());

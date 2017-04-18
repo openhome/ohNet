@@ -176,7 +176,9 @@ void SourceBase::VisibleChanged(Configuration::KeyValuePair<TUint>& aKvp)
 Source::Source(const Brx& aSystemName, const TChar* aType, Media::PipelineManager& aPipeline, IPowerManager& aPowerManager, TBool aIsVisibleByDefault)
     : SourceBase(aSystemName, aType, aIsVisibleByDefault)
     , iPipeline(aPipeline)
+    , iNoPipelinePrefetchOnActivation(false)
     , iPowerManager(aPowerManager)
+    , iLockActivation("SRC ")
 {
 }
 
@@ -184,4 +186,14 @@ void Source::DoPlay()
 {
     iPowerManager.StandbyDisable(StandbyDisableReason::User);
     iPipeline.Play();
+}
+
+void Source::EnsureActiveNoPrefetch()
+{
+    AutoMutex _(iLockActivation);
+    iNoPipelinePrefetchOnActivation = true;
+    if (!IsActive()) {
+        DoActivate();
+    }
+    iNoPipelinePrefetchOnActivation = false;
 }

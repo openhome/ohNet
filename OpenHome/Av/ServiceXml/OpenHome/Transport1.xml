@@ -100,31 +100,6 @@
       </argumentList>
     </action>
     <action>
-      <name>Counters</name>
-      <argumentList>
-        <argument>
-          <name>ModeCount</name>
-          <direction>out</direction>
-          <relatedStateVariable>ModeCount</relatedStateVariable>
-        </argument>
-        <argument>
-          <name>TrackCount</name>
-          <direction>out</direction>
-          <relatedStateVariable>TrackCount</relatedStateVariable>
-        </argument>
-        <argument>
-          <name>StreamCount</name>
-          <direction>out</direction>
-          <relatedStateVariable>StreamCount</relatedStateVariable>
-        </argument>
-        <argument>
-          <name>MetatextCount</name>
-          <direction>out</direction>
-          <relatedStateVariable>MetatextCount</relatedStateVariable>
-        </argument>
-      </argumentList>
-    </action>
-    <action>
       <name>ModeInfo</name>
       <argumentList>
         <argument>
@@ -140,37 +115,12 @@
       </argumentList>
     </action>
     <action>
-      <name>TrackInfo</name>
-      <argumentList>
-        <argument>
-          <name>Uri</name>
-          <direction>out</direction>
-          <relatedStateVariable>A_ARG_TYPE_string</relatedStateVariable>
-        </argument>
-        <argument>
-          <name>Metadata</name>
-          <direction>out</direction>
-          <relatedStateVariable>A_ARG_TYPE_string</relatedStateVariable>
-        </argument>
-      </argumentList>
-    </action>
-    <action>
       <name>StreamInfo</name>
       <argumentList>
         <argument>
           <name>StreamId</name>
           <direction>out</direction>
           <relatedStateVariable>StreamId</relatedStateVariable>
-        </argument>
-        <argument>
-          <name>Uri</name>
-          <direction>out</direction>
-          <relatedStateVariable>A_ARG_TYPE_string</relatedStateVariable>
-        </argument>
-        <argument>
-          <name>Metadata</name>
-          <direction>out</direction>
-          <relatedStateVariable>A_ARG_TYPE_string</relatedStateVariable>
         </argument>
         <argument>
           <name>Seekable</name>
@@ -181,36 +131,6 @@
           <name>Pausable</name>
           <direction>out</direction>
           <relatedStateVariable>Pausable</relatedStateVariable>
-        </argument>
-        <argument>
-          <name>Duration</name>
-          <direction>out</direction>
-          <relatedStateVariable>Duration</relatedStateVariable>
-        </argument>
-        <argument>
-          <name>BitRate</name>
-          <direction>out</direction>
-          <relatedStateVariable>BitRate</relatedStateVariable>
-        </argument>
-        <argument>
-          <name>BitDepth</name>
-          <direction>out</direction>
-          <relatedStateVariable>BitDepth</relatedStateVariable>
-        </argument>
-        <argument>
-          <name>SampleRate</name>
-          <direction>out</direction>
-          <relatedStateVariable>SampleRate</relatedStateVariable>
-        </argument>
-        <argument>
-          <name>Lossless</name>
-          <direction>out</direction>
-          <relatedStateVariable>Lossless</relatedStateVariable>
-        </argument>
-        <argument>
-          <name>CodecName</name>
-          <direction>out</direction>
-          <relatedStateVariable>CodecName</relatedStateVariable>
         </argument>
       </argumentList>
     </action>
@@ -224,45 +144,11 @@
         </argument>
       </argumentList>
     </action>
-    <action>
-      <name>Metatext</name>
-      <argumentList>
-        <argument>
-          <name>Metatext</name>
-          <direction>out</direction>
-          <relatedStateVariable>Metatext</relatedStateVariable>
-        </argument>
-      </argumentList>
-    </action>
   </actionList>
   <serviceStateTable>
     <stateVariable sendEvents="yes">
       <name>Modes</name>
       <dataType>string</dataType>
-    </stateVariable>
-    <stateVariable sendEvents="yes">
-      <name>ModeCount</name>
-      <dataType>ui4</dataType>
-    </stateVariable>
-    <stateVariable sendEvents="yes">
-      <name>TrackCount</name>
-      <dataType>ui4</dataType>
-    </stateVariable>
-    <stateVariable sendEvents="yes">
-      <name>Mode</name>
-      <dataType>string</dataType>
-    </stateVariable>
-    <stateVariable sendEvents="yes">
-      <name>SequenceNumbers</name>
-      <dataType>string</dataType>
-    </stateVariable>
-    <stateVariable sendEvents="yes">
-      <name>StreamCount</name>
-      <dataType>ui4</dataType>
-    </stateVariable>
-    <stateVariable sendEvents="yes">
-      <name>MetatextCount</name>
-      <dataType>ui4</dataType>
     </stateVariable>
     <stateVariable sendEvents="yes">
       <name>NextAvailable</name>
@@ -277,40 +163,12 @@
       <dataType>ui4</dataType>
     </stateVariable>
     <stateVariable sendEvents="yes">
-      <name>Duration</name>
-      <dataType>ui4</dataType>
-    </stateVariable>
-    <stateVariable sendEvents="yes">
       <name>Seekable</name>
       <dataType>boolean</dataType>
     </stateVariable>
     <stateVariable sendEvents="yes">
       <name>Pausable</name>
       <dataType>boolean</dataType>
-    </stateVariable>
-    <stateVariable sendEvents="yes">
-      <name>BitRate</name>
-      <dataType>ui4</dataType>
-    </stateVariable>
-    <stateVariable sendEvents="yes">
-      <name>BitDepth</name>
-      <dataType>ui4</dataType>
-    </stateVariable>
-    <stateVariable sendEvents="yes">
-      <name>SampleRate</name>
-      <dataType>ui4</dataType>
-    </stateVariable>
-    <stateVariable sendEvents="yes">
-      <name>Lossless</name>
-      <dataType>boolean</dataType>
-    </stateVariable>
-    <stateVariable sendEvents="yes">
-      <name>CodecName</name>
-      <dataType>string</dataType>
-    </stateVariable>
-    <stateVariable sendEvents="yes">
-      <name>Metatext</name>
-      <dataType>string</dataType>
     </stateVariable>
     <stateVariable sendEvents="yes">
       <name>TransportState</name>

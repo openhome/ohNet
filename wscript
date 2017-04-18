@@ -687,6 +687,8 @@ def build(bld):
                 'OpenHome/Av/Tests/TestMediaPlayerOptions.cpp',
                 'OpenHome/Configuration/Tests/ConfigRamStore.cpp',
                 'OpenHome/Configuration/Tests/TestConfigManager.cpp',
+                'OpenHome/Tests/TestPipe.cpp',
+                'OpenHome/Tests/Mock.cpp',
                 'OpenHome/Tests/TestPowerManager.cpp',
                 'OpenHome/Tests/TestSsl.cpp',
                 'OpenHome/Av/Tests/TestCredentials.cpp',

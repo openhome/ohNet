@@ -43,11 +43,11 @@ public:
     SourceUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice, Media::UriProviderRepeater& aUriProvider, Media::MimeTypeList& aMimeTypeList);
     ~SourceUpnpAv();
 private:
-    void EnsureActive();
     void NotifyState(Media::EPipelineState aState);
 private: // from Source
     void Activate(TBool aAutoPlay) override;
     void Deactivate() override;
+    TBool TryActivateNoPrefetch(const Brx& aMode) override;
     void StandbyEnabled() override;
     void PipelineStopped() override;
 private: // from ISourceUpnpAv
@@ -78,7 +78,6 @@ private:
     std::atomic<TUint> iStreamId;
     Media::EPipelineState iTransportState;
     Media::EPipelineState iPipelineTransportState;
-    TBool iNoPipelinePrefetchOnActivation;
     TBool iIgnorePipelineStateUpdates;
 };
 
