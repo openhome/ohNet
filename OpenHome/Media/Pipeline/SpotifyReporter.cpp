@@ -321,6 +321,15 @@ void SpotifyReporter::NotifySeek(TUint aOffsetMs)
 Msg* SpotifyReporter::ProcessMsg(MsgMode* aMsg)
 {
     if (aMsg->Mode() == kInterceptMode) {
+
+        // If iInterceptMode is already true, this must have been called with
+        // lock held, so can safely reset internal members that require locking.
+        if (iInterceptMode) {
+            iMsgTrackPending = true;
+            iMsgDecodedStreamPending = true;
+            iSubSamples = 0;
+        }
+
         iInterceptMode = true;
 
         ClearDecodedStream();
@@ -348,7 +357,7 @@ Msg* SpotifyReporter::ProcessMsg(MsgDecodedStream* aMsg)
         return aMsg;
     }
     const DecodedStreamInfo& info = aMsg->StreamInfo();
-    ASSERT(info.SampleRate() != 0);
+    ASSERT(info.SampleRate() != 0);     // This is used as a divisor. Don't want a divide-by-zero error.
     ASSERT(info.NumChannels() != 0);
 
     // Clear any previous cached MsgDecodedStream and cache the one received.
