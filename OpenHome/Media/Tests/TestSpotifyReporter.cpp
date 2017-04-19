@@ -82,7 +82,7 @@ private:
     Mutex iLock;
 };
 
-class WriterBool
+class WriterBool : private INonCopyable
 {
 public:
     WriterBool(IWriter& aWriter);
@@ -91,7 +91,7 @@ private:
     IWriter& iWriter;
 };
 
-class MockMsgProcessor : public IMsgProcessor
+class MockMsgProcessor : public IMsgProcessor, private INonCopyable
 {
 private:
     static const TUint kMaxMsgBytes = OpenHome::Test::TestPipeDynamic::kMaxMsgBytes;
