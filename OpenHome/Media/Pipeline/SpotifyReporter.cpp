@@ -157,42 +157,17 @@ void SpotifyDidlLiteWriter::WriteOptionalAttributes(IWriter& aWriter, TUint aBit
 
 StartOffset::StartOffset()
     : iOffsetMs(0)
-    , iOffsetSample(0)
 {
 }
 
 void StartOffset::SetMs(TUint aOffsetMs)
 {
     iOffsetMs = aOffsetMs;
-    iOffsetSample = 0;
-}
-
-void StartOffset::SetSample(TUint64 aOffsetSample)
-{
-    iOffsetMs = 0;
-    iOffsetSample = aOffsetSample;
 }
 
 TUint64 StartOffset::OffsetSample(TUint aSampleRate) const
 {
-    if (iOffsetMs == 0 && iOffsetSample == 0) {
-        return 0;
-    }
-
-    if (iOffsetMs > 0 && iOffsetSample == 0) {
-        // Offset was set as a ms value.
-        const TUint64 offsetSample = (static_cast<TUint64>(iOffsetMs)*aSampleRate)/1000;
-        return offsetSample;
-    }
-
-    if (iOffsetMs == 0 && iOffsetSample > 0) {
-        // Offset was set as a sample value.
-        return iOffsetSample;
-    }
-
-    // Unknown/unreachable condition.
-    ASSERTS();
-    return 0;
+    return (static_cast<TUint64>(iOffsetMs)*aSampleRate)/1000;
 }
 
 
@@ -233,7 +208,7 @@ SpotifyReporter::SpotifyReporter(IPipelineElementUpstream& aUpstreamElement, Msg
 
 SpotifyReporter::~SpotifyReporter()
 {
-    AutoMutex a(iLock);
+    AutoMutex _(iLock);
     if (iMetadata != nullptr) {
         iMetadata->Destroy();
     }
@@ -246,12 +221,31 @@ Msg* SpotifyReporter::Pull()
 {
     Msg* msg = nullptr;
     while (msg == nullptr) {
-        {
+        if (!iInterceptMode) {
+            msg = iUpstreamElement.Pull();
+            msg = msg->Process(*this);
+
+            if (iInterceptMode) {
+                // Mode changed. Need to set up some variables that are
+                // accessed from different threads, so need to acquire iLock.
+                AutoMutex _(iLock);
+                iMsgTrackPending = true;
+                iMsgDecodedStreamPending = true;
+                iSubSamples = 0;
+            }
+        }
+        else {
+            // iLock needs to be held for a subset of the checks below, and in
+            // certain msg->Process() calls.
+            // However, doing it that way results in acquiring the mutex twice
+            // when processing MsgAudioPcm during a Spotify stream. Instead,
+            // acquire iLock here and keep it held while calling msg->Process().
+            AutoMutex _(iLock);
+
             // Don't output any generated MsgTrack or modified MsgDecodedStream
             // unless in Spotify mode, and seen a MsgTrack and MsgDecodedStream
             // arrive via pipeline.
-            if (iInterceptMode && iPipelineTrackSeen && iDecodedStream != nullptr) {
-                AutoMutex a(iLock);
+            if (iPipelineTrackSeen && iDecodedStream != nullptr) {
                 // Only want to output generated MsgTrack if it's pending and if stream format is known to get certain elements for track metadata.
                 if (iMsgTrackPending) {
                     ASSERT(iMetadata != nullptr);
@@ -289,31 +283,23 @@ Msg* SpotifyReporter::Pull()
                     }
                 }
             }
-        }
 
-        msg = iUpstreamElement.Pull();
-        msg = msg->Process(*this);
+            msg = iUpstreamElement.Pull();
+            msg = msg->Process(*this);
+        }
     }
     return msg;
 }
 
 TUint64 SpotifyReporter::SubSamples() const
 {
-    AutoMutex a(iLock);
+    AutoMutex _(iLock);
     return iSubSamples;
-}
-
-TUint64 SpotifyReporter::SubSamplesDiff(TUint64 aPrevSubSamples) const
-{
-    AutoMutex a(iLock);
-    const TUint64 subSamples = iSubSamples;
-    ASSERT(subSamples >= aPrevSubSamples);
-    return subSamples - aPrevSubSamples;
 }
 
 void SpotifyReporter::TrackChanged(const Brx& aUri, ISpotifyMetadata* aMetadata, TUint aStartMs)
 {
-    AutoMutex a(iLock);
+    AutoMutex _(iLock);
     iMsgTrackPending = true;
     if (iMetadata != nullptr) {
         iMetadata->Destroy();
@@ -328,25 +314,31 @@ void SpotifyReporter::TrackChanged(const Brx& aUri, ISpotifyMetadata* aMetadata,
 
 void SpotifyReporter::NotifySeek(TUint aOffsetMs)
 {
-    AutoMutex a(iLock);
+    AutoMutex _(iLock);
     iStartOffset.SetMs(aOffsetMs);
 }
 
 Msg* SpotifyReporter::ProcessMsg(MsgMode* aMsg)
 {
-    AutoMutex a(iLock);
     if (aMsg->Mode() == kInterceptMode) {
+
+        // If iInterceptMode is already true, this must have been called with
+        // lock held, so can safely reset internal members that require locking.
+        if (iInterceptMode) {
+            iMsgTrackPending = true;
+            iMsgDecodedStreamPending = true;
+            iSubSamples = 0;
+        }
+
         iInterceptMode = true;
+
+        ClearDecodedStream();
+        iPipelineTrackSeen = false;
     }
     else {
         iInterceptMode = false;
     }
-    iPipelineTrackSeen = false;
-    iMsgTrackPending = true;
-    iMsgDecodedStreamPending = true;
-    ClearDecodedStream();
 
-    iSubSamples = 0;
     return aMsg;
 }
 
@@ -355,7 +347,6 @@ Msg* SpotifyReporter::ProcessMsg(MsgTrack* aMsg)
     if (!iInterceptMode) {
         return aMsg;
     }
-    AutoMutex a(iLock);
     iPipelineTrackSeen = true;  // Only matters when in iInterceptMode. Ensures in-band MsgTrack is output before any are generated from out-of-band notifications.
     return aMsg;
 }
@@ -366,9 +357,9 @@ Msg* SpotifyReporter::ProcessMsg(MsgDecodedStream* aMsg)
         return aMsg;
     }
     const DecodedStreamInfo& info = aMsg->StreamInfo();
-    ASSERT(info.SampleRate() != 0);
+    ASSERT(info.SampleRate() != 0);     // This is used as a divisor. Don't want a divide-by-zero error.
     ASSERT(info.NumChannels() != 0);
-    AutoMutex a(iLock);
+
     // Clear any previous cached MsgDecodedStream and cache the one received.
     UpdateDecodedStream(*aMsg);
 
@@ -382,11 +373,12 @@ Msg* SpotifyReporter::ProcessMsg(MsgAudioPcm* aMsg)
     if (!iInterceptMode) {
         return aMsg;
     }
-    AutoMutex a(iLock);
+
     ASSERT(iDecodedStream != nullptr);  // Can't receive audio until MsgDecodedStream seen.
     const DecodedStreamInfo& info = iDecodedStream->StreamInfo();
     TUint samples = aMsg->Jiffies()/Jiffies::PerSample(info.SampleRate());
 
+    // iLock held in ::Pull() method to protect iSubSamples.
     TUint64 subSamplesPrev = iSubSamples;
     iSubSamples += samples*info.NumChannels();
     ASSERT(iSubSamples >= subSamplesPrev); // Overflow not handled.
