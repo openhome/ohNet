@@ -75,7 +75,7 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     iProduct->AddAttribute("Info");
     iProviderConfig = new ProviderConfig(aDevice, *iConfigManager);
 #if 0
-    iProviderTransport = new ProviderTransport(aDevice, *iPipeline, *iProduct);
+    iProviderTransport = new ProviderTransport(aDevice, *iPipeline, *iProduct, iTransportRepeatRandom);
     iProduct->AddAttribute("Transport");
 #else
     iProviderTransport = nullptr;
@@ -261,4 +261,9 @@ RingBufferLogger* MediaPlayer::LogBuffer()
 IUnixTimestamp& MediaPlayer::UnixTimestamp()
 {
     return *iUnixTimestamp;
+}
+
+ITransportRepeatRandom& MediaPlayer::TransportRepeatRandom()
+{
+    return iTransportRepeatRandom;
 }

@@ -1920,21 +1920,25 @@ SuiteMode::~SuiteMode()
 void SuiteMode::Test()
 {
     Brn mode("First");
-    MsgMode* msg = iMsgFactory->CreateMsgMode(mode, true, ModeClockPullers(), true, true);
+    MsgMode* msg = iMsgFactory->CreateMsgMode(mode, true, ModeClockPullers(), true, false, true, false);
     TEST(msg->Mode() == mode);
     const ModeInfo& info = msg->Info();
-    TEST(info.SupportsLatency());
-    TEST(info.SupportsNext());
-    TEST(info.SupportsPrev());
+    TEST( info.SupportsLatency());
+    TEST( info.SupportsNext());
+    TEST(!info.SupportsPrev());
+    TEST( info.SupportsRepeat());
+    TEST(!info.SupportsRandom());
     msg->RemoveRef();
     TEST(msg->Mode() != mode);
 
     Brn mode2("Second");
-    msg = iMsgFactory->CreateMsgMode(mode2, false, ModeClockPullers(), false, false);
+    msg = iMsgFactory->CreateMsgMode(mode2, false, ModeClockPullers(), false, true, false, true);
     TEST(msg->Mode() == mode2);
     TEST(!info.SupportsLatency());
     TEST(!info.SupportsNext());
-    TEST(!info.SupportsPrev());
+    TEST( info.SupportsPrev());
+    TEST(!info.SupportsRepeat());
+    TEST( info.SupportsRandom());
     msg->RemoveRef();
     TEST(msg->Mode() != mode2);
 }
@@ -2152,7 +2156,7 @@ void SuiteMsgProcessor::Test()
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgDecodedStream);
     msg->RemoveRef();
 
-    msg = iMsgFactory->CreateMsgMode(Brx::Empty(), true, ModeClockPullers(), false, false);
+    msg = iMsgFactory->CreateMsgMode(Brx::Empty(), true, ModeClockPullers(), false, false, false, false);
     TEST(msg == msg->Process(processor));
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgMode);
     msg->RemoveRef();
@@ -2762,7 +2766,7 @@ void SuiteMsgReservoir::Test()
     TEST(queue->LastIn() == TestMsgReservoir::ENone);
     TEST(queue->LastOut() == TestMsgReservoir::ENone);
 
-    Msg* msg = iMsgFactory->CreateMsgMode(Brx::Empty(), true, ModeClockPullers(), false, false);
+    Msg* msg = iMsgFactory->CreateMsgMode(Brx::Empty(), true, ModeClockPullers(), false, false, false, false);
     queue->Enqueue(msg);
     jiffies = queue->Jiffies();
     TEST(jiffies == 0);
@@ -3201,7 +3205,7 @@ Msg* SuitePipelineElement::CreateMsg(ProcessorMsgType::EMsgType aType)
     case ProcessorMsgType::ENone:
         break;
     case ProcessorMsgType::EMsgMode:
-        return iMsgFactory->CreateMsgMode(Brx::Empty(), true, ModeClockPullers(), false, false);
+        return iMsgFactory->CreateMsgMode(Brx::Empty(), true, ModeClockPullers(), false, false, false, false);
     case ProcessorMsgType::EMsgTrack:
     {
         Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());

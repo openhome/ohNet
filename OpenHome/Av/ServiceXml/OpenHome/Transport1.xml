@@ -50,6 +50,26 @@
       </argumentList>
     </action>
     <action>
+      <name>SetRepeat</name>
+      <argumentList>
+        <argument>
+          <name>Repeat</name>
+          <direction>in</direction>
+          <relatedStateVariable>A_ARG_TYPE_boolean</relatedStateVariable>
+        </argument>
+      </argumentList>
+    </action>
+    <action>
+      <name>SetRandom</name>
+      <argumentList>
+        <argument>
+          <name>Random</name>
+          <direction>in</direction>
+          <relatedStateVariable>A_ARG_TYPE_boolean</relatedStateVariable>
+        </argument>
+      </argumentList>
+    </action>
+    <action>
       <name>SeekSecondsAbsolute</name>
       <argumentList>
         <argument>
@@ -112,6 +132,16 @@
           <direction>out</direction>
           <relatedStateVariable>PrevAvailable</relatedStateVariable>
         </argument>
+        <argument>
+          <name>RepeatAvailable</name>
+          <direction>out</direction>
+          <relatedStateVariable>RepeatAvailable</relatedStateVariable>
+        </argument>
+        <argument>
+          <name>RandomAvailable</name>
+          <direction>out</direction>
+          <relatedStateVariable>RandomAvailable</relatedStateVariable>
+        </argument>
       </argumentList>
     </action>
     <action>
@@ -144,6 +174,26 @@
         </argument>
       </argumentList>
     </action>
+    <action>
+      <name>Repeat</name>
+      <argumentList>
+        <argument>
+          <name>Repeat</name>
+          <direction>out</direction>
+          <relatedStateVariable>Repeat</relatedStateVariable>
+        </argument>
+      </argumentList>
+    </action>
+    <action>
+      <name>Random</name>
+      <argumentList>
+        <argument>
+          <name>Random</name>
+          <direction>out</direction>
+          <relatedStateVariable>Random</relatedStateVariable>
+        </argument>
+      </argumentList>
+    </action>
   </actionList>
   <serviceStateTable>
     <stateVariable sendEvents="yes">
@@ -156,6 +206,14 @@
     </stateVariable>
     <stateVariable sendEvents="yes">
       <name>PrevAvailable</name>
+      <dataType>boolean</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="yes">
+      <name>RepeatAvailable</name>
+      <dataType>boolean</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="yes">
+      <name>RandomAvailable</name>
       <dataType>boolean</dataType>
     </stateVariable>
     <stateVariable sendEvents="yes">
@@ -181,6 +239,14 @@
         <allowedValue>Waiting</allowedValue>
       </allowedValueList>
     </stateVariable>
+    <stateVariable sendEvents="yes">
+      <name>Repeat</name>
+      <dataType>boolean</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="yes">
+      <name>Random</name>
+      <dataType>boolean</dataType>
+    </stateVariable>
     <stateVariable sendEvents="no">
       <name>A_ARG_TYPE_uint</name>
       <dataType>ui4</dataType>
@@ -192,6 +258,10 @@
     <stateVariable sendEvents="no">
       <name>A_ARG_TYPE_string</name>
       <dataType>string</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="no">
+      <name>A_ARG_TYPE_boolean</name>
+      <dataType>boolean</dataType>
     </stateVariable>
   </serviceStateTable>
 </scpd>

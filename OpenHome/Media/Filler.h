@@ -27,6 +27,8 @@ public:
     TBool SupportsLatency() const;
     TBool SupportsNext() const;
     TBool SupportsPrev() const;
+    TBool SupportsRepeat() const;
+    TBool SupportsRandom() const;
     virtual ModeClockPullers ClockPullers();
     virtual TBool IsValid(TUint aTrackId) const;
     virtual void Begin(TUint aTrackId) = 0;
@@ -41,14 +43,19 @@ protected:
     enum class Latency  { Supported, NotSupported };
     enum class Next     { Supported, NotSupported };
     enum class Prev     { Supported, NotSupported };
+    enum class Repeat   { Supported, NotSupported };
+    enum class Random   { Supported, NotSupported };
 protected:
     UriProvider(const TChar* aMode, Latency aLatency,
-                Next aNextSupported, Prev aPrevSupported);
+                Next aNextSupported, Prev aPrevSupported,
+                Repeat aRepeatSupported, Random aRandomSupported);
 private:
     BwsMode iMode;
     TBool iSupportsLatency;
     TBool iSupportsNext;
     TBool iSupportsPrev;
+    TBool iSupportsRepeat;
+    TBool iSupportsRandom;
 };
 
 class Filler : private Thread, public IPipelineElementDownstream, private IMsgProcessor

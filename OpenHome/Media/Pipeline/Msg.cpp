@@ -896,11 +896,15 @@ ModeInfo::ModeInfo()
     Clear();
 }
 
-void ModeInfo::Set(TBool aSupportsLatency, TBool aSupportsNext, TBool aSupportsPrev)
+void ModeInfo::Set(TBool aSupportsLatency,
+                   TBool aSupportsNext, TBool aSupportsPrev,
+                   TBool aSupportsRepeat, TBool aSupportsRandom)
 {
     iSupportsLatency = aSupportsLatency;
     iSupportsNext    = aSupportsNext;
     iSupportsPrev    = aSupportsPrev;
+    iSupportsRepeat  = aSupportsRepeat;
+    iSupportsRandom  = aSupportsRandom;
 }
 
 void ModeInfo::Clear()
@@ -908,6 +912,8 @@ void ModeInfo::Clear()
     iSupportsLatency = false;
     iSupportsNext    = false;
     iSupportsPrev    = false;
+    iSupportsRepeat  = false;
+    iSupportsRandom  = false;
 }
 
 
@@ -964,10 +970,12 @@ const ModeClockPullers& MsgMode::ClockPullers() const
     return iClockPullers;
 }
 
-void MsgMode::Initialise(const Brx& aMode, TBool aSupportsLatency, ModeClockPullers aClockPullers, TBool aSupportsNext, TBool aSupportsPrev)
+void MsgMode::Initialise(const Brx& aMode, TBool aSupportsLatency, ModeClockPullers aClockPullers,
+                         TBool aSupportsNext, TBool aSupportsPrev,
+                         TBool aSupportsRepeat, TBool aSupportsRandom)
 {
     iMode.Replace(aMode);
-    iInfo.Set(aSupportsLatency, aSupportsNext, aSupportsPrev);
+    iInfo.Set(aSupportsLatency, aSupportsNext, aSupportsPrev, aSupportsRepeat, aSupportsRandom);
     iClockPullers = aClockPullers;
 }
 
@@ -3126,10 +3134,10 @@ MsgFactory::MsgFactory(IInfoAggregator& aInfoAggregator, const MsgFactoryInitPar
 {
 }
 
-MsgMode* MsgFactory::CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, ModeClockPullers aClockPullers, TBool aSupportsNext, TBool aSupportsPrev)
+MsgMode* MsgFactory::CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, ModeClockPullers aClockPullers, TBool aSupportsNext, TBool aSupportsPrev, TBool aSupportsRepeat, TBool aSupportsRandom)
 {
     MsgMode* msg = iAllocatorMsgMode.Allocate();
-    msg->Initialise(aMode, aSupportsLatency, aClockPullers, aSupportsNext, aSupportsPrev);
+    msg->Initialise(aMode, aSupportsLatency, aClockPullers, aSupportsNext, aSupportsPrev, aSupportsRepeat, aSupportsRandom);
     return msg;
 }
 

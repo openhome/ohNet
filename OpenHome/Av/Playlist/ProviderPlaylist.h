@@ -7,6 +7,7 @@
 #include <Generated/DvAvOpenhomeOrgPlaylist1.h>
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
 #include <OpenHome/Media/PipelineObserver.h>
+#include <OpenHome/Av/TransportControl.h>
 #include <OpenHome/Av/Playlist/TrackDatabase.h>
 
 #include <array>
@@ -33,11 +34,18 @@ public:
 };
 
 
-class ProviderPlaylist : public Net::DvProviderAvOpenhomeOrgPlaylist1, private ITrackDatabaseObserver
+class ProviderPlaylist : public Net::DvProviderAvOpenhomeOrgPlaylist1
+                       , private ITrackDatabaseObserver
+                       , private ITransportRepeatRandomObserver
 {
     static const TUint kIdArrayUpdateFrequencyMillisecs = 300;
 public:
-    ProviderPlaylist(Net::DvDevice& aDevice, Environment& aEnv, ISourcePlaylist& aSource, ITrackDatabase& aDatabase, IRepeater& aRepeater);
+    ProviderPlaylist(Net::DvDevice& aDevice,
+                     Environment& aEnv,
+                     ISourcePlaylist& aSource,
+                     ITrackDatabase& aDatabase,
+                     IRepeater& aRepeater,
+                     ITransportRepeatRandom& aTransportRepeatRandom);
     ~ProviderPlaylist();
     void NotifyPipelineState(Media::EPipelineState aState);
     void NotifyTrack(TUint aId);
@@ -46,6 +54,9 @@ private: // from ITrackDatabaseObserver
     void NotifyTrackInserted(Media::Track& aTrack, TUint aIdBefore, TUint aIdAfter) override;
     void NotifyTrackDeleted(TUint aId, Media::Track* aBefore, Media::Track* aAfter) override;
     void NotifyAllDeleted() override;
+private: // from ITransportRepeatRandomObserver
+    void TransportRepeatChanged(TBool aRepeat) override;
+    void TransportRandomChanged(TBool aRandom) override;
 private: // from Net::DvProviderAvOpenhomeOrgPlaylist1
     void Play(Net::IDvInvocation& aInvocation) override;
     void Pause(Net::IDvInvocation& aInvocation) override;
@@ -73,8 +84,6 @@ private: // from Net::DvProviderAvOpenhomeOrgPlaylist1
     void ProtocolInfo(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aValue) override;
 private:
     void TrackDatabaseChanged();
-    void SetRepeat(TBool aRepeat);
-    void SetShuffle(TBool aShuffle);
     void UpdateIdArray();
     void UpdateIdArrayProperty();
     void TimerCallback();
@@ -83,6 +92,7 @@ private:
     ISourcePlaylist& iSource;
     ITrackDatabase& iDatabase;
     IRepeater& iRepeater;
+    ITransportRepeatRandom& iTransportRepeatRandom;
     Brn iProtocolInfo;
     Media::EPipelineState iPipelineState;
     TUint iDbSeq;

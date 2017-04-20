@@ -60,6 +60,14 @@ inline TBool ModeInfo::SupportsPrev() const
 {
     return iSupportsPrev;
 }
+inline TBool ModeInfo::SupportsRepeat() const
+{
+    return iSupportsRepeat;
+}
+inline TBool ModeInfo::SupportsRandom() const
+{
+    return iSupportsRandom;
+}
 
 
 // MsgAudioEncoded, MsgAudioPcm

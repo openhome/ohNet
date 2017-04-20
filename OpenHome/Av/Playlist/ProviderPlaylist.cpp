@@ -28,12 +28,18 @@ static const Brn kSeekFailureMsg("Seek failed");
 
 // ProviderPlaylist
 
-ProviderPlaylist::ProviderPlaylist(Net::DvDevice& aDevice, Environment& aEnv, ISourcePlaylist& aSource, ITrackDatabase& aDatabase, IRepeater& aRepeater)
+ProviderPlaylist::ProviderPlaylist(DvDevice& aDevice,
+                                   Environment& aEnv,
+                                   ISourcePlaylist& aSource,
+                                   ITrackDatabase& aDatabase,
+                                   IRepeater& aRepeater,
+                                   ITransportRepeatRandom& aTransportRepeatRandom)
     : DvProviderAvOpenhomeOrgPlaylist1(aDevice)
     , iLock("PPLY")
     , iSource(aSource)
     , iDatabase(aDatabase)
     , iRepeater(aRepeater)
+    , iTransportRepeatRandom(aTransportRepeatRandom)
     , iTimerLock("PPL2")
     , iTimerActive(false)
 {
@@ -73,9 +79,8 @@ ProviderPlaylist::ProviderPlaylist(Net::DvDevice& aDevice, Environment& aEnv, IS
     EnableActionIdArrayChanged();
     EnableActionProtocolInfo();
 
+    iTransportRepeatRandom.AddObserver(*this);
     NotifyPipelineState(Media::EPipelineStopped);
-    SetRepeat(false);
-    SetShuffle(false);
     NotifyTrack(ITrackDatabase::kTrackIdNone);
     UpdateIdArrayProperty();
     (void)SetPropertyTracksMax(ITrackDatabase::kMaxTracks);
@@ -128,6 +133,18 @@ void ProviderPlaylist::NotifyAllDeleted()
     TrackDatabaseChanged();
 }
 
+void ProviderPlaylist::TransportRepeatChanged(TBool aRepeat)
+{
+    (void)SetPropertyRepeat(aRepeat);
+    iRepeater.SetRepeat(aRepeat);
+}
+
+void ProviderPlaylist::TransportRandomChanged(TBool aRandom)
+{
+    (void)SetPropertyShuffle(aRandom);
+    iSource.SetShuffle(aRandom);
+}
+
 void ProviderPlaylist::Play(IDvInvocation& aInvocation)
 {
     iSource.Play();
@@ -165,7 +182,7 @@ void ProviderPlaylist::Previous(IDvInvocation& aInvocation)
 
 void ProviderPlaylist::SetRepeat(IDvInvocation& aInvocation, TBool aValue)
 {
-    SetRepeat(aValue);
+    iTransportRepeatRandom.SetRepeat(aValue);
     aInvocation.StartResponse();
     aInvocation.EndResponse();
 }
@@ -181,7 +198,7 @@ void ProviderPlaylist::Repeat(IDvInvocation& aInvocation, IDvInvocationResponseB
 
 void ProviderPlaylist::SetShuffle(IDvInvocation& aInvocation, TBool aValue)
 {
-    SetShuffle(aValue);
+    iTransportRepeatRandom.SetRandom(aValue);
     aInvocation.StartResponse();
     aInvocation.EndResponse();
 }
@@ -434,18 +451,6 @@ void ProviderPlaylist::TrackDatabaseChanged()
         iTimer->FireIn(kIdArrayUpdateFrequencyMillisecs);
     }
     iTimerLock.Signal();
-}
-
-void ProviderPlaylist::SetRepeat(TBool aRepeat)
-{
-    (void)SetPropertyRepeat(aRepeat);
-    iRepeater.SetRepeat(aRepeat);
-}
-
-void ProviderPlaylist::SetShuffle(TBool aShuffle)
-{
-    (void)SetPropertyShuffle(aShuffle);
-    iSource.SetShuffle(aShuffle);
 }
 
 void ProviderPlaylist::UpdateIdArray()

@@ -24,11 +24,13 @@ const TUint ProviderTransport::kModesGranularity = 1024;
 
 ProviderTransport::ProviderTransport(Net::DvDevice& aDevice,
                                      PipelineManager& aPipeline,
-                                     ITransportActivator& aTransportActivator)
+                                     ITransportActivator& aTransportActivator,
+                                     ITransportRepeatRandom& aTransportRepeatRandom)
     : DvProviderAvOpenhomeOrgTransport1(aDevice)
     , iLock("PTPR")
     , iPipeline(aPipeline)
     , iTransportActivator(aTransportActivator)
+    , iTransportRepeatRandom(aTransportRepeatRandom)
     , iTransportState(EPipelineStopped)
     , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
     , iModes(kModesGranularity)
@@ -36,10 +38,14 @@ ProviderTransport::ProviderTransport(Net::DvDevice& aDevice,
     EnablePropertyModes();
     EnablePropertyNextAvailable();
     EnablePropertyPrevAvailable();
+    EnablePropertyRepeatAvailable();
+    EnablePropertyRandomAvailable();
     EnablePropertyStreamId();
     EnablePropertySeekable();
     EnablePropertyPausable();
     EnablePropertyTransportState();
+    EnablePropertyRepeat();
+    EnablePropertyRandom();
 
     EnableActionPlayAs();
     EnableActionPlay();
@@ -47,6 +53,8 @@ ProviderTransport::ProviderTransport(Net::DvDevice& aDevice,
     EnableActionStop();
     EnableActionNext();
     EnableActionPrev();
+    EnableActionSetRepeat();
+    EnableActionSetRandom();
     EnableActionSeekSecondsAbsolute();
     EnableActionSeekSecondsRelative();
     EnableActionTransportState();
@@ -54,12 +62,17 @@ ProviderTransport::ProviderTransport(Net::DvDevice& aDevice,
     EnableActionModeInfo();
     EnableActionStreamInfo();
     EnableActionStreamId();
+    EnableActionRepeat();
+    EnableActionRandom();
 
     iPipeline.AddObserver(*static_cast<Media::IPipelineObserver*>(this));
     iPipeline.AddObserver(*static_cast<Media::IModeObserver*>(this));
+    iTransportRepeatRandom.AddObserver(*this);
 
     (void)SetPropertyNextAvailable(false);
     (void)SetPropertyPrevAvailable(false);
+    (void)SetPropertyRepeatAvailable(false);
+    (void)SetPropertyRandomAvailable(false);
     (void)SetPropertyStreamId(iStreamId);
     (void)SetPropertySeekable(false);
     (void)SetPropertyPausable(false);
@@ -118,6 +131,16 @@ void ProviderTransport::NotifyModeAdded(const Brx& aMode)
         iModes.Write(' ');
     }
     iModes.Write(aMode);
+}
+
+void ProviderTransport::TransportRepeatChanged(TBool aRepeat)
+{
+    (void)SetPropertyRepeat(aRepeat);
+}
+
+void ProviderTransport::TransportRandomChanged(TBool aRandom)
+{
+    (void)SetPropertyRandom(aRandom);
 }
 
 void ProviderTransport::PlayAs(IDvInvocation& aInvocation, const Brx& aMode, const Brx& aCommand)
@@ -180,6 +203,20 @@ void ProviderTransport::Prev(IDvInvocation& aInvocation, TUint aStreamId)
     aInvocation.EndResponse();
 }
 
+void ProviderTransport::SetRepeat(IDvInvocation& aInvocation, TBool aRepeat)
+{
+    iTransportRepeatRandom.SetRepeat(aRepeat);
+    aInvocation.StartResponse();
+    aInvocation.EndResponse();
+}
+
+void ProviderTransport::SetRandom(IDvInvocation& aInvocation, TBool aRandom)
+{
+    iTransportRepeatRandom.SetRandom(aRandom);
+    aInvocation.StartResponse();
+    aInvocation.EndResponse();
+}
+
 void ProviderTransport::SeekSecondsAbsolute(IDvInvocation& aInvocation,
                                             TUint aStreamId, TUint aSecondsAbsolute)
 {
@@ -234,15 +271,21 @@ void ProviderTransport::Modes(IDvInvocation& aInvocation, IDvInvocationResponseS
 
 void ProviderTransport::ModeInfo(IDvInvocation& aInvocation,
                                  IDvInvocationResponseBool& aNextAvailable,
-                                 IDvInvocationResponseBool& aPrevAvailable)
+                                 IDvInvocationResponseBool& aPrevAvailable,
+                                 IDvInvocationResponseBool& aRepeatAvailable,
+                                 IDvInvocationResponseBool& aRandomAvailable)
 {
     AutoMutex _(iLock);
-    TBool next, prev;
+    TBool next, prev, repeat, random;
     GetPropertyNextAvailable(next);
     GetPropertyPrevAvailable(prev);
+    GetPropertyRepeat(repeat);
+    GetPropertyRandom(random);
     aInvocation.StartResponse();
     aNextAvailable.Write(next);
     aPrevAvailable.Write(prev);
+    aRepeatAvailable.Write(repeat);
+    aRandomAvailable.Write(random);
     aInvocation.EndResponse();
 }
 
@@ -271,5 +314,25 @@ void ProviderTransport::StreamId(IDvInvocation& aInvocation, IDvInvocationRespon
     GetPropertyStreamId(streamId);
     aInvocation.StartResponse();
     aStreamId.Write(streamId);
+    aInvocation.EndResponse();
+}
+
+void ProviderTransport::Repeat(IDvInvocation& aInvocation, IDvInvocationResponseBool& aRepeat)
+{
+    AutoMutex _(iLock);
+    TBool repeat;
+    GetPropertyRepeat(repeat);
+    aInvocation.StartResponse();
+    aRepeat.Write(repeat);
+    aInvocation.EndResponse();
+}
+
+void ProviderTransport::Random(IDvInvocation& aInvocation, IDvInvocationResponseBool& aRandom)
+{
+    AutoMutex _(iLock);
+    TBool random;
+    GetPropertyRandom(random);
+    aInvocation.StartResponse();
+    aRandom.Write(random);
     aInvocation.EndResponse();
 }

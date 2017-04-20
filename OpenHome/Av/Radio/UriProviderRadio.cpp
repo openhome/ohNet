@@ -20,7 +20,9 @@ UriProviderRadio::UriProviderRadio(TrackFactory& aTrackFactory,
     : UriProvider("Radio",
                   Latency::NotSupported,
                   Next::Supported,
-                  Prev::Supported)
+                  Prev::Supported,
+                  Repeat::NotSupported,
+                  Random::NotSupported)
     , iLock("UPRD")
     , iTrackFactory(aTrackFactory)
     , iDbReader(aDbReader)

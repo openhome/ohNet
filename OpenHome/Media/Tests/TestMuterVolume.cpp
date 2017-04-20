@@ -434,7 +434,7 @@ void SuiteMuterVolume::AcknowledgeDeferredHalt()
 
 void SuiteMuterVolume::TestMsgsPassWhenRunning()
 {
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), false, ModeClockPullers(), false, false));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), false, ModeClockPullers(), false, false, false, false));
     iPendingMsgs.push_back(CreateTrack());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgDrain(Functor()));
     iPendingMsgs.push_back(CreateDecodedStream());

@@ -12,7 +12,8 @@ using namespace OpenHome::Media;
 UriProviderSingleTrack::UriProviderSingleTrack(const TChar* aMode, TBool aSupportsLatency, TrackFactory& aTrackFactory)
     : UriProvider(aMode,
                   aSupportsLatency? Latency::Supported : Latency::NotSupported,
-                  Next::NotSupported, Prev::NotSupported)
+                  Next::NotSupported, Prev::NotSupported,
+                  Repeat::NotSupported, Random::NotSupported)
     , iLock("UPST")
     , iTrackFactory(aTrackFactory)
     , iTrack(nullptr)

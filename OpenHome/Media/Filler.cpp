@@ -33,6 +33,16 @@ TBool UriProvider::SupportsPrev() const
     return iSupportsPrev;
 }
 
+TBool UriProvider::SupportsRepeat() const
+{
+    return iSupportsRepeat;
+}
+
+TBool UriProvider::SupportsRandom() const
+{
+    return iSupportsRandom;
+}
+
 ModeClockPullers UriProvider::ClockPullers()
 {
     return ModeClockPullers();
@@ -53,11 +63,14 @@ void UriProvider::Interrupt(TBool /*aInterrupt*/)
 }
 
 UriProvider::UriProvider(const TChar* aMode, Latency aLatency,
-                        Next aNextSupported, Prev aPrevSupported)
+                         Next aNextSupported, Prev aPrevSupported,
+                         Repeat aRepeatSupported, Random aRandomSupported)
     : iMode(aMode)
     , iSupportsLatency(aLatency == Latency::Supported)
     , iSupportsNext(aNextSupported == Next::Supported)
     , iSupportsPrev(aPrevSupported == Prev::Supported)
+    , iSupportsRepeat(aRepeatSupported == Repeat::Supported)
+    , iSupportsRandom(aRandomSupported == Random::Supported)
 {
 }
 
@@ -322,7 +335,7 @@ void Filler::Run()
                 iChangedMode = true;
                 iStopped = true;
                 iLock.Signal();
-                iPipeline.Push(iMsgFactory.CreateMsgMode(Brn("null"), false, ModeClockPullers(), false, false));
+                iPipeline.Push(iMsgFactory.CreateMsgMode(Brn("null"), false, ModeClockPullers(), false, false, false, false));
                 iPipeline.Push(iMsgFactory.CreateMsgTrack(*iNullTrack));
                 iPipelineIdTracker.AddStream(iNullTrack->Id(), NullTrackStreamHandler::kNullTrackStreamId, false /* play later */);
                 iPipeline.Push(iMsgFactory.CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 0, 0, NullTrackStreamHandler::kNullTrackStreamId, false /* not seekable */, true /* live */, Multiroom::Forbidden, &iNullTrackStreamHandler));
@@ -336,7 +349,8 @@ void Filler::Run()
                 if (iChangedMode) {
                     const TBool supportsLatency = iActiveUriProvider->SupportsLatency();
                     iPipeline.Push(iMsgFactory.CreateMsgMode(iActiveUriProvider->Mode(), supportsLatency, iActiveUriProvider->ClockPullers(),
-                                                             iActiveUriProvider->SupportsNext(), iActiveUriProvider->SupportsPrev()));
+                                                             iActiveUriProvider->SupportsNext(), iActiveUriProvider->SupportsPrev(),
+                                                             iActiveUriProvider->SupportsRepeat(), iActiveUriProvider->SupportsRandom()));
                     if (!supportsLatency) {
                         iPipeline.Push(iMsgFactory.CreateMsgDelay(iDefaultDelay));
                     }

@@ -323,14 +323,20 @@ public:
     inline TBool SupportsLatency() const;
     inline TBool SupportsNext() const;
     inline TBool SupportsPrev() const;
+    inline TBool SupportsRepeat() const;
+    inline TBool SupportsRandom() const;
 private:
     ModeInfo();
-    void Set(TBool aSupportsLatency, TBool aSupportsNext, TBool aSupportsPrev);
+    void Set(TBool aSupportsLatency,
+             TBool aSupportsNext, TBool aSupportsPrev,
+             TBool aSupportsRepeat, TBool aSupportsRandom);
     void Clear();
 private:
     TBool iSupportsLatency;
     TBool iSupportsNext;
     TBool iSupportsPrev;
+    TBool iSupportsRepeat;
+    TBool iSupportsRandom;
 };
 
 class IClockPuller;
@@ -357,7 +363,9 @@ public:
     const ModeInfo& Info() const;
     const ModeClockPullers& ClockPullers() const;
 private:
-    void Initialise(const Brx& aMode, TBool aSupportsLatency, ModeClockPullers aClockPullers, TBool aSupportsNext, TBool aSupportsPrev);
+    void Initialise(const Brx& aMode, TBool aSupportsLatency, ModeClockPullers aClockPullers,
+                    TBool aSupportsNext, TBool aSupportsPrev,
+                    TBool aSupportsRepeat, TBool aSupportsRandom);
 private: // from Msg
     void Clear() override;
     Msg* Process(IMsgProcessor& aProcessor) override;
@@ -1597,7 +1605,7 @@ class MsgFactory
 public:
     MsgFactory(IInfoAggregator& aInfoAggregator, const MsgFactoryInitParams& aInitParams);
 
-    MsgMode* CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, ModeClockPullers aClockPullers, TBool aSupportsNext, TBool aSupportsPrev);
+    MsgMode* CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, ModeClockPullers aClockPullers, TBool aSupportsNext, TBool aSupportsPrev, TBool aSupportsRepeat, TBool aSupportsRandom);
     MsgTrack* CreateMsgTrack(Media::Track& aTrack, TBool aStartOfStream = true);
     MsgDrain* CreateMsgDrain(Functor aCallback);
     MsgDelay* CreateMsgDelay(TUint aDelayJiffies);

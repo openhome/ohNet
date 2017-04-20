@@ -5,6 +5,7 @@
 #include <OpenHome/Media/MimeTypeList.h>
 #include <OpenHome/Optional.h>
 #include <OpenHome/Av/Logger.h>
+#include <OpenHome/Av/TransportControl.h>
 
 namespace OpenHome {
     class Environment;
@@ -83,6 +84,7 @@ public:
     virtual void AddAttribute(const TChar* aAttribute) = 0;
     virtual ILoggerSerial& BufferLogOutput(TUint aBytes, IShell& aShell, Optional<ILogPoster> aLogPoster) = 0; // must be called before Start()
     virtual IUnixTimestamp& UnixTimestamp() = 0;
+    virtual ITransportRepeatRandom& TransportRepeatRandom() = 0;
 };
 
 class MediaPlayer : public IMediaPlayer, private INonCopyable
@@ -127,6 +129,7 @@ public: // from IMediaPlayer
     void AddAttribute(const TChar* aAttribute) override;
     ILoggerSerial& BufferLogOutput(TUint aBytes, IShell& aShell, Optional<ILogPoster> aLogPoster) override; // must be called before Start()
     IUnixTimestamp& UnixTimestamp() override;
+    ITransportRepeatRandom& TransportRepeatRandom() override;
 private:
     Net::DvStack& iDvStack;
     Net::DvDeviceStandard& iDevice;
@@ -149,6 +152,7 @@ private:
     ProviderTime* iProviderTime;
     ProviderInfo* iProviderInfo;
     ProviderTransport* iProviderTransport;
+    Av::TransportRepeatRandom iTransportRepeatRandom;
     Configuration::ProviderConfig* iProviderConfig;
     LoggerBuffered* iLoggerBuffered;
     IUnixTimestamp* iUnixTimestamp;

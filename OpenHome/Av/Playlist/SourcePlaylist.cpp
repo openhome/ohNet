@@ -31,8 +31,7 @@ class ProviderPlaylist;
 class SourcePlaylist : public Source, private ISourcePlaylist, private ITrackDatabaseObserver, private Media::IPipelineObserver
 {
 public:
-    SourcePlaylist(Environment& aEnv, Net::DvDevice& aDevice, Media::PipelineManager& aPipeline,
-                   Media::TrackFactory& aTrackFactory, Media::MimeTypeList& aMimeTypeList, IPowerManager& aPowerManager);
+    SourcePlaylist(IMediaPlayer& aMediaPlayer);
     ~SourcePlaylist();
 private:
     TBool StartedShuffled();
@@ -92,7 +91,7 @@ using namespace OpenHome::Media;
 
 ISource* SourceFactory::NewPlaylist(IMediaPlayer& aMediaPlayer)
 { // static
-    return new SourcePlaylist(aMediaPlayer.Env(), aMediaPlayer.Device(), aMediaPlayer.Pipeline(), aMediaPlayer.TrackFactory(), aMediaPlayer.MimeTypes(), aMediaPlayer.PowerManager());
+    return new SourcePlaylist(aMediaPlayer);
 }
 
 const TChar* SourceFactory::kSourceTypePlaylist = "Playlist";
@@ -101,9 +100,11 @@ const Brn SourceFactory::kSourceNamePlaylist("Playlist");
 
 // SourcePlaylist
 
-SourcePlaylist::SourcePlaylist(Environment& aEnv, Net::DvDevice& aDevice, PipelineManager& aPipeline,
-                               TrackFactory& aTrackFactory, MimeTypeList& aMimeTypeList, IPowerManager& aPowerManager)
-    : Source(SourceFactory::kSourceNamePlaylist, SourceFactory::kSourceTypePlaylist, aPipeline, aPowerManager)
+SourcePlaylist::SourcePlaylist(IMediaPlayer& aMediaPlayer)
+    : Source(SourceFactory::kSourceNamePlaylist,
+             SourceFactory::kSourceTypePlaylist,
+             aMediaPlayer.Pipeline(),
+             aMediaPlayer.PowerManager())
     , iLock("SPL1")
     , iTrackPosSeconds(0)
     , iStreamId(UINT_MAX)
@@ -111,13 +112,14 @@ SourcePlaylist::SourcePlaylist(Environment& aEnv, Net::DvDevice& aDevice, Pipeli
     , iTrackId(ITrackDatabase::kTrackIdNone)
     , iNewPlaylist(true)
 {
-    iDatabase = new TrackDatabase(aTrackFactory);
-    iShuffler = new Shuffler(aEnv, *iDatabase);
+    auto& env = aMediaPlayer.Env();
+    iDatabase = new TrackDatabase(aMediaPlayer.TrackFactory());
+    iShuffler = new Shuffler(env, *iDatabase);
     iRepeater = new Repeater(*iShuffler);
-    iUriProvider = new UriProviderPlaylist(*iRepeater, aPipeline, *this);
+    iUriProvider = new UriProviderPlaylist(*iRepeater, iPipeline, *this);
     iPipeline.Add(iUriProvider); // ownership passes to iPipeline
-    iProviderPlaylist = new ProviderPlaylist(aDevice, aEnv, *this, *iDatabase, *iRepeater);
-    aMimeTypeList.AddUpnpProtocolInfoObserver(MakeFunctorGeneric(*iProviderPlaylist, &ProviderPlaylist::NotifyProtocolInfo));
+    iProviderPlaylist = new ProviderPlaylist(aMediaPlayer.Device(), env, *this, *iDatabase, *iRepeater, aMediaPlayer.TransportRepeatRandom());
+    aMediaPlayer.MimeTypes().AddUpnpProtocolInfoObserver(MakeFunctorGeneric(*iProviderPlaylist, &ProviderPlaylist::NotifyProtocolInfo));
     iPipeline.AddObserver(*this);
 }
 
