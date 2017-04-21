@@ -107,6 +107,7 @@ public:
     void Add(Media::Protocol* aProtocol);
     void Add(ISource* aSource);
     RingBufferLogger* LogBuffer(); // an optional component. returns nullptr if not available. no transfer of ownership.
+    void EnableTransportService(); // FIXME - enable this unconditionally in ctor once Transport is fully tested
     void Start();
 public: // from IMediaPlayer
     Environment& Env() override;

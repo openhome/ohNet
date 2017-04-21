@@ -198,6 +198,7 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
                                    *iConfigRamStore, pipelineInit,
                                    volumeInit, volumeProfile, *iInfoLogger,
                                    aUdn, Brn(aRoom), Brn(aProductName));
+    iMediaPlayer->EnableTransportService();
     iPipelineObserver = new LoggingPipelineObserver();
     iMediaPlayer->Pipeline().AddObserver(*iPipelineObserver);
 

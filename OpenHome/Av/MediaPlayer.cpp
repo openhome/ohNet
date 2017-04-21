@@ -49,6 +49,7 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     , iConfigProductName(nullptr)
     , iConfigAutoPlay(nullptr)
     , iConfigStartupSource(nullptr)
+    , iProviderTransport(nullptr)
     , iLoggerBuffered(nullptr)
 {
     iUnixTimestamp = new OpenHome::UnixTimestamp(iDvStack.Env());
@@ -74,12 +75,6 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     iProviderInfo = new ProviderInfo(aDevice, *iPipeline);
     iProduct->AddAttribute("Info");
     iProviderConfig = new ProviderConfig(aDevice, *iConfigManager);
-#if 0
-    iProviderTransport = new ProviderTransport(aDevice, *iPipeline, *iProduct, iTransportRepeatRandom);
-    iProduct->AddAttribute("Transport");
-#else
-    iProviderTransport = nullptr;
-#endif
 }
 
 MediaPlayer::~MediaPlayer()
@@ -147,6 +142,12 @@ ILoggerSerial& MediaPlayer::BufferLogOutput(TUint aBytes, IShell& aShell, Option
 {
     iLoggerBuffered = new LoggerBuffered(aBytes, iDevice, *iProduct, aShell, aLogPoster);
     return iLoggerBuffered->LoggerSerial();
+}
+
+void MediaPlayer::EnableTransportService()
+{
+    iProviderTransport = new ProviderTransport(iDevice, *iPipeline, *iProduct, iTransportRepeatRandom);
+    iProduct->AddAttribute("Transport");
 }
 
 void MediaPlayer::Start()
