@@ -44,8 +44,8 @@ private: // from Net::DvProviderOpenhomeOrgEriskayTransportControl1
     void Play(Net::IDvInvocation& aInvocation) override;
     void Pause(Net::IDvInvocation& aInvocation) override;
     void Stop(Net::IDvInvocation& aInvocation) override;
-    void Next(Net::IDvInvocation& aInvocation, TUint aStreamId) override;
-    void Prev(Net::IDvInvocation& aInvocation, TUint aStreamId) override;
+    void Next(Net::IDvInvocation& aInvocation) override;
+    void Prev(Net::IDvInvocation& aInvocation) override;
     void SetRepeat(Net::IDvInvocation& aInvocation, TBool aRepeat) override;
     void SetRandom(Net::IDvInvocation& aInvocation, TBool aRandom) override;
     void SeekSecondsAbsolute(Net::IDvInvocation& aInvocation, TUint aStreamId, TUint aSecondsAbsolute) override;

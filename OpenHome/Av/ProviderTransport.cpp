@@ -179,25 +179,17 @@ void ProviderTransport::Stop(IDvInvocation& aInvocation)
     aInvocation.EndResponse();
 }
 
-void ProviderTransport::Next(IDvInvocation& aInvocation, TUint aStreamId)
+void ProviderTransport::Next(IDvInvocation& aInvocation)
 {
     AutoMutex _(iLock);
-    if (iStreamId != aStreamId) {
-        aInvocation.Error(kCodeBadStreamId, kMsgBadStreamId);
-    }
-    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     iPipeline.Next();
     aInvocation.StartResponse();
     aInvocation.EndResponse();
 }
 
-void ProviderTransport::Prev(IDvInvocation& aInvocation, TUint aStreamId)
+void ProviderTransport::Prev(IDvInvocation& aInvocation)
 {
     AutoMutex _(iLock);
-    if (iStreamId != aStreamId) {
-        aInvocation.Error(kCodeBadStreamId, kMsgBadStreamId);
-    }
-    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     iPipeline.Prev();
     aInvocation.StartResponse();
     aInvocation.EndResponse();

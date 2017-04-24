@@ -31,23 +31,9 @@
     </action>
     <action>
       <name>Next</name>
-      <argumentList>
-        <argument>
-          <name>StreamId</name>
-          <direction>in</direction>
-          <relatedStateVariable>StreamId</relatedStateVariable>
-        </argument>
-      </argumentList>
     </action>
     <action>
       <name>Prev</name>
-      <argumentList>
-        <argument>
-          <name>StreamId</name>
-          <direction>in</direction>
-          <relatedStateVariable>StreamId</relatedStateVariable>
-        </argument>
-      </argumentList>
     </action>
     <action>
       <name>SetRepeat</name>
