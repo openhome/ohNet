@@ -109,6 +109,7 @@ public:
     void Append(const Brx& aB);
     void Append(const TChar* aStr);
     void Append(const TByte* aPtr, TUint aBytes);
+    void AppendThrow(const Brx& aBuf);
     TBool TryAppend(TChar aChar);
     TBool TryAppend(TByte aByte);
     TBool TryAppend(const Brx& aB);

@@ -275,6 +275,13 @@ void Bwx::Replace(const TChar* aStr)
     iBytes = bytes;
 }
 
+void OpenHome::Bwx::AppendThrow(const Brx& aBuf)
+{
+    if (!TryAppend(aBuf)) {
+        THROW(BufferOverflow);
+    }
+}
+
 TBool OpenHome::Bwx::TryAppend(TChar aChar)
 {
     if ((iMaxBytes-Bytes())<1)
