@@ -53,7 +53,7 @@ TUint UnixTimestamp::Now()
         iStartSeconds = networkTime.Seconds() - kSecsBetweenNtpAndUnixEpoch + ((networkDelayMs + 500) / 1000);
         iStartMs = Time::Now(iEnv);
         // recalculate when local millisecond timer wraps
-        const TUint timeTillWrap = std::max(static_cast<TUint>(UINT_MAX) - iStartMs, 1u);
+        const TUint timeTillWrap = std::max(static_cast<TUint>(UINT_MAX)-iStartMs, static_cast<TUint>(1u));
         const TUint timerDuration = std::min(kTimeResyncFreqMs, timeTillWrap);
         iTimer->FireIn(timerDuration);
         iTimestampValid = true;
