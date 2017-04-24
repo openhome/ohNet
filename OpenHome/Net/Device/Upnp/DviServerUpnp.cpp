@@ -1429,11 +1429,14 @@ DviServerUpnp::DviServerUpnp(DvStack& aDvStack, TUint aPort)
 DviServerUpnp::~DviServerUpnp()
 {
     Deinitialise();
+    delete iPathMapper;
 }
 
-void DviServerUpnp::SetPathMapper(IPathMapperUpnp& aPathMapper)
+void DviServerUpnp::SetPathMapper(IPathMapperUpnp* aPathMapper)
 {
-    iPathMapper = &aPathMapper;
+    ASSERT(iPathMapper == NULL);
+    ASSERT(aPathMapper != NULL);
+    iPathMapper = aPathMapper;
 }
 
 void DviServerUpnp::Redirect(const Brx& aUriRequested, const Brx& aUriRedirectedTo)
