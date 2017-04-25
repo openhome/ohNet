@@ -189,6 +189,7 @@ Msg* Sender::ProcessMsg(MsgStreamInterrupted* aMsg)
 Msg* Sender::ProcessMsg(MsgHalt* aMsg)
 {
     SendPendingAudio(true);
+    iOhmSender->NotifyAudioPlaying(false);
     return aMsg;
 }
 
@@ -303,6 +304,7 @@ void Sender::SendPendingAudio(TBool aHalt)
     iOhmSenderDriver->SendAudio(msg, aHalt);
     iAudioBuf = nullptr;
     iPendingAudio.clear();
+    iOhmSender->NotifyAudioPlaying(true);
 }
 
 void Sender::ConfigEnabledChanged(KeyValuePair<TUint>& aStringId)

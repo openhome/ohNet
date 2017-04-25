@@ -23,17 +23,23 @@ namespace Av {
 class ProviderSender : public Net::DvProviderAvOpenhomeOrgSender1
 {
     static const TUint kMaxMetadataBytes = 4096;
-    static const TUint kTimeoutAudioPresentMs = 1000;
-    static const Brn kStatusEnabled;
-    static const Brn kStatusDisabled;
+    static const TUint kTimeoutAudioMs = 1000;
+    static const Brn kStatusSending;
+    static const Brn kStatusReady;
     static const Brn kStatusBlocked;
+    static const Brn kStatusInactive;
+    static const Brn kStatusDisabled;
 public:
-    ProviderSender(Net::DvDevice& aDevice);
+    ProviderSender(Environment& aEnv, Net::DvDevice& aDevice);
+    ~ProviderSender();
     void SetMetadata(const Brx& aValue);
-    void SetStatusEnabled();
-    void SetStatusDisabled();
-    void SetStatusBlocked();
+    void SetStatusEnabled(TBool aEnabled);
+    void SetStatusBlocked(TBool aBlocked);
     void NotifyAudioPlaying(TBool aPlaying);
+    void NotifyListeners(TBool aListeners);
+private:
+    void UpdateStatusLocked();
+    void TimerAudioExpired();
 private: // from Net::DvProviderAvOpenhomeOrgSender1
     void PresentationUrl(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aValue) override;
     void Metadata(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aValue) override;
@@ -41,12 +47,14 @@ private: // from Net::DvProviderAvOpenhomeOrgSender1
     void Status(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aValue) override;
     void Attributes(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aValue) override;
 private:
-    void UpdateMetadata();
-private:
     mutable Mutex iLock;
     Bws<kMaxMetadataBytes> iMetadata;
-    Timer* iTimerAudioPresent;
+    Timer* iTimerAudio;
     Brn iStatus;
+    TBool iEnabled;
+    TBool iBlocked;
+    TBool iPlaying;
+    TBool iListeners;
 };
 
 } // namespace Av
@@ -58,14 +66,22 @@ using namespace OpenHome::Av;
 
 // ProviderSender
 
-const Brn ProviderSender::kStatusEnabled("Enabled");
-const Brn ProviderSender::kStatusDisabled("Disabled");
+const Brn ProviderSender::kStatusSending("Sending");
+const Brn ProviderSender::kStatusReady("Ready");
 const Brn ProviderSender::kStatusBlocked("Blocked");
+const Brn ProviderSender::kStatusInactive("Inactive");
+const Brn ProviderSender::kStatusDisabled("Disabled");
 
-ProviderSender::ProviderSender(Net::DvDevice& aDevice)
+ProviderSender::ProviderSender(Environment& aEnv, Net::DvDevice& aDevice)
     : DvProviderAvOpenhomeOrgSender1(aDevice)
     , iLock("PSND")
+    , iEnabled(false)
+    , iBlocked(false)
+    , iPlaying(false)
+    , iListeners(false)
 {
+    iTimerAudio = new Timer(aEnv, MakeFunctor(*this, &ProviderSender::TimerAudioExpired), "ProviderSender");
+
     EnablePropertyPresentationUrl();
     EnablePropertyMetadata();
     EnablePropertyAudio();
@@ -78,11 +94,16 @@ ProviderSender::ProviderSender(Net::DvDevice& aDevice)
     EnableActionStatus();
     EnableActionAttributes();
     
-    SetPropertyPresentationUrl(Brx::Empty());
-    SetPropertyMetadata(Brx::Empty());
-    SetPropertyAudio(false);
-    SetStatusDisabled();
-    SetPropertyAttributes(Brx::Empty());
+    (void)SetPropertyPresentationUrl(Brx::Empty());
+    (void)SetPropertyMetadata(Brx::Empty());
+    (void)SetPropertyAudio(false);
+    UpdateStatusLocked(); // no need for lock in ctor
+    (void)SetPropertyAttributes(Brx::Empty());
+}
+
+ProviderSender::~ProviderSender()
+{
+    delete iTimerAudio;
 }
 
 void ProviderSender::PresentationUrl(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aValue)
@@ -128,7 +149,6 @@ void ProviderSender::Status(Net::IDvInvocation& aInvocation, Net::IDvInvocationR
 
 void ProviderSender::Attributes(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aValue)
 {
-    // FIXME - can we just copy from Product's attributes?
     Brhz value;
     GetPropertyAttributes(value);
     aInvocation.StartResponse();
@@ -145,30 +165,71 @@ void ProviderSender::SetMetadata(const Brx& aValue)
     SetPropertyMetadata(aValue);
 }
 
-void ProviderSender::SetStatusEnabled()
+void ProviderSender::SetStatusEnabled(TBool aEnabled)
 {
     AutoMutex a(iLock);
-    iStatus.Set(kStatusEnabled);
-    SetPropertyStatus(iStatus);
+    iEnabled = aEnabled;
+    UpdateStatusLocked();
 }
 
-void ProviderSender::SetStatusDisabled()
+void ProviderSender::SetStatusBlocked(TBool aBlocked)
 {
-    AutoMutex a(iLock);
-    iStatus.Set(kStatusDisabled);
-    SetPropertyStatus(iStatus);
-}
-
-void ProviderSender::SetStatusBlocked()
-{
-    AutoMutex a(iLock);
-    iStatus.Set(kStatusBlocked);
-    SetPropertyStatus(iStatus);
+    AutoMutex _(iLock);
+    if (iBlocked == aBlocked) {
+        return;
+    }
+    iBlocked = aBlocked;
+    UpdateStatusLocked();
 }
 
 void ProviderSender::NotifyAudioPlaying(TBool aPlaying)
 {
-    SetPropertyAudio(aPlaying);
+    {
+        AutoMutex _(iLock);
+        if (iPlaying != aPlaying) {
+            (void)SetPropertyAudio(aPlaying);
+            iPlaying = aPlaying;
+            UpdateStatusLocked();
+        }
+    }
+    if (iPlaying) {
+        iTimerAudio->FireIn(kTimeoutAudioMs);
+    }
+    else {
+        iTimerAudio->Cancel();
+    }
+}
+
+void ProviderSender::NotifyListeners(TBool aListeners)
+{
+    AutoMutex _(iLock);
+    iListeners = aListeners;
+    UpdateStatusLocked();
+}
+
+void ProviderSender::UpdateStatusLocked()
+{
+    if (!iEnabled) {
+        iStatus.Set(kStatusDisabled);
+    }
+    else if (iBlocked) {
+        iStatus.Set(kStatusBlocked);
+    }
+    else if (!iPlaying) {
+        iStatus.Set(kStatusInactive);
+    }
+    else if (!iListeners) {
+        iStatus.Set(kStatusReady);
+    }
+    else {
+        iStatus.Set(kStatusSending);
+    }
+    (void)SetPropertyStatus(iStatus);
+}
+
+void ProviderSender::TimerAudioExpired()
+{
+    NotifyAudioPlaying(false);
 }
 
 
@@ -535,7 +596,7 @@ OhmSender::OhmSender(Environment& aEnv, Net::DvDeviceStandard& aDevice, IOhmSend
     , iSequenceMetatext(0)
     , iClientControllingTrackMetadata(false)
 {
-    iProvider = new ProviderSender(iDevice);
+    iProvider = new ProviderSender(aEnv, iDevice);
     CurrentSubnetChanged(); // roundabout way of initialising iInterface
  
     iDriver.SetTtl(kTtl);
@@ -677,12 +738,12 @@ void OhmSender::SetEnabled(TBool aValue)
         LOG(kSongcast, "OHM SENDER DRIVER ENABLED %d\n", aValue);
     
         if (iEnabled) {
-            iProvider->SetStatusEnabled();
+            iProvider->SetStatusEnabled(true);
             Start();
         }
         else {
             Stop();
-            iProvider->SetStatusDisabled();
+            iProvider->SetStatusEnabled(false);
         }
     }
 }
@@ -847,6 +908,7 @@ void OhmSender::RunMulticast()
                         }
                         iAliveJoined = true;
                         iTimerAliveJoin->FireIn(kTimerAliveJoinTimeoutMs);
+                        iProvider->NotifyListeners(true);
                     }
                     else if (header.MsgType() == OhmHeader::kMsgTypeResend) {
                         LOG(kSongcast, "OhmSender::RunMulticast resend received\n");
@@ -877,11 +939,10 @@ void OhmSender::RunMulticast()
                                     LOG(kSongcast, "OHM SENDER DRIVER ACTIVE %d\n", iActive);
                                 } 
                                 iAliveBlocked = true;
+                                iProvider->SetStatusBlocked(iAliveBlocked);
                                 iTimerAliveAudio->FireIn(delay);
                             }
-
                             LOG(kSongcast, "OhmSender::RunMulticast blocked\n");
-                            iProvider->SetStatusBlocked();
                         }
                     }
                 }
@@ -909,6 +970,8 @@ void OhmSender::RunMulticast()
             } 
             iAliveJoined = false;
             iAliveBlocked = false;
+            iProvider->NotifyListeners(false);
+            iProvider->SetStatusBlocked(iAliveBlocked);
         }
         
         iNetworkDeactivated.Signal();
@@ -955,6 +1018,7 @@ void OhmSender::RunUnicast()
                     iActive = true;
                     iAliveJoined = true;
                     iDriver.SetActive(true);
+                    iProvider->NotifyListeners(true);
                     LOG(kSongcast, "OHM SENDER DRIVER ACTIVE %d\n", true);
                 }
                 iTimerExpiry->FireIn(kTimerExpiryTimeoutMs);
@@ -1086,6 +1150,7 @@ void OhmSender::RunUnicast()
                 iActive = false;
                 iAliveJoined = false;               
                 iDriver.SetActive(false);
+                iProvider->NotifyListeners(false);
                 LOG(kSongcast, "OHM SENDER DRIVER ACTIVE %d\n", iActive);
             }
         }
@@ -1105,6 +1170,8 @@ void OhmSender::RunUnicast()
             } 
             iAliveJoined = false;
             iAliveBlocked = false;
+            iProvider->NotifyListeners(false);
+            iProvider->SetStatusBlocked(iAliveBlocked);
         }
 
         iNetworkDeactivated.Signal();
@@ -1118,6 +1185,7 @@ void OhmSender::TimerAliveJoinExpired()
     AutoMutex mutex(iMutexActive);
     iActive = false;
     iAliveJoined = false;
+    iProvider->NotifyListeners(false);
 }
 
 void OhmSender::TimerAliveAudioExpired()
@@ -1127,9 +1195,10 @@ void OhmSender::TimerAliveAudioExpired()
         TBool joined = iAliveBlocked;
         iActive = joined;
         iAliveBlocked = false;
+        iProvider->SetStatusBlocked(iAliveBlocked);
     }
 
-    iProvider->SetStatusEnabled();
+    iProvider->SetStatusEnabled(true);
 }
 
 void OhmSender::TimerExpiryExpired()
