@@ -41,7 +41,7 @@
         <argument>
           <name>Repeat</name>
           <direction>in</direction>
-          <relatedStateVariable>A_ARG_TYPE_boolean</relatedStateVariable>
+          <relatedStateVariable>A_ARG_TYPE_uint</relatedStateVariable>
         </argument>
       </argumentList>
     </action>
@@ -51,7 +51,7 @@
         <argument>
           <name>Shuffle</name>
           <direction>in</direction>
-          <relatedStateVariable>A_ARG_TYPE_boolean</relatedStateVariable>
+          <relatedStateVariable>A_ARG_TYPE_uint</relatedStateVariable>
         </argument>
       </argumentList>
     </action>
@@ -244,10 +244,6 @@
     <stateVariable sendEvents="no">
       <name>A_ARG_TYPE_string</name>
       <dataType>string</dataType>
-    </stateVariable>
-    <stateVariable sendEvents="no">
-      <name>A_ARG_TYPE_boolean</name>
-      <dataType>boolean</dataType>
     </stateVariable>
   </serviceStateTable>
 </scpd>

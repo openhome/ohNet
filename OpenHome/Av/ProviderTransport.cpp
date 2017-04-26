@@ -202,16 +202,16 @@ void ProviderTransport::Previous(IDvInvocation& aInvocation)
     aInvocation.EndResponse();
 }
 
-void ProviderTransport::SetRepeat(IDvInvocation& aInvocation, TBool aRepeat)
+void ProviderTransport::SetRepeat(IDvInvocation& aInvocation, TUint aRepeat)
 {
-    iTransportRepeatRandom.SetRepeat(aRepeat);
+    iTransportRepeatRandom.SetRepeat(aRepeat != kRepeatOff);
     aInvocation.StartResponse();
     aInvocation.EndResponse();
 }
 
-void ProviderTransport::SetShuffle(IDvInvocation& aInvocation, TBool aShuffle)
+void ProviderTransport::SetShuffle(IDvInvocation& aInvocation, TUint aShuffle)
 {
-    iTransportRepeatRandom.SetRandom(aShuffle);
+    iTransportRepeatRandom.SetRandom(aShuffle != kShuffleOff);
     aInvocation.StartResponse();
     aInvocation.EndResponse();
 }
