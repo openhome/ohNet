@@ -38,7 +38,7 @@
     },
     {   "name":             "libosa",
         "type":             "internal",
-        "version":          "0.1.244",
+        "version":          "0.1.247",
         "cross-check":      false,
         "archive-suffix":   "-Release",
         "platform-ignore": {
@@ -92,7 +92,7 @@
     {
         "name": "FunctionalTest",
         "type": "openhome",
-        "version": "0.0.830",
+        "version": "0.0.865",
         "cross-check": false,
         "platform-specific": false,
         "archive-filename": "FunctionalTest-${version}.zip",

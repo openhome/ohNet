@@ -101,6 +101,7 @@ public:
     void SetMetatext(const Brx& aValue);
     void SetPreset(TUint aValue);
     void NotifyAudioPlaying(TBool aPlaying);
+    void NotifyBroadcastAllowed(TBool aAllowed);
     void EnableUnicastOverride(TBool aEnable);
 private:
     void RunMulticast();

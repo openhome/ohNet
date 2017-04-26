@@ -31,23 +31,9 @@
     </action>
     <action>
       <name>Next</name>
-      <argumentList>
-        <argument>
-          <name>StreamId</name>
-          <direction>in</direction>
-          <relatedStateVariable>StreamId</relatedStateVariable>
-        </argument>
-      </argumentList>
     </action>
     <action>
-      <name>Prev</name>
-      <argumentList>
-        <argument>
-          <name>StreamId</name>
-          <direction>in</direction>
-          <relatedStateVariable>StreamId</relatedStateVariable>
-        </argument>
-      </argumentList>
+      <name>Previous</name>
     </action>
     <action>
       <name>SetRepeat</name>
@@ -60,17 +46,17 @@
       </argumentList>
     </action>
     <action>
-      <name>SetRandom</name>
+      <name>SetShuffle</name>
       <argumentList>
         <argument>
-          <name>Random</name>
+          <name>Shuffle</name>
           <direction>in</direction>
           <relatedStateVariable>A_ARG_TYPE_boolean</relatedStateVariable>
         </argument>
       </argumentList>
     </action>
     <action>
-      <name>SeekSecondsAbsolute</name>
+      <name>SeekSecondAbsolute</name>
       <argumentList>
         <argument>
           <name>StreamId</name>
@@ -85,7 +71,7 @@
       </argumentList>
     </action>
     <action>
-      <name>SeekSecondsRelative</name>
+      <name>SeekSecondRelative</name>
       <argumentList>
         <argument>
           <name>StreamId</name>
@@ -128,9 +114,9 @@
           <relatedStateVariable>NextAvailable</relatedStateVariable>
         </argument>
         <argument>
-          <name>PrevAvailable</name>
+          <name>PreviousAvailable</name>
           <direction>out</direction>
-          <relatedStateVariable>PrevAvailable</relatedStateVariable>
+          <relatedStateVariable>PreviousAvailable</relatedStateVariable>
         </argument>
         <argument>
           <name>RepeatAvailable</name>
@@ -138,9 +124,9 @@
           <relatedStateVariable>RepeatAvailable</relatedStateVariable>
         </argument>
         <argument>
-          <name>RandomAvailable</name>
+          <name>ShuffleAvailable</name>
           <direction>out</direction>
-          <relatedStateVariable>RandomAvailable</relatedStateVariable>
+          <relatedStateVariable>ShuffleAvailable</relatedStateVariable>
         </argument>
       </argumentList>
     </action>
@@ -185,12 +171,12 @@
       </argumentList>
     </action>
     <action>
-      <name>Random</name>
+      <name>Shuffle</name>
       <argumentList>
         <argument>
-          <name>Random</name>
+          <name>Shuffle</name>
           <direction>out</direction>
-          <relatedStateVariable>Random</relatedStateVariable>
+          <relatedStateVariable>Shuffle</relatedStateVariable>
         </argument>
       </argumentList>
     </action>
@@ -205,7 +191,7 @@
       <dataType>boolean</dataType>
     </stateVariable>
     <stateVariable sendEvents="yes">
-      <name>PrevAvailable</name>
+      <name>PreviousAvailable</name>
       <dataType>boolean</dataType>
     </stateVariable>
     <stateVariable sendEvents="yes">
@@ -213,7 +199,7 @@
       <dataType>boolean</dataType>
     </stateVariable>
     <stateVariable sendEvents="yes">
-      <name>RandomAvailable</name>
+      <name>ShuffleAvailable</name>
       <dataType>boolean</dataType>
     </stateVariable>
     <stateVariable sendEvents="yes">
@@ -241,11 +227,11 @@
     </stateVariable>
     <stateVariable sendEvents="yes">
       <name>Repeat</name>
-      <dataType>boolean</dataType>
+      <dataType>ui4</dataType>
     </stateVariable>
     <stateVariable sendEvents="yes">
-      <name>Random</name>
-      <dataType>boolean</dataType>
+      <name>Shuffle</name>
+      <dataType>ui4</dataType>
     </stateVariable>
     <stateVariable sendEvents="no">
       <name>A_ARG_TYPE_uint</name>

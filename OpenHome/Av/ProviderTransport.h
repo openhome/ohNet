@@ -21,6 +21,10 @@ class ProviderTransport : public Net::DvProviderAvOpenhomeOrgTransport1
                         , private ITransportRepeatRandomObserver
 {
     static const TUint kModesGranularity;
+    static const TUint kRepeatOff;
+    static const TUint kRepeatOnAll;
+    static const TUint kShuffleOff;
+    static const TUint kShuffleOnAll;
 public:
     ProviderTransport(Net::DvDevice& aDevice,
                       Media::PipelineManager& aPipeline,
@@ -44,19 +48,19 @@ private: // from Net::DvProviderOpenhomeOrgEriskayTransportControl1
     void Play(Net::IDvInvocation& aInvocation) override;
     void Pause(Net::IDvInvocation& aInvocation) override;
     void Stop(Net::IDvInvocation& aInvocation) override;
-    void Next(Net::IDvInvocation& aInvocation, TUint aStreamId) override;
-    void Prev(Net::IDvInvocation& aInvocation, TUint aStreamId) override;
+    void Next(Net::IDvInvocation& aInvocation) override;
+    void Previous(Net::IDvInvocation& aInvocation) override;
     void SetRepeat(Net::IDvInvocation& aInvocation, TBool aRepeat) override;
-    void SetRandom(Net::IDvInvocation& aInvocation, TBool aRandom) override;
-    void SeekSecondsAbsolute(Net::IDvInvocation& aInvocation, TUint aStreamId, TUint aSecondsAbsolute) override;
-    void SeekSecondsRelative(Net::IDvInvocation& aInvocation, TUint aStreamId, TInt aSecondsRelative) override;
+    void SetShuffle(Net::IDvInvocation& aInvocation, TBool aRandom) override;
+    void SeekSecondAbsolute(Net::IDvInvocation& aInvocation, TUint aStreamId, TUint aSecondsAbsolute) override;
+    void SeekSecondRelative(Net::IDvInvocation& aInvocation, TUint aStreamId, TInt aSecondsRelative) override;
     void TransportState(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aState) override;
     void Modes(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aModes) override;
-    void ModeInfo(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseBool& aNextAvailable, Net::IDvInvocationResponseBool& aPrevAvailable, Net::IDvInvocationResponseBool& aRepeatAvailable, Net::IDvInvocationResponseBool& aRandomAvailable) override;
+    void ModeInfo(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseBool& aNextAvailable, Net::IDvInvocationResponseBool& aPreviousAvailable, Net::IDvInvocationResponseBool& aRepeatAvailable, Net::IDvInvocationResponseBool& aShuffleAvailable) override;
     void StreamInfo(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseUint& aStreamId, Net::IDvInvocationResponseBool& aSeekable, Net::IDvInvocationResponseBool& aPausable) override;
     void StreamId(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseUint& aStreamId) override;
-    void Repeat(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseBool& aRepeat) override;
-    void Random(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseBool& aRandom) override;
+    void Repeat(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseUint& aRepeat) override;
+    void Shuffle(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseUint& aShuffle) override;
 private:
     Mutex iLock;
     Media::PipelineManager& iPipeline;

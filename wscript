@@ -160,7 +160,7 @@ upnp_services = [
         GeneratedFile('OpenHome/Av/ServiceXml/Upnp/RenderingControl1.xml',  'upnp.org',        'RenderingControl',  '1', 'UpnpOrgRenderingControl1'),
         GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Product2.xml',       'av.openhome.org', 'Product',           '2', 'AvOpenhomeOrgProduct2'),
         GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Radio1.xml',         'av.openhome.org', 'Radio',             '1', 'AvOpenhomeOrgRadio1'),
-        GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Sender1.xml',        'av.openhome.org', 'Sender',            '1', 'AvOpenhomeOrgSender1'),
+        GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Sender2.xml',        'av.openhome.org', 'Sender',            '2', 'AvOpenhomeOrgSender2'),
         GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Playlist1.xml',      'av.openhome.org', 'Playlist',          '1', 'AvOpenhomeOrgPlaylist1'),
         GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Receiver1.xml',      'av.openhome.org', 'Receiver',          '1', 'AvOpenhomeOrgReceiver1'),
         GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Time1.xml',          'av.openhome.org', 'Time',              '1', 'AvOpenhomeOrgTime1'),
@@ -360,7 +360,7 @@ def build(bld):
     # Library
     bld.stlib(
             source=[
-                'Generated/DvAvOpenhomeOrgSender1.cpp',
+                'Generated/DvAvOpenhomeOrgSender2.cpp',
                 'OpenHome/Av/Songcast/Ohm.cpp',
                 'OpenHome/Av/Songcast/OhmMsg.cpp',
                 'OpenHome/Av/Songcast/OhmSender.cpp',
