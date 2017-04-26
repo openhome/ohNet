@@ -235,57 +235,87 @@ Msg* SpotifyReporter::Pull()
             }
         }
         else {
-            // iLock needs to be held for a subset of the checks below, and in
-            // certain msg->Process() calls.
-            // However, doing it that way results in acquiring the mutex twice
-            // when processing MsgAudioPcm during a Spotify stream. Instead,
-            // acquire iLock here and keep it held while calling msg->Process().
-            AutoMutex _(iLock);
+            {
+                /*
+                 * iLock needs to be held for a subset of the checks below, and
+                 * in certain msg->Process() calls.
+                 *
+                 * However, cannot hold iLock during a Pull() call to the
+                 * upstream element, as it blocks when pipeline is not playing
+                 * anything.
+                 *
+                 * So, must acquire iLock to perform some checking before
+                 * decided whether to pull a message, release iLock while
+                 * pulling a message from upstream, then re-acquire the iLock
+                 * when processing the message.
+                 *
+                 * So, iLock will be acquired (at most) 2 times when on Spotify
+                 * mode. However, iLock will never be acquired when not on a
+                 * Spotify mode.
+                 */
+                AutoMutex _(iLock);
 
-            // Don't output any generated MsgTrack or modified MsgDecodedStream
-            // unless in Spotify mode, and seen a MsgTrack and MsgDecodedStream
-            // arrive via pipeline.
-            if (iPipelineTrackSeen && iDecodedStream != nullptr) {
-                // Only want to output generated MsgTrack if it's pending and if stream format is known to get certain elements for track metadata.
-                if (iMsgTrackPending) {
-                    ASSERT(iMetadata != nullptr);
-                    const DecodedStreamInfo& info = iDecodedStream->StreamInfo();
-                    const TUint bitDepth = info.BitDepth();
-                    const TUint channels = info.NumChannels();
-                    const TUint sampleRate = info.SampleRate();
+                // Don't output any generated MsgTrack or modified MsgDecodedStream
+                // unless in Spotify mode, and seen a MsgTrack and MsgDecodedStream
+                // arrive via pipeline.
+                if (iPipelineTrackSeen && iDecodedStream != nullptr) {
+                    // Only want to output generated MsgTrack if it's pending and if stream format is known to get certain elements for track metadata.
+                    if (iMsgTrackPending) {
+                        ASSERT(iMetadata != nullptr);
+                        const DecodedStreamInfo& info = iDecodedStream->StreamInfo();
+                        const TUint bitDepth = info.BitDepth();
+                        const TUint channels = info.NumChannels();
+                        const TUint sampleRate = info.SampleRate();
 
-                    BwsTrackMetaData metadata;
-                    WriterBuffer writerBuffer(metadata);
-                    SpotifyDidlLiteWriter metadataWriter(iTrackUri, *iMetadata);
-                    metadataWriter.Write(writerBuffer, bitDepth, channels, sampleRate);
-                    iMetadata->Destroy();
-                    iMetadata = nullptr;
-                    Track* track = iTrackFactory.CreateTrack(iTrackUri, metadata);
+                        BwsTrackMetaData metadata;
+                        WriterBuffer writerBuffer(metadata);
+                        SpotifyDidlLiteWriter metadataWriter(iTrackUri, *iMetadata);
+                        metadataWriter.Write(writerBuffer, bitDepth, channels, sampleRate);
+                        iMetadata->Destroy();
+                        iMetadata = nullptr;
+                        Track* track = iTrackFactory.CreateTrack(iTrackUri, metadata);
 
-                    const TBool startOfStream = false;  // Report false as don't want downstream elements to re-enter any stream detection mode.
-                    MsgTrack* msg = iMsgFactory.CreateMsgTrack(*track, startOfStream);
-                    track->RemoveRef();
-                    iMsgTrackPending = false;
-                    return msg;
-                }
-                if (!iMsgTrackPending && iMsgDecodedStreamPending) {
-                    /*
-                     * If iDecodedStream == nullptr, means still need to pull first
-                     * MsgDecodedStream of Spotify stream from upstream element.
-                     * Return control to keep pulling from upstream until first
-                     * MsgDecodedStream is eventually pulled.
-                     */
-                    if (iDecodedStream != nullptr) {
-                        iMsgDecodedStreamPending = false;
-                        MsgDecodedStream* msg = CreateMsgDecodedStreamLocked();
-                        UpdateDecodedStream(*msg);
-                        return iDecodedStream;
+                        const TBool startOfStream = false;  // Report false as don't want downstream elements to re-enter any stream detection mode.
+                        MsgTrack* msg = iMsgFactory.CreateMsgTrack(*track, startOfStream);
+                        track->RemoveRef();
+                        iMsgTrackPending = false;
+                        return msg;
+                    }
+                    if (!iMsgTrackPending && iMsgDecodedStreamPending) {
+                        /*
+                         * If iDecodedStream == nullptr, means still need to pull first
+                         * MsgDecodedStream of Spotify stream from upstream element.
+                         * Return control to keep pulling from upstream until first
+                         * MsgDecodedStream is eventually pulled.
+                         */
+                        if (iDecodedStream != nullptr) {
+                            iMsgDecodedStreamPending = false;
+                            MsgDecodedStream* msg = CreateMsgDecodedStreamLocked();
+                            UpdateDecodedStream(*msg);
+                            return iDecodedStream;
+                        }
                     }
                 }
             }
 
+            /*
+             * Calling Pull() on upstream element may block for a long time,
+             * e.g., when pipeline is not playing anything.
+             *
+             * If lock was held during that time, it would cause the pipeline
+             * to lock up if a component to the left of the pipeline tried to
+             * call SubSamples(), TrackChanged() or NotifySeek().
+             */
             msg = iUpstreamElement.Pull();
-            msg = msg->Process(*this);
+
+            {
+                /*
+                 * Re-acquire iLock, as certain ProcessMsg() calls will alter
+                 * protected members when Spotify mode is active.
+                 */
+                AutoMutex _(iLock);
+                msg = msg->Process(*this);
+            }
         }
     }
     return msg;
