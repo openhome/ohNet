@@ -224,6 +224,7 @@ Msg* Sender::ProcessMsg(MsgDecodedStream* aMsg)
     iOhmSenderDriver->SetAudioFormat(iSampleRate, streamInfo.BitRate(), std::min(numChannels, (TUint)2),
                                      bitDepth, streamInfo.Lossless(), streamInfo.CodecName(),
                                      streamInfo.SampleStart());
+    iOhmSender->NotifyBroadcastAllowed(!iStreamForbidden);
 
     return aMsg;
 }
