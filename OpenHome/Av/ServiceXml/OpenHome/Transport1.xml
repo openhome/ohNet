@@ -30,10 +30,10 @@
       <name>Stop</name>
     </action>
     <action>
-      <name>Next</name>
+      <name>SkipNext</name>
     </action>
     <action>
-      <name>Previous</name>
+      <name>SkipPrevious</name>
     </action>
     <action>
       <name>SetRepeat</name>
@@ -41,7 +41,7 @@
         <argument>
           <name>Repeat</name>
           <direction>in</direction>
-          <relatedStateVariable>A_ARG_TYPE_uint</relatedStateVariable>
+          <relatedStateVariable>Repeat</relatedStateVariable>
         </argument>
       </argumentList>
     </action>
@@ -51,7 +51,7 @@
         <argument>
           <name>Shuffle</name>
           <direction>in</direction>
-          <relatedStateVariable>A_ARG_TYPE_uint</relatedStateVariable>
+          <relatedStateVariable>Shuffle</relatedStateVariable>
         </argument>
       </argumentList>
     </action>
@@ -109,24 +109,24 @@
       <name>ModeInfo</name>
       <argumentList>
         <argument>
-          <name>NextAvailable</name>
+          <name>CanSkipNext</name>
           <direction>out</direction>
-          <relatedStateVariable>NextAvailable</relatedStateVariable>
+          <relatedStateVariable>CanSkipNext</relatedStateVariable>
         </argument>
         <argument>
-          <name>PreviousAvailable</name>
+          <name>CanSkipPrevious</name>
           <direction>out</direction>
-          <relatedStateVariable>PreviousAvailable</relatedStateVariable>
+          <relatedStateVariable>CanSkipPrevious</relatedStateVariable>
         </argument>
         <argument>
-          <name>RepeatAvailable</name>
+          <name>CanRepeat</name>
           <direction>out</direction>
-          <relatedStateVariable>RepeatAvailable</relatedStateVariable>
+          <relatedStateVariable>CanRepeat</relatedStateVariable>
         </argument>
         <argument>
-          <name>ShuffleAvailable</name>
+          <name>CanShuffle</name>
           <direction>out</direction>
-          <relatedStateVariable>ShuffleAvailable</relatedStateVariable>
+          <relatedStateVariable>CanShuffle</relatedStateVariable>
         </argument>
       </argumentList>
     </action>
@@ -139,14 +139,14 @@
           <relatedStateVariable>StreamId</relatedStateVariable>
         </argument>
         <argument>
-          <name>Seekable</name>
+          <name>CanSeek</name>
           <direction>out</direction>
-          <relatedStateVariable>Seekable</relatedStateVariable>
+          <relatedStateVariable>CanSeek</relatedStateVariable>
         </argument>
         <argument>
-          <name>Pausable</name>
+          <name>CanPause</name>
           <direction>out</direction>
-          <relatedStateVariable>Pausable</relatedStateVariable>
+          <relatedStateVariable>CanPause</relatedStateVariable>
         </argument>
       </argumentList>
     </action>
@@ -187,19 +187,19 @@
       <dataType>string</dataType>
     </stateVariable>
     <stateVariable sendEvents="yes">
-      <name>NextAvailable</name>
+      <name>CanSkipNext</name>
       <dataType>boolean</dataType>
     </stateVariable>
     <stateVariable sendEvents="yes">
-      <name>PreviousAvailable</name>
+      <name>CanSkipPrevious</name>
       <dataType>boolean</dataType>
     </stateVariable>
     <stateVariable sendEvents="yes">
-      <name>RepeatAvailable</name>
+      <name>CanRepeat</name>
       <dataType>boolean</dataType>
     </stateVariable>
     <stateVariable sendEvents="yes">
-      <name>ShuffleAvailable</name>
+      <name>CanShuffle</name>
       <dataType>boolean</dataType>
     </stateVariable>
     <stateVariable sendEvents="yes">
@@ -207,11 +207,11 @@
       <dataType>ui4</dataType>
     </stateVariable>
     <stateVariable sendEvents="yes">
-      <name>Seekable</name>
+      <name>CanSeek</name>
       <dataType>boolean</dataType>
     </stateVariable>
     <stateVariable sendEvents="yes">
-      <name>Pausable</name>
+      <name>CanPause</name>
       <dataType>boolean</dataType>
     </stateVariable>
     <stateVariable sendEvents="yes">
