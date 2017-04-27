@@ -52,8 +52,8 @@ private: // from Net::DvProviderOpenhomeOrgEriskayTransportControl1
     void Previous(Net::IDvInvocation& aInvocation) override;
     void SetRepeat(Net::IDvInvocation& aInvocation, TUint aRepeat) override;
     void SetShuffle(Net::IDvInvocation& aInvocation, TUint aRandom) override;
-    void SeekSecondAbsolute(Net::IDvInvocation& aInvocation, TUint aStreamId, TUint aSecondsAbsolute) override;
-    void SeekSecondRelative(Net::IDvInvocation& aInvocation, TUint aStreamId, TInt aSecondsRelative) override;
+    void SeekSecondAbsolute(Net::IDvInvocation& aInvocation, TUint aStreamId, TUint aSecondAbsolute) override;
+    void SeekSecondRelative(Net::IDvInvocation& aInvocation, TUint aStreamId, TInt aSecondRelative) override;
     void TransportState(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aState) override;
     void Modes(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aModes) override;
     void ModeInfo(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseBool& aNextAvailable, Net::IDvInvocationResponseBool& aPreviousAvailable, Net::IDvInvocationResponseBool& aRepeatAvailable, Net::IDvInvocationResponseBool& aShuffleAvailable) override;

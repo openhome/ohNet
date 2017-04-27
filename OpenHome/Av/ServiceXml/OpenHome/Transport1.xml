@@ -64,7 +64,7 @@
           <relatedStateVariable>StreamId</relatedStateVariable>
         </argument>
         <argument>
-          <name>SecondsAbsolute</name>
+          <name>SecondAbsolute</name>
           <direction>in</direction>
           <relatedStateVariable>A_ARG_TYPE_uint</relatedStateVariable>
         </argument>
@@ -79,7 +79,7 @@
           <relatedStateVariable>StreamId</relatedStateVariable>
         </argument>
         <argument>
-          <name>SecondsRelative</name>
+          <name>SecondRelative</name>
           <direction>in</direction>
           <relatedStateVariable>A_ARG_TYPE_int</relatedStateVariable>
         </argument>

@@ -217,10 +217,10 @@ void ProviderTransport::SetShuffle(IDvInvocation& aInvocation, TUint aShuffle)
 }
 
 void ProviderTransport::SeekSecondAbsolute(IDvInvocation& aInvocation,
-                                            TUint aStreamId, TUint aSecondsAbsolute)
+                                            TUint aStreamId, TUint aSecondAbsolute)
 {
     try {
-        iPipeline.Seek(aStreamId, aSecondsAbsolute);
+        iPipeline.Seek(aStreamId, aSecondAbsolute);
     }
     catch (SeekStreamInvalid&) {
         aInvocation.Error(kCodeBadStreamId, kMsgBadStreamId);
@@ -239,11 +239,11 @@ void ProviderTransport::SeekSecondAbsolute(IDvInvocation& aInvocation,
 }
 
 void ProviderTransport::SeekSecondRelative(IDvInvocation& aInvocation,
-                                            TUint aStreamId, TInt aSecondsRelative)
+                                            TUint aStreamId, TInt aSecondRelative)
 {
     iLock.Wait();
-    TUint seconds = aSecondsRelative + iTrackPosSeconds;
-    if (aSecondsRelative < 0 && -aSecondsRelative >(TInt)iTrackPosSeconds) {
+    TUint seconds = aSecondRelative + iTrackPosSeconds;
+    if (aSecondRelative < 0 && -aSecondRelative >(TInt)iTrackPosSeconds) {
         seconds = 0;
     }
     iLock.Signal();
