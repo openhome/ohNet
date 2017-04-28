@@ -1219,9 +1219,8 @@ void SuiteSpotifyReporter::TestModeSpotifySeek()
 
     // Tell SpotifyReporter about a seek.
     static const TUint kSeekMs2 = 250; // Sample 11025 @ 44.1KHz.
-    iReporter->NotifySeek(kSeekMs2);
 
-    // MsgDrain, followed by MsgDecodedStream to signify a flush.
+    // MsgDrain, to signify a flush.
     Semaphore sem("TSRS", 0);
     iUpstream->Enqueue(iMsgFactory->CreateMsgDrain(MakeFunctor(sem, &Semaphore::Signal)));
     msg = iReporter->Pull();
@@ -1230,7 +1229,8 @@ void SuiteSpotifyReporter::TestModeSpotifySeek()
     msg->RemoveRef();
     TEST(iTestPipe->Expect(Brn("MMP::ProcessMsg MsgDrain 0")));
 
-    iUpstream->Enqueue(iMsgFactory->CreateMsgDecodedStream(0, 705600, 16, 44100, 2, Brn("CODC"), 3386880000, 0, true, false, false, false, Multiroom::Allowed, SpeakerProfile(2), nullptr));
+    // NotifySeek() triggers generation of a new MsgDecodedStream with new start offset.
+    iReporter->NotifySeek(kSeekMs2);
     msg = iReporter->Pull();
     msg->Process(*iMsgProcessor);
     msg->RemoveRef();
