@@ -710,7 +710,7 @@ void SuiteSpotifyReporter::TestMsgsPassedThroughNoSamplesInPipeline()
 void SuiteSpotifyReporter::TestMsgsPassedThroughSamplesInPipeline()
 {
     // First, put some audio into pipeline.
-    iUpstream->Enqueue(iMsgFactory->CreateMsgMode(Brn("null"), false, ModeClockPullers(), false, false, false, false));
+    iUpstream->Enqueue(iMsgFactory->CreateMsgMode(Brn("null")));
     Track* track = iTrackFactory->CreateTrack(Brn("spotify://"), Brn("Spotify track meta text"));
     iUpstream->Enqueue(iMsgFactory->CreateMsgTrack(*track));
     track->RemoveRef();
@@ -741,7 +741,7 @@ void SuiteSpotifyReporter::TestMsgModeResets()
     iReporter->TrackChanged(Brn("spotify://"), metadata, 0);
 
     // Send in a Spotify MsgMode.
-    iUpstream->Enqueue(iMsgFactory->CreateMsgMode(Brn("Spotify"), false, ModeClockPullers(), false, false, false, false));
+    iUpstream->Enqueue(iMsgFactory->CreateMsgMode(Brn("Spotify")));
     Track* track = iTrackFactory->CreateTrack(Brn("spotify://"), Brn("Spotify track meta text"));
     iUpstream->Enqueue(iMsgFactory->CreateMsgTrack(*track));
     track->RemoveRef();
@@ -764,7 +764,7 @@ void SuiteSpotifyReporter::TestMsgModeResets()
     TEST(iReporter->SubSamples() == samplesExpected);
 
     // Now, send another Spotify MsgMode, which should reset sample count.
-    iUpstream->Enqueue(iMsgFactory->CreateMsgMode(Brn("Spotify"), false, ModeClockPullers(), false, false, false, false));
+    iUpstream->Enqueue(iMsgFactory->CreateMsgMode(Brn("Spotify")));
     Msg* msg = iReporter->Pull();
     msg->Process(*iMsgProcessor);
     msg->RemoveRef();
@@ -785,7 +785,7 @@ void SuiteSpotifyReporter::TestSubSamples()
     iReporter->TrackChanged(Brn("spotify://"), metadata, 0);
 
     // Send in a Spotify MsgMode.
-    iUpstream->Enqueue(iMsgFactory->CreateMsgMode(Brn("Spotify"), false, ModeClockPullers(), false, false, false, false));
+    iUpstream->Enqueue(iMsgFactory->CreateMsgMode(Brn("Spotify")));
     Track* track = iTrackFactory->CreateTrack(Brn("spotify://"), Brn("Spotify track meta text"));
     iUpstream->Enqueue(iMsgFactory->CreateMsgTrack(*track));
     track->RemoveRef();
@@ -830,7 +830,7 @@ void SuiteSpotifyReporter::TestSampleRateChange()
     iReporter->TrackChanged(Brn("spotify://"), metadata, 0);
 
     // Send in a Spotify MsgMode.
-    iUpstream->Enqueue(iMsgFactory->CreateMsgMode(Brn("Spotify"), false, ModeClockPullers(), false, false, false, false));
+    iUpstream->Enqueue(iMsgFactory->CreateMsgMode(Brn("Spotify")));
     Track* track = iTrackFactory->CreateTrack(Brn("spotify://"), Brn("Spotify track meta text"));
     iUpstream->Enqueue(iMsgFactory->CreateMsgTrack(*track));
     track->RemoveRef();
@@ -912,7 +912,7 @@ void SuiteSpotifyReporter::TestNumChannelsChange()
     iReporter->TrackChanged(Brn("spotify://"), metadata, 0);
 
     // Send in a Spotify MsgMode.
-    iUpstream->Enqueue(iMsgFactory->CreateMsgMode(Brn("Spotify"), false, ModeClockPullers(), false, false, false, false));
+    iUpstream->Enqueue(iMsgFactory->CreateMsgMode(Brn("Spotify")));
     Track* track = iTrackFactory->CreateTrack(Brn("spotify://"), Brn("Spotify track meta text"));
     iUpstream->Enqueue(iMsgFactory->CreateMsgTrack(*track));
     track->RemoveRef();
@@ -983,7 +983,7 @@ void SuiteSpotifyReporter::TestInvalidSampleRate()
     iReporter->TrackChanged(Brn("spotify://"), metadata, 0);
 
     // Send in a Spotify MsgMode.
-    iUpstream->Enqueue(iMsgFactory->CreateMsgMode(Brn("Spotify"), false, ModeClockPullers(), false, false, false, false));
+    iUpstream->Enqueue(iMsgFactory->CreateMsgMode(Brn("Spotify")));
     Track* track = iTrackFactory->CreateTrack(Brn("spotify://"), Brn("Spotify track meta text"));
     iUpstream->Enqueue(iMsgFactory->CreateMsgTrack(*track));
     track->RemoveRef();
@@ -1011,7 +1011,7 @@ void SuiteSpotifyReporter::TestInvalidNumChannels()
     iReporter->TrackChanged(Brn("spotify://"), metadata, 0);
 
     // Send in a Spotify MsgMode.
-    iUpstream->Enqueue(iMsgFactory->CreateMsgMode(Brn("Spotify"), false, ModeClockPullers(), false, false, false, false));
+    iUpstream->Enqueue(iMsgFactory->CreateMsgMode(Brn("Spotify")));
     Track* track = iTrackFactory->CreateTrack(Brn("spotify://"), Brn("Spotify track meta text"));
     iUpstream->Enqueue(iMsgFactory->CreateMsgTrack(*track));
     track->RemoveRef();
@@ -1043,7 +1043,7 @@ void SuiteSpotifyReporter::TestPassThroughInjectTrack()
     iReporter->NotifySeek(kSeekMs);
 
     // NOT "Spotify" mode.
-    iUpstream->Enqueue(iMsgFactory->CreateMsgMode(Brn("null"), false, ModeClockPullers(), false, false, false, false));
+    iUpstream->Enqueue(iMsgFactory->CreateMsgMode(Brn("null")));
     Msg* msg = iReporter->Pull();
     msg->Process(*iMsgProcessor);
     msg->RemoveRef();
@@ -1090,7 +1090,7 @@ void SuiteSpotifyReporter::TestModeSpotifyTrackInjected()
     iReporter->NotifySeek(kSeekMs);
 
     // Pull mode.
-    iUpstream->Enqueue(iMsgFactory->CreateMsgMode(Brn("Spotify"), false, ModeClockPullers(), false, false, false, false));
+    iUpstream->Enqueue(iMsgFactory->CreateMsgMode(Brn("Spotify")));
     Msg* msg = iReporter->Pull();
     msg->Process(*iMsgProcessor);
     msg->RemoveRef();
@@ -1174,7 +1174,7 @@ void SuiteSpotifyReporter::TestModeSpotifySeek()
     iReporter->NotifySeek(kSeekMs);
 
     // Pull mode.
-    iUpstream->Enqueue(iMsgFactory->CreateMsgMode(Brn("Spotify"), false, ModeClockPullers(), false, false, false, false));
+    iUpstream->Enqueue(iMsgFactory->CreateMsgMode(Brn("Spotify")));
     Msg* msg = iReporter->Pull();
     msg->Process(*iMsgProcessor);
     msg->RemoveRef();

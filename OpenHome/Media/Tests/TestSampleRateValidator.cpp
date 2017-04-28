@@ -156,7 +156,7 @@ void SuiteSampleRateValidator::PushMsg(EMsgType aType)
     switch (aType)
     {
     case EMsgMode:
-        msg = iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, ModeClockPullers(), false, false, false, false);
+        msg = iMsgFactory->CreateMsgMode(Brn("dummyMode"));
         break;
     case EMsgTrack:
     {

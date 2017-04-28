@@ -24,11 +24,7 @@ class UriProvider
 public:
     virtual ~UriProvider();
     const Brx& Mode() const;
-    TBool SupportsLatency() const;
-    TBool SupportsNext() const;
-    TBool SupportsPrev() const;
-    TBool SupportsRepeat() const;
-    TBool SupportsRandom() const;
+    const Media::ModeInfo& ModeInfo() const;
     virtual ModeClockPullers ClockPullers();
     virtual TBool IsValid(TUint aTrackId) const;
     virtual void Begin(TUint aTrackId) = 0;
@@ -51,11 +47,7 @@ protected:
                 Repeat aRepeatSupported, Random aRandomSupported);
 private:
     BwsMode iMode;
-    TBool iSupportsLatency;
-    TBool iSupportsNext;
-    TBool iSupportsPrev;
-    TBool iSupportsRepeat;
-    TBool iSupportsRandom;
+    Media::ModeInfo iModeInfo;
 };
 
 class Filler : private Thread, public IPipelineElementDownstream, private IMsgProcessor

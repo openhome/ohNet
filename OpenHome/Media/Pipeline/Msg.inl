@@ -48,6 +48,29 @@ inline TBool Ramp::IsEnabled() const
 
 // ModeInfo
 
+inline ModeInfo::ModeInfo()
+{
+    Clear();
+}
+inline ModeInfo::ModeInfo(TBool aSupportsLatency)
+{
+    Clear();
+    iSupportsLatency = aSupportsLatency;
+}
+inline void ModeInfo::SetSupportsLatency(TBool aSupportsLatency)
+{
+    iSupportsLatency = aSupportsLatency;
+}
+inline void ModeInfo::SetSupportsNextPrev(TBool aSupportsNext, TBool aSupportsPrev)
+{
+    iSupportsNext = aSupportsNext;
+    iSupportsPrev = aSupportsPrev;
+}
+inline void ModeInfo::SetSupportsRepeatRandom(TBool aSupportsRepeat, TBool aSupportsRandom)
+{
+    iSupportsRepeat  = aSupportsRepeat;
+    iSupportsRandom  = aSupportsRandom;
+}
 inline TBool ModeInfo::SupportsLatency() const
 {
     return iSupportsLatency;

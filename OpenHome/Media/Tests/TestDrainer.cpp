@@ -278,7 +278,7 @@ void SuiteDrainer::TestBlocksWaitingForDrainResponse()
 {
     iPendingMsgs.push_back(CreateMsgSilence());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), false, ModeClockPullers(), false, false, false, false));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty()));
 
     PullNext(EMsgSilence);
     PullNext(EMsgHalt);

@@ -194,8 +194,7 @@ Msg* ElementFileReader::Pull()
     Msg* msg = nullptr;
     if (iMode == eMode) {
         const Brn mode("Playlist");
-        const TBool supportsLatency = false;
-        msg = iMsgFactory.CreateMsgMode(mode, supportsLatency, ModeClockPullers(), false, false, false, false);
+        msg = iMsgFactory.CreateMsgMode(Brx::Empty());
         iMode = eTrack;
     }
     else if (iMode == eTrack) {

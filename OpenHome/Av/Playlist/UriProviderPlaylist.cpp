@@ -304,7 +304,7 @@ void UriProviderPlaylist::NotifyPipelineState(EPipelineState /*aState*/)
 {
 }
 
-void UriProviderPlaylist::NotifyMode(const Brx& /*aMode*/, const ModeInfo& /*aInfo*/)
+void UriProviderPlaylist::NotifyMode(const Brx& /*aMode*/, const Media::ModeInfo& /*aInfo*/)
 {
 }
 

@@ -18,29 +18,9 @@ const Brx& UriProvider::Mode() const
     return iMode;
 }
 
-TBool UriProvider::SupportsLatency() const
+const Media::ModeInfo& UriProvider::ModeInfo() const
 {
-    return iSupportsLatency;
-}
-
-TBool UriProvider::SupportsNext() const
-{
-    return iSupportsNext;
-}
-
-TBool UriProvider::SupportsPrev() const
-{
-    return iSupportsPrev;
-}
-
-TBool UriProvider::SupportsRepeat() const
-{
-    return iSupportsRepeat;
-}
-
-TBool UriProvider::SupportsRandom() const
-{
-    return iSupportsRandom;
+    return iModeInfo;
 }
 
 ModeClockPullers UriProvider::ClockPullers()
@@ -66,12 +46,12 @@ UriProvider::UriProvider(const TChar* aMode, Latency aLatency,
                          Next aNextSupported, Prev aPrevSupported,
                          Repeat aRepeatSupported, Random aRandomSupported)
     : iMode(aMode)
-    , iSupportsLatency(aLatency == Latency::Supported)
-    , iSupportsNext(aNextSupported == Next::Supported)
-    , iSupportsPrev(aPrevSupported == Prev::Supported)
-    , iSupportsRepeat(aRepeatSupported == Repeat::Supported)
-    , iSupportsRandom(aRandomSupported == Random::Supported)
 {
+    iModeInfo.SetSupportsLatency(aLatency == Latency::Supported);
+    iModeInfo.SetSupportsNextPrev(aNextSupported == Next::Supported,
+                                  aPrevSupported == Prev::Supported);
+    iModeInfo.SetSupportsRepeatRandom(aRepeatSupported == Repeat::Supported,
+                                      aRandomSupported == Random::Supported);
 }
 
 UriProvider::~UriProvider()
@@ -335,7 +315,8 @@ void Filler::Run()
                 iChangedMode = true;
                 iStopped = true;
                 iLock.Signal();
-                iPipeline.Push(iMsgFactory.CreateMsgMode(Brn("null"), false, ModeClockPullers(), false, false, false, false));
+                ModeInfo info;
+                iPipeline.Push(iMsgFactory.CreateMsgMode(Brn("null"), info, ModeClockPullers()));
                 iPipeline.Push(iMsgFactory.CreateMsgTrack(*iNullTrack));
                 iPipelineIdTracker.AddStream(iNullTrack->Id(), NullTrackStreamHandler::kNullTrackStreamId, false /* play later */);
                 iPipeline.Push(iMsgFactory.CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 0, 0, NullTrackStreamHandler::kNullTrackStreamId, false /* not seekable */, true /* live */, Multiroom::Forbidden, &iNullTrackStreamHandler));
@@ -347,11 +328,11 @@ void Filler::Run()
                 iUriStreamer->Interrupt(false);
                 iLock.Wait();
                 if (iChangedMode) {
-                    const TBool supportsLatency = iActiveUriProvider->SupportsLatency();
-                    iPipeline.Push(iMsgFactory.CreateMsgMode(iActiveUriProvider->Mode(), supportsLatency, iActiveUriProvider->ClockPullers(),
-                                                             iActiveUriProvider->SupportsNext(), iActiveUriProvider->SupportsPrev(),
-                                                             iActiveUriProvider->SupportsRepeat(), iActiveUriProvider->SupportsRandom()));
-                    if (!supportsLatency) {
+                    const auto& modeInfo = iActiveUriProvider->ModeInfo();
+                    iPipeline.Push(iMsgFactory.CreateMsgMode(iActiveUriProvider->Mode(),
+                                                             modeInfo,
+                                                             iActiveUriProvider->ClockPullers()));
+                    if (!modeInfo.SupportsLatency()) {
                         iPipeline.Push(iMsgFactory.CreateMsgDelay(iDefaultDelay));
                     }
                     iChangedMode = false;

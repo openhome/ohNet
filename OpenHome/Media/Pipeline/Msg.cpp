@@ -891,22 +891,6 @@ void Track::Clear()
 
 // ModeInfo
 
-ModeInfo::ModeInfo()
-{
-    Clear();
-}
-
-void ModeInfo::Set(TBool aSupportsLatency,
-                   TBool aSupportsNext, TBool aSupportsPrev,
-                   TBool aSupportsRepeat, TBool aSupportsRandom)
-{
-    iSupportsLatency = aSupportsLatency;
-    iSupportsNext    = aSupportsNext;
-    iSupportsPrev    = aSupportsPrev;
-    iSupportsRepeat  = aSupportsRepeat;
-    iSupportsRandom  = aSupportsRandom;
-}
-
 void ModeInfo::Clear()
 {
     iSupportsLatency = false;
@@ -970,12 +954,10 @@ const ModeClockPullers& MsgMode::ClockPullers() const
     return iClockPullers;
 }
 
-void MsgMode::Initialise(const Brx& aMode, TBool aSupportsLatency, ModeClockPullers aClockPullers,
-                         TBool aSupportsNext, TBool aSupportsPrev,
-                         TBool aSupportsRepeat, TBool aSupportsRandom)
+void MsgMode::Initialise(const Brx& aMode, const ModeInfo& aInfo, ModeClockPullers aClockPullers)
 {
     iMode.Replace(aMode);
-    iInfo.Set(aSupportsLatency, aSupportsNext, aSupportsPrev, aSupportsRepeat, aSupportsRandom);
+    iInfo = aInfo;
     iClockPullers = aClockPullers;
 }
 
@@ -3134,11 +3116,18 @@ MsgFactory::MsgFactory(IInfoAggregator& aInfoAggregator, const MsgFactoryInitPar
 {
 }
 
-MsgMode* MsgFactory::CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, ModeClockPullers aClockPullers, TBool aSupportsNext, TBool aSupportsPrev, TBool aSupportsRepeat, TBool aSupportsRandom)
+MsgMode* MsgFactory::CreateMsgMode(const Brx& aMode, const ModeInfo& aInfo, ModeClockPullers aClockPullers)
 {
     MsgMode* msg = iAllocatorMsgMode.Allocate();
-    msg->Initialise(aMode, aSupportsLatency, aClockPullers, aSupportsNext, aSupportsPrev, aSupportsRepeat, aSupportsRandom);
+    msg->Initialise(aMode, aInfo, aClockPullers);
     return msg;
+}
+
+MsgMode* MsgFactory::CreateMsgMode(const Brx& aMode)
+{
+    ModeInfo info;
+    ModeClockPullers clockPullers;
+    return CreateMsgMode(aMode, info, clockPullers);
 }
 
 MsgTrack* MsgFactory::CreateMsgTrack(Media::Track& aTrack, TBool aStartOfStream)

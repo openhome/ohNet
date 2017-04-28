@@ -468,7 +468,7 @@ TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
         msg = iMsgFactory->CreateMsgBitRate(1);
         break;
     case EMsgMode:
-        msg = iMsgFactory->CreateMsgMode(Brx::Empty(), true, ModeClockPullers(), false, false, false, false);
+        msg = iMsgFactory->CreateMsgMode(Brx::Empty());
         break;
     case EMsgTrack:
     {
@@ -1082,7 +1082,9 @@ void SuiteGorger::PullNext(EMsgType aExpectedMsg)
 
 Msg* SuiteGorger::CreateMode(const Brx& aMode, TBool aSupportsLatency)
 {
-    return iMsgFactory->CreateMsgMode(aMode, aSupportsLatency, ModeClockPullers(), false, false, false, false);
+    ModeInfo info;
+    info.SetSupportsLatency(aSupportsLatency);
+    return iMsgFactory->CreateMsgMode(aMode, info, ModeClockPullers());
 }
 
 Msg* SuiteGorger::CreateTrack()

@@ -207,7 +207,10 @@ Msg* SuitePreDriver::Pull()
     switch (iNextGeneratedMsg)
     {
     case EMsgMode:
-        return iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, ModeClockPullers(iNextModePullable), false, false, false, false);
+    {
+        ModeInfo info;
+        return iMsgFactory->CreateMsgMode(Brn("dummyMode"), info, ModeClockPullers(iNextModePullable));
+    }
     case EMsgDrain:
         return iMsgFactory->CreateMsgDrain(Functor());
     case EMsgEncodedStream:

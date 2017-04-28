@@ -505,7 +505,7 @@ void SuiteFiller::Test()
     iFiller->Play(iUriProvider->Mode(), iUriProvider->IdByIndex(0));
     iTrackAddedSem.Wait();
     TEST(iDummySupply->LastMode() == iUriProvider->Mode());
-    TEST(iDummySupply->LastSupportsLatency() == iUriProvider->SupportsLatency());
+    TEST(iDummySupply->LastSupportsLatency() == iUriProvider->ModeInfo().SupportsLatency());
     TEST(iDummySupply->LastTrackUri() == iUriProvider->TrackUriByIndex(0));
     TEST(iDummySupply->LastTrackId() == iUriStreamer->TrackId());
     TEST(iDummySupply->LastStreamId() == iUriStreamer->StreamId());
