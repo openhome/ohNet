@@ -281,7 +281,7 @@ Msg* SpotifyReporter::Pull()
                         iMsgTrackPending = false;
                         return msg;
                     }
-                    if (!iMsgTrackPending && iMsgDecodedStreamPending) {
+                    else if (iMsgDecodedStreamPending) {
                         /*
                          * If iDecodedStream == nullptr, means still need to pull first
                          * MsgDecodedStream of Spotify stream from upstream element.
@@ -346,6 +346,8 @@ void SpotifyReporter::NotifySeek(TUint aOffsetMs)
 {
     AutoMutex _(iLock);
     iStartOffset.SetMs(aOffsetMs);
+    // Must output new MsgDecodedStream to update start offset.
+    iMsgDecodedStreamPending = true;
 }
 
 Msg* SpotifyReporter::ProcessMsg(MsgMode* aMsg)
@@ -411,6 +413,7 @@ Msg* SpotifyReporter::ProcessMsg(MsgAudioPcm* aMsg)
     // iLock held in ::Pull() method to protect iSubSamples.
     TUint64 subSamplesPrev = iSubSamples;
     iSubSamples += samples*info.NumChannels();
+
     ASSERT(iSubSamples >= subSamplesPrev); // Overflow not handled.
     return aMsg;
 }
