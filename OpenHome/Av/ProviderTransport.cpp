@@ -33,11 +33,12 @@ ProviderTransport::ProviderTransport(Net::DvDevice& aDevice,
                                      ITransportActivator& aTransportActivator,
                                      ITransportRepeatRandom& aTransportRepeatRandom)
     : DvProviderAvOpenhomeOrgTransport1(aDevice)
-    , iLock("PTPR")
+    , iLock("PTR1")
     , iPipeline(aPipeline)
     , iPowerManager(aPowerManager)
     , iTransportActivator(aTransportActivator)
     , iTransportRepeatRandom(aTransportRepeatRandom)
+    , iLockTransportControls("PTR2")
     , iTransportState(EPipelineStopped)
     , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
     , iModes(kModesGranularity)
@@ -105,7 +106,7 @@ void ProviderTransport::NotifyMode(const Brx& /*aMode*/,
                                    const Media::ModeTransportControls& aTransportControls)
 {
     {
-        AutoMutex _(iLock);
+        AutoMutex _(iLockTransportControls);
         iTransportControls = aTransportControls;
     }
     PropertiesLock();
@@ -173,7 +174,7 @@ void ProviderTransport::Play(IDvInvocation& aInvocation)
 {
     iPowerManager.StandbyDisable(StandbyDisableReason::User);
     {
-        AutoMutex _(iLock);
+        AutoMutex _(iLockTransportControls);
         auto f = iTransportControls.Play();
         if (f) {
             f();
@@ -189,7 +190,7 @@ void ProviderTransport::Play(IDvInvocation& aInvocation)
 void ProviderTransport::Pause(IDvInvocation& aInvocation)
 {
     {
-        AutoMutex _(iLock);
+        AutoMutex _(iLockTransportControls);
         auto f = iTransportControls.Pause();
         if (f) {
             f();
@@ -210,7 +211,7 @@ void ProviderTransport::Pause(IDvInvocation& aInvocation)
 void ProviderTransport::Stop(IDvInvocation& aInvocation)
 {
     {
-        AutoMutex _(iLock);
+        AutoMutex _(iLockTransportControls);
         auto f = iTransportControls.Stop();
         if (f) {
             f();
@@ -227,7 +228,7 @@ void ProviderTransport::SkipNext(IDvInvocation& aInvocation)
 {
     iPowerManager.StandbyDisable(StandbyDisableReason::User);
     {
-        AutoMutex _(iLock);
+        AutoMutex _(iLockTransportControls);
         auto f = iTransportControls.Next();
         if (f) {
             f();
@@ -244,7 +245,7 @@ void ProviderTransport::SkipPrevious(IDvInvocation& aInvocation)
 {
     iPowerManager.StandbyDisable(StandbyDisableReason::User);
     {
-        AutoMutex _(iLock);
+        AutoMutex _(iLockTransportControls);
         auto f = iTransportControls.Prev();
         if (f) {
             f();
@@ -276,7 +277,7 @@ void ProviderTransport::SeekSecondAbsolute(IDvInvocation& aInvocation,
 {
     iPowerManager.StandbyDisable(StandbyDisableReason::User);
     {
-        AutoMutex _(iLock);
+        AutoMutex _(iLockTransportControls);
         auto f = iTransportControls.Seek();
         if (f) {
             f(aSecondAbsolute);

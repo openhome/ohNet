@@ -69,6 +69,7 @@ private:
     IPowerManager& iPowerManager;
     ITransportActivator& iTransportActivator;
     ITransportRepeatRandom& iTransportRepeatRandom;
+    Mutex iLockTransportControls;
     Media::ModeTransportControls iTransportControls;
     Media::EPipelineState iTransportState;
     TUint iStreamId;
