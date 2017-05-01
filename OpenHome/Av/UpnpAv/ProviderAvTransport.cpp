@@ -525,7 +525,9 @@ void ProviderAvTransport::NotifyPipelineState(Media::EPipelineState aState)
     iLock.Signal();
 }
 
-void ProviderAvTransport::NotifyMode(const Brx& /*aMode*/, const Media::ModeInfo& /*aInfo*/)
+void ProviderAvTransport::NotifyMode(const Brx& /*aMode*/,
+                                     const Media::ModeInfo& /*aInfo*/,
+                                     const Media::ModeTransportControls& /*aTransportControls*/)
 {
 }
 

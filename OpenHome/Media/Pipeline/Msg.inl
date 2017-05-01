@@ -93,6 +93,58 @@ inline TBool ModeInfo::SupportsRandom() const
 }
 
 
+// ModeTransportControls
+
+inline void ModeTransportControls::SetPlay(Functor aPlay)
+{
+    iPlay = aPlay;
+}
+inline void ModeTransportControls::SetPause(Functor aPause)
+{
+    iPause = aPause;
+}
+inline void ModeTransportControls::SetStop(Functor aStop)
+{
+    iStop = aStop;
+}
+inline void ModeTransportControls::SetNext(Functor aNext)
+{
+    iNext = aNext;
+}
+inline void ModeTransportControls::SetPrev(Functor aPrev)
+{
+    iPrev = aPrev;
+}
+inline void ModeTransportControls::SetSeek(FunctorGeneric<TUint> aSeek)
+{
+    iSeek = aSeek;
+}
+inline Functor ModeTransportControls::Play() const
+{
+    return iPlay;
+}
+inline Functor ModeTransportControls::Pause() const
+{
+    return iPause;
+}
+inline Functor ModeTransportControls::Stop() const
+{
+    return iStop;
+}
+inline Functor ModeTransportControls::Next() const
+{
+    return iNext;
+}
+inline Functor ModeTransportControls::Prev() const
+{
+    return iPrev;
+}
+inline FunctorGeneric<TUint> ModeTransportControls::Seek() const
+{
+    return iSeek;
+}
+
+
 // MsgAudioEncoded, MsgAudioPcm
 
 #ifdef TIMESTAMP_LOGGING_ENABLE

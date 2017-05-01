@@ -146,7 +146,7 @@ ILoggerSerial& MediaPlayer::BufferLogOutput(TUint aBytes, IShell& aShell, Option
 
 void MediaPlayer::EnableTransportService()
 {
-    iProviderTransport = new ProviderTransport(iDevice, *iPipeline, *iProduct, iTransportRepeatRandom);
+    iProviderTransport = new ProviderTransport(iDevice, *iPipeline, *iPowerManager, *iProduct, iTransportRepeatRandom);
     iProduct->AddAttribute("Transport");
 }
 

@@ -106,7 +106,8 @@ private: // from SuiteUnitTest
     void TearDown() override;
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState) override;
-    void NotifyMode(const Brx& aMode, const Media::ModeInfo& aInfo) override;
+    void NotifyMode(const Brx& aMode, const Media::ModeInfo& aInfo,
+                    const Media::ModeTransportControls& aTransportControls) override;
     void NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream) override;
     void NotifyMetaText(const Brx& aText) override;
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
@@ -503,7 +504,9 @@ void SuitePlaylist::NotifyPipelineState(EPipelineState aState)
     iTransportStateCount[aState]++;
 }
 
-void SuitePlaylist::NotifyMode(const Brx& /*aMode*/, const ModeInfo& /*aInfo*/)
+void SuitePlaylist::NotifyMode(const Brx& /*aMode*/,
+                               const ModeInfo& /*aInfo*/,
+                               const ModeTransportControls& aTransportControls)
 {
 }
 

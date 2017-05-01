@@ -59,7 +59,8 @@ private: // from ITrackDatabaseObserver
     void NotifyAllDeleted() override;
 private: // from Media::IPipelineObserver
     void NotifyPipelineState(Media::EPipelineState aState) override;
-    void NotifyMode(const Brx& aMode, const Media::ModeInfo& aInfo) override;
+    void NotifyMode(const Brx& aMode, const Media::ModeInfo& aInfo,
+                    const Media::ModeTransportControls& aTransportControls) override;
     void NotifyTrack(Media::Track& aTrack, const Brx& aMode, TBool aStartOfStream) override;
     void NotifyMetaText(const Brx& aText) override;
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
@@ -117,6 +118,12 @@ SourcePlaylist::SourcePlaylist(IMediaPlayer& aMediaPlayer)
     iShuffler = new Shuffler(env, *iDatabase);
     iRepeater = new Repeater(*iShuffler);
     iUriProvider = new UriProviderPlaylist(*iRepeater, iPipeline, *this);
+    iUriProvider->SetTransportPlay(MakeFunctor(*this, &SourcePlaylist::Play));
+    iUriProvider->SetTransportPause(MakeFunctor(*this, &SourcePlaylist::Pause));
+    iUriProvider->SetTransportStop(MakeFunctor(*this, &SourcePlaylist::Stop));
+    iUriProvider->SetTransportNext(MakeFunctor(*this, &SourcePlaylist::Next));
+    iUriProvider->SetTransportPrev(MakeFunctor(*this, &SourcePlaylist::Prev));
+    iUriProvider->SetTransportSeek(MakeFunctorGeneric<TUint>(*this, &SourcePlaylist::SeekAbsolute));
     iPipeline.Add(iUriProvider); // ownership passes to iPipeline
     iProviderPlaylist = new ProviderPlaylist(aMediaPlayer.Device(), env, *this, *iDatabase, *iRepeater, aMediaPlayer.TransportRepeatRandom());
     aMediaPlayer.MimeTypes().AddUpnpProtocolInfoObserver(MakeFunctorGeneric(*iProviderPlaylist, &ProviderPlaylist::NotifyProtocolInfo));
@@ -425,7 +432,9 @@ void SourcePlaylist::NotifyPipelineState(EPipelineState aState)
     }
 }
 
-void SourcePlaylist::NotifyMode(const Brx& /*aMode*/, const ModeInfo& /*aInfo*/)
+void SourcePlaylist::NotifyMode(const Brx& /*aMode*/,
+                                const ModeInfo& /*aInfo*/,
+                                const ModeTransportControls& /*aTransportControls*/)
 {
 }
 

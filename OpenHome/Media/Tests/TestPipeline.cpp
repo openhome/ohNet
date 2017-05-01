@@ -94,7 +94,8 @@ private:
     void WaitForStateChange(EPipelineState aState);
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState) override;
-    void NotifyMode(const Brx& aMode, const ModeInfo& aInfo) override;
+    void NotifyMode(const Brx& aMode, const ModeInfo& aInfo,
+                    const ModeTransportControls& aTransportControls) override;
     void NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream) override;
     void NotifyMetaText(const Brx& aText) override;
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
@@ -695,7 +696,9 @@ void SuitePipeline::NotifyPipelineState(EPipelineState aState)
 // on the state of LOG_PIPELINE_OBSERVER
 # pragma warning(disable:4100)
 #endif
-void SuitePipeline::NotifyMode(const Brx& aMode, const ModeInfo& aInfo)
+void SuitePipeline::NotifyMode(const Brx& aMode,
+                               const ModeInfo& aInfo,
+                               const ModeTransportControls& /*aTransportControls*/)
 {
 #ifdef LOG_PIPELINE_OBSERVER
     Log::Print("Pipeline report property: MODE {mode=");

@@ -381,13 +381,15 @@ void PipelineManager::NotifyPipelineState(EPipelineState aState)
     }
 }
 
-void PipelineManager::NotifyMode(const Brx& aMode, const ModeInfo& aInfo)
+void PipelineManager::NotifyMode(const Brx& aMode,
+                                 const ModeInfo& aInfo,
+                                 const ModeTransportControls& aTransportControls)
 {
     iLock.Wait();
     iMode.Replace(aMode);
     iLock.Signal();
     for (auto it=iObservers.begin(); it!=iObservers.end(); ++it) {
-        (*it)->NotifyMode(aMode, aInfo);
+        (*it)->NotifyMode(aMode, aInfo, aTransportControls);
     }
 }
 

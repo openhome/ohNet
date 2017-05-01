@@ -37,7 +37,8 @@ public:
 public: // from IPipelineElementUpstream
     Msg* Pull() override;
 private: // from IPipelinePropertyObserver
-    void NotifyMode(const Brx& aMode, const ModeInfo& aInfo) override;
+    void NotifyMode(const Brx& aMode, const ModeInfo& aInfo,
+                    const ModeTransportControls& aTransportControls) override;
     void NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream) override;
     void NotifyMetaText(const Brx& aText) override;
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
@@ -380,7 +381,9 @@ MsgAudio* SuiteReporter::CreateAudio()
     return audio;
 }
 
-void SuiteReporter::NotifyMode(const Brx& aMode, const ModeInfo& /*aInfo*/)
+void SuiteReporter::NotifyMode(const Brx& aMode,
+                               const ModeInfo& /*aInfo*/,
+                               const ModeTransportControls& /*aTransportControls*/)
 {
     iModeUpdates++;
     iMode.Replace(aMode);

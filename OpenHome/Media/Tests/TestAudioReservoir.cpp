@@ -1084,7 +1084,8 @@ Msg* SuiteGorger::CreateMode(const Brx& aMode, TBool aSupportsLatency)
 {
     ModeInfo info;
     info.SetSupportsLatency(aSupportsLatency);
-    return iMsgFactory->CreateMsgMode(aMode, info, ModeClockPullers());
+    ModeTransportControls transportControls;
+    return iMsgFactory->CreateMsgMode(aMode, info, ModeClockPullers(), transportControls);
 }
 
 Msg* SuiteGorger::CreateTrack()

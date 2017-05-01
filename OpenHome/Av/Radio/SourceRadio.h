@@ -30,7 +30,7 @@ public:
     virtual void Pause() = 0;
     virtual void Stop() = 0;
     virtual void SeekAbsolute(TUint aSeconds) = 0;
-    virtual void SeekRelative(TUint aSeconds) = 0;
+    virtual void SeekRelative(TInt aSeconds) = 0;
 };
 
 class ProviderRadio;
@@ -59,14 +59,15 @@ private: // from ISourceRadio
     void Pause() override;
     void Stop() override;
     void SeekAbsolute(TUint aSeconds) override;
-    void SeekRelative(TUint aSeconds) override;
+    void SeekRelative(TInt aSeconds) override;
 private: // from IPresetDatabaseObserver
     void PresetDatabaseChanged() override;
 private:
     void FetchLocked(const Brx& aUri, const Brx& aMetaData);
 private: // from IPipelineObserver
     void NotifyPipelineState(Media::EPipelineState aState) override;
-    void NotifyMode(const Brx& aMode, const Media::ModeInfo& aInfo) override;
+    void NotifyMode(const Brx& aMode, const Media::ModeInfo& aInfo,
+                    const Media::ModeTransportControls& aTransportControls) override;
     void NotifyTrack(Media::Track& aTrack, const Brx& aMode, TBool aStartOfStream) override;
     void NotifyMetaText(const Brx& aText) override;
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;

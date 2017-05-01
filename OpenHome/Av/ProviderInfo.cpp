@@ -143,7 +143,9 @@ void ProviderInfo::NotifyPipelineState(EPipelineState /*aState*/)
     // NOP -- playing, paused, stopped, buffering
 }
 
-void ProviderInfo::NotifyMode(const Brx& /*aMode*/, const ModeInfo& /*aInfo*/)
+void ProviderInfo::NotifyMode(const Brx& /*aMode*/,
+                              const ModeInfo& /*aInfo*/,
+                              const ModeTransportControls& /*aTransportControls*/)
 {
 }
 

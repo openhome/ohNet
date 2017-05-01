@@ -76,6 +76,9 @@ SourceRadio::SourceRadio(IMediaPlayer& aMediaPlayer, const Brx& aTuneInPartnerId
     iPresetDatabase->AddObserver(*this);
 
     iUriProvider = new UriProviderRadio(aMediaPlayer.TrackFactory(), *iPresetDatabase);
+    iUriProvider->SetTransportPlay(MakeFunctor(*this, &SourceRadio::Play));
+    iUriProvider->SetTransportPause(MakeFunctor(*this, &SourceRadio::Pause));
+    iUriProvider->SetTransportStop(MakeFunctor(*this, &SourceRadio::Stop));
     aMediaPlayer.Add(iUriProvider);
 
     iProviderRadio = new ProviderRadio(aMediaPlayer.Device(), *this, *iPresetDatabase);
@@ -254,9 +257,16 @@ void SourceRadio::SeekAbsolute(TUint aSeconds)
     }
 }
 
-void SourceRadio::SeekRelative(TUint aSeconds)
+void SourceRadio::SeekRelative(TInt aSeconds)
 {
-    SeekAbsolute(aSeconds + iTrackPosSeconds);
+    TUint abs;
+    if (aSeconds < 0 && (TUint)(-aSeconds) > iTrackPosSeconds) {
+        abs = 0;
+    }
+    else {
+        abs = aSeconds + iTrackPosSeconds;
+    }
+    SeekAbsolute(abs);
 }
 
 void SourceRadio::NotifyPipelineState(EPipelineState aState)
@@ -296,7 +306,9 @@ void SourceRadio::PresetDatabaseChanged()
     }
 }
 
-void SourceRadio::NotifyMode(const Brx& /*aMode*/, const ModeInfo& /*aInfo*/)
+void SourceRadio::NotifyMode(const Brx& /*aMode*/,
+                             const ModeInfo& /*aInfo*/,
+                             const ModeTransportControls& /*aTransportControls*/)
 {
 }
 

@@ -897,9 +897,11 @@ void Pipeline::SetAttenuation(TUint aAttenuation)
     iAttenuator->SetAttenuation(aAttenuation);
 }
 
-void Pipeline::NotifyMode(const Brx& aMode, const ModeInfo& aInfo)
+void Pipeline::NotifyMode(const Brx& aMode,
+                          const ModeInfo& aInfo,
+                          const ModeTransportControls& aTransportControls)
 {
-    iObserver.NotifyMode(aMode, aInfo);
+    iObserver.NotifyMode(aMode, aInfo, aTransportControls);
 }
 
 void Pipeline::NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream)

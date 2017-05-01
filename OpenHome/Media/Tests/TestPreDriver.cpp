@@ -209,7 +209,8 @@ Msg* SuitePreDriver::Pull()
     case EMsgMode:
     {
         ModeInfo info;
-        return iMsgFactory->CreateMsgMode(Brn("dummyMode"), info, ModeClockPullers(iNextModePullable));
+        ModeTransportControls transportControls;
+        return iMsgFactory->CreateMsgMode(Brn("dummyMode"), info, ModeClockPullers(iNextModePullable), transportControls);
     }
     case EMsgDrain:
         return iMsgFactory->CreateMsgDrain(Functor());

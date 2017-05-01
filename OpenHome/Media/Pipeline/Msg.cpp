@@ -932,6 +932,23 @@ IClockPuller* ModeClockPullers::PipelineBuffer() const
 }
 
 
+// ModeTransportControls
+
+ModeTransportControls::ModeTransportControls()
+{
+}
+
+void ModeTransportControls::Clear()
+{
+    iPlay  = Functor();
+    iPause = Functor();
+    iStop  = Functor();
+    iNext  = Functor();
+    iPrev  = Functor();
+    iSeek  = FunctorGeneric<TUint>();
+}
+
+
 // MsgMode
 
 MsgMode::MsgMode(AllocatorBase& aAllocator)
@@ -954,11 +971,19 @@ const ModeClockPullers& MsgMode::ClockPullers() const
     return iClockPullers;
 }
 
-void MsgMode::Initialise(const Brx& aMode, const ModeInfo& aInfo, ModeClockPullers aClockPullers)
+const ModeTransportControls& MsgMode::TransportControls() const
+{
+    return iTransportControls;
+}
+
+void MsgMode::Initialise(const Brx& aMode, const ModeInfo& aInfo,
+                         ModeClockPullers aClockPullers,
+                         const ModeTransportControls& aTransportControls)
 {
     iMode.Replace(aMode);
     iInfo = aInfo;
     iClockPullers = aClockPullers;
+    iTransportControls = aTransportControls;
 }
 
 void MsgMode::Clear()
@@ -966,6 +991,7 @@ void MsgMode::Clear()
     iMode.Replace(Brx::Empty());
     iInfo.Clear();
     iClockPullers = ModeClockPullers();
+    iTransportControls.Clear();
 }
 
 Msg* MsgMode::Process(IMsgProcessor& aProcessor)
@@ -3116,10 +3142,12 @@ MsgFactory::MsgFactory(IInfoAggregator& aInfoAggregator, const MsgFactoryInitPar
 {
 }
 
-MsgMode* MsgFactory::CreateMsgMode(const Brx& aMode, const ModeInfo& aInfo, ModeClockPullers aClockPullers)
+MsgMode* MsgFactory::CreateMsgMode(const Brx& aMode, const ModeInfo& aInfo,
+                                   ModeClockPullers aClockPullers,
+                                   const ModeTransportControls& aTransportControls)
 {
     MsgMode* msg = iAllocatorMsgMode.Allocate();
-    msg->Initialise(aMode, aInfo, aClockPullers);
+    msg->Initialise(aMode, aInfo, aClockPullers, aTransportControls);
     return msg;
 }
 
@@ -3127,7 +3155,8 @@ MsgMode* MsgFactory::CreateMsgMode(const Brx& aMode)
 {
     ModeInfo info;
     ModeClockPullers clockPullers;
-    return CreateMsgMode(aMode, info, clockPullers);
+    ModeTransportControls transportControls;
+    return CreateMsgMode(aMode, info, clockPullers, transportControls);
 }
 
 MsgTrack* MsgFactory::CreateMsgTrack(Media::Track& aTrack, TBool aStartOfStream)

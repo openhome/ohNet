@@ -71,7 +71,8 @@ private: // from IZoneListener
     void NotifyPresetInfo(TUint aPreset, const Brx& aMetadata) override;
 private: // from Media::IPipelineObserver
     void NotifyPipelineState(Media::EPipelineState aState) override;
-    void NotifyMode(const Brx& aMode, const Media::ModeInfo& aInfo) override;
+    void NotifyMode(const Brx& aMode, const Media::ModeInfo& aInfo,
+                    const Media::ModeTransportControls& aTransportControls) override;
     void NotifyTrack(Media::Track& aTrack, const Brx& aMode, TBool aStartOfStream) override;
     void NotifyMetaText(const Brx& aText) override;
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
@@ -114,7 +115,8 @@ public:
     ~SongcastSender();
 private: // from Media::IPipelineObserver
     void NotifyPipelineState(Media::EPipelineState aState) override;
-    void NotifyMode(const Brx& aMode, const Media::ModeInfo& aInfo) override;
+    void NotifyMode(const Brx& aMode, const Media::ModeInfo& aInfo,
+                    const Media::ModeTransportControls& aTransportControls) override;
     void NotifyTrack(Media::Track& aTrack, const Brx& aMode, TBool aStartOfStream) override;
     void NotifyMetaText(const Brx& aText) override;
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
@@ -207,6 +209,8 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer,
     // Receiver
     iProviderReceiver = new ProviderReceiver(device, *this, kProtocolInfo);
     iUriProvider = new UriProviderSongcast(aMediaPlayer, aClockPuller);
+    iUriProvider->SetTransportPlay(MakeFunctor(*this, &SourceReceiver::Play));
+    iUriProvider->SetTransportStop(MakeFunctor(*this, &SourceReceiver::Stop));
     iPipeline.Add(iUriProvider);
     iOhmMsgFactory = new OhmMsgFactory(210, 10, 10);
     TrackFactory& trackFactory = aMediaPlayer.TrackFactory();
@@ -397,7 +401,9 @@ void SourceReceiver::NotifyPipelineState(EPipelineState aState)
     }
 }
 
-void SourceReceiver::NotifyMode(const Brx& /*aMode*/, const ModeInfo& /*aInfo*/)
+void SourceReceiver::NotifyMode(const Brx& /*aMode*/,
+                                const ModeInfo& /*aInfo*/,
+                                const ModeTransportControls& /*aTransportControls*/)
 {
 }
 
@@ -514,7 +520,9 @@ void SongcastSender::NotifyPipelineState(EPipelineState aState)
     iSender->NotifyPipelineState(aState);
 }
 
-void SongcastSender::NotifyMode(const Brx& /*aMode*/, const ModeInfo& /*aInfo*/)
+void SongcastSender::NotifyMode(const Brx& /*aMode*/,
+                                const ModeInfo& /*aInfo*/,
+                                const ModeTransportControls& /*aTransportControls*/)
 {
 }
 

@@ -329,7 +329,9 @@ void SourceRaop::NotifyPipelineState(Media::EPipelineState aState)
     iLock.Signal();
 }
 
-void SourceRaop::NotifyMode(const Brx& /*aMode*/, const ModeInfo& /*aInfo*/)
+void SourceRaop::NotifyMode(const Brx& /*aMode*/,
+                            const ModeInfo& /*aInfo*/,
+                            const ModeTransportControls& /*aTransportControls*/)
 {
 }
 

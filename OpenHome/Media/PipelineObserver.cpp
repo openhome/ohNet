@@ -45,7 +45,9 @@ void NullPipelineObserver::NotifyPipelineState(EPipelineState /*aState*/)
 {
 }
 
-void NullPipelineObserver::NotifyMode(const Brx& /*aMode*/, const ModeInfo& /*aInfo*/)
+void NullPipelineObserver::NotifyMode(const Brx& /*aMode*/,
+                                      const ModeInfo& /*aInfo*/,
+                                      const ModeTransportControls& /*aTransportControls*/)
 {
 }
 
@@ -108,7 +110,9 @@ void LoggingPipelineObserver::NotifyPipelineState(EPipelineState aState)
     Log::Print("Pipeline state change: %s\n", state);
 }
 
-void LoggingPipelineObserver::NotifyMode(const Brx& aMode, const ModeInfo& aInfo)
+void LoggingPipelineObserver::NotifyMode(const Brx& aMode,
+                                         const ModeInfo& aInfo,
+                                         const ModeTransportControls& /*aTransportControls*/)
 {
     if (!iEnable) {
         return;

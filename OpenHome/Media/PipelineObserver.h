@@ -44,11 +44,12 @@ public:
     /**
      * A new UriProvider is active (the pipeline is running in a new mode).
      *
-     * @param[in] aMode            Identifier for the UriProvider.
-     *                             Subsequent tracks will be owned by this.
-     * @param[in] aInfo            Description of the mode.
+     * @param[in] aMode               Identifier for the UriProvider.
+     *                                Subsequent tracks will be owned by this.
+     * @param[in] aInfo               Description of the mode.
+     * @param[in] aTransportControls  Optional over-rides to default transport controls
      */
-    virtual void NotifyMode(const Brx& aMode, const ModeInfo& aInfo) = 0;
+    virtual void NotifyMode(const Brx& aMode, const ModeInfo& aInfo, const ModeTransportControls& aTransportControls) = 0;
     /**
      * A new track is starting to play.
      *
@@ -95,7 +96,8 @@ class NullPipelineObserver : public IPipelineObserver
 {
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState) override;
-    void NotifyMode(const Brx& aMode, const ModeInfo& aInfo) override;
+    void NotifyMode(const Brx& aMode, const ModeInfo& aInfo,
+                    const ModeTransportControls& aTransportControls) override;
     void NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream) override;
     void NotifyMetaText(const Brx& aText) override;
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
@@ -109,7 +111,8 @@ public:
     void Enable(TBool aEnable);
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState) override;
-    void NotifyMode(const Brx& aMode, const ModeInfo& aInfo) override;
+    void NotifyMode(const Brx& aMode, const ModeInfo& aInfo,
+                    const ModeTransportControls& aTransportControls) override;
     void NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream) override;
     void NotifyMetaText(const Brx& aText) override;
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;

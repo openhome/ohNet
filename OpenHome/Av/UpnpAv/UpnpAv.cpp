@@ -47,6 +47,13 @@ SourceUpnpAv::SourceUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice, U
     iStreamId.store(IPipelineIdProvider::kStreamIdInvalid);
     ASSERT(iStreamId.is_lock_free());
 
+    iUriProvider.SetTransportPlay(MakeFunctor(*this, &SourceUpnpAv::Play));
+    iUriProvider.SetTransportPause(MakeFunctor(*this, &SourceUpnpAv::Pause));
+    iUriProvider.SetTransportStop(MakeFunctor(*this, &SourceUpnpAv::Stop));
+    iUriProvider.SetTransportNext(MakeFunctor(*this, &SourceUpnpAv::Next));
+    iUriProvider.SetTransportPrev(MakeFunctor(*this, &SourceUpnpAv::Prev));
+    iUriProvider.SetTransportSeek(MakeFunctorGeneric<TUint>(*this, &SourceUpnpAv::Seek));
+
     iProviderAvTransport = new ProviderAvTransport(iDevice, aMediaPlayer.Env(), *this);
     iProviderConnectionManager = new ProviderConnectionManager(iDevice);
     aMimeTypeList.AddUpnpProtocolInfoObserver(MakeFunctorGeneric(*iProviderConnectionManager, &ProviderConnectionManager::NotifyProtocolInfo));
@@ -221,7 +228,9 @@ void SourceUpnpAv::NotifyPipelineState(EPipelineState aState)
     }
 }
 
-void SourceUpnpAv::NotifyMode(const Brx& /*aMode*/, const ModeInfo& /*aInfo*/)
+void SourceUpnpAv::NotifyMode(const Brx& /*aMode*/,
+                              const ModeInfo& /*aInfo*/,
+                              const ModeTransportControls& /*aTransportControls*/)
 {
 }
 

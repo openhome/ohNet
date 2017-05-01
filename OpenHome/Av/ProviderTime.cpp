@@ -53,7 +53,9 @@ void ProviderTime::NotifyPipelineState(EPipelineState aState)
     }
 }
 
-void ProviderTime::NotifyMode(const Brx& /*aMode*/, const ModeInfo& /*aInfo*/)
+void ProviderTime::NotifyMode(const Brx& /*aMode*/,
+                              const ModeInfo& /*aInfo*/,
+                              const ModeTransportControls& /*aTransportControls*/)
 {
 }
 

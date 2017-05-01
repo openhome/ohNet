@@ -202,7 +202,9 @@ void TestProtocol::NotifyPipelineState(EPipelineState aState)
 #endif
 }
 
-void TestProtocol::NotifyMode(const Brx& aMode, const ModeInfo& aInfo)
+void TestProtocol::NotifyMode(const Brx& aMode,
+                              const ModeInfo& aInfo,
+                              const ModeTransportControls& /*aTransportControls*/)
 {
 #ifdef LOG_PIPELINE_OBSERVER
     Log::Print("Pipeline report property: MODE {mode=");

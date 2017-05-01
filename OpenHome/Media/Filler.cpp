@@ -23,6 +23,41 @@ const Media::ModeInfo& UriProvider::ModeInfo() const
     return iModeInfo;
 }
 
+const Media::ModeTransportControls& UriProvider::ModeTransportControls() const
+{
+    return iTransportControls;
+}
+
+void UriProvider::SetTransportPlay(Functor aPlay)
+{
+    iTransportControls.SetPlay(aPlay);
+}
+
+void UriProvider::SetTransportPause(Functor aPause)
+{
+    iTransportControls.SetPause(aPause);
+}
+
+void UriProvider::SetTransportStop(Functor aStop)
+{
+    iTransportControls.SetStop(aStop);
+}
+
+void UriProvider::SetTransportNext(Functor aNext)
+{
+    iTransportControls.SetNext(aNext);
+}
+
+void UriProvider::SetTransportPrev(Functor aPrev)
+{
+    iTransportControls.SetPrev(aPrev);
+}
+
+void UriProvider::SetTransportSeek(FunctorGeneric<TUint> aSeek)
+{
+    iTransportControls.SetSeek(aSeek);
+}
+
 ModeClockPullers UriProvider::ClockPullers()
 {
     return ModeClockPullers();
@@ -316,7 +351,8 @@ void Filler::Run()
                 iStopped = true;
                 iLock.Signal();
                 ModeInfo info;
-                iPipeline.Push(iMsgFactory.CreateMsgMode(Brn("null"), info, ModeClockPullers()));
+                ModeTransportControls transportControls;
+                iPipeline.Push(iMsgFactory.CreateMsgMode(Brn("null"), info, ModeClockPullers(), transportControls));
                 iPipeline.Push(iMsgFactory.CreateMsgTrack(*iNullTrack));
                 iPipelineIdTracker.AddStream(iNullTrack->Id(), NullTrackStreamHandler::kNullTrackStreamId, false /* play later */);
                 iPipeline.Push(iMsgFactory.CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 0, 0, NullTrackStreamHandler::kNullTrackStreamId, false /* not seekable */, true /* live */, Multiroom::Forbidden, &iNullTrackStreamHandler));
@@ -331,7 +367,8 @@ void Filler::Run()
                     const auto& modeInfo = iActiveUriProvider->ModeInfo();
                     iPipeline.Push(iMsgFactory.CreateMsgMode(iActiveUriProvider->Mode(),
                                                              modeInfo,
-                                                             iActiveUriProvider->ClockPullers()));
+                                                             iActiveUriProvider->ClockPullers(),
+                                                             iActiveUriProvider->ModeTransportControls()));
                     if (!modeInfo.SupportsLatency()) {
                         iPipeline.Push(iMsgFactory.CreateMsgDelay(iDefaultDelay));
                     }
