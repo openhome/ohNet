@@ -114,7 +114,9 @@ void PipelineManager::Add(UriProvider* aUriProvider)
 {
     iUriProviders.push_back(aUriProvider);
     iFiller->Add(*aUriProvider);
-    iModeObserver->NotifyModeAdded(aUriProvider->Mode());
+    if (iModeObserver != nullptr) {
+        iModeObserver->NotifyModeAdded(aUriProvider->Mode());
+    }
 }
 
 void PipelineManager::Start(IAnalogBypassVolumeRamper& aAnalogBypassVolumeRamper, IVolumeRamper& aVolumeRamper)
