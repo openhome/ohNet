@@ -22,10 +22,6 @@ static const TUint kSeekFailureCode = 804;
 static const Brn kSeekFailureMsg("Seek failed");
 
 const TUint ProviderTransport::kModesGranularity = 1024;
-const TUint ProviderTransport::kRepeatOff    = 0;
-const TUint ProviderTransport::kRepeatOnAll  = 1;
-const TUint ProviderTransport::kShuffleOff   = 0;
-const TUint ProviderTransport::kShuffleOnAll = 1;
 
 ProviderTransport::ProviderTransport(Net::DvDevice& aDevice,
                                      PipelineManager& aPipeline,
@@ -152,12 +148,12 @@ void ProviderTransport::NotifyModeAdded(const Brx& aMode)
 
 void ProviderTransport::TransportRepeatChanged(TBool aRepeat)
 {
-    (void)SetPropertyRepeat(aRepeat? kRepeatOnAll : kRepeatOff);
+    (void)SetPropertyRepeat(aRepeat);
 }
 
 void ProviderTransport::TransportRandomChanged(TBool aRandom)
 {
-    (void)SetPropertyShuffle(aRandom? kShuffleOnAll : kShuffleOff);
+    (void)SetPropertyShuffle(aRandom);
 }
 
 void ProviderTransport::PlayAs(IDvInvocation& aInvocation, const Brx& aMode, const Brx& aCommand)
@@ -258,16 +254,16 @@ void ProviderTransport::SkipPrevious(IDvInvocation& aInvocation)
     aInvocation.EndResponse();
 }
 
-void ProviderTransport::SetRepeat(IDvInvocation& aInvocation, TUint aRepeat)
+void ProviderTransport::SetRepeat(IDvInvocation& aInvocation, TBool aRepeat)
 {
-    iTransportRepeatRandom.SetRepeat(aRepeat != kRepeatOff);
+    iTransportRepeatRandom.SetRepeat(aRepeat);
     aInvocation.StartResponse();
     aInvocation.EndResponse();
 }
 
-void ProviderTransport::SetShuffle(IDvInvocation& aInvocation, TUint aShuffle)
+void ProviderTransport::SetShuffle(IDvInvocation& aInvocation, TBool aShuffle)
 {
-    iTransportRepeatRandom.SetRandom(aShuffle != kShuffleOff);
+    iTransportRepeatRandom.SetRandom(aShuffle);
     aInvocation.StartResponse();
     aInvocation.EndResponse();
 }
@@ -383,20 +379,20 @@ void ProviderTransport::StreamId(IDvInvocation& aInvocation, IDvInvocationRespon
     aInvocation.EndResponse();
 }
 
-void ProviderTransport::Repeat(IDvInvocation& aInvocation, IDvInvocationResponseUint& aRepeat)
+void ProviderTransport::Repeat(IDvInvocation& aInvocation, IDvInvocationResponseBool& aRepeat)
 {
     AutoMutex _(iLock);
-    TUint repeat;
+    TBool repeat;
     GetPropertyRepeat(repeat);
     aInvocation.StartResponse();
     aRepeat.Write(repeat);
     aInvocation.EndResponse();
 }
 
-void ProviderTransport::Shuffle(IDvInvocation& aInvocation, IDvInvocationResponseUint& aRandom)
+void ProviderTransport::Shuffle(IDvInvocation& aInvocation, IDvInvocationResponseBool& aRandom)
 {
     AutoMutex _(iLock);
-    TUint shuffle;
+    TBool shuffle;
     GetPropertyShuffle(shuffle);
     aInvocation.StartResponse();
     aRandom.Write(shuffle);

@@ -227,11 +227,11 @@
     </stateVariable>
     <stateVariable sendEvents="yes">
       <name>Repeat</name>
-      <dataType>ui4</dataType>
+      <dataType>boolean</dataType>
     </stateVariable>
     <stateVariable sendEvents="yes">
       <name>Shuffle</name>
-      <dataType>ui4</dataType>
+      <dataType>boolean</dataType>
     </stateVariable>
     <stateVariable sendEvents="no">
       <name>A_ARG_TYPE_uint</name>
