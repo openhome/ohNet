@@ -97,6 +97,15 @@ Msg* Waiter::Pull()
     return msg;
 }
 
+Msg* Waiter::ProcessMsg(MsgMode* aMsg)
+{
+    if (iState == EWaiting) {
+        iState = ERunning;
+        ScheduleEvent(false);
+    }
+    return aMsg;
+}
+
 Msg* Waiter::ProcessMsg(MsgMetaText* aMsg)
 {
     return ProcessFlushable(aMsg);
