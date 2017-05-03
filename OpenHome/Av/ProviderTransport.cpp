@@ -110,6 +110,10 @@ void ProviderTransport::NotifyMode(const Brx& /*aMode*/,
     (void)SetPropertyCanSkipPrevious(aInfo.SupportsPrev());
     (void)SetPropertyCanRepeat(aInfo.SupportsRepeat());
     (void)SetPropertyCanShuffle(aInfo.SupportsRandom());
+    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
+    (void)SetPropertyStreamId(iStreamId);
+    (void)SetPropertyCanSeek(false);
+    (void)SetPropertyCanPause(false);
     PropertiesUnlock();
 }
 
