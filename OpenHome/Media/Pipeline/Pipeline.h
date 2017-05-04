@@ -134,7 +134,7 @@ class IVolumeRamper;
 class PreDriver;
 class ITrackObserver;
 class ISpotifyReporter;
-class ITrackChangeObserver;
+class ISpotifyTrackObserver;
 class IMimeTypeList;
 class AnalogBypassRamper;
 class IAnalogBypassVolumeRamper;
@@ -186,7 +186,7 @@ public:
     void Seek(TUint aStreamId, TUint aSecondsAbsolute);
     void AddObserver(ITrackObserver& aObserver);
     ISpotifyReporter& SpotifyReporter() const;
-    ITrackChangeObserver& TrackChangeObserver() const;
+    ISpotifyTrackObserver& SpotifyTrackObserver() const;
     IPipelineElementUpstream& InsertElements(IPipelineElementUpstream& aTail);
     TUint SenderMinLatencyMs() const;
     void GetThreadPriorityRange(TUint& aMin, TUint& aMax) const;
