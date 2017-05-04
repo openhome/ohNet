@@ -228,8 +228,8 @@ void PipelineManager::StopPrefetch(const Brx& aMode, TUint aTrackId)
     iPipeline->Unblock();
     const TUint trackId = (aTrackId==Track::kIdNone? iFiller->NullTrackId() : aTrackId);
     iPrefetchObserver->SetTrack(trackId);
-    iFiller->PlayLater(aMode, trackId);
     iPipeline->Play(); // in case pipeline is paused/stopped, force it to pull until a new track
+    iFiller->PlayLater(aMode, trackId);
     try {
         iPrefetchObserver->Wait(5000); /* It's possible that a protocol module will block without
                                           ever delivering content.  Other pipeline operations which
