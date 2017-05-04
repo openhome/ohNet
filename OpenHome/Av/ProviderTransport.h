@@ -8,6 +8,7 @@
 #include <OpenHome/Av/TransportControl.h>
 #include <OpenHome/Media/PipelineObserver.h>
 #include <OpenHome/Media/PipelineManager.h>
+#include <OpenHome/Json.h>
 
 namespace OpenHome {
     class IPowerManager;
@@ -75,6 +76,7 @@ private:
     TUint iStreamId;
     TUint iTrackPosSeconds;
     WriterBwh iModes;
+    WriterJsonArray iWriterModes;
 };
 
 } // namespace Av

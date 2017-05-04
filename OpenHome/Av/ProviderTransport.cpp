@@ -6,6 +6,7 @@
 #include <OpenHome/Media/Pipeline/Seeker.h> // for Seeker exceptions
 #include <OpenHome/Media/Pipeline/Pipeline.h> // for PipelineStreamNotPausable
 #include <OpenHome/PowerManager.h>
+#include <OpenHome/Json.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
@@ -38,6 +39,7 @@ ProviderTransport::ProviderTransport(Net::DvDevice& aDevice,
     , iTransportState(EPipelineStopped)
     , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
     , iModes(kModesGranularity)
+    , iWriterModes(iModes, WriterJsonArray::WriteOnEmpty::eEmptyArray)
 {
     EnablePropertyModes();
     EnablePropertyCanSkipNext();
@@ -86,6 +88,7 @@ ProviderTransport::ProviderTransport(Net::DvDevice& aDevice,
 
 void ProviderTransport::Start()
 {
+    iWriterModes.WriteEnd();
     (void)SetPropertyModes(iModes.Buffer());
 }
 
@@ -144,10 +147,7 @@ void ProviderTransport::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
 
 void ProviderTransport::NotifyModeAdded(const Brx& aMode)
 {
-    if (iModes.Buffer().Bytes() > 0) {
-        iModes.Write(' ');
-    }
-    iModes.Write(aMode);
+    iWriterModes.WriteString(aMode);
 }
 
 void ProviderTransport::TransportRepeatChanged(TBool aRepeat)
