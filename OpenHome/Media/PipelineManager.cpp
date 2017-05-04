@@ -209,8 +209,10 @@ void PipelineManager::Stop()
 {
     AutoMutex _(iPublicLock);
     LOG(kPipeline, "PipelineManager::Stop()\n");
+    iPipeline->Block();
     const TUint haltId = iFiller->Stop();
     iPipeline->Stop(haltId);
+    iPipeline->Unblock();
     iIdManager->InvalidatePending(); /* don't use InvalidateAll - iPipeline->Stop() will
                                         have removed current stream.  InvalidateAll ends
                                         up with Stopper trying to halt (pause) which would
@@ -275,9 +277,11 @@ void PipelineManager::Next()
        This works well when the pipeline is running but doesn't cope with the unusual
        case where a protocol module is stalled before pushing any audio into the pipeline.
        Call to iFiller->Stop() below spots this case and Interrupt()s the blocked protocol. */
+    iPipeline->Block();
     const TUint haltId = iFiller->Stop();
     iIdManager->InvalidatePending();
     iPipeline->RemoveAll(haltId);
+    iPipeline->Unblock();
     iFiller->Next(iMode);
 }
 
@@ -288,9 +292,11 @@ void PipelineManager::Prev()
     if (iMode.Bytes() == 0) {
         return; // nothing playing or ready to be played so nothing we can advance relative to
     }
+    iPipeline->Block();
     const TUint haltId = iFiller->Stop();
     iIdManager->InvalidatePending();
     iPipeline->RemoveAll(haltId);
+    iPipeline->Unblock();
     iFiller->Prev(iMode);
 }
 
