@@ -34,12 +34,13 @@ public:
     virtual ~ISpotifyMetadata() {}
 };
 
-class ITrackChangeObserver
+class ISpotifyTrackObserver
 {
 public:
-    virtual void TrackChanged(const Brx& aUri, ISpotifyMetadata* aMetadata, TUint aStartMs) = 0;
-    virtual void NotifySeek(TUint aOffsetMs) = 0;
-    virtual ~ITrackChangeObserver() {}
+    virtual void TrackChanged(Media::ISpotifyMetadata* aMetadata) = 0;
+    virtual void TrackOffsetChanged(TUint aOffsetMs) = 0;
+    virtual void FlushTrackState() = 0;
+    virtual ~ISpotifyTrackObserver() {}
 };
 
 class SpotifyDidlLiteWriter : private INonCopyable
@@ -82,7 +83,7 @@ private:
 /*
  * Element to report number of samples seen since last MsgMode.
  */
-class SpotifyReporter : public PipelineElement, public IPipelineElementUpstream, public ISpotifyReporter, public ITrackChangeObserver, private INonCopyable
+class SpotifyReporter : public PipelineElement, public IPipelineElementUpstream, public ISpotifyReporter, public ISpotifyTrackObserver, private INonCopyable
 {
 private:
     static const TUint kSupportedMsgTypes;
@@ -94,9 +95,10 @@ public: // from IPipelineElementUpstream
     Msg* Pull() override;
 public: // from ISpotifyReporter
     TUint64 SubSamples() const override;
-public: // from ITrackChangeObserver
-    void TrackChanged(const Brx& aUri, ISpotifyMetadata* aMetadata, TUint aStartMs) override;
-    void NotifySeek(TUint aOffsetMs) override;
+public: // from ISpotifyTrackObserver
+    void TrackChanged(Media::ISpotifyMetadata* aMetadata) override;
+    void TrackOffsetChanged(TUint aOffsetMs) override;
+    void FlushTrackState() override;
 private: // PipelineElement
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
@@ -115,7 +117,6 @@ private:
     TUint iTrackDurationMs;
     BwsTrackUri iTrackUri;
     ISpotifyMetadata* iMetadata;
-    TBool iMsgTrackPending;
     TBool iMsgDecodedStreamPending;
     MsgDecodedStream* iDecodedStream;
     TUint64 iSubSamples;
