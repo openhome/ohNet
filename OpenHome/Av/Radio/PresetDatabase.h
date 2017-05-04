@@ -107,7 +107,7 @@ private:
         Preset();
         void Set(TUint aId, const Brx& aUri, const Brx& aMetaData);
         TUint Id() const { return iId; }
-        TBool IsEmpty() const { return iId != IPresetDatabaseReader::kPresetIdNone; }
+        TBool IsEmpty() const { return iId == IPresetDatabaseReader::kPresetIdNone; }
         const Brx& Uri() const { return iUri; }
         const Brx& MetaData() const { return iMetaData; }
     private:

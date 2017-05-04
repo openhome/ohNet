@@ -43,6 +43,7 @@ public:
 public: // from IPipelineElementUpstream
     Msg* Pull() override;
 private: // from IMsgProcessor
+    Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgMetaText* aMsg) override;
     Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
     Msg* ProcessMsg(MsgFlush* aMsg) override;
