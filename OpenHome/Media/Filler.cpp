@@ -124,7 +124,7 @@ Filler::Filler(IPipelineElementDownstream& aPipeline, IPipelineIdTracker& aIdTra
     , iDefaultDelay(aDefaultDelay)
     , iPrefetchTrackId(kPrefetchTrackIdInvalid)
 {
-    iNullTrack = aTrackFactory.CreateTrack(Brx::Empty(), Brx::Empty());
+    iNullTrack = aTrackFactory.CreateNullTrack();
 }
 
 Filler::~Filler()
@@ -349,9 +349,9 @@ void Filler::Run()
             if (iChangedMode) {
                 const auto& modeInfo = iActiveUriProvider->ModeInfo();
                 iPipeline.Push(iMsgFactory.CreateMsgMode(iActiveUriProvider->Mode(),
-                               modeInfo,
-                               iActiveUriProvider->ClockPullers(),
-                               iActiveUriProvider->ModeTransportControls()));
+                                                         modeInfo,
+                                                         iActiveUriProvider->ClockPullers(),
+                                                         iActiveUriProvider->ModeTransportControls()));
                 if (!modeInfo.SupportsLatency()) {
                     iPipeline.Push(iMsgFactory.CreateMsgDelay(iDefaultDelay));
                 }

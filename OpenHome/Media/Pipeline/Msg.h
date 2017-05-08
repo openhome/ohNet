@@ -1580,6 +1580,7 @@ class TrackFactory
 public:
     TrackFactory(IInfoAggregator& aInfoAggregator, TUint aTrackCount);
     Track* CreateTrack(const Brx& aUri, const Brx& aMetaData);
+    Track* CreateNullTrack();
 private:
     Allocator<Track> iAllocatorTrack;
     Mutex iLock;
