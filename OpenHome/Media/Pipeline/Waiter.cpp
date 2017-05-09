@@ -99,7 +99,10 @@ Msg* Waiter::Pull()
 
 Msg* Waiter::ProcessMsg(MsgMode* aMsg)
 {
-    if (iState == EWaiting) {
+    if (iState != ERunning) {
+        if (iState == EFlushing) {
+            Log::Print("ERROR Waiter::ProcessMsg(MsgMode* ) called when flushing\n");
+        }
         iState = ERunning;
         ScheduleEvent(false);
     }

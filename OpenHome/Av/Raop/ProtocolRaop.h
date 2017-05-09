@@ -757,7 +757,8 @@ private:
 public:
     ProtocolRaop(Environment& aEnv, Media::TrackFactory& aTrackFactory, IRaopDiscovery& aDiscovery, UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId);
     ~ProtocolRaop();
-    TUint SendFlush(TUint aSeq, TUint aTime);
+    TUint SendFlushStart(TUint aSeq, TUint aTime); // if returns valid flush id, internal mutex is locked => call SendFlushEnd later.
+    void SendFlushEnd();
 private: // from Protocol
     void Interrupt(TBool aInterrupt) override;
     void Initialise(Media::MsgFactory& aMsgFactory, Media::IPipelineElementDownstream& aDownstream) override;

@@ -303,22 +303,18 @@ void SourceRaop::NotifySessionWait(TUint aSeq, TUint aTime)
     // exit its Stream() method, so SendFlush() will return
     // MsgFlush::kIdInvalid (as it can no longer send a flush).
 
-    TUint flushId = MsgFlush::kIdInvalid;
-    {
-        AutoMutex a(iLock);
-        if (IsActive() && iSessionActive) {
-            // Possible race condition here - MsgFlush could pass Waiter before
-            // iPipeline::Wait is called.
-            flushId = iProtocol->SendFlush(aSeq, aTime);
-            if (flushId != MsgFlush::kIdInvalid) {
-                iTransportState = Media::EPipelineWaiting;
-            }
+    AutoMutex a(iLock);
+    if (IsActive() && iSessionActive) {
+        // Possible race condition here - MsgFlush could pass Waiter before
+        // iPipeline::Wait is called.
+        const TUint flushId = iProtocol->SendFlushStart(aSeq, aTime);
+        if (flushId != MsgFlush::kIdInvalid) {
+            iTransportState = Media::EPipelineWaiting;
+            iPipeline.Wait(flushId);
+            iProtocol->SendFlushEnd();
         }
     }
 
-    if (flushId != MsgFlush::kIdInvalid) {
-        iPipeline.Wait(flushId);
-    }
     LOG(kMedia, "<SourceRaop::NotifySessionWait\n");
 }
 
