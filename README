@@ -17,8 +17,10 @@ On Linux:
     Java (optional, required for building Java bindings)
 
 Building
---------
+--------    
     make
+    
+    Note: On Windows, ensure you are in the visual studio 2010 command prompt.
 
 Note: On Windows, ensure you are in a visual studio command prompt or have otherwise set Visual
 Studio's environment variables.
