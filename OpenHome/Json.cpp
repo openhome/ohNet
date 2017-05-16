@@ -344,6 +344,25 @@ Brn JsonParser::String(const Brx& aKey) const
     return Value(aKey);
 }
 
+Brn JsonParser::StringOptional(const TChar* aKey) const
+{
+    Brn key(aKey);
+    return StringOptional(key);
+}
+
+Brn JsonParser::StringOptional(const Brx& aKey) const
+{
+    try {
+        return String(aKey);
+    }
+    catch (JsonKeyNotFound&) {
+        return Brx::Empty();
+    }
+    catch (JsonValueNull&) {
+        return Brx::Empty();
+    }
+}
+
 TInt JsonParser::Num(const TChar* aKey) const
 {
     Brn key(aKey);

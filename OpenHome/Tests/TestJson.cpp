@@ -50,6 +50,7 @@ private:
     void TestInvalidKey();
     void TestGetValidString();
     void TestGetInvalidString();
+    void TestGetOptionalString();
     void TestGetValidNum();
     void TestGetInvalidNum();
     void TestGetStringAsNum();
@@ -248,6 +249,7 @@ SuiteJsonParser::SuiteJsonParser()
     AddTest(MakeFunctor(*this, &SuiteJsonParser::TestInvalidKey), "TestInvalidKey");
     AddTest(MakeFunctor(*this, &SuiteJsonParser::TestGetValidString), "TestGetValidString");
     AddTest(MakeFunctor(*this, &SuiteJsonParser::TestGetInvalidString), "TestGetInvalidString");
+    AddTest(MakeFunctor(*this, &SuiteJsonParser::TestGetOptionalString), "TestGetOptionalString");
     AddTest(MakeFunctor(*this, &SuiteJsonParser::TestGetValidNum), "TestGetValidNum");
     AddTest(MakeFunctor(*this, &SuiteJsonParser::TestGetInvalidNum), "TestGetInvalidNum");
     AddTest(MakeFunctor(*this, &SuiteJsonParser::TestGetStringAsNum), "TestGetStringAsNum");
@@ -371,6 +373,15 @@ void SuiteJsonParser::TestGetInvalidString()
     iParser->Parse(json);
     TEST_THROWS(iParser->String("key2"), JsonKeyNotFound);
     TEST_THROWS(iParser->String(Brn("key2")), JsonKeyNotFound);
+}
+
+void SuiteJsonParser::TestGetOptionalString()
+{
+    Brn json("{\"key1\":null}");
+
+    iParser->Parse(json);
+    TEST(iParser->StringOptional("key1") == Brx::Empty());
+    TEST(iParser->StringOptional("key2") == Brx::Empty());
 }
 
 void SuiteJsonParser::TestGetValidNum()

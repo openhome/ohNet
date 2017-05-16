@@ -54,6 +54,8 @@ public:
     TBool HasKey(const Brx& aKey) const;
     Brn String(const TChar* aKey) const;
     Brn String(const Brx& aKey) const;
+    Brn StringOptional(const TChar* aKey) const; // returns empty buffer if aKey had null value or was missing
+    Brn StringOptional(const Brx& aKey) const; // returns empty buffer if aKey had null value or was missing
     TInt Num(const TChar* aKey) const;
     TInt Num(const Brx& aKey) const;
     TBool Bool(const TChar* aKey) const;
