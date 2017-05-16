@@ -1037,14 +1037,8 @@ public:
     void Clear();
     TUint NumMsgs() const; // test/debug use only
 private:
-    void CheckMsgNotQueued(Msg* aMsg) const;
-    Msg* DequeueLocked();
-private:
     mutable Mutex iLock;
     Semaphore iSem;
-    Msg* iHead;
-    Msg* iTail;
-    TUint iNumMsgs;
 };
 
 class MsgReservoir
