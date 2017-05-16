@@ -168,8 +168,12 @@ void JsonParser::Parse(const Brx& aJson, TBool aUnescapeInPlace)
 {
     Reset();
 
-    const TByte* ptr = aJson.Ptr();
-    const TByte* end = ptr + aJson.Bytes();
+    Brn json = Ascii::Trim(aJson);
+    if (json.Bytes() == 0 || json == WriterJson::kNull) {
+        return;
+    }
+    const TByte* ptr = json.Ptr();
+    const TByte* end = ptr + json.Bytes();
 
     enum ParseState {
         DocStart,

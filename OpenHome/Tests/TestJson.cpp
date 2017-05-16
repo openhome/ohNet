@@ -46,6 +46,7 @@ private:
     void TestParseNoUnescapeInPlace();
     void TestParseArray();
     void TestParseObject();
+    void TestParseEmptyObject();
     void TestValidKey();
     void TestInvalidKey();
     void TestGetValidString();
@@ -245,6 +246,7 @@ SuiteJsonParser::SuiteJsonParser()
     AddTest(MakeFunctor(*this, &SuiteJsonParser::TestParseNoUnescapeInPlace), "TestParseNoUnescapeInPlace");
     AddTest(MakeFunctor(*this, &SuiteJsonParser::TestParseArray), "TestParseArray");
     AddTest(MakeFunctor(*this, &SuiteJsonParser::TestParseObject), "TestParseObject");
+    AddTest(MakeFunctor(*this, &SuiteJsonParser::TestParseEmptyObject), "TestParseEmptyObject");
     AddTest(MakeFunctor(*this, &SuiteJsonParser::TestValidKey), "TestValidKey");
     AddTest(MakeFunctor(*this, &SuiteJsonParser::TestInvalidKey), "TestInvalidKey");
     AddTest(MakeFunctor(*this, &SuiteJsonParser::TestGetValidString), "TestGetValidString");
@@ -337,6 +339,27 @@ void SuiteJsonParser::TestParseObject()
 
     TEST(iParser->HasKey("key4"));
     TEST(iParser->Num("key4") == 4);
+}
+
+void SuiteJsonParser::TestParseEmptyObject()
+{
+    Brn json("{}");
+    iParser->Parse(json);
+    std::vector<Brn> keys;
+    iParser->GetKeys(keys);
+    TEST(keys.size() == 0);
+
+    iParser->Reset();
+    json.Set("");
+    iParser->Parse(json);
+    iParser->GetKeys(keys);
+    TEST(keys.size() == 0);
+
+    iParser->Reset();
+    json.Set("null");
+    iParser->Parse(json);
+    iParser->GetKeys(keys);
+    TEST(keys.size() == 0);
 }
 
 void SuiteJsonParser::TestValidKey()
