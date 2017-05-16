@@ -3115,6 +3115,13 @@ Track* TrackFactory::CreateTrack(const Brx& aUri, const Brx& aMetaData)
     return track;
 }
 
+Track* TrackFactory::CreateNullTrack()
+{
+    auto track = iAllocatorTrack.Allocate();
+    track->Initialise(Brx::Empty(), Brx::Empty(), Track::kIdNone);
+    return track;
+}
+
 
 // MsgFactory
 

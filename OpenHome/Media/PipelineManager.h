@@ -157,12 +157,12 @@ public:
     /**
      * Retrieve a track change observer.
      *
-     * @return  ITrackChangeObserver that can be notified out-of-band that the
+     * @return  ISpotifyTrackObserver that can be notified out-of-band that the
      *          current track has changed, allowing IPipelinePropertyObservers
      *          to be updated without requiring a MsgTrack to be passed down
      *          the pipeline.
      */
-    ITrackChangeObserver& TrackChangeObserver() const;
+    ISpotifyTrackObserver& SpotifyTrackObserver() const;
     /**
      * Instruct the pipeline what should be streamed next.
      *

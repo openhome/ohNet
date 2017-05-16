@@ -769,7 +769,7 @@ ISpotifyReporter& Pipeline::SpotifyReporter() const
     return *iSpotifyReporter;
 }
 
-ITrackChangeObserver& Pipeline::TrackChangeObserver() const
+ISpotifyTrackObserver& Pipeline::SpotifyTrackObserver() const
 {
     return *iSpotifyReporter;
 }

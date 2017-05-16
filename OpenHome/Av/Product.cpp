@@ -378,15 +378,14 @@ TBool Product::DoSetCurrentSourceLocked(TUint aIndex)
     }
     iCurrentSource = aIndex;
     iLastSelectedSource->Set(iSources[iCurrentSource]->SystemName());
-    if (!iStandby) {
-        iSources[iCurrentSource]->Activate(iAutoPlay);
-    }
-
     {
         AutoMutex amx(iObserverLock);
         for (auto observer : iObservers) {
             observer->SourceIndexChanged();
         }
+    }
+    if (!iStandby) {
+        iSources[iCurrentSource]->Activate(iAutoPlay);
     }
     return true;
 }

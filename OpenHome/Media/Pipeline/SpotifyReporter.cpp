@@ -196,7 +196,6 @@ SpotifyReporter::SpotifyReporter(IPipelineElementUpstream& aUpstreamElement, Msg
     , iTrackFactory(aTrackFactory)
     , iTrackDurationMs(0)
     , iMetadata(nullptr)
-    , iMsgTrackPending(false)
     , iMsgDecodedStreamPending(false)
     , iDecodedStream(nullptr)
     , iSubSamples(0)
@@ -229,7 +228,6 @@ Msg* SpotifyReporter::Pull()
                 // Mode changed. Need to set up some variables that are
                 // accessed from different threads, so need to acquire iLock.
                 AutoMutex _(iLock);
-                iMsgTrackPending = true;
                 iMsgDecodedStreamPending = true;
                 iSubSamples = 0;
             }
@@ -259,9 +257,9 @@ Msg* SpotifyReporter::Pull()
                 // unless in Spotify mode, and seen a MsgTrack and MsgDecodedStream
                 // arrive via pipeline.
                 if (iPipelineTrackSeen && iDecodedStream != nullptr) {
-                    // Only want to output generated MsgTrack if it's pending and if stream format is known to get certain elements for track metadata.
-                    if (iMsgTrackPending) {
-                        ASSERT(iMetadata != nullptr);
+                    // If new metadata is available, generate a new MsgTrack
+                    // with that metadata.
+                    if (iMetadata != nullptr) {
                         const DecodedStreamInfo& info = iDecodedStream->StreamInfo();
                         const TUint bitDepth = info.BitDepth();
                         const TUint channels = info.NumChannels();
@@ -278,7 +276,6 @@ Msg* SpotifyReporter::Pull()
                         const TBool startOfStream = false;  // Report false as don't want downstream elements to re-enter any stream detection mode.
                         MsgTrack* msg = iMsgFactory.CreateMsgTrack(*track, startOfStream);
                         track->RemoveRef();
-                        iMsgTrackPending = false;
                         return msg;
                     }
                     else if (iMsgDecodedStreamPending) {
@@ -327,27 +324,40 @@ TUint64 SpotifyReporter::SubSamples() const
     return iSubSamples;
 }
 
-void SpotifyReporter::TrackChanged(const Brx& aUri, ISpotifyMetadata* aMetadata, TUint aStartMs)
+void SpotifyReporter::TrackChanged(Media::ISpotifyMetadata* aMetadata)
 {
     AutoMutex _(iLock);
-    iMsgTrackPending = true;
+    // If there is already pending metadata, it's now invalid.
     if (iMetadata != nullptr) {
         iMetadata->Destroy();
         iMetadata = nullptr;
     }
-    iTrackUri.Replace(aUri);
     iMetadata = aMetadata;
-    iStartOffset.SetMs(aStartMs);
     iTrackDurationMs = iMetadata->DurationMs();
     iMsgDecodedStreamPending = true;
+
+    // Any start offset will be updated via call to TrackOffsetChanged, be it
+    // because track is starting from non-zero position or a seek occurred.
 }
 
-void SpotifyReporter::NotifySeek(TUint aOffsetMs)
+void SpotifyReporter::TrackOffsetChanged(TUint aOffsetMs)
 {
     AutoMutex _(iLock);
     iStartOffset.SetMs(aOffsetMs);
     // Must output new MsgDecodedStream to update start offset.
     iMsgDecodedStreamPending = true;
+}
+
+void SpotifyReporter::FlushTrackState()
+{
+    AutoMutex _(iLock);
+    iTrackUri.SetBytes(0);
+    if (iMetadata != nullptr) {
+        iMetadata->Destroy();
+        iMetadata = nullptr;
+    }
+    iStartOffset.SetMs(0);
+    iTrackDurationMs = 0;
 }
 
 Msg* SpotifyReporter::ProcessMsg(MsgMode* aMsg)
@@ -357,7 +367,6 @@ Msg* SpotifyReporter::ProcessMsg(MsgMode* aMsg)
         // If iInterceptMode is already true, this must have been called with
         // lock held, so can safely reset internal members that require locking.
         if (iInterceptMode) {
-            iMsgTrackPending = true;
             iMsgDecodedStreamPending = true;
             iSubSamples = 0;
         }
@@ -379,7 +388,9 @@ Msg* SpotifyReporter::ProcessMsg(MsgTrack* aMsg)
     if (!iInterceptMode) {
         return aMsg;
     }
-    iPipelineTrackSeen = true;  // Only matters when in iInterceptMode. Ensures in-band MsgTrack is output before any are generated from out-of-band notifications.
+
+    iTrackUri.Replace(aMsg->Track().Uri()); // Cache URI for reuse in out-of-band MsgTracks.
+    iPipelineTrackSeen = true;              // Only matters when in iInterceptMode. Ensures in-band MsgTrack is output before any are generated from out-of-band notifications.
     return aMsg;
 }
 

@@ -124,7 +124,7 @@ Filler::Filler(IPipelineElementDownstream& aPipeline, IPipelineIdTracker& aIdTra
     , iDefaultDelay(aDefaultDelay)
     , iPrefetchTrackId(kPrefetchTrackIdInvalid)
 {
-    iNullTrack = aTrackFactory.CreateTrack(Brx::Empty(), Brx::Empty());
+    iNullTrack = aTrackFactory.CreateNullTrack();
 }
 
 Filler::~Filler()
@@ -346,34 +346,29 @@ void Filler::Run()
             /* assume that if the uri provider has returned a track then ProtocolManager
                 will call OutputTrack, causing Stopper to later call iStreamPlayObserver */
             iPrefetchTrackId = kPrefetchTrackIdInvalid;
+            if (iChangedMode) {
+                const auto& modeInfo = iActiveUriProvider->ModeInfo();
+                iPipeline.Push(iMsgFactory.CreateMsgMode(iActiveUriProvider->Mode(),
+                                                         modeInfo,
+                                                         iActiveUriProvider->ClockPullers(),
+                                                         iActiveUriProvider->ModeTransportControls()));
+                if (!modeInfo.SupportsLatency()) {
+                    iPipeline.Push(iMsgFactory.CreateMsgDelay(iDefaultDelay));
+                }
+                iChangedMode = false;
+            }
             if (iTrackPlayStatus == ePlayNo) {
-                iChangedMode = true;
                 iStopped = true;
                 iLock.Signal();
-                ModeInfo info;
-                ModeTransportControls transportControls;
-                iPipeline.Push(iMsgFactory.CreateMsgMode(Brn("null"), info, ModeClockPullers(), transportControls));
                 iPipeline.Push(iMsgFactory.CreateMsgTrack(*iNullTrack));
                 iPipelineIdTracker.AddStream(iNullTrack->Id(), NullTrackStreamHandler::kNullTrackStreamId, false /* play later */);
                 iPipeline.Push(iMsgFactory.CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 0, 0, NullTrackStreamHandler::kNullTrackStreamId, false /* not seekable */, true /* live */, Multiroom::Forbidden, &iNullTrackStreamHandler));
                 iPipeline.Push(iMsgFactory.CreateMsgMetaText(Brx::Empty()));
-                iPipeline.Push(iMsgFactory.CreateMsgDelay(iDefaultDelay));
             }
             else {
                 iLock.Signal();
                 iUriStreamer->Interrupt(false);
                 iLock.Wait();
-                if (iChangedMode) {
-                    const auto& modeInfo = iActiveUriProvider->ModeInfo();
-                    iPipeline.Push(iMsgFactory.CreateMsgMode(iActiveUriProvider->Mode(),
-                                                             modeInfo,
-                                                             iActiveUriProvider->ClockPullers(),
-                                                             iActiveUriProvider->ModeTransportControls()));
-                    if (!modeInfo.SupportsLatency()) {
-                        iPipeline.Push(iMsgFactory.CreateMsgDelay(iDefaultDelay));
-                    }
-                    iChangedMode = false;
-                }
                 iWaitingForAudio = true;
                 iNoAudioBeforeNextTrack = false;
                 iLock.Signal();

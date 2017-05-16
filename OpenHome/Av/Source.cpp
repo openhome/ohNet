@@ -192,6 +192,7 @@ void Source::EnsureActiveNoPrefetch()
 {
     AutoMutex _(iLockActivation);
     iNoPipelinePrefetchOnActivation = true;
+    iPowerManager.StandbyDisable(StandbyDisableReason::User);
     if (!IsActive()) {
         DoActivate();
     }

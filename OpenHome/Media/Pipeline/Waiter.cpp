@@ -97,6 +97,18 @@ Msg* Waiter::Pull()
     return msg;
 }
 
+Msg* Waiter::ProcessMsg(MsgMode* aMsg)
+{
+    if (iState != ERunning) {
+        if (iState == EFlushing) {
+            Log::Print("ERROR Waiter::ProcessMsg(MsgMode* ) called when flushing\n");
+        }
+        iState = ERunning;
+        ScheduleEvent(false);
+    }
+    return aMsg;
+}
+
 Msg* Waiter::ProcessMsg(MsgMetaText* aMsg)
 {
     return ProcessFlushable(aMsg);

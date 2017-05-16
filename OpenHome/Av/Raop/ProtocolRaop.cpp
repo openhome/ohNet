@@ -811,10 +811,10 @@ void ProtocolRaop::ResendReceive(const RaopPacketResendResponse& aPacket)
     }
 }
 
-TUint ProtocolRaop::SendFlush(TUint aSeq, TUint aTime)
+TUint ProtocolRaop::SendFlushStart(TUint aSeq, TUint aTime)
 {
-    LOG(kPipeline, "ProtocolRaop::SendFlush\n");
-    AutoMutex a(iLockRaop);
+    LOG(kPipeline, "ProtocolRaop::SendFlushStart\n");
+    iLockRaop.Wait();
 
     if (!iActive) {
         // It's possible that the RAOP session is still active, so this is a
@@ -822,6 +822,7 @@ TUint ProtocolRaop::SendFlush(TUint aSeq, TUint aTime)
         // to play the stream for some reason (network issue, change in
         // protocol) and TryStop() has been called which has caused Stream() to
         // return, so no valid flush can be sent.
+        iLockRaop.Signal();
         return MsgFlush::kIdInvalid;
     }
 
@@ -838,6 +839,11 @@ TUint ProtocolRaop::SendFlush(TUint aSeq, TUint aTime)
 
     DoInterrupt();  // FIXME - need to do an interrupt here?
     return iNextFlushId;
+}
+
+void ProtocolRaop::SendFlushEnd()
+{
+    iLockRaop.Signal();
 }
 
 

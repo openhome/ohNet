@@ -168,8 +168,12 @@ void JsonParser::Parse(const Brx& aJson, TBool aUnescapeInPlace)
 {
     Reset();
 
-    const TByte* ptr = aJson.Ptr();
-    const TByte* end = ptr + aJson.Bytes();
+    Brn json = Ascii::Trim(aJson);
+    if (json.Bytes() == 0 || json == WriterJson::kNull) {
+        return;
+    }
+    const TByte* ptr = json.Ptr();
+    const TByte* end = ptr + json.Bytes();
 
     enum ParseState {
         DocStart,
@@ -342,6 +346,25 @@ Brn JsonParser::String(const TChar* aKey) const
 Brn JsonParser::String(const Brx& aKey) const
 {
     return Value(aKey);
+}
+
+Brn JsonParser::StringOptional(const TChar* aKey) const
+{
+    Brn key(aKey);
+    return StringOptional(key);
+}
+
+Brn JsonParser::StringOptional(const Brx& aKey) const
+{
+    try {
+        return String(aKey);
+    }
+    catch (JsonKeyNotFound&) {
+        return Brx::Empty();
+    }
+    catch (JsonValueNull&) {
+        return Brx::Empty();
+    }
 }
 
 TInt JsonParser::Num(const TChar* aKey) const
