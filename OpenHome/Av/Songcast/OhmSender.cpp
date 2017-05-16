@@ -155,7 +155,7 @@ void ProviderSender::Status(Net::IDvInvocation& aInvocation, Net::IDvInvocationR
     aInvocation.StartResponse();
     {
         AutoMutex a(iLock);
-        aValue.Write(iStatus2);
+        aValue.Write(iStatus);
     }
     aValue.WriteFlush();
     aInvocation.EndResponse();
