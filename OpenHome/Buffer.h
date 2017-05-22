@@ -184,6 +184,7 @@ public:
     void TransferTo(Brhz& aBrh); // reallocates buffer for aBrh
     void TransferTo(Bwh& aBwh);
     virtual const TByte* Ptr() const;
+    void Swap(Bwh& aBwh);
 protected:
     const TByte* iPtr;
 private:

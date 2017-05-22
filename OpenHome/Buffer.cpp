@@ -581,6 +581,14 @@ void Bwh::TransferTo(Bwh& aBwh)
     iBytes = 0;
 }
 
+void Bwh::Swap(Bwh& aBwh)
+{
+    if (this != &aBwh) {
+        std::swap(iPtr, aBwh.iPtr);
+        std::swap(iBytes, aBwh.iBytes);
+    }
+}
+
 // BufferCmp
 
 TBool BufferCmp::operator()(const Brx& aStr1, const Brx& aStr2) const

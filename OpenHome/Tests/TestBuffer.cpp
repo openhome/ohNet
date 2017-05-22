@@ -365,6 +365,16 @@ void SuiteHeap::Test()
     TEST(src.Ptr() == NULL);
     TEST(trg.Ptr() != NULL);
     }
+
+    {
+    Bwh lhs("left");
+    Bwh rhs("right");
+    TEST(lhs == Brn("left"));
+    TEST(rhs == Brn("right"));
+    lhs.Swap(rhs);
+    TEST(rhs == Brn("left"));
+    TEST(lhs == Brn("right"));
+    }
 }
 
 class SuiteSplit : public Suite
