@@ -17,7 +17,7 @@ IFile* IFile::Open(const TChar* aFilename, FileMode aFileMode)
     if (aFilename[0] == '/' && aFilename[1] != '\0' && aFilename[2] == ':') {
         aFilename++;
     }
-    return new FileAnsii(aFilename, aFileMode);
+    return new FileAnsi(aFilename, aFileMode);
 }
 
 #endif

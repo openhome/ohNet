@@ -75,7 +75,7 @@ objects_core = \
 	$(objdir)Exception.$(objext) \
 	$(objdir)Fifo.$(objext) \
 	$(objdir)File.$(objext) \
-	$(objdir)FileAnsii.$(objext) \
+	$(objdir)FileAnsi.$(objext) \
 	$(objdir)FileBrx.$(objext) \
 	$(objdir)FileStream.$(objext) \
 	$(objdir)Globals.$(objext) \
@@ -345,8 +345,8 @@ $(objdir)Exception.$(objext) : OpenHome/Exception.cpp $(headers)
 	$(compiler)Exception.$(objext) -c $(cppflags) $(includes) OpenHome/Exception.cpp
 $(objdir)Fifo.$(objext) : OpenHome/Fifo.cpp $(headers)
 	$(compiler)Fifo.$(objext) -c $(cppflags) $(includes) OpenHome/Fifo.cpp
-$(objdir)FileAnsii.$(objext) : OpenHome/FileAnsii.cpp $(headers)
-	$(compiler)FileAnsii.$(objext) -c $(cppflags) $(includes) OpenHome/FileAnsii.cpp
+$(objdir)FileAnsi.$(objext) : OpenHome/FileAnsi.cpp $(headers)
+	$(compiler)FileAnsi.$(objext) -c $(cppflags) $(includes) OpenHome/FileAnsi.cpp
 $(objdir)FileBrx.$(objext) : OpenHome/FileBrx.cpp $(headers)
 	$(compiler)FileBrx.$(objext) -c $(cppflags) $(includes) OpenHome/FileBrx.cpp
 $(objdir)FileStream.$(objext) : OpenHome/FileStream.cpp $(headers)

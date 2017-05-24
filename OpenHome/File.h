@@ -61,7 +61,7 @@ public:
     virtual ~IFileSystem() {}
 };
 
-class FileSystemAnsii : public IFileSystem
+class FileSystemAnsi : public IFileSystem
 {
 public: // IFileSystem
     IFile* Open(const TChar* aFilename, FileMode aFileMode);
@@ -69,11 +69,11 @@ public: // IFileSystem
     void Unlink(const TChar* aFilename);
 };
 
-class FileAnsii : public IFile
+class FileAnsi : public IFile
 {
 public:
-    FileAnsii(const TChar* aFilename, FileMode aFileMode);
-    ~FileAnsii();
+    FileAnsi(const TChar* aFilename, FileMode aFileMode);
+    ~FileAnsi();
 public: // from IFile
     void Read(Bwx& aBuffer);
     void Read(Bwx& aBuffer, TUint aBytes);

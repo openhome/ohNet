@@ -9,12 +9,12 @@
 
 using namespace OpenHome;
 
-IFile* FileSystemAnsii::Open(const TChar* aFilename, FileMode aFileMode)
+IFile* FileSystemAnsi::Open(const TChar* aFilename, FileMode aFileMode)
 {
-    return new FileAnsii(aFilename, aFileMode);
+    return new FileAnsi(aFilename, aFileMode);
 }
 
-void FileSystemAnsii::MakeDir(const TChar* aDirname)
+void FileSystemAnsi::MakeDir(const TChar* aDirname)
 {
 #if defined(_WIN32)
     const int error = _mkdir(aDirname);
@@ -26,7 +26,7 @@ void FileSystemAnsii::MakeDir(const TChar* aDirname)
     }
 }
 
-void FileSystemAnsii::Unlink(const TChar* aFilename)
+void FileSystemAnsi::Unlink(const TChar* aFilename)
 {
     const int error = remove(aFilename);
     if (error != 0) {
@@ -34,7 +34,7 @@ void FileSystemAnsii::Unlink(const TChar* aFilename)
     }
 }
 
-FileAnsii::FileAnsii(const TChar* aFilename, FileMode aFileMode)
+FileAnsi::FileAnsi(const TChar* aFilename, FileMode aFileMode)
     : iFilePtr(NULL)
 {
     switch (aFileMode)
@@ -57,17 +57,17 @@ FileAnsii::FileAnsii(const TChar* aFilename, FileMode aFileMode)
         THROW(FileOpenError);
 }
 
-FileAnsii::~FileAnsii()
+FileAnsi::~FileAnsi()
 {
     ASSERT(fclose(iFilePtr) != EOF);
 }
 
-void FileAnsii::Read(Bwx& aBuffer)
+void FileAnsi::Read(Bwx& aBuffer)
 {
     Read(aBuffer, aBuffer.BytesRemaining());
 }
 
-void FileAnsii::Read(Bwx& aBuffer, TUint32 aBytes)
+void FileAnsi::Read(Bwx& aBuffer, TUint32 aBytes)
 {
     // IFile implementations must check read length
     ASSERT(aBytes);
@@ -84,12 +84,12 @@ void FileAnsii::Read(Bwx& aBuffer, TUint32 aBytes)
         THROW(FileReadError);
 }
 
-void FileAnsii::Write(const Brx& aBuffer)
+void FileAnsi::Write(const Brx& aBuffer)
 {
     Write(aBuffer, aBuffer.Bytes());
 }
 
-void FileAnsii::Write(const Brx& aBuffer, TUint32 aBytes)
+void FileAnsi::Write(const Brx& aBuffer, TUint32 aBytes)
 {
     // IFile implementations must check write length
     ASSERT(aBytes);
@@ -102,7 +102,7 @@ void FileAnsii::Write(const Brx& aBuffer, TUint32 aBytes)
         THROW(FileWriteError);
 }
 
-void FileAnsii::Seek(TInt32 aBytes, SeekWhence aWhence)
+void FileAnsi::Seek(TInt32 aBytes, SeekWhence aWhence)
 {
     int whence;
     switch (aWhence)
@@ -125,14 +125,14 @@ void FileAnsii::Seek(TInt32 aBytes, SeekWhence aWhence)
         THROW(FileSeekError);
 }
 
-TUint32 FileAnsii::Tell() const
+TUint32 FileAnsi::Tell() const
 {
     return ftell(iFilePtr);
 }
 
-TUint32 FileAnsii::Bytes() const
+TUint32 FileAnsi::Bytes() const
 {
-    FileAnsii* self = const_cast<FileAnsii*>(this);
+    FileAnsi* self = const_cast<FileAnsi*>(this);
     TUint32 currentPos = self->Tell();
     TUint32 bytes = 0;
     try {
@@ -147,7 +147,7 @@ TUint32 FileAnsii::Bytes() const
     return bytes;
 }
 
-void FileAnsii::Flush()
+void FileAnsi::Flush()
 {
     ASSERT(iFilePtr);
     std::fflush(iFilePtr);

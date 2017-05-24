@@ -65,7 +65,7 @@ LOCAL_SRC_FILES := $(ohroot)OpenHome/Ascii.cpp \
                    $(ohroot)OpenHome/Net/ControlPoint/Upnp/EventUpnp.cpp \
                    $(ohroot)OpenHome/Exception.cpp \
                    $(ohroot)OpenHome/Fifo.cpp \
-                   $(ohroot)OpenHome/FileAnsii.cpp \
+                   $(ohroot)OpenHome/FileAnsi.cpp \
                    $(ohroot)OpenHome/FileBrx.cpp \
                    $(ohroot)OpenHome/FileStream.cpp \
                    $(ohroot)OpenHome/Net/Globals.cpp \
