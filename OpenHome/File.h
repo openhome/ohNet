@@ -13,6 +13,8 @@ EXCEPTION(FileOpenError)
 EXCEPTION(FileReadError)
 EXCEPTION(FileWriteError)
 EXCEPTION(FileSeekError)
+EXCEPTION(MakeDirFailed)
+EXCEPTION(UnlinkFailed)
 
 namespace OpenHome {
 
@@ -54,6 +56,8 @@ class IFileSystem
 {
 public:
     virtual IFile* Open(const TChar* aFilename, FileMode aFileMode) = 0; // throws FileOpenError
+    virtual void MakeDir(const TChar* aDirname) = 0; // throws DirAlreadyExists
+    virtual void Unlink(const TChar* aFilename) = 0;
     virtual ~IFileSystem() {}
 };
 
@@ -61,6 +65,8 @@ class FileSystemAnsii : public IFileSystem
 {
 public: // IFileSystem
     IFile* Open(const TChar* aFilename, FileMode aFileMode);
+    void MakeDir(const TChar* aDirname); // throws DirAlreadyExists
+    void Unlink(const TChar* aFilename);
 };
 
 class FileAnsii : public IFile

@@ -1,10 +1,37 @@
 #include <OpenHome/Private/File.h>
 #include <cstdio>
+#include <cerrno>
+
+#if defined(_WIN32)
+#else
+#include <sys/stat.h>
+#endif
+
 using namespace OpenHome;
 
 IFile* FileSystemAnsii::Open(const TChar* aFilename, FileMode aFileMode)
 {
     return new FileAnsii(aFilename, aFileMode);
+}
+
+void FileSystemAnsii::MakeDir(const TChar* aDirname)
+{
+#if defined(_WIN32)
+    const int error = _mkdir(aDirname);
+#else
+    const int error = mkdir(aDirname, 0777);
+#endif
+    if (error == -1) {
+        THROW(MakeDirFailed);
+    }
+}
+
+void FileSystemAnsii::Unlink(const TChar* aFilename)
+{
+    const int error = remove(aFilename);
+    if (error != 0) {
+        THROW(UnlinkFailed);
+    }
 }
 
 FileAnsii::FileAnsii(const TChar* aFilename, FileMode aFileMode)
