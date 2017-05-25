@@ -361,10 +361,11 @@ const Brn Credentials::kKeyRsaPrivate("RsaPrivateKey");
 const Brn Credentials::kKeyRsaPublic("RsaPublicKey");
 
 Credentials::Credentials(Environment& aEnv, Net::DvDevice& aDevice, IStoreReadWrite& aStore, const Brx& aEntropy, Configuration::IConfigInitialiser& aConfigInitialiser, TUint aKeyBits)
-    : iLock("CRED")
+    : iLock("CRD1")
     , iEnv(aEnv)
     , iConfigInitialiser(aConfigInitialiser)
     , iKey(nullptr)
+    , iLockRsaConsumers("CRD2")
     , iModerationTimerStarted(false)
     , iKeyParams(aStore, aEntropy, aKeyBits)
     , iThread(nullptr)
@@ -407,6 +408,17 @@ void Credentials::Start()
     if (iCredentials.size() > 0) {
         iThread = new ThreadFunctor("Credentials", MakeFunctor(*this, &Credentials::CredentialsThread), kPriorityLow);
         iThread->Start();
+    }
+}
+
+void Credentials::GetKey(FunctorGeneric<IRsaProvider&> aCb)
+{
+    AutoMutex _(iLockRsaConsumers);
+    if (iKey != nullptr) {
+        aCb(*this);
+    }
+    else {
+        iRsaConsumers.push_back(aCb);
     }
 }
 
@@ -471,6 +483,16 @@ void Credentials::CredentialChanged()
     }
 }
 
+void* Credentials::RsaPrivateKey()
+{
+    return iKey;
+}
+
+void Credentials::GetRsaPublicKey(Bwx& aKey)
+{
+    iKeyParams.Store().Read(kKeyRsaPublic, aKey);
+}
+
 Credential* Credentials::Find(const Brx& aId) const
 {
     for (auto it=iCredentials.begin(); it!=iCredentials.end(); ++it) {
@@ -519,7 +541,13 @@ void Credentials::CreateKey(IStoreReadWrite& aStore, const Brx& aEntropy, TUint 
     ASSERT(1 == PEM_write_bio_RSAPublicKey(bio, rsa));
     WriteToStore(aStore, kKeyRsaPublic, bio);
     BIO_free(bio);
+
+    AutoMutex _(iLockRsaConsumers);
     iKey = (void*)rsa;
+
+    for (auto cb : iRsaConsumers) {
+        cb(*this);
+    }
 }
 
 void Credentials::CurrentAdapterChanged()
