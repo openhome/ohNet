@@ -519,8 +519,12 @@ void Credentials::CreateKey(IStoreReadWrite& aStore, const Brx& aEntropy, TUint 
     try {
         aStore.Read(kKeyRsaPrivate, iKeyBuf);
         BIO *bio = BIO_new_mem_buf((void*)iKeyBuf.Ptr(), iKeyBuf.Bytes());
+        AutoMutex _(iLockRsaConsumers);
         iKey = (void*)PEM_read_bio_RSAPrivateKey(bio, nullptr, 0, nullptr);
         BIO_free(bio);
+        for (auto cb : iRsaConsumers) {
+            cb(*this);
+        }
         return;
     }
     catch (StoreKeyNotFound&) {
