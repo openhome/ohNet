@@ -346,6 +346,8 @@ def build(bld):
                 'OpenHome/Av/Radio/PresetDatabase.cpp',
                 'OpenHome/Av/Radio/UriProviderRadio.cpp',
                 'OpenHome/Av/Radio/TuneIn.cpp',
+                'OpenHome/Av/CalmRadio/CalmRadio.cpp',
+                'OpenHome/Av/CalmRadio/ProtocolCalmRadio.cpp',
                 'OpenHome/Av/Radio/ContentAsx.cpp',
                 'OpenHome/Av/Radio/ContentM3u.cpp',
                 'OpenHome/Av/Radio/ContentM3uX.cpp',
@@ -966,6 +968,11 @@ def build(bld):
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestFriendlyNameManager',
             install_path=None)
+    #bld.program(
+    #        source='OpenHome/Tests/TestKey.cpp',
+    #        use=['OHNET', 'ohMediaPlayer', 'OPENSSL'],
+    #        target='TestKey',
+    #        install_path=None)
     #bld.program(
     #        source='OpenHome/Tests/TestHttpsBsd.cpp',
     #        use=['OHNET', 'ohMediaPlayer', 'OPENSSL'],

@@ -27,6 +27,7 @@
 #include <OpenHome/Web/ConfigUi/ConfigUiMediaPlayer.h>
 #include <OpenHome/Web/ConfigUi/FileResourceHandler.h>
 #include <OpenHome/Av/UpnpAv/FriendlyNameUpnpAv.h>
+#include <OpenHome/Av/CalmRadio/CalmRadio.h> // FIXME - won't be required if we create an associated protocol module
 
 #undef LPEC_ENABLE
 
@@ -385,6 +386,7 @@ void TestMediaPlayer::RegisterPlugins(Environment& aEnv)
         Log::Print("\n");
         iMediaPlayer->Add(ProtocolFactory::NewQobuz(appId, appSecret, *iMediaPlayer));
     }
+    iMediaPlayer->Add(ProtocolFactory::NewCalmRadio(aEnv, iUserAgent, *iMediaPlayer));
 
     // Add sources
     iMediaPlayer->Add(SourceFactory::NewPlaylist(*iMediaPlayer));
