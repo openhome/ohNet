@@ -362,6 +362,10 @@ void SourceReceiver::SetSender(const Brx& aUri, const Brx& aMetadata)
         if (iPlaying) {
             iZoneHandler->StartMonitoring(iZone);
         }
+        else {
+            iTrackId = Track::kIdNone;
+            iPipeline.StopPrefetch(iUriProvider->Mode(), iTrackId);
+        }
     }
     else {
         iZone.Replace(Brx::Empty());
