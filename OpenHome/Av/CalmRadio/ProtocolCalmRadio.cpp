@@ -14,11 +14,14 @@
 #include <OpenHome/Av/CalmRadio/CalmRadio.h>
 #include <OpenHome/Media/SupplyAggregator.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
+#include <OpenHome/Media/Protocol/Icy.h>
 
 namespace OpenHome {
 namespace Av {
 
-class ProtocolCalmRadio : public Media::ProtocolNetwork, private IReader
+class ProtocolCalmRadio : public Media::ProtocolNetwork
+                        , private IReader
+                        , private Media::IIcyObserver
 {
     static const TUint kTcpConnectTimeoutMs = 10 * 1000;
     static const TUint kMaxUserAgentBytes = 64;
@@ -39,6 +42,8 @@ private: // from IReader
     Brn Read(TUint aBytes) override;
     void ReadFlush() override;
     void ReadInterrupt() override;
+private: // from Media::IIcyObserver
+    void NotifyIcyData(const Brx& aIcyData) override;
 private:
     static TBool TryGetTrackId(const Brx& aQuery, Bwx& aTrackId);
     Media::ProtocolStreamResult DoStream();
@@ -57,9 +62,14 @@ private:
     WriterHttpRequest iWriterRequest;
     ReaderUntilS<2048> iReaderUntil;
     ReaderHttpResponse iReaderResponse;
+    ReaderHttpChunked iDechunker;
+    Media::ReaderIcy* iReaderIcy;
     HttpHeaderContentType iHeaderContentType;
     HttpHeaderContentLength iHeaderContentLength;
+    HttpHeaderTransferEncoding iHeaderTransferEncoding;
+    Media::HeaderIcyMetadata iHeaderIcyMetadata;
     Bws<kMaxUserAgentBytes> iUserAgent;
+    Media::IcyObserverDidlLite* iIcyObserverDidlLite;
     TUint64 iTotalStreamBytes;
     TUint64 iTotalBytes;
     TUint iStreamId;
@@ -98,13 +108,19 @@ ProtocolCalmRadio::ProtocolCalmRadio(Environment& aEnv, const Brx& aUserAgent, C
     , iWriterRequest(iWriterBuf)
     , iReaderUntil(iReaderBuf)
     , iReaderResponse(aEnv, iReaderUntil)
+    , iDechunker(iReaderUntil)
     , iUserAgent(aUserAgent)
     , iTotalStreamBytes(0)
     , iTotalBytes(0)
     , iSem("PCR ", 0)
 {
+    iIcyObserverDidlLite = new Media::IcyObserverDidlLite(*this);
+    iReaderIcy = new Media::ReaderIcy(iDechunker, *iIcyObserverDidlLite, iOffset);
+
     iReaderResponse.AddHeader(iHeaderContentType);
     iReaderResponse.AddHeader(iHeaderContentLength);
+    iReaderResponse.AddHeader(iHeaderTransferEncoding);
+    iReaderResponse.AddHeader(iHeaderIcyMetadata);
 
     iCalm = new CalmRadio(aEnv, aCredentialsManager);
     aCredentialsManager.Add(iCalm);
@@ -112,6 +128,8 @@ ProtocolCalmRadio::ProtocolCalmRadio(Environment& aEnv, const Brx& aUserAgent, C
 
 ProtocolCalmRadio::~ProtocolCalmRadio()
 {
+    delete iReaderIcy;
+    delete iIcyObserverDidlLite;
     delete iSupply;
 }
 
@@ -142,6 +160,7 @@ ProtocolStreamResult ProtocolCalmRadio::Stream(const Brx& aUri)
     iNextFlushId = MsgFlush::kIdInvalid;
     iCalm->Interrupt(false);
     iUri.Replace(aUri);
+    iReaderIcy->Reset();
 
     if (iUri.Scheme() != Brn("calmradio")) {
         return EProtocolErrorNotSupported;
@@ -239,7 +258,8 @@ void ProtocolCalmRadio::Deactivated()
         iContentProcessor->Reset();
         iContentProcessor = nullptr;
     }
-    iReaderUntil.ReadFlush();
+    iReaderIcy->ReadFlush();
+    iReaderIcy->Reset();
     Close();
 }
 
@@ -306,19 +326,23 @@ TUint ProtocolCalmRadio::TryStop(TUint aStreamId)
 
 Brn ProtocolCalmRadio::Read(TUint aBytes)
 {
-    Brn buf = iReaderUntil.Read(aBytes);
-    iOffset += buf.Bytes();
+    Brn buf = iReaderIcy->Read(aBytes);
     return buf;
 }
 
 void ProtocolCalmRadio::ReadFlush()
 {
-    iReaderUntil.ReadFlush();
+    iReaderIcy->ReadFlush();
 }
 
 void ProtocolCalmRadio::ReadInterrupt()
 {
-    iReaderUntil.ReadInterrupt();
+    iReaderIcy->ReadInterrupt();
+}
+
+void ProtocolCalmRadio::NotifyIcyData(const Brx& aIcyData)
+{
+    iSupply->OutputMetadata(aIcyData);
 }
 
 TBool ProtocolCalmRadio::ContinueStreaming(ProtocolStreamResult aResult)
@@ -361,6 +385,10 @@ ProtocolStreamResult ProtocolCalmRadio::DoStream()
     else { // code == HttpStatus::kOk.Code()
         LOG(kMedia, "ProtocolCalmRadio::DoStream 'OK' non-seekable (%lld bytes)\n", iTotalBytes);
     }
+    if (iHeaderIcyMetadata.Received()) {
+        iReaderIcy->SetEnabled(iHeaderIcyMetadata.Bytes());
+    }
+    iDechunker.SetChunked(iHeaderTransferEncoding.IsChunked());
 
     return ProcessContent();
 }
@@ -380,7 +408,7 @@ TUint ProtocolCalmRadio::WriteRequestHandleForbidden(TUint64 aOffset)
 
 TUint ProtocolCalmRadio::WriteRequest(TUint64 aOffset)
 {
-    iReaderUntil.ReadFlush();
+    iReaderIcy->ReadFlush();
     Close();
     const TUint port = (iUri.Port() == -1? 80 : (TUint)iUri.Port());
     if (!Connect(iUri, port, kTcpConnectTimeoutMs)) {
@@ -397,6 +425,7 @@ TUint ProtocolCalmRadio::WriteRequest(TUint64 aOffset)
             iWriterRequest.WriteHeader(Http::kHeaderUserAgent, iUserAgent);
         }
         Http::WriteHeaderConnectionClose(iWriterRequest);
+        HeaderIcyMetadata::Write(iWriterRequest);
         Http::WriteHeaderRangeFirstOnly(iWriterRequest, aOffset);
         iWriterRequest.WriteFlush();
     }
@@ -407,9 +436,9 @@ TUint ProtocolCalmRadio::WriteRequest(TUint64 aOffset)
 
     try {
         LOG(kMedia, "ProtocolCalmRadio::WriteRequest read response\n");
-        //iTcpClient.LogVerbose(true);
+        iTcpClient.LogVerbose(true);
         iReaderResponse.Read();
-        //iTcpClient.LogVerbose(false);
+        iTcpClient.LogVerbose(false);
     }
     catch(HttpError&) {
         LOG2(kPipeline, kError, "ProtocolCalmRadio::WriteRequest HttpError\n");

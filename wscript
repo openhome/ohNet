@@ -262,6 +262,7 @@ def build(bld):
                 'OpenHome/Media/Protocol/ProtocolHttps.cpp',
                 'OpenHome/Media/Protocol/ProtocolFile.cpp',
                 'OpenHome/Media/Protocol/ProtocolTone.cpp',
+                'OpenHome/Media/Protocol/Icy.cpp',
                 'OpenHome/Media/Protocol/Rtsp.cpp',
                 'OpenHome/Media/Protocol/ProtocolRtsp.cpp',
                 'OpenHome/Media/Protocol/ContentAudio.cpp',
@@ -1028,6 +1029,25 @@ def build(bld):
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestVolumeManager',
             install_path=None)
+
+    #bld.stlib(
+    #        source=[
+    #            'OpenHome/Av/Scd/Scd.cpp',
+    #            'OpenHome/Av/Scd/ScdMsg.cpp',
+    #            'OpenHome/Av/Scd/ScdSupply.cpp',
+    #            'OpenHome/Av/Scd/ScdServer.cpp'
+    #        ],
+    #        use=['OHNET', 'ohMediaPlayer'],
+    #        target='ScdSender')
+    #bld.program(
+    #        source=[
+    #            'OpenHome/Av/Scd/WavSender.cpp',
+    #            'OpenHome/Av/Scd/DirScanner.cpp',
+    #            'OpenHome/Av/Scd/WavSenderMain.cpp'
+    #            ],
+    #        use=['OHNET', 'ScdSender', 'ohMediaPlayer'],
+    #        target='WavSender',
+    #        install_path=None)
 
 # Bundles
 def bundle(ctx):
