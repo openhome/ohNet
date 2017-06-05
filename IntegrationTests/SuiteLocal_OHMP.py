@@ -65,6 +65,9 @@ tests = [
     # UPnP compliance
     [ 'TestComplianceDevice',         'local'                                                                                        ],
 
+    # Transport Service
+    [ 'TestTransportService',         'local'                                                                                        ],
+
     # OH Playlist Service
     [ 'TestPlaylistHandling',         'local', 'all',   0                                                                            ],
     [ 'TestPlaylistModes',            'local', 'all',   0                                                                            ],
