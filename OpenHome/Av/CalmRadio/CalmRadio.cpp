@@ -77,13 +77,13 @@ const Brx& CalmRadio::Id() const
     return kId;
 }
 
-void CalmRadio::CredentialsChanged(const Brx& /*aUsername*/, const Brx& /*aPassword*/)
+void CalmRadio::CredentialsChanged(const Brx& aUsername, const Brx& aPassword)
 {
     AutoMutex _(iLockConfig);
     iUsername.Reset();
-    iUsername.Write(Brn("1linndevmembership"));
+    iUsername.Write(aUsername);
     iPassword.Reset();
-    iPassword.Write(Brn("1892.0P@s$"));
+    iPassword.Write(aPassword);
 }
 
 void CalmRadio::UpdateStatus()
