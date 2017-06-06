@@ -282,7 +282,7 @@ void OptionParser::SetUsage(const TChar* aUsage)
 {
     delete iUsage;
     iUsage = NULL;
-    iUsage = new TChar[strlen(iUsage)];
+    iUsage = new TChar[strlen(aUsage)];
     (void)strcpy(iUsage, aUsage);
 }
 
