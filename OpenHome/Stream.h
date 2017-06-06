@@ -194,6 +194,16 @@ private:
     TByte iBuf[T];
 };
 
+class ReaderProtocolN : public ReaderProtocol
+{
+public:
+    ReaderProtocolN(IReader& aReader, Bwx& aBuf) : ReaderProtocol(aBuf.MaxBytes(), aReader), iBuf(aBuf) {}
+private: // from ReaderUntil
+    TByte* Ptr() { return const_cast<TByte*>(iBuf.Ptr()); }
+private:
+    Bwx& iBuf;
+};
+
 class Swx : public Sxx, public IWriter
 {
 public: // from IWriter
