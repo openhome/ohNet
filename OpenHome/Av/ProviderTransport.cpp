@@ -17,10 +17,10 @@ static const TUint kCodeNotSupportedByMode = 801;
 static const Brn kMsgNotSupportedByMode("Action not supported by current mode");
 static const TUint kCodeNotSupportedByStream = 802;
 static const Brn kMsgNotSupportedByStream("Action not supported by current stream");
-static const TUint kCodeBadStreamId = 803;
-static const Brn kMsgBadStreamId("Stream id not current");
-static const TUint kSeekFailureCode = 804;
+static const TUint kSeekFailureCode = 803;
 static const Brn kSeekFailureMsg("Seek failed");
+static const TUint kCodeBadStreamId = 804;
+static const Brn kMsgBadStreamId("Stream id not current");
 
 const TUint ProviderTransport::kModesGranularity = 1024;
 

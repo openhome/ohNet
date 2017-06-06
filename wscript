@@ -262,6 +262,7 @@ def build(bld):
                 'OpenHome/Media/Protocol/ProtocolHttps.cpp',
                 'OpenHome/Media/Protocol/ProtocolFile.cpp',
                 'OpenHome/Media/Protocol/ProtocolTone.cpp',
+                'OpenHome/Media/Protocol/Icy.cpp',
                 'OpenHome/Media/Protocol/Rtsp.cpp',
                 'OpenHome/Media/Protocol/ProtocolRtsp.cpp',
                 'OpenHome/Media/Protocol/ContentAudio.cpp',
@@ -346,6 +347,8 @@ def build(bld):
                 'OpenHome/Av/Radio/PresetDatabase.cpp',
                 'OpenHome/Av/Radio/UriProviderRadio.cpp',
                 'OpenHome/Av/Radio/TuneIn.cpp',
+                'OpenHome/Av/CalmRadio/CalmRadio.cpp',
+                'OpenHome/Av/CalmRadio/ProtocolCalmRadio.cpp',
                 'OpenHome/Av/Radio/ContentAsx.cpp',
                 'OpenHome/Av/Radio/ContentM3u.cpp',
                 'OpenHome/Av/Radio/ContentM3uX.cpp',
@@ -967,6 +970,11 @@ def build(bld):
             target='TestFriendlyNameManager',
             install_path=None)
     #bld.program(
+    #        source='OpenHome/Tests/TestKey.cpp',
+    #        use=['OHNET', 'ohMediaPlayer', 'OPENSSL'],
+    #        target='TestKey',
+    #        install_path=None)
+    #bld.program(
     #        source='OpenHome/Tests/TestHttpsBsd.cpp',
     #        use=['OHNET', 'ohMediaPlayer', 'OPENSSL'],
     #        target='TestHttpsBsd',
@@ -1021,6 +1029,25 @@ def build(bld):
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestVolumeManager',
             install_path=None)
+
+    #bld.stlib(
+    #        source=[
+    #            'OpenHome/Av/Scd/Scd.cpp',
+    #            'OpenHome/Av/Scd/ScdMsg.cpp',
+    #            'OpenHome/Av/Scd/ScdSupply.cpp',
+    #            'OpenHome/Av/Scd/ScdServer.cpp'
+    #        ],
+    #        use=['OHNET', 'ohMediaPlayer'],
+    #        target='ScdSender')
+    #bld.program(
+    #        source=[
+    #            'OpenHome/Av/Scd/WavSender.cpp',
+    #            'OpenHome/Av/Scd/DirScanner.cpp',
+    #            'OpenHome/Av/Scd/WavSenderMain.cpp'
+    #            ],
+    #        use=['OHNET', 'ScdSender', 'ohMediaPlayer'],
+    #        target='WavSender',
+    #        install_path=None)
 
 # Bundles
 def bundle(ctx):
