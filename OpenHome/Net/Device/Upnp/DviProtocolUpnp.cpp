@@ -309,7 +309,6 @@ void DviProtocolUpnp::Enable()
             adapter->AddRef();
             Bws<Uri::kMaxUriBytes> uriBase;
             DviDevice* root = (iDevice.IsRoot()? &iDevice : iDevice.Root());
-            Log::Print("  adapter=%p, iServer=%p\n", (void*)adapter, (void*)iServer);
             iLock.Signal();
             /* UpdateServerPort can block if we're processing an adapter change and
                destruction of previous servers is blocked waiting on a call to our
