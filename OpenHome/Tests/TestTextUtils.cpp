@@ -1291,6 +1291,29 @@ void SuiteUri::Test()
     delete uriNoPath1;
     delete uriNoPath2;
 
+    // Relative path tests:
+    // Nicked from the examples at http://www.webreference.com/html/tutorial2/3.html
+
+    Brn root("http://WebReference.com/html/");
+#define REL_TEST(relativeUri,expectedAbsoluteUri) \
+    do { \
+        TEST(Uri(root, Brn(relativeUri)).AbsoluteUri() == Brn(expectedAbsoluteUri)); \
+    } \
+    while(0)
+
+    REL_TEST("about.html",         "http://WebReference.com/html/about.html");
+    REL_TEST("tutorial1/",         "http://WebReference.com/html/tutorial1/");
+    REL_TEST("tutorial1/2.html",   "http://WebReference.com/html/tutorial1/2.html");
+    //REL_TEST("/",                  "http://WebReference.com/"); // fails, throws AssertionFailed
+    REL_TEST("//www.internet.com/", "http://www.internet.com/"); // fails
+    REL_TEST("/experts/",          "http://WebReference.com/experts/"); // fails
+    REL_TEST("../",                "http://WebReference.com/");
+    REL_TEST("../experts/",        "http://WebReference.com/experts/");
+    //REL_TEST("../../../",          "http://WebReference.com/"); // fails, throws UriError
+    REL_TEST("./",                 "http://WebReference.com/html/"); // fails
+    REL_TEST("./about.html",       "http://WebReference.com/html/about.html"); // fails
+#undef REL_TEST
+
     Bws<128> uriString("testscheme://testhost:123/testpath");
     Bws<32> uriPath("/testpath");
     for(i=0 ; i<128 ; i++) {
