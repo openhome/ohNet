@@ -175,6 +175,7 @@ private:
 class ReaderProtocol : public ReaderBinary
 {
 public:
+    static void Read(IReader& aReader, TUint aBytes, Bwx& aBuf);
     virtual ~ReaderProtocol();
     Brn Read(TUint aBytes); // reads exactly aBytes or throws
 protected:
