@@ -54,49 +54,82 @@ void Uri::Replace(const Brx& aBaseUri, const Brx& aRelativeUri)
     iBase.Replace(aBaseUri);
     Ascii::Substitute(iBase, '\\', '/'); // convert path to use only back slashes
 
-    while (iRelative.At(0) == '/') { // insure relative path starts without back slash
-        iRelative.Replace(iRelative.Split(1,iRelative.Bytes()-1));
+    if (iRelative.BeginsWith(Brn("//"))) {
+        Parser p(iBase);
+        iAbsoluteUri.Replace(p.Next(':'));
+        iAbsoluteUri.Append(':');
+        iAbsoluteUri.Append(iRelative);
     }
-    if (iBase.At(iBase.Bytes()-1) != '/') { // insure base path ends with back slash
-        iBase.Append('/');
-    }
-
-    Parser parser(iRelative);
-    Brn section;
-    TUint relCount = 0, relIndex = 0;
-    while (!parser.Finished()) {
-        section.Set(parser.Next('/'));
-        if (section.Bytes() > 0) {
-            if (section.At(0) == '.') {
-                relCount++;
-                relIndex = parser.Index();
-            }
-            else {
-                break;
-            }
+    else if (iRelative.BeginsWith(Brn("/"))) {
+        Replace(iBase);
+        iBase.Replace(iScheme);
+        iBase.Append(Brn("://"));
+        iBase.Append(iHost);
+        if (iPort != -1) {
+            iBase.Append(':');
+            Ascii::AppendDec(iBase, iPort);
         }
+        iBase.Append(iRelative);
+        iAbsoluteUri.Replace(iBase);
     }
-    if (relCount > kMaxDirLevels) {
-        THROW(UriError);
-    }
-    iRelative.Replace(iRelative.Split(relIndex, iRelative.Bytes()-relIndex));
+    else {
+        if (iBase.At(iBase.Bytes()-1) != '/') { // insure base path ends with back slash
+            iBase.Append('/');
+        }
 
-    if (relCount > 0) {
-        parser.Set(iBase);
-        TUint baseCount = 0;
-        TUint baseIndex[kMaxDirLevels];
+        Parser parser(iRelative);
+        Brn section;
+        TUint relCount = 0, relIndex = 0;
         while (!parser.Finished()) {
             section.Set(parser.Next('/'));
-            baseIndex[baseCount] = parser.Index();
-            baseCount++;
+            if (section.Bytes() > 0) {
+                if (section.At(0) == '.') {
+                    if (section == Brn("..")) {
+                        relCount++;
+                    }
+                    else if (section.Bytes() != 1) {
+                        THROW(UriError);
+                    }
+                    relIndex = parser.Index();
+                }
+                else {
+                    break;
+                }
+            }
         }
-        if (relCount >= baseCount) {
+        if (relCount > kMaxDirLevels) {
             THROW(UriError);
         }
-        iBase.Replace(iBase.Split(0, baseIndex[(baseCount-1)-relCount]));
+        iRelative.Replace(iRelative.Split(relIndex, iRelative.Bytes()-relIndex));
+
+        if (relCount > 0) {
+            Replace(iBase);
+            parser.Set(iPath);
+            TUint baseCount = 0;
+            TUint baseIndex[kMaxDirLevels];
+            while (!parser.Finished()) {
+                section.Set(parser.Next('/'));
+                baseIndex[baseCount] = parser.Index();
+                baseCount++;
+            }
+            const TUint index = (relCount >= baseCount? 0 : baseCount-1-relCount);
+
+            iAbsoluteUri.Replace(iScheme);
+            iAbsoluteUri.Append(Brn("://"));
+            iAbsoluteUri.Append(iHost);
+            if (iPort != -1) {
+                iAbsoluteUri.Append(':');
+                Ascii::AppendDec(iAbsoluteUri, iPort);
+            }
+            iAbsoluteUri.Append(iPath.Split(0, baseIndex[index]));
+            iAbsoluteUri.Append(iRelative);
+        }
+        else {
+            iAbsoluteUri.Append(iBase);
+            iAbsoluteUri.Append(iRelative);
+        }
     }
-    iAbsoluteUri.Append(iBase);
-    iAbsoluteUri.Append(iRelative);
+
     iBase.Replace(iAbsoluteUri);
     Replace(iBase);
 }
