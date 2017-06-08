@@ -1047,6 +1047,9 @@ void SuiteAscii::Test()
     TEST(Ascii::UintHex(Brn("10")) == 16);
     TEST(Ascii::UintHex(Brn("11")) == 17);
 
+    TEST(Ascii::UintHex(Brn("1234abcd")) == 0x1234abcd); // full width hex uint32
+    TEST_THROWS(Ascii::UintHex(Brn("112345678")), AsciiError); // too long
+    TEST_THROWS(Ascii::UintHex(Brn("invalid")), AsciiError); // non-hex chars
 }   
     
 class SuiteParser : public Suite

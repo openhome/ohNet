@@ -553,11 +553,15 @@ TUint Ascii::UintHex(const Brx& aBuffer)
         THROW(AsciiError);  // empty string
     }
 
+    if (aBuffer.Bytes() > 8) {
+        THROW(AsciiError);  // clearly too long
+    }
+
     TInt val = 0;
     for (TUint i=0; i<trim.Bytes(); i++) {
         TByte c = trim[i];
         if (!Ascii::IsHex(c)) {
-            THROW(ReaderError);
+            THROW(AsciiError);
         }
         val = (val * 16) + Ascii::HexValue(c);
     }
