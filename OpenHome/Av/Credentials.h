@@ -3,6 +3,7 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Exception.h>
+#include <OpenHome/Functor.h>
 #include <OpenHome/Private/Fifo.h>
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Private/Thread.h>
@@ -85,10 +86,21 @@ public:
     virtual void CredentialChanged() = 0;
 };
 
+class IRsaProvider
+{
+public:
+    virtual void* RsaPrivateKey() = 0; // Type is RSA. Ownership not passed.
+    virtual void GetRsaPublicKey(Bwx& aKey) = 0;
+    virtual ~IRsaProvider() {}
+};
+
 class ProviderCredentials;
 class Credential;
 
-class Credentials : public ICredentials, public ICredentialsState, private ICredentialObserver
+class Credentials : public ICredentials
+                  , public ICredentialsState
+                  , private ICredentialObserver
+                  , private IRsaProvider
 {
     static const Brn kKeyRsaPrivate;
     static const Brn kKeyRsaPublic;
@@ -99,6 +111,7 @@ public:
     virtual ~Credentials();
     void Add(ICredentialConsumer* aConsumer);
     void Start();
+    void GetKey(FunctorGeneric<IRsaProvider&> aCb);
     void GetPublicKey(Bwx& aKey); // test use only
 private: // from ICredentials
     void Set(const Brx& aId, const Brx& aUsername) override;
@@ -112,6 +125,9 @@ public: // from ICredentialsState
     void SetState(const Brx& aId, const Brx& aStatus, const Brx& aData) override;
 private: // from ICredentialObserver
     void CredentialChanged() override;
+private: // from IRsaProvider
+    void* RsaPrivateKey() override;
+    void GetRsaPublicKey(Bwx& aKey) override;
 private:
     Credential* Find(const Brx& aId) const;
     void CreateKey(Configuration::IStoreReadWrite& aStore, const Brx& aEntropy, TUint aKeyBits);
@@ -139,6 +155,8 @@ private:
     void* iKey; /* Type is RSA but don't want to include openssl headers.
                    These define lower case macros which can conflict with functions in our code. */
     std::vector<Credential*> iCredentials;
+    Mutex iLockRsaConsumers;
+    std::vector<FunctorGeneric<IRsaProvider&>> iRsaConsumers;
     Timer* iModerationTimer;
     TBool iModerationTimerStarted;
     Bws<2048> iKeyBuf;
