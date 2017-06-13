@@ -1561,6 +1561,7 @@ ILanguageResourceReader& ConfigAppBase::CreateLanguageResourceHandler(const Brx&
     AutoMutex a(iLock);
     for (TUint i=0; i<iLanguageResourceHandlers.size(); i++) {
         if (!iLanguageResourceHandlers[i]->Allocated()) {
+            
             for (TUint j=0; j<languages.size(); j++) {
                 Bws<Uri::kMaxUriBytes> resource(languages[j]);
                 resource.Append("/");
@@ -1574,7 +1575,16 @@ ILanguageResourceReader& ConfigAppBase::CreateLanguageResourceHandler(const Brx&
                     LOG(kHttp, "ConfigAppBase::CreateLanguageResourceHandler no mapping found for: %.*s\n", PBUF(resource));
                 }
             }
-            ASSERTS();  // No mapping found; should have been able to find kDefaultLanguage
+
+            // No mapping found; should have been able to find kDefaultLanguage.
+            // Useless to just assert here; print out all language resources
+            // searched for.
+            Log::Print("ConfigAppBase::CreateLanguageResourceHandler aResourceUriTail: %.*s\n", PBUF(aResourceUriTail));
+            Log::Print("Languages:\n");
+            for (TUint j=0; j<languages.size(); j++) {
+                Log::Print("\t%.*s\n", PBUF(languages[j]));
+            }
+            ASSERTS();
         }
     }
     ASSERTS();  // No free handler available. // FIXME - throw exception instead?
