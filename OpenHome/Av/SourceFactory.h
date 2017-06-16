@@ -31,18 +31,21 @@ public:
                                 Optional<IOhmTimestamper> aTxTimestamper,
                                 Optional<IOhmTimestamper> aRxTimestamper,
                                 Optional<IOhmMsgProcessor> aOhmMsgObserver);
+    static ISource* NewScd(IMediaPlayer& aMediaPlayer);
 
     static const TChar* kSourceTypePlaylist;
     static const TChar* kSourceTypeRadio;
     static const TChar* kSourceTypeUpnpAv;
     static const TChar* kSourceTypeRaop;
     static const TChar* kSourceTypeReceiver;
+    static const TChar* kSourceTypeScd;
 
     static const Brn kSourceNamePlaylist;
     static const Brn kSourceNameRadio;
     static const Brn kSourceNameUpnpAv;
     static const Brn kSourceNameRaop;
     static const Brn kSourceNameReceiver;
+    static const Brn kSourceNameScd;
 };
 
 } // namespace Av

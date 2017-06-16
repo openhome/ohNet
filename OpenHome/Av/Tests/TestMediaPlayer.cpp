@@ -418,6 +418,8 @@ void TestMediaPlayer::RegisterPlugins(Environment& aEnv)
                                                  Optional<IOhmTimestamper>(iTxTimestamper),
                                                  Optional<IOhmTimestamper>(iRxTimestamper),
                                                  Optional<IOhmMsgProcessor>()));
+
+    iMediaPlayer->Add(SourceFactory::NewScd(*iMediaPlayer));
 }
 
 void TestMediaPlayer::InitialiseSubsystems()

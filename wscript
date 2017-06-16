@@ -386,6 +386,19 @@ def build(bld):
     # Library
     bld.stlib(
             source=[
+                'OpenHome/Av/Scd/ScdMsg.cpp',
+                'OpenHome/Av/Scd/Receiver/ProtocolScd.cpp',
+                'OpenHome/Av/Scd/Receiver/SupplyScd.cpp',
+                'OpenHome/Av/Scd/Receiver/OhMetadata.cpp',
+                'OpenHome/Av/Scd/Receiver/UriProviderScd.cpp',
+                'OpenHome/Av/Scd/Receiver/SourceScd.cpp'
+            ],
+            use=['OHNET', 'ohMediaPlayer'],
+            target='SourceScd')
+
+    # Library
+    bld.stlib(
+            source=[
                 'OpenHome/Av/Raop/Raop.cpp',
                 'OpenHome/Av/Raop/SourceRaop.cpp',
                 'OpenHome/Av/Raop/ProtocolRaop.cpp',
@@ -936,7 +949,7 @@ def build(bld):
             install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestMediaPlayerMain.cpp',
-            use=['OHNET', 'OPENSSL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist', 'SourceRadio', 'SourceSongcast', 'SourceRaop', 'SourceUpnpAv', 'WebAppFramework', 'ConfigUi'],
+            use=['OHNET', 'OPENSSL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist', 'SourceRadio', 'SourceSongcast', 'SourceScd', 'SourceRaop', 'SourceUpnpAv', 'WebAppFramework', 'ConfigUi'],
             target='TestMediaPlayer',
             install_path='install/bin')
     bld.program(
@@ -1016,7 +1029,7 @@ def build(bld):
             install_path=None)
     bld.program(
             source=['OpenHome/Web/ConfigUi/Tests/TestConfigUiMain.cpp'],
-            use=['OHNET', 'PLATFORM', 'OPENSSL', 'ConfigUiTestUtils', 'WebAppFrameworkTestUtils', 'ConfigUi', 'WebAppFramework', 'ohMediaPlayerTestUtils', 'SourcePlaylist', 'SourceRadio', 'SourceSongcast', 'SourceRaop', 'SourceUpnpAv', 'ohMediaPlayer'],
+            use=['OHNET', 'PLATFORM', 'OPENSSL', 'ConfigUiTestUtils', 'WebAppFrameworkTestUtils', 'ConfigUi', 'WebAppFramework', 'ohMediaPlayerTestUtils', 'SourcePlaylist', 'SourceRadio', 'SourceSongcast', 'SourceScd', 'SourceRaop', 'SourceUpnpAv', 'ohMediaPlayer'],
             target='TestConfigUi',
             install_path=None)
     bld.program(
@@ -1030,24 +1043,23 @@ def build(bld):
             target='TestVolumeManager',
             install_path=None)
 
-    #bld.stlib(
-    #        source=[
-    #            'OpenHome/Av/Scd/Scd.cpp',
-    #            'OpenHome/Av/Scd/ScdMsg.cpp',
-    #            'OpenHome/Av/Scd/ScdSupply.cpp',
-    #            'OpenHome/Av/Scd/ScdServer.cpp'
-    #        ],
-    #        use=['OHNET', 'ohMediaPlayer'],
-    #        target='ScdSender')
-    #bld.program(
-    #        source=[
-    #            'OpenHome/Av/Scd/WavSender.cpp',
-    #            'OpenHome/Av/Scd/DirScanner.cpp',
-    #            'OpenHome/Av/Scd/WavSenderMain.cpp'
-    #            ],
-    #        use=['OHNET', 'ScdSender', 'ohMediaPlayer'],
-    #        target='WavSender',
-    #        install_path=None)
+    bld.stlib(
+            source=[
+                'OpenHome/Av/Scd/ScdMsg.cpp',
+                'OpenHome/Av/Scd/Sender/ScdSupply.cpp',
+                'OpenHome/Av/Scd/Sender/ScdServer.cpp'
+            ],
+            use=['OHNET', 'ohMediaPlayer'],
+            target='ScdSender')
+    bld.program(
+            source=[
+                'OpenHome/Av/Scd/Sender/Demo/WavSender.cpp',
+                'OpenHome/Av/Scd/Sender/Demo/DirScanner.cpp',
+                'OpenHome/Av/Scd/Sender/Demo/WavSenderMain.cpp'
+                ],
+            use=['OHNET', 'ScdSender', 'ohMediaPlayer'],
+            target='WavSender',
+            install_path=None)
 
 # Bundles
 def bundle(ctx):
