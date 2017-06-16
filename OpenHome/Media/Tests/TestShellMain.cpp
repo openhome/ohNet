@@ -60,6 +60,7 @@ ENV_TEST_DECLARATION(TestSsl);
 ENV_TEST_DECLARATION(TestWebAppFramework);
 CP_DV_TEST_DECLARATION(TestCredentials);
 CP_DV_TEST_DECLARATION(TestUpnpErrors);
+CP_DV_TEST_DECLARATION(TestDvOdp);
 
 
 extern void TestCodec(OpenHome::Environment& aEnv, CreateTestCodecPipelineFunc aFunc, GetTestFiles aFiles, const std::vector<Brn>& aArgs);
@@ -118,6 +119,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     shellTests.push_back(ShellTest("TestCodec", ShellTestCodec));
     shellTests.push_back(ShellTest("TestUdpServer", ShellTestUdpServer));
     shellTests.push_back(ShellTest("TestUpnpErrors", ShellTestUpnpErrors));
+    shellTests.push_back(ShellTest("TestDvOdp", ShellTestDvOdp));
     shellTests.push_back(ShellTest("TestJson", ShellTestJson));
     //shellTests.push_back(ShellTest("TestSpotifyReporter", ShellTestSpotifyReporter));
     shellTests.push_back(ShellTest("TestCredentials", ShellTestCredentials));

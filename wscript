@@ -324,6 +324,18 @@ def build(bld):
             use=['OHNET', 'OPENSSL', 'ohPipeline'],
             target='ohMediaPlayer')
 
+    bld.stlib(
+            source=[
+                'OpenHome/Net/Odp/Odp.cpp',
+                'OpenHome/Net/Odp/DviOdp.cpp',
+                'OpenHome/Net/Odp/DviProtocolOdp.cpp',
+                'OpenHome/Net/Odp/DviServerOdp.cpp',
+                'OpenHome/Net/Odp/CpiOdp.cpp',
+            ],
+            use=['OHNET'],
+            target='Odp')
+
+
     # Library
     bld.stlib(
             source=[
@@ -713,13 +725,15 @@ def build(bld):
                 'OpenHome/Tests/TestJson.cpp',
                 'OpenHome/Av/Tests/TestRaop.cpp',
                 'OpenHome/Av/Tests/TestVolumeManager.cpp',
+                'OpenHome/Net/Odp/Tests/CpiDeviceOdp.cpp',
+                'OpenHome/Net/Odp/Tests/TestDvOdp.cpp',
             ],
-            use=['ConfigUi', 'WebAppFramework', 'ohMediaPlayer', 'WebAppFramework', 'CodecFlac', 'CodecWav', 'CodecPcm', 'CodecAlac', 'CodecAlacApple', 'CodecAifc', 'CodecAiff', 'CodecAac', 'CodecAdts', 'CodecMp3', 'CodecVorbis', 'TestFramework', 'OHNET', 'OPENSSL'],
+            use=['ConfigUi', 'WebAppFramework', 'ohMediaPlayer', 'WebAppFramework', 'CodecFlac', 'CodecWav', 'CodecPcm', 'CodecAlac', 'CodecAlacApple', 'CodecAifc', 'CodecAiff', 'CodecAac', 'CodecAdts', 'CodecMp3', 'CodecVorbis', 'Odp', 'TestFramework', 'OHNET', 'OPENSSL'],
             target='ohMediaPlayerTestUtils')
 
     bld.program(
             source='OpenHome/Media/Tests/TestShellMain.cpp',
-            use=['OHNET', 'OPENSSL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'WebAppFrameworkTestUtils', 'SourcePlaylist', 'SourceRadio', 'SourceRaop', 'SourceUpnpAv'],
+            use=['OHNET', 'OPENSSL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'WebAppFrameworkTestUtils', 'SourcePlaylist', 'SourceRadio', 'SourceRaop', 'SourceUpnpAv', 'Odp'],
             target='TestShell',
             install_path=None)
     bld.program(
@@ -1042,6 +1056,11 @@ def build(bld):
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestVolumeManager',
             install_path=None)
+    bld.program(
+            source='OpenHome/Net/Odp/Tests/TestDvOdpMain.cpp',
+            use=['OHNET', 'Odp', 'ohMediaPlayerTestUtils'],
+            target='TestDvOdp',
+            install_path=None)
 
     bld.stlib(
             source=[
@@ -1072,6 +1091,7 @@ def bundle(ctx):
                  'SourceRadio',
                  'SourceSongcast',
                  'SourceRaop',
+                 'SourceScd',
                  'SourceUpnpAv',
                  'CodecAac',
                  'CodecAacBase',
@@ -1089,7 +1109,8 @@ def bundle(ctx):
                  'libOgg',
                  'WebAppFramework',
                  'ConfigUi',
-                 'ConfigUiTestUtils'
+                 'ConfigUiTestUtils',
+                 'Odp'
                 ]
     lib_files = gather_files(ctx, '{bld}', (ctx.env.cxxstlib_PATTERN % x for x in lib_names))
     res_files = gather_files(ctx, '{top}/OpenHome/Web/ConfigUi/res', ['**/*'])
