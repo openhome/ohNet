@@ -53,12 +53,13 @@ const Brn ProviderConfig::kErrorDescInvalidSelection("Expected value selected fr
 const Brn ProviderConfig::kErrorDescValueTooLong("Value too long");
 
 ProviderConfig::ProviderConfig(DvDevice& aDevice, Configuration::IConfigManager& aConfigManager)
-    : DvProviderAvOpenhomeOrgConfig1(aDevice)
+    : DvProviderAvOpenhomeOrgConfig2(aDevice)
     , iConfigManager(aConfigManager)
 {
     EnableActionGetKeys();
     EnableActionSetValue();
     EnableActionGetValue();
+    EnableActionHasKey();
 }
 
 void ProviderConfig::GetKeys(IDvInvocation& aInvocation, IDvInvocationResponseString& aKeyList)
@@ -105,5 +106,12 @@ void ProviderConfig::GetValue(IDvInvocation& aInvocation, const Brx& aKey, IDvIn
     ISerialisable& ser = iConfigManager.Get(aKey);
     aInvocation.StartResponse();
     ser.Serialise(aValue);
+    aInvocation.EndResponse();
+}
+
+void ProviderConfig::HasKey(Net::IDvInvocation& aInvocation, const Brx& aKey, Net::IDvInvocationResponseBool& aValue) 
+{
+    aInvocation.StartResponse();
+    aValue.Write(iConfigManager.Has(aKey));
     aInvocation.EndResponse();
 }

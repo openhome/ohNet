@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Generated/DvAvOpenhomeOrgConfig1.h>
+#include <Generated/DvAvOpenhomeOrgConfig2.h>
 #include <OpenHome/Av/ProviderFactory.h>
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/Json.h>
@@ -19,7 +19,7 @@ private:
     IWriter& iWriter;
 };
 
-class ProviderConfig : public OpenHome::Net::DvProviderAvOpenhomeOrgConfig1, public Av::IProvider
+class ProviderConfig : public OpenHome::Net::DvProviderAvOpenhomeOrgConfig2, public Av::IProvider
 {
 public:
     ProviderConfig(Net::DvDevice& aDevice, Configuration::IConfigManager& aConfigManager);
@@ -27,6 +27,7 @@ private: // from DvProviderAvOpenhomeOrgConfiguration1
     void GetKeys(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aKeyList) override;
     void SetValue(Net::IDvInvocation& aInvocation, const Brx& aKey, const Brx& aValue) override;
     void GetValue(Net::IDvInvocation& aInvocation, const Brx& aKey, Net::IDvInvocationResponseString& aValue) override;
+    void HasKey(Net::IDvInvocation& aInvocation, const Brx& aKey, Net::IDvInvocationResponseBool& aValue) override;
 private:
     static const TUint kErrorCodeInvalidKey = 800;
     static const TUint kErrorCodeNotANumber = 801;
