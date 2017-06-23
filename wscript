@@ -1070,15 +1070,15 @@ def build(bld):
             ],
             use=['OHNET', 'ohMediaPlayer'],
             target='ScdSender')
-    bld.program(
-            source=[
-                'OpenHome/Av/Scd/Sender/Demo/WavSender.cpp',
-                'OpenHome/Av/Scd/Sender/Demo/DirScanner.cpp',
-                'OpenHome/Av/Scd/Sender/Demo/WavSenderMain.cpp'
-                ],
-            use=['OHNET', 'ScdSender', 'ohMediaPlayer'],
-            target='WavSender',
-            install_path=None)
+    #bld.program(
+    #        source=[
+    #            'OpenHome/Av/Scd/Sender/Demo/WavSender.cpp',
+    #            'OpenHome/Av/Scd/Sender/Demo/DirScanner.cpp',
+    #            'OpenHome/Av/Scd/Sender/Demo/WavSenderMain.cpp'
+    #            ],
+    #        use=['OHNET', 'ScdSender', 'ohMediaPlayer'],
+    #        target='WavSender',
+    #        install_path=None)
 
 # Bundles
 def bundle(ctx):
