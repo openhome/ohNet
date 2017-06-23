@@ -114,15 +114,20 @@ void Uri::Replace(const Brx& aBaseUri, const Brx& aRelativeUri)
             }
             const TUint index = (relCount >= baseCount? 0 : baseCount-1-relCount);
 
-            iAbsoluteUri.Replace(iScheme);
-            iAbsoluteUri.Append(Brn("://"));
-            iAbsoluteUri.Append(iHost);
+            // Compile full uri inside iBase
+
+            iBase.Replace(iScheme);
+            iBase.Append(Brn("://"));
+            iBase.Append(iHost);
             if (iPort != -1) {
-                iAbsoluteUri.Append(':');
-                Ascii::AppendDec(iAbsoluteUri, iPort);
+                iBase.Append(':');
+                Ascii::AppendDec(iBase, iPort);
             }
-            iAbsoluteUri.Append(iPath.Split(0, baseIndex[index]));
-            iAbsoluteUri.Append(iRelative);
+            iBase.Append(iPath.Split(0, baseIndex[index]));
+            iBase.Append(iRelative);
+
+            // Copy iBase into iAbsoluteUri
+            iAbsoluteUri.Replace(iBase);
         }
         else {
             iAbsoluteUri.Append(iBase);
