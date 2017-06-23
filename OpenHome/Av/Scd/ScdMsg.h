@@ -103,7 +103,7 @@ public:
     virtual void Externalise(IWriter& aWriter) const = 0;
 protected:
     ScdMsg(IScdMsgAllocator& aAllocator);
-    ~ScdMsg();
+    virtual ~ScdMsg();
     void Initialise();
     void ReadString(IReader& aReader, TUint aLenBytes, Bwx& aBuf);
 private:
