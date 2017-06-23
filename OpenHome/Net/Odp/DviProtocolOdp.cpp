@@ -18,8 +18,7 @@ IDvProtocol* DviProtocolFactoryOdp::CreateProtocol(DviDevice& aDevice)
 
 const Brn DviProtocolOdp::kProtocolName("Odp");
 
-DviProtocolOdp::DviProtocolOdp(DviDevice& aDevice)
-    : iDevice(aDevice)
+DviProtocolOdp::DviProtocolOdp(DviDevice& /*aDevice*/)
 {
 }
 

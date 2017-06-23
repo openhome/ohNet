@@ -20,8 +20,7 @@ using namespace OpenHome::Net;
 const Brn DviSessionOdp::kUserAgentDefault("Odp");
 
 DviSessionOdp::DviSessionOdp(DvStack& aDvStack, TIpAddress aAdapter)
-    : iDvStack(aDvStack)
-    , iAdapter(aAdapter)
+    : iAdapter(aAdapter)
     , iWriteLock("Odp1")
     , iShutdownSem("Odp2", 1)
 {

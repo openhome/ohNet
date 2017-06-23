@@ -33,7 +33,6 @@ private: // from IDvProtocol
     void SetCustomData(const TChar* aTag, void* aData) override;
     void GetResourceManagerUri(const NetworkAdapter& aAdapter, Brh& aUri) override;
 private:
-    DviDevice& iDevice;
     AttributeMap iAttributeMap;
 };
 

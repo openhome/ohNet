@@ -17,7 +17,7 @@ public:
     DviSessionOdp(DvStack& aDvStack, TIpAddress aAdapter);
     ~DviSessionOdp();
 private: // from SocketTcpSession
-    void Run();
+    void Run() override;
 private: // from IOdpSession
     IWriter& WriteLock() override;
     void WriteUnlock() override;
@@ -27,7 +27,6 @@ private: // from IOdpSession
 private:
     static const TUint kMaxReadBytes = 12 * 1024;
     static const TUint kWriteBufferBytes = 4000;
-    DvStack& iDvStack;
     TIpAddress iAdapter;
     Mutex iWriteLock;
     Semaphore iShutdownSem;

@@ -23,7 +23,7 @@ public:
     ~ProtocolScd();
 private: // from Protocol
     void Initialise(Media::MsgFactory& aMsgFactory, Media::IPipelineElementDownstream& aDownstream) override;
-    void Interrupt(TBool aInterrupt);
+    void Interrupt(TBool aInterrupt) override;
     Media::ProtocolStreamResult Stream(const Brx& aUri) override;
     Media::ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes) override;
 private: // from Media::IStreamHandler
