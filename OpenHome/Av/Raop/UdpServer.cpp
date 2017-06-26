@@ -334,10 +334,13 @@ void SocketUdpServer::ServerThread()
             AutoMutex _(iReadyLock);
             iFifoReady.ReadInterrupt(false);
             // Move all messages from ready queue back to waiting queue
-            while (iFifoReady.SlotsUsed() > 0) {
-                MsgUdp* msg = iFifoReady.Read();
-                iFifoWaiting.Write(msg);
+            try {
+                while (iFifoReady.SlotsUsed() > 0) {
+                    MsgUdp* msg = iFifoReady.Read();
+                    iFifoWaiting.Write(msg);
+                }
             }
+            catch (FifoReadError&) {}
             iFifoReady.ReadInterrupt(false);
         }
 
