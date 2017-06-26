@@ -36,6 +36,7 @@ private:
     Environment& iEnv;
     Mutex iLock;
     NtpClient iNtpClient;
+    NtpTimestamp iNtpTimestamp;
     Timer* iTimer;
     TBool iTimestampValid;
     TBool iTimestampRenew;

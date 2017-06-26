@@ -44,13 +44,14 @@ TUint UnixTimestamp::Now()
     if (!iTimestampValid || iTimestampRenew) {
         NtpTimestamp networkTime;
         TUint networkDelayMs;
-        if (!iNtpClient.TryGetNetworkTime(networkTime, networkDelayMs)) {
-            if (!iTimestampValid) {
-                THROW(UnixTimestampUnavailable);
-            }
+        if (iNtpClient.TryGetNetworkTime(networkTime, networkDelayMs)) {
+            iNtpTimestamp = networkTime;
         }
-        // round up network delay to make up for rounding down fractional component of networkTime
-        iStartSeconds = networkTime.Seconds() - kSecsBetweenNtpAndUnixEpoch + ((networkDelayMs + 500) / 1000);
+        else if (!iTimestampValid) {
+            THROW(UnixTimestampUnavailable);
+        }
+        // round up network delay to make up for rounding down fractional component of iNtpTimestamp
+        iStartSeconds = iNtpTimestamp.Seconds() - kSecsBetweenNtpAndUnixEpoch + ((networkDelayMs + 500) / 1000);
         iStartMs = Time::Now(iEnv);
         // recalculate when local millisecond timer wraps
         const TUint timeTillWrap = std::max(static_cast<TUint>(UINT_MAX)-iStartMs, static_cast<TUint>(1u));
