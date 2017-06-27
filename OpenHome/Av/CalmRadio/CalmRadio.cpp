@@ -39,7 +39,7 @@ CalmRadio::CalmRadio(Environment& aEnv, ICredentialsState& aCredentialsState)
     iReaderResponse.AddHeader(iHeaderContentLength);
     iReaderResponse.AddHeader(iHeaderTransferEncoding);
 
-    iSocket.LogVerbose(true); // FIXME - debug helper - DO NOT COMMIT
+    //iSocket.LogVerbose(true);
 }
 
 CalmRadio::~CalmRadio()
