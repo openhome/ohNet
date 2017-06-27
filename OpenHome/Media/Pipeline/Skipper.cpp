@@ -147,7 +147,7 @@ Msg* Skipper::ProcessMsg(MsgHalt* aMsg)
         /* A Halt signals a potential discontinuity in audio.
           Appropriate ramps must already have been applied by the creator of this msg
           ...so we can terminate our ramp */
-        StartFlushing();
+        StartFlushing(false);
     }
     if (iTargetHaltId != MsgHalt::kIdInvalid && aMsg->Id() == iTargetHaltId) {
         LOG(kPipeline, "Skipper - completed flush (pulled haltId %u)\n", iTargetHaltId);
@@ -309,10 +309,12 @@ TBool Skipper::TryRemoveCurrentStream(TBool aRampDown)
     return (state != iState);
 }
 
-void Skipper::StartFlushing()
+void Skipper::StartFlushing(TBool aGenerateHalt)
 {
-    iQueue.Enqueue(iMsgFactory.CreateMsgHalt()); /* inform downstream parties (StarvationMonitor)
-                                                    that any subsequent break in audio is expected */
+    if (aGenerateHalt) {
+        iQueue.Enqueue(iMsgFactory.CreateMsgHalt()); /* inform downstream parties (StarvationMonitor)
+                                                        that any subsequent break in audio is expected */
+    }
     iState = eFlushing;
     iTargetFlushId = (iStreamHandler==nullptr? MsgFlush::kIdInvalid : iStreamHandler->TryStop(iStreamId));
     if (iTargetHaltId != MsgHalt::kIdNone && iTargetHaltId != MsgHalt::kIdInvalid) {

@@ -57,7 +57,7 @@ private: // from IStreamHandler
 private:
     inline TBool RemoveAllPending() const;
     TBool TryRemoveCurrentStream(TBool aRampDown);
-    void StartFlushing();
+    void StartFlushing(TBool aGenerateHalt = true);
     Msg* ProcessFlushable(Msg* aMsg);
     void NewStream();
 private:
