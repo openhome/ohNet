@@ -24,7 +24,7 @@ NtpClient::NtpClient(Environment& aEnv)
     , iUdpReader(iSocket)
     , iReadBuffer(iUdpReader)
     , iNextServerIndex(0)
-    , iLogEnable(false)
+    , iLogEnable(true) // temporarily enabled to help diagnose http://forums.linn.co.uk/bb/showthread.php?tid=36476&pid=440782#pid440782
 {
     iWriteBuffer = new Sws<kFrameBytes>(*this);
     iReadTimeout = new Timer(aEnv, MakeFunctor(*this, &NtpClient::ReadTimeout), "NtpClient");
