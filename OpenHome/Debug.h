@@ -75,6 +75,7 @@ private:
     #define LOGT(x,...)
     #define LOG2(x,y,...)
     #define LOG2F(x,y,...)
+    #define LOG3(x,y,z,...)
     #define LOG_HEX(x,aBrx)
     #define LOGF_HEX(x,aBrx)
     #define LOGFUNC(x)
