@@ -196,8 +196,8 @@ ifeq ($(platform), Core-ppc32)
     openhome_system = Core
     openhome_architecture = ppc32
     endian = BIG
-    platform_cflags = -mcpu=403
-    platform_linkflags = -mcpu=403 ${CROSS_LINKFLAGS}
+    platform_cflags = -mcpu=405
+    platform_linkflags = -mcpu=405 ${CROSS_LINKFLAGS}
     linkopts_ohNet =
     osdir = Core
     osbuilddir = Core-ppc32

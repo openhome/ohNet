@@ -333,7 +333,7 @@ void ReaderHttpRequest::Read(TUint aTimeoutMs)
         if (aTimeoutMs > 0) {
             iTimer->Cancel();
         }
-//        LOG(kHttp, "HTTP Read Request    %.%s\n", PBUF(line));
+//        LOG(kHttp, "HTTP Read Request    %.*s\n", PBUF(line));
         TUint bytes = line.Bytes();
         if (!bytes) {
             if (count == 0) {

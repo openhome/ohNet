@@ -270,7 +270,7 @@ class DviServerUpnp : public DviServer, private IPathMapperUpnp, private IRedire
 public:
     DviServerUpnp(DvStack& aDvStack, TUint aPort = 0);
     ~DviServerUpnp();
-    void SetPathMapper(IPathMapperUpnp& aPathMapper);
+    void SetPathMapper(IPathMapperUpnp* aPathMapper);
     void Redirect(const Brx& aUriRequested, const Brx& aUriRedirectedTo);
 protected: // from DviServer
     SocketTcpServer* CreateServer(const NetworkAdapter& aNif);
