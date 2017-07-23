@@ -314,100 +314,106 @@ TBool NetworkAdapterList::CompareSubnets(NetworkAdapter* aI, NetworkAdapter* aJ)
 void NetworkAdapterList::HandleInterfaceListChanged()
 {
     static const char* kRemovedAdapterCookie = "RemovedAdapter";
-    iListLock.Wait();
-    std::vector<NetworkAdapter*>* list = Os::NetworkListAdapters(iEnv, iEnv.InitParams()->LoopbackNetworkAdapter(), "NetworkAdapterList");
-    TIpAddress oldAddress = (iCurrent==NULL ? 0 : iCurrent->Address());
-    DestroySubnetList(iNetworkAdapters);
-    iNetworkAdapters = list;
-
-    // update the 'current' adapter and inform observers if it has changed
-    UpdateCurrentAdapter();
-    TIpAddress newAddress = (iCurrent==NULL? 0 : iCurrent->Address());
-
-    // update the subnet list, noting if it has changed
-    std::vector<NetworkAdapter*>* subnets = CreateSubnetListLocked();
     TBool subnetsChanged = false;
-    if (subnets->size() != iSubnets->size()) {
-        subnetsChanged = true;
-    }
-    else {
-        for (TUint i=0; i<iSubnets->size(); i++) {
-            if ((*iSubnets)[i]->Address() != (*subnets)[i]->Address()) {
-                subnetsChanged = true;
-                break;
-            }
-        }
-    }
+    TIpAddress newAddress = 0;
+    TIpAddress oldAddress = 0;
+    std::vector<NetworkAdapter *> added;
+    std::vector<NetworkAdapter *> removed;
+    std::vector<NetworkAdapter *> adapterChanged;
+    {
+        AutoMutex a(iListLock);
+        std::vector<NetworkAdapter *> *list = Os::NetworkListAdapters(iEnv,
+                                                                      iEnv.InitParams()->LoopbackNetworkAdapter(),
+                                                                      "NetworkAdapterList");
+        oldAddress = (iCurrent == NULL ? 0 : iCurrent->Address());
+        DestroySubnetList(iNetworkAdapters);
+        iNetworkAdapters = list;
 
-    // determine adds and/or removes from list
-    std::vector<NetworkAdapter*> oldSubnetsObj(iSubnets->begin(), iSubnets->end());
-    std::vector<NetworkAdapter*> newSubnetsObj(subnets->begin(), subnets->end());
-    std::vector<NetworkAdapter*>* oldSubnets = &oldSubnetsObj;
-    std::vector<NetworkAdapter*>* newSubnets = &newSubnetsObj;
-    std::vector<NetworkAdapter*> added;
-    std::vector<NetworkAdapter*> removed;
-    std::vector<NetworkAdapter*> adapterChanged;
+        // update the 'current' adapter and inform observers if it has changed
+        UpdateCurrentAdapter();
+        newAddress = (iCurrent == NULL ? 0 : iCurrent->Address());
 
-    std::sort(oldSubnets->begin(), oldSubnets->end(), CompareSubnets);
-    std::sort(newSubnets->begin(), newSubnets->end(), CompareSubnets);
+        // update the subnet list, noting if it has changed
+        std::vector<NetworkAdapter *> *subnets = CreateSubnetListLocked();
 
-    if (oldSubnets->size() == 0 && newSubnets->size() > 0) {
-        for (TUint i=0; i < newSubnets->size(); i++) {
-            added.push_back((*newSubnets)[i]);
-        }
-    }
-    else if (oldSubnets->size() > 0 && newSubnets->size() == 0) {
-        for (TUint i=0; i < oldSubnets->size(); i++) {
-            NetworkAdapter* removedAdapter = (*oldSubnets)[i];
-            removed.push_back(removedAdapter);
-            removedAdapter->AddRef(kRemovedAdapterCookie); // DestroySubnetList(iSubnets) may destroy the last ref to this before QueueAdapterRemoved later claims a new ref
-        }
-    }
-    else {
-        TUint j = 0;
-        for (TUint i=0; i < newSubnets->size(); i++) {
-            while (j < oldSubnets->size() && (*oldSubnets)[j]->Subnet() < (*newSubnets)[i]->Subnet()) {
-                NetworkAdapter* removedAdapter = (*oldSubnets)[j];
-                removed.push_back(removedAdapter);
-                removedAdapter->AddRef(kRemovedAdapterCookie);
-                j++;
-            }
-            if (j < oldSubnets->size() && (*oldSubnets)[j]->Subnet() == (*newSubnets)[i]->Subnet()) {
-                if ((*oldSubnets)[j]->Address() != (*newSubnets)[i]->Address()) {
-                    adapterChanged.push_back((*newSubnets)[i]);
+        if (subnets->size() != iSubnets->size()) {
+            subnetsChanged = true;
+        } else {
+            for (TUint i = 0; i < iSubnets->size(); i++) {
+                if ((*iSubnets)[i]->Address() != (*subnets)[i]->Address()) {
+                    subnetsChanged = true;
+                    break;
                 }
-                j++;
             }
         }
-        if (j < oldSubnets->size()) {
-            while (j < oldSubnets->size()) {
-                NetworkAdapter* removedAdapter = (*oldSubnets)[j];
-                removed.push_back(removedAdapter);
-                removedAdapter->AddRef(kRemovedAdapterCookie);
-                j++;
-            }
-        }
-        j = 0;
-        for (TUint i=0; i < oldSubnets->size(); i++) {
-            while (j < newSubnets->size() && (*newSubnets)[j]->Subnet() < (*oldSubnets)[i]->Subnet()) {
-                added.push_back((*newSubnets)[j]);
-                j++;
-            }
-            if (j < newSubnets->size() && (*newSubnets)[j]->Subnet() == (*oldSubnets)[i]->Subnet()) {
-                j++;
-            }
-        }
-        if (j < newSubnets->size()) {
-            while (j < newSubnets->size()) {
-                added.push_back((*newSubnets)[j]);
-                j++;
-            }
-        }
-    }
+        std::vector<NetworkAdapter *> oldSubnetsObj(iSubnets->begin(), iSubnets->end());
+        std::vector<NetworkAdapter *> newSubnetsObj(subnets->begin(), subnets->end());
+        std::vector<NetworkAdapter *> *oldSubnets = &oldSubnetsObj;
+        std::vector<NetworkAdapter *> *newSubnets = &newSubnetsObj;
 
-    DestroySubnetList(iSubnets);
-    iSubnets = subnets;
-    iListLock.Signal();
+
+        std::sort(oldSubnets->begin(), oldSubnets->end(), CompareSubnets);
+        std::sort(newSubnets->begin(), newSubnets->end(), CompareSubnets);
+
+        if (oldSubnets->size() == 0 && newSubnets->size() > 0) {
+            for (TUint i = 0; i < newSubnets->size(); i++) {
+                added.push_back((*newSubnets)[i]);
+            }
+        } else if (oldSubnets->size() > 0 && newSubnets->size() == 0) {
+            for (TUint i = 0; i < oldSubnets->size(); i++) {
+                NetworkAdapter *removedAdapter = (*oldSubnets)[i];
+                removed.push_back(removedAdapter);
+                removedAdapter->AddRef(
+                        kRemovedAdapterCookie); // DestroySubnetList(iSubnets) may destroy the last ref to this before QueueAdapterRemoved later claims a new ref
+            }
+        } else {
+            TUint j = 0;
+            for (TUint i = 0; i < newSubnets->size(); i++) {
+                while (j < oldSubnets->size() &&
+                       (*oldSubnets)[j]->Subnet() < (*newSubnets)[i]->Subnet()) {
+                    NetworkAdapter *removedAdapter = (*oldSubnets)[j];
+                    removed.push_back(removedAdapter);
+                    removedAdapter->AddRef(kRemovedAdapterCookie);
+                    j++;
+                }
+                if (j < oldSubnets->size() &&
+                    (*oldSubnets)[j]->Subnet() == (*newSubnets)[i]->Subnet()) {
+                    if ((*oldSubnets)[j]->Address() != (*newSubnets)[i]->Address()) {
+                        adapterChanged.push_back((*newSubnets)[i]);
+                    }
+                    j++;
+                }
+            }
+            if (j < oldSubnets->size()) {
+                while (j < oldSubnets->size()) {
+                    NetworkAdapter *removedAdapter = (*oldSubnets)[j];
+                    removed.push_back(removedAdapter);
+                    removedAdapter->AddRef(kRemovedAdapterCookie);
+                    j++;
+                }
+            }
+            j = 0;
+            for (TUint i = 0; i < oldSubnets->size(); i++) {
+                while (j < newSubnets->size() &&
+                       (*newSubnets)[j]->Subnet() < (*oldSubnets)[i]->Subnet()) {
+                    added.push_back((*newSubnets)[j]);
+                    j++;
+                }
+                if (j < newSubnets->size() &&
+                    (*newSubnets)[j]->Subnet() == (*oldSubnets)[i]->Subnet()) {
+                    j++;
+                }
+            }
+            if (j < newSubnets->size()) {
+                while (j < newSubnets->size()) {
+                    added.push_back((*newSubnets)[j]);
+                    j++;
+                }
+            }
+        }
+        DestroySubnetList(iSubnets);
+        iSubnets = subnets;
+    }
 
     if (subnetsChanged) {
         iNotifierThread->QueueSubnetsChanged();
