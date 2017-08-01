@@ -31,11 +31,7 @@ private:
          } \
         }
 
-    #define LOG(x,...) \
-        {if(OpenHome::Debug::TestLevel(OpenHome::Debug::x)) { \
-            OpenHome::Log::Print(__VA_ARGS__); \
-         } \
-        }
+    #define LOG(x,...) {LOG_INFO(x, __VA_ARGS__)}
 
     #ifdef _MSC_VER
         #define LOGFUNC(x) \
