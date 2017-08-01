@@ -188,7 +188,7 @@ void NetworkAdapterList::TempFailureRetry(Functor& aCallback)
             return;
         }
         catch (NetworkError&) {
-            LOG2(kNetwork, kError, "TempFailureRetry: error handling adapter change, try again in %ums\n", kDelaysMs[i]);
+            LOG_ERROR(kNetwork, "TempFailureRetry: error handling adapter change, try again in %ums\n", kDelaysMs[i]);
             Thread::Sleep(kDelaysMs[i]);
         }
     }
@@ -302,7 +302,7 @@ void NetworkAdapterList::UpdateCurrentAdapter()
         }
     }
     if (iCurrent == NULL) {
-        LOG(kTrace, "Subnet changed: none active\n");
+        LOG_TRACE(kAdapterChange, "Subnet changed: none active\n");
     }
 }
 
@@ -450,7 +450,7 @@ void NetworkAdapterList::RunCallbacks(const VectorListener& aCallbacks)
             return;
         }
         catch (NetworkError&) {
-            LOG2(kNetwork, kError, "TempFailureRetry: error handling adapter change, try again in %ums\n", kDelaysMs[i]);
+            LOG_ERROR(kNetwork, "TempFailureRetry: error handling adapter change, try again in %ums\n", kDelaysMs[i]);
             Thread::Sleep(kDelaysMs[i]);
         }
     }
@@ -485,7 +485,7 @@ void NetworkAdapterList::TraceAdapter(const TChar* aPrefix, NetworkAdapter& aAda
     Endpoint ep(0, aAdapter.Address());
     Bws<Endpoint::kMaxAddressBytes> addr;
     ep.AppendAddress(addr);
-    LOG(kTrace, "%s: %s(%s)\n", aPrefix, aAdapter.Name(), (const TChar*)addr.Ptr());
+    LOG_TRACE(kNetwork, "%s: %s(%s)\n", aPrefix, aAdapter.Name(), (const TChar*)addr.Ptr());
 }
 
 void NetworkAdapterList::ListObjectDetails() const

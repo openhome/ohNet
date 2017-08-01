@@ -65,11 +65,11 @@ void SsdpNotifierScheduler::SendNextMsg()
     }
     catch (WriterError&) {
         stop = true;
-        LOG2(kError, kDvDevice, "WriterError from SsdpNotifierScheduler::SendNextMsg() id=%s\n", iId);
+        LOG_ERROR(kDvDevice, "WriterError from SsdpNotifierScheduler::SendNextMsg() id=%s\n", iId);
     }
     catch (NetworkError&) {
         stop = true;
-        LOG2(kError, kDvDevice, "NetworkError from SsdpNotifierScheduler::SendNextMsg() id=%s\n", iId);
+        LOG_ERROR(kDvDevice, "NetworkError from SsdpNotifierScheduler::SendNextMsg() id=%s\n", iId);
     }
 #ifdef NOTIFIER_LOG_VERBOSE
     LOG(kDvSsdpNotifier, "Ssdp notification sent - %s (%p) %s  %.*s remaining=%u  stop=%d\n", iType, this, iId, PBUF(iUdn), remaining, stop);

@@ -53,7 +53,7 @@ EventSessionUpnp::~EventSessionUpnp()
 void EventSessionUpnp::Error(const HttpStatus& aStatus)
 {
     const Brx& reason = aStatus.Reason();
-    LOG2(kEvent, kError, "EventSessionUpnp::Error %.*s\n", PBUF(reason));
+    LOG_ERROR(kEvent, "EventSessionUpnp::Error %.*s\n", PBUF(reason));
     iErrorStatus = &aStatus;
     THROW(HttpError);
 }
@@ -65,7 +65,7 @@ void EventSessionUpnp::LogError(CpiSubscription* aSubscription, const TChar* /*a
 #endif
 {
     const Brx& sid = iHeaderSid.Sid();
-    LOG2(kEvent, kError, "EventSessionUpnp::Run, %s handling\n    sid - %.*s seq - %u\n",
+    LOG_ERROR(kEvent, "EventSessionUpnp::Run, %s handling\n    sid - %.*s seq - %u\n",
                          aErr, PBUF(sid), iHeaderSeq.Seq());
     if (aSubscription != NULL) {
         aSubscription->SetNotificationError();
@@ -105,13 +105,13 @@ void EventSessionUpnp::Run()
         }
         catch (AsciiError&) {
             const Brx& sid = iHeaderSid.Sid();
-            LOG2(kEvent, kError, "notification for %.*s failed to include id in path\n", PBUF(sid));
+            LOG_ERROR(kEvent, "notification for %.*s failed to include id in path\n", PBUF(sid));
             Error(HttpStatus::kPreconditionFailed);
         }
         subscription = iCpStack.SubscriptionManager().FindSubscription(id);
         if (subscription == NULL) {
             const Brx& sid = iHeaderSid.Sid();
-            LOG2(kEvent, kError, "notification for unexpected device - %.*s\n", PBUF(sid))
+            LOG_ERROR(kEvent, "notification for unexpected device - %.*s\n", PBUF(sid))
             Error(HttpStatus::kPreconditionFailed);
         }
     }

@@ -12,7 +12,6 @@ ShellCommandDebug::ShellCommandDebug(Shell& aShell)
     : iShell(aShell)
 {
     iShell.AddCommandHandler(kShellCommandDebug, *this);
-    AddLevel("Error", Debug::kError);
     AddLevel("Thread", Debug::kThread);
     //AddLevel("Network", Debug::kNetwork); // Shell is only contactable over network. Attempting to log network interactions will result in endless chain of logging until device crashes.
     AddLevel("Timer", Debug::kTimer);
@@ -39,7 +38,9 @@ ShellCommandDebug::ShellCommandDebug(Shell& aShell)
     AddLevel("Application7", Debug::kApplication7);
     AddLevel("Application8", Debug::kApplication8);
     AddLevel("Application9", Debug::kApplication9);
-    AddLevel("AdapterChange", Debug::kAdapterChange);
+    AddLevel("Application10", Debug::kApplication10);
+    AddLevel("Application11", Debug::kApplication11);
+    AddLevel("Application12", Debug::kApplication12);
     AddLevel("Application13", Debug::kApplication13);
     AddLevel("Application14", Debug::kApplication14);
     AddLevel("Application15", Debug::kApplication15);
@@ -70,13 +71,13 @@ ShellCommandDebug::ShellCommandDebug(Shell& aShell)
     AddLevel("Application40", Debug::kApplication40);
     AddLevel("Application41", Debug::kApplication41);
     AddLevel("Application42", Debug::kApplication42);
+    AddLevel("Application43", Debug::kApplication43);
+    AddLevel("Application44", Debug::kApplication44);
+
+    AddLevel("AdapterChange", Debug::kAdapterChange);
     AddLevel("CpDeviceDv", Debug::kCpDeviceDv);
 
-    // Debug::kAll level includes Debug::kNetwork, which will crash device if
-    // activated via shell.
-    // So, mask out Debug::kNetwork level.
-    static const TUint kDebugAll = Debug::kAll & ~Debug::kNetwork;
-    AddLevel("All", kDebugAll);
+    AddLevel("All", Debug::kAll);
 }
 
 ShellCommandDebug::~ShellCommandDebug()

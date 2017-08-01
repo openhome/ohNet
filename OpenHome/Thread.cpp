@@ -332,7 +332,7 @@ void ThreadPriorityArbitrator::Add(IPriorityArbitrator& aArbitrator)
         const TUint arbMin = aArbitrator.OpenHomeMin();
         const TUint arbMax = aArbitrator.OpenHomeMax();
         if (itMin <= arbMax && arbMin <= itMax) {
-            LOG2(kThread, kError, "ERROR: ThreadPriorityArbitrator ranges overlap: [%u..%u], [%u..%u]\n",
+            LOG_ERROR(kThread, "ERROR: ThreadPriorityArbitrator ranges overlap: [%u..%u], [%u..%u]\n",
                                   itMin, itMax, arbMax, arbMin);
             ASSERTS();
         }
@@ -349,7 +349,7 @@ void ThreadPriorityArbitrator::Validate()
     TUint max = kPrioritySystemHighest + 1;
     for (std::vector<IPriorityArbitrator*>::const_iterator it=iArbitrators.begin(); it!=iArbitrators.end(); ++it) {
         if ((*it)->OpenHomeMax() != max-1) {
-            LOG2(kThread, kError, "ERROR: gaps between thread priority arbitrators are not supported\n");
+            LOG_ERROR(kThread, "ERROR: gaps between thread priority arbitrators are not supported\n");
             ASSERTS();
         }
         max = (*it)->OpenHomeMin();

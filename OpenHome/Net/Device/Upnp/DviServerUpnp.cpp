@@ -413,19 +413,19 @@ void PropertyWriterUpnp::PropertyWriteEnd()
         iSocket.Write(body);
     }
     catch (NetworkTimeout&) {
-        LOG2(kDvEvent, kError, "PropertyWriterUpnp - NetworkTimeout eventing to %.*s\n", PBUF(subscriberAddress));
+        LOG_ERROR(kDvEvent, "PropertyWriterUpnp - NetworkTimeout eventing to %.*s\n", PBUF(subscriberAddress));
         throw;
     }
     catch (NetworkError&) {
-        LOG2(kDvEvent, kError, "PropertyWriterUpnp - NetworkError eventing to %.*s\n", PBUF(subscriberAddress));
+        LOG_ERROR(kDvEvent, "PropertyWriterUpnp - NetworkError eventing to %.*s\n", PBUF(subscriberAddress));
         THROW(WriterError);
     }
     catch (HttpError&) {
-        LOG2(kDvEvent, kError, "PropertyWriterUpnp - HttpError eventing to %.*s\n", PBUF(subscriberAddress));
+        LOG_ERROR(kDvEvent, "PropertyWriterUpnp - HttpError eventing to %.*s\n", PBUF(subscriberAddress));
         THROW(WriterError);
     }
     catch (WriterError&) {
-        LOG2(kDvEvent, kError, "PropertyWriterUpnp - WriterError eventing to %.*s\n", PBUF(subscriberAddress));
+        LOG_ERROR(kDvEvent, "PropertyWriterUpnp - WriterError eventing to %.*s\n", PBUF(subscriberAddress));
         throw;
     }
 
@@ -436,7 +436,7 @@ void PropertyWriterUpnp::PropertyWriteEnd()
     const HttpStatus& status = readerResponse.Status();
     if (status != HttpStatus::kOk) {
         const Brx& reason = status.Reason();
-        LOG2(kDvEvent, kError, "PropertyWriter, http error %u %.*s\n", status.Code(), PBUF(reason));
+        LOG_ERROR(kDvEvent, "PropertyWriter, http error %u %.*s\n", status.Code(), PBUF(reason));
     }
 }
 
@@ -686,19 +686,24 @@ void DviSessionUpnp::Run()
         }
     }
     catch (HttpError&) {
-        LOG2(kDvDevice, kDvEvent, "HttpError handling %.*s for %.*s\n", PBUF(method), PBUF(reqUri));
+        LOG(/*kDvDevice|*/kDvEvent, "HttpError handling %.*s for %.*s\n", PBUF(method), PBUF(reqUri));
         if (iErrorStatus == &HttpStatus::kOk) {
             iErrorStatus = &HttpStatus::kBadRequest;
         }
     }
     catch (ReaderError&) {
-        LOG2(kDvDevice, kDvEvent, "ReaderError handling %.*s for %.*s\n", PBUF(method), PBUF(reqUri));
+        if(OpenHome::Debug::TestLevel(OpenHome::Debug::kDvDevice|OpenHome::Debug::kDvDevice)) {
+            Log::Print("ReaderError handling %.*s for %.*s\n", PBUF(method), PBUF(reqUri));
+        }
+        
         if (iErrorStatus == &HttpStatus::kOk) {
             iErrorStatus = &HttpStatus::kBadRequest;
         }
     }
     catch (WriterError&) {
-        LOG2(kDvDevice, kDvEvent, "WriterError handling %.*s for %.*s\n", PBUF(method), PBUF(reqUri));
+        if(OpenHome::Debug::TestLevel(OpenHome::Debug::kDvDevice|OpenHome::Debug::kDvDevice)) {
+            Log::Print("WriterError handling %.*s for %.*s\n", PBUF(method), PBUF(reqUri));
+        }
     }
     try {
         if (!iResponseStarted) {
@@ -714,7 +719,9 @@ void DviSessionUpnp::Run()
         }
     }
     catch (WriterError&) {
-        LOG2(kDvDevice, kDvEvent, "WriterError(2) handling %.*s for %.*s\n", PBUF(method), PBUF(reqUri));
+        if(OpenHome::Debug::TestLevel(OpenHome::Debug::kDvDevice|OpenHome::Debug::kDvDevice)) {
+           Log::Print("WriterError(2) handling %.*s for %.*s\n", PBUF(method), PBUF(reqUri));
+        }
     }
     iShutdownSem.Signal();
 }
@@ -829,7 +836,7 @@ void DviSessionUpnp::Subscribe()
             Renew();
         }
         catch (DvSubscriptionError&) {
-            LOG2(kDvEvent, kError, "DvSubscriptionError\n");
+            LOG_ERROR(kDvEvent, "DvSubscriptionError\n");
             iErrorStatus = &HttpStatus::kPreconditionFailed;
         }
         return;
@@ -898,7 +905,7 @@ void DviSessionUpnp::Subscribe()
 void DviSessionUpnp::Unsubscribe()
 {
     if (!iHeaderSid.Received()) {
-        LOG2(kDvEvent, kError, "Unsubscribe failed - no sid\n");
+        LOG_ERROR(kDvEvent, "Unsubscribe failed - no sid\n");
         Error(HttpStatus::kPreconditionFailed);
     }
     const Brx& sid = iHeaderSid.Sid();
@@ -911,12 +918,12 @@ void DviSessionUpnp::Unsubscribe()
     AutoDeviceRef d(device);
     AutoServiceRef s(service);
     if (device == NULL  || !device->Enabled()|| service == NULL) {
-        LOG2(kDvEvent, kError, "Unsubscribe failed - device=%p, service=%p\n", device, service);
+        LOG_ERROR(kDvEvent, "Unsubscribe failed - device=%p, service=%p\n", device, service);
         Error(HttpStatus::kPreconditionFailed);
     }
     DviSubscription* subscription = iDvStack.SubscriptionManager().Find(sid);
     if (subscription == NULL) {
-        LOG2(kDvEvent, kError, "Unsubscribe failed - couldn't match sid %.*s\n", PBUF(sid));
+        LOG_ERROR(kDvEvent, "Unsubscribe failed - couldn't match sid %.*s\n", PBUF(sid));
         Error(HttpStatus::kPreconditionFailed);
     }
     service->RemoveSubscription(sid);

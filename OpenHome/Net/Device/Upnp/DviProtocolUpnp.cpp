@@ -62,7 +62,7 @@ DviProtocolUpnp::DviProtocolUpnp(DviDevice& aDevice)
             // (typical on Windows & Mac after hibernation) so just ignore this exception
             // and trust that we'll get advertised on another interface.
             char* adapterName = subnet->FullName();
-            LOG2(kTrace, kError, "DvDevice unable to use adapter %s\n", adapterName);
+            LOG_ERROR(kDvDevice, "DvDevice unable to use adapter %s\n", adapterName);
             delete adapterName;
         }
     }

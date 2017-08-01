@@ -133,7 +133,9 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
     aInitParams->SetDvWebSocketPort(54320);
     aInitParams->SetDvUpnpServerPort(0);
     Library* lib = new Library(aInitParams);
-    Debug::SetLevel(Debug::kDvWebSocket | Debug::kError | Debug::kDvInvocation | Debug::kDvEvent | Debug::kDvDevice);
+    Debug::SetLevel(Debug::kDvWebSocket | Debug::kDvInvocation | Debug::kDvEvent | Debug::kDvDevice);
+    Debug::SetSeverity(Debug::kSeverityError);
+    
     DvStack* dvStack = lib->StartDv();
 
     Print("TestDvTestBasic - starting ('q' to quit)\n");

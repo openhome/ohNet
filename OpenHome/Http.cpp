@@ -368,7 +368,7 @@ void ReaderHttpRequest::Read(TUint aTimeoutMs)
 
 void ReaderHttpRequest::ReadTimeout()
 {
-    LOG2(kHttp, kError, "HTTP read timeout\n");
+    LOG_ERROR(kHttp, "HTTP read timeout\n");
     iReader.ReadInterrupt();
 }
 
@@ -424,7 +424,7 @@ void ReaderHttpRequest::ProcessMethod(const Brx& aMethod, const Brx& aUri, const
         }
     }
 
-    LOG2(kHttp, kError, "Unsupported method - %.*s\n", PBUF(aMethod));
+    LOG_ERROR(kHttp, "Unsupported method - %.*s\n", PBUF(aMethod));
     THROW(HttpError);
 }
 
@@ -510,7 +510,7 @@ void ReaderHttpResponse::Read(TUint aTimeoutMs)
 
 void ReaderHttpResponse::ReadTimeout()
 {
-    LOG2(kHttp, kError, "HTTP response read timeout\n");
+    LOG_ERROR(kHttp, "HTTP response read timeout\n");
     iReader.ReadInterrupt();
 }
 
@@ -1225,7 +1225,7 @@ TUint HttpReader::WriteRequest(const Uri& aUri)
     if (!Connect(ep)) {
         Endpoint::AddressBuf buf;
         ep.AppendAddress(buf);
-        LOG2(kHttp, kError, "HttpReader::WriteRequest connection failure %.*s\n", PBUF(buf));
+        LOG_ERROR(kHttp, "HttpReader::WriteRequest connection failure %.*s\n", PBUF(buf));
         return 0;
     }
 

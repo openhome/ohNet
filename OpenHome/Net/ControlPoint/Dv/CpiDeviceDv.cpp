@@ -209,7 +209,7 @@ void CpiDeviceDv::Invocable::InvokeAction(Invocation& aInvocation)
     const OpenHome::Net::ServiceType& serviceType = aInvocation.ServiceType();
     DviService* service = iDevice.iDeviceDv.ServiceReference(serviceType);
     if (service == NULL) {
-        LOG2(kCpDeviceDv, kError, "CpiDeviceDv::Invocable::InvokeAction failed lookup for service %.*s:%.*s:%u\n",
+        LOG_ERROR(kCpDeviceDv, "CpiDeviceDv::Invocable::InvokeAction failed lookup for service %.*s:%.*s:%u\n",
                                   PBUF(serviceType.Domain()), PBUF(serviceType.Name()), serviceType.Version());
         const HttpStatus& err = HttpStatus::kNotFound;
         aInvocation.SetError(Error::eUpnp, err.Code(), err.Reason());

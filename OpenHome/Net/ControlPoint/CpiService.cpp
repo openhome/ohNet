@@ -669,7 +669,7 @@ void Invoker::SetError(Error::ELevel aLevel, TUint aCode, const Brx& aDescriptio
     (void)iInvocation->Error(level, code, desc);
     const Brx& actionName = iInvocation->Action().Name();
     const Brx& udn = iInvocation->Device().Udn();
-    LOG3(kService, kError, kTrace, "Error - %s(%s, %d, %s) - from invocation %p, on action %.*s, from device %.*s\n",
+    LOG_ERROR(kService, "Error - %s(%s, %d, %s) - from invocation %p, on action %.*s, from device %.*s\n",
         aLogStr, Error::LevelName(level), code, (desc==NULL? "" : desc), iInvocation, PBUF(actionName), PBUF(udn));
 }
 
