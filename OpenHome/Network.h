@@ -240,9 +240,9 @@ public:
     Endpoint Receive(Bwx& aBuffer);
     TUint Port() const;
     ~SocketUdpBase();
+    void ReCreate();
 protected:
     SocketUdpBase(Environment& aEnv);
-    void ReCreate();
 private:
     void Create();
 protected:
