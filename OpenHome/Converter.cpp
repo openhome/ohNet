@@ -328,8 +328,6 @@ TUint16 Converter::LeUint16At(const Brx& aBuf, TUint aIndex)
     return (TUint16)((b[1] << 8) | b[0]);
 }
 
-
-
 void Converter::ToUtf8(TUint aCodePoint, IWriter& aWriter)
 {
     Bws<6> buf;
