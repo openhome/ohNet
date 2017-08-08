@@ -78,6 +78,13 @@ ShellCommandDebug::ShellCommandDebug(Shell& aShell)
     AddLevel("CpDeviceDv", Debug::kCpDeviceDv);
 
     AddLevel("All", Debug::kAll);
+
+    AddSeverity("Critical", Debug::kSeverityCritical);
+    AddSeverity("Error", Debug::kSeverityError);
+    AddSeverity("Warning", Debug::kSeverityWarning);
+    AddSeverity("Info", Debug::kSeverityInfo);
+    AddSeverity("Debug", Debug::kSeverityDebug);
+    AddSeverity("Trace", Debug::kSeverityTrace);
 }
 
 ShellCommandDebug::~ShellCommandDebug()
@@ -114,6 +121,18 @@ void ShellCommandDebug::HandleShellCommand(Brn aCommand, const std::vector<Brn>&
     }
     else if (aArgs[0] == Brn("clear")) {
         set = false;
+    }
+    else if (aArgs[0] == Brn("severity")) {
+        try {
+            Debug::SetSeverity(iSevs.at(aArgs[1]));
+        }
+        catch (const std::out_of_range&)
+        {
+            aResponse.Write(Brn("Unexpected severity name for command \'debug\': "));
+            aResponse.Write(aArgs[1]);
+            aResponse.Write(Brn("\n"));
+        }
+        return;
     }
     else {
         aResponse.Write(Brn("Unexpected command for \'debug\': "));
@@ -170,6 +189,11 @@ void ShellCommandDebug::AddLevel(const TChar* aName, TUint64 aValue)
     iLevels.insert(std::pair<Brn, Level*>(name, level));
 }
 
+void ShellCommandDebug::AddSeverity(const TChar* aName, TUint aValue)
+{
+    Brn name(aName);
+    iSevs.insert(std::pair<Brn, TUint>(name, aValue));
+}
 
 // ShellCommandDebug::Level
 
