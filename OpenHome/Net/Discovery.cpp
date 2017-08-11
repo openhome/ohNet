@@ -137,17 +137,17 @@ void SsdpListenerMulticast::Run()
             epb.PtrZ();
             try {
                 Brn buf = iReaderUntil.Read(kMaxBufferBytes);
-                LOG2(kSsdpMulticast, kError, "SSDP Multicast      HttpError (sender=%s) from %s:%u.  Received: %.*s\n\n",
+                LOG_ERROR(kSsdpMulticast, "SSDP Multicast      HttpError (sender=%s) from %s:%u.  Received: %.*s\n\n",
                                              (const char*)epb.Ptr(), ex.File(), ex.Line(), PBUF(buf));
             }
             catch (ReaderError&) {
             }
         }
         catch (WriterError&) {
-            LOG2(kSsdpMulticast, kError, "SSDP Multicast      WriterError\n");
+            LOG_ERROR(kSsdpMulticast, "SSDP Multicast      WriterError\n");
         }
         catch (ReaderError&) {
-            LOG2(kSsdpMulticast, kError, "SSDP Multicast      ReaderError\n");
+            LOG_ERROR(kSsdpMulticast, "SSDP Multicast      ReaderError\n");
             if (iExiting) {
                 break;
             }
@@ -159,7 +159,7 @@ void SsdpListenerMulticast::Run()
                 iRecreateSocket = false;
             }
             catch (NetworkError&) {
-                LOG2(kSsdpMulticast, kError, "SSDP Multicast      failed to recreate socket after library Resumed\n");
+                LOG_ERROR(kSsdpMulticast, "SSDP Multicast      failed to recreate socket after library Resumed\n");
             }
         }
     }
@@ -563,33 +563,33 @@ void SsdpListenerUnicast::Run()
                             }
                             break;
                         default:
-                            LOG2(kSsdpUnicast, kError, "SSDP Unicast: unexpected target - %u\n", iHeaderSt.Target());
+                            LOG_ERROR(kSsdpUnicast, "SSDP Unicast: unexpected target - %u\n", iHeaderSt.Target());
                             break;
                         }
                     }
                     else {
-                        LOG2(kSsdpUnicast, kError, "SSDP Unicast: unexpected headers\n");
+                        LOG_ERROR(kSsdpUnicast, "SSDP Unicast: unexpected headers\n");
                     }
                 }
                 else {
-                    LOG2(kSsdpUnicast, kError, "SSDP Unicast: unexpected status - %u\n", iReaderResponse.Status().Code());
+                    LOG_ERROR(kSsdpUnicast, "SSDP Unicast: unexpected status - %u\n", iReaderResponse.Status().Code());
                 }
             }
             else {
-                    LOG2(kSsdpUnicast, kError, "SSDP Unicast: unexpected http version - %u\n", iReaderResponse.Version());
+                    LOG_ERROR(kSsdpUnicast, "SSDP Unicast: unexpected http version - %u\n", iReaderResponse.Version());
             }
         }
         catch (HttpError&) {
-            LOG2(kSsdpUnicast, kError, "SSDP Unicast        HttpError\n");
+            LOG_ERROR(kSsdpUnicast, "SSDP Unicast        HttpError\n");
         }
         catch (ReaderError&) {
-            LOG2(kSsdpUnicast, kError, "SSDP Unicast        ReaderError\n");
+            LOG_ERROR(kSsdpUnicast, "SSDP Unicast        ReaderError\n");
             if (iExiting) {
                 break;
             }
         }
         catch (WriterError&) {
-            LOG2(kSsdpUnicast, kError, "SSDP Unicast        WriterError\n");
+            LOG_ERROR(kSsdpUnicast, "SSDP Unicast        WriterError\n");
         }
         if (iRecreateSocket) {
             try {
@@ -599,7 +599,7 @@ void SsdpListenerUnicast::Run()
                 iRecreateSocket = false;
             }
             catch (NetworkError&) {
-                LOG2(kSsdpUnicast, kError, "SSDP Unicast      failed to recreate socket after library Resumed\n");
+                LOG_ERROR(kSsdpUnicast, "SSDP Unicast      failed to recreate socket after library Resumed\n");
             }
         }
     }

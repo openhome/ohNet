@@ -398,7 +398,7 @@ void CpiDeviceUpnp::XmlFetchCompleted(IAsync& aAsync)
         catch (XmlFetchError&) {
             err = true;
             const Brx& udn = Udn();
-            LOG2(kDevice, kError, "Error fetching xml for %.*s from %.*s\n", PBUF(udn), PBUF(iLocation));
+            LOG_ERROR(kDevice, "Error fetching xml for %.*s from %.*s\n", PBUF(udn), PBUF(iLocation));
         }
     }
     if (!err) {
@@ -409,7 +409,7 @@ void CpiDeviceUpnp::XmlFetchCompleted(IAsync& aAsync)
         catch (XmlError&) {
             err = true;
             const Brx& udn = Udn();
-            LOG2(kDevice, kError, "Error within xml for %.*s from %.*s.  Xml is %.*s\n",
+            LOG_ERROR(kDevice, "Error within xml for %.*s from %.*s.  Xml is %.*s\n",
                                   PBUF(udn), PBUF(iLocation), PBUF(iXml));
         }
     }
@@ -753,7 +753,7 @@ void CpiDeviceListUpnp::XmlFetchCompleted(CpiDeviceUpnp& aDevice, TBool aError)
     if (aError) {
         const Brx& udn = aDevice.Udn();
         const Brx& location = aDevice.Location();
-        LOG2(kTrace, kError, "Device xml fetch error {udn{%.*s}, location{%.*s}}\n",
+        LOG_ERROR(kDevice, "Device xml fetch error {udn{%.*s}, location{%.*s}}\n",
                              PBUF(udn), PBUF(location));
         Remove(aDevice.Udn());
     }
@@ -839,10 +839,10 @@ void CpiDeviceListUpnpAll::Start()
             iUnicastListener->MsearchAll();
         }
         catch (NetworkError&) {
-            LOG2(kDevice, kError, "Error sending msearch for CpiDeviceListUpnpAll\n");
+            LOG_ERROR(kDevice, "Error sending msearch for CpiDeviceListUpnpAll\n");
         }
         catch (WriterError&) {
-            LOG2(kDevice, kError, "Error sending msearch for CpiDeviceListUpnpAll\n");
+            LOG_ERROR(kDevice, "Error sending msearch for CpiDeviceListUpnpAll\n");
         }
     }
 }
@@ -902,10 +902,10 @@ void CpiDeviceListUpnpRoot::Start()
             iUnicastListener->MsearchRoot();
         }
         catch (NetworkError&) {
-            LOG2(kDevice, kError, "Error sending msearch for CpiDeviceListUpnpRoot\n");
+            LOG_ERROR(kDevice, "Error sending msearch for CpiDeviceListUpnpRoot\n");
         }
         catch (WriterError&) {
-            LOG2(kDevice, kError, "Error sending msearch for CpiDeviceListUpnpRoot\n");
+            LOG_ERROR(kDevice, "Error sending msearch for CpiDeviceListUpnpRoot\n");
         }
     }
 }
@@ -944,10 +944,10 @@ void CpiDeviceListUpnpUuid::Start()
             iUnicastListener->MsearchUuid(iUuid);
         }
         catch (NetworkError&) {
-            LOG2(kDevice, kError, "Error sending msearch for CpiDeviceListUpnpUuid\n");
+            LOG_ERROR(kDevice, "Error sending msearch for CpiDeviceListUpnpUuid\n");
         }
         catch (WriterError&) {
-            LOG2(kDevice, kError, "Error sending msearch for CpiDeviceListUpnpUuid\n");
+            LOG_ERROR(kDevice, "Error sending msearch for CpiDeviceListUpnpUuid\n");
         }
     }
 }
@@ -992,10 +992,10 @@ void CpiDeviceListUpnpDeviceType::Start()
             iUnicastListener->MsearchDeviceType(iDomainName, iDeviceType, iVersion);
         }
         catch (NetworkError&) {
-            LOG2(kDevice, kError, "Error sending msearch for CpiDeviceListUpnpDeviceType\n");
+            LOG_ERROR(kDevice, "Error sending msearch for CpiDeviceListUpnpDeviceType\n");
         }
         catch (WriterError&) {
-            LOG2(kDevice, kError, "Error sending msearch for CpiDeviceListUpnpDeviceType\n");
+            LOG_ERROR(kDevice, "Error sending msearch for CpiDeviceListUpnpDeviceType\n");
         }
     }
 }
@@ -1041,10 +1041,10 @@ void CpiDeviceListUpnpServiceType::Start()
             iUnicastListener->MsearchServiceType(iDomainName, iServiceType, iVersion);
         }
         catch (NetworkError&) {
-            LOG2(kDevice, kError, "Error sending msearch for CpiDeviceListUpnpServiceType\n");
+            LOG_ERROR(kDevice, "Error sending msearch for CpiDeviceListUpnpServiceType\n");
         }
         catch (WriterError&) {
-            LOG2(kDevice, kError, "Error sending msearch for CpiDeviceListUpnpServiceType\n");
+            LOG_ERROR(kDevice, "Error sending msearch for CpiDeviceListUpnpServiceType\n");
         }
     }
 }

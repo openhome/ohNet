@@ -175,6 +175,7 @@ private:
 class ReaderProtocol : public ReaderBinary
 {
 public:
+    static void Read(IReader& aReader, TUint aBytes, Bwx& aBuf);
     virtual ~ReaderProtocol();
     Brn Read(TUint aBytes); // reads exactly aBytes or throws
 protected:
@@ -192,6 +193,16 @@ private: // from ReaderUntil
     TByte* Ptr() { return iBuf; }
 private:
     TByte iBuf[T];
+};
+
+class ReaderProtocolN : public ReaderProtocol
+{
+public:
+    ReaderProtocolN(IReader& aReader, Bwx& aBuf) : ReaderProtocol(aBuf.MaxBytes(), aReader), iBuf(aBuf) {}
+private: // from ReaderUntil
+    TByte* Ptr() { return const_cast<TByte*>(iBuf.Ptr()); }
+private:
+    Bwx& iBuf;
 };
 
 class Swx : public Sxx, public IWriter

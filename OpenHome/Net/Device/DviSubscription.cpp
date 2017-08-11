@@ -186,7 +186,7 @@ void DviSubscription::WriteChanges()
         throw;
     }
     catch (Exception& ex) {
-        LOG2(kDvEvent, kError, "Exception - %s - eventing update for %.*s\n", ex.Message(), PBUF(iSid));
+        LOG_ERROR(kDvEvent, "Exception - %s - eventing update for %.*s\n", ex.Message(), PBUF(iSid));
         /* we may block a publisher for a relatively long time (e.g. failing to connect)
            its reasonable to assume that later attempts are also likely to fail
            ...so its better if we don't keep blocking and instead remove the subscription */
@@ -443,9 +443,9 @@ void Publisher::Error(const TChar* aErr)
 void Publisher::Error(const TChar* /*aErr*/)
 #endif
 {
-    LOG2(kDvEvent, kError, "Error - %s - from SID ", aErr);
-    LOG2(kDvEvent, kError, iSubscription->Sid());
-    LOG2(kDvEvent, kError, "\n");
+    LOG_ERROR(kDvEvent, "Error - %s - from SID ", aErr);
+    LOG_ERROR(kDvEvent, iSubscription->Sid());
+    LOG_ERROR(kDvEvent, "\n");
 }
 
 void Publisher::Run()

@@ -22,6 +22,7 @@ private: // from IShellCommandHandler
     void DisplayHelp(IWriter& aResponse);
 private:
     void AddLevel(const TChar* aName, TUint64 aValue);
+    void AddSeverity(const TChar* aName, TUint aValue);
 private:
     class Level
     {
@@ -38,6 +39,8 @@ private:
     typedef std::map<Brn, Level*, BufferCmp> LevelMap;
     LevelMap iLevels;
     LevelMap iAlias;
+    typedef std::map<Brn, TUint, BufferCmp> SeverityMap;
+    SeverityMap iSevs;
 };
 
 } // namespace OpenHome

@@ -784,9 +784,9 @@ mStatus mDNSPlatformSendUDP(const mDNS* m, const void* const aMessage, const mDN
     }
     catch (NetworkError&)
     {
-        LOG(kError, "mDNSPlatformSendUDP caught NetworkError. Endpoint port %u, address: ", aPort.NotAnInteger);
-        LOG(kError, address);
-        LOG(kError, "\n");
+        LOG_ERROR(kBonjour, "mDNSPlatformSendUDP caught NetworkError. Endpoint port %u, address: ", aPort.NotAnInteger);
+        LOG_ERROR(kBonjour, address);
+        LOG_ERROR(kBonjour, "\n");
         status = mStatus_UnknownErr;
     }
     return status;
@@ -901,7 +901,7 @@ void LogMsgWithLevel(mDNSLogLevel_t /*logLevel*/, const char *format, ...)
     va_list args;
     va_start(args, format);
     // not all messages are errors but enough are that its handy to log everything here if we're interested in errors
-    if(Debug::TestLevel(Debug::kBonjour) || Debug::TestLevel(Debug::kError)) {
+    if(Debug::TestLevel(Debug::kBonjour) && Debug::TestSeverity(Debug::kSeverityError)) {
         Bws<kMaxLogMsgBytes> msg;
         TUint written = mDNS_vsnprintf((char*)msg.Ptr(), msg.MaxBytes(), format, args);
         msg.SetBytes(written);

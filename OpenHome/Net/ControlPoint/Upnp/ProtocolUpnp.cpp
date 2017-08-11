@@ -94,7 +94,7 @@ void InvocationUpnp::ReadResponse()
     const HttpStatus& status = iReaderResponse.Status();
     if (status != HttpStatus::kOk) {
         const Brx& reason = status.Reason();
-        LOG2(kService, kError, "InvocationUpnp::ReadResponse, http error %u %.*s\n", status.Code(), PBUF(reason));
+        LOG_ERROR(kService, "InvocationUpnp::ReadResponse, http error %u %.*s\n", status.Code(), PBUF(reason));
         if (status != HttpStatus::kInternalServerError) {
             iInvocation.SetError(Error::eHttp, status.Code(), reason);
             THROW(HttpError);
@@ -401,7 +401,7 @@ void EventUpnp::SubscribeReadResponse(Brh& aSid, TUint& aDurationSecs)
     const HttpStatus& status = readerResponse.Status();
     if (status != HttpStatus::kOk) {
         const Brx& reason = status.Reason();
-        LOG2(kEvent, kError, "EventUpnp::SubscribeReadResponse, http error %u %.*s\n", status.Code(), PBUF(reason));
+        LOG_ERROR(kEvent, "EventUpnp::SubscribeReadResponse, http error %u %.*s\n", status.Code(), PBUF(reason));
         THROW(HttpError);
     }
 
@@ -458,7 +458,7 @@ void EventUpnp::UnsubscribeReadResponse()
     const HttpStatus& status = readerResponse.Status();
     if (status != HttpStatus::kOk) {
         const Brx& reason = status.Reason();
-        LOG2(kEvent, kError, "EventUpnp::Unsubscribe, http error %u %.*s\n", status.Code(), PBUF(reason));
+        LOG_ERROR(kEvent, "EventUpnp::Unsubscribe, http error %u %.*s\n", status.Code(), PBUF(reason));
         // don't throw an exception here - clients will ignore any later events with unrecognised SIDs
     }
 }

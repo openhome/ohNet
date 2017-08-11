@@ -223,7 +223,8 @@ void TestDviDeviceList(CpStack& aCpStack, DvStack& aDvStack)
     TUint oldMsearchTime = initParams->MsearchTimeSecs();
     initParams->SetMsearchTime(1);
 
-//    Debug::SetLevel(/*Debug::kDevice | Debug::kDvDevice | Debug::kXmlFetch | Debug::kError);
+//    Debug::SetLevel(Debug::kDevice | Debug::kDvDevice | Debug::kXmlFetch );
+//    Debug::SetSeverity(Debug::kSeverityError);
 
     Print("TestDviDeviceList - starting\n");
 

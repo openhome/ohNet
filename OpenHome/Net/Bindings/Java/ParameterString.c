@@ -33,11 +33,11 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_core_ParameterString_ServiceParame
 			for (j = 0; j < i; j++)
 			{
 				// Free memory before we throw the exception.
-				jstring allowedString = (*aEnv)->GetObjectArrayElement(aEnv, aAllowedValues, i);
-				(*aEnv)->ReleaseStringUTFChars(aEnv, allowedString, allowed[i]);
-				free(allowed);
+				jstring allowedString2 = (*aEnv)->GetObjectArrayElement(aEnv, aAllowedValues, j);
+				(*aEnv)->ReleaseStringUTFChars(aEnv, allowedString2, allowed[j]);
 			}
-			exc = (*aEnv)->FindClass(aEnv, 
+            free(allowed);
+            exc = (*aEnv)->FindClass(aEnv,
 					"java/lang/NullPointerException");
 			if (exc == NULL) {
 				return 0;

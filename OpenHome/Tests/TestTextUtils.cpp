@@ -2,6 +2,7 @@
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Uri.h>
+#include <OpenHome/Private/Converter.h>
 #include <OpenHome/Os.h>
 
 #include <limits>
@@ -1579,6 +1580,91 @@ void SuiteSwap::Test()
     TEST(CheckCalls());
 }
 
+
+class SuiteUnicode : public Suite
+{
+public:
+    SuiteUnicode() : Suite("Test utf8 encoding") {}
+    void Test();
+};
+
+void SuiteUnicode::Test()
+{
+    Bws<6> buf;
+
+    // test the byte count
+    Converter::ToUtf8(0x01, buf); // buffer
+    TEST(buf.Bytes()==1);
+
+    Converter::ToUtf8(0x7f, buf);
+    TEST(buf.Bytes()==1);
+    Converter::ToUtf8(0x80, buf);
+    TEST(buf.Bytes()==2);
+
+    Converter::ToUtf8(0x7ff, buf);
+    TEST(buf.Bytes()==2);
+    Converter::ToUtf8(0x800, buf);
+    TEST(buf.Bytes()==3);
+
+    Converter::ToUtf8(0xffff, buf);
+    TEST(buf.Bytes()==3);
+    Converter::ToUtf8(0x10000, buf);
+    TEST(buf.Bytes()==4);
+
+    Converter::ToUtf8(0x1fffff, buf);
+    TEST(buf.Bytes()==4);
+    Converter::ToUtf8(0x200000, buf);
+    TEST(buf.Bytes()==5);
+
+    Converter::ToUtf8(0x3ffffff, buf);
+    TEST(buf.Bytes()==5);
+    //
+
+    // test the values
+    // 1 byte
+    Converter::ToUtf8(0x01, buf);
+    TEST(buf[0]==0x01);
+    Converter::ToUtf8(0x7f, buf);
+    TEST(buf[0]==0x7f);
+
+    // 2 bytes
+    Converter::ToUtf8(0x577, buf);
+    TEST(buf[0]==0xd5);
+    TEST(buf[1]==0xb7);
+
+    // 3 bytes
+    Converter::ToUtf8(0x1234, buf);
+    TEST(buf[0]==0xe1);
+    TEST(buf[1]==0x88);
+    TEST(buf[2]==0xb4);
+
+
+    //// 4 bytes
+    Converter::ToUtf8(0x15678, buf);
+    TEST(buf[0]==0xf0);
+    TEST(buf[1]==0x95);
+    TEST(buf[2]==0x99);
+    TEST(buf[3]==0xb8);
+
+    // 5 bytes
+    Converter::ToUtf8(0x29abcde, buf);
+    TEST(buf[0]==0xfa);
+    TEST(buf[1]==0xa6);
+    TEST(buf[2]==0xab);
+    TEST(buf[3]==0xb3);
+    TEST(buf[4]==0x9e);
+
+    // 6 bytes
+    Converter::ToUtf8(0x5f012345, buf);
+    TEST(buf[0]==0xfd);
+    TEST(buf[1]==0x9f);
+    TEST(buf[2]==0x80);
+    TEST(buf[3]==0x92);
+    TEST(buf[4]==0x8d);
+    TEST(buf[5]==0x85);
+}
+
+
 void TestTextUtils()
 {
     Runner runner("Ascii System");
@@ -1586,5 +1672,6 @@ void TestTextUtils()
     runner.Add(new SuiteParser());
     runner.Add(new SuiteUri());
     runner.Add(new SuiteSwap());
+    runner.Add(new SuiteUnicode());
     runner.Run();
 }

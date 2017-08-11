@@ -476,6 +476,18 @@ void ReaderBinary::Read(TUint aBytes)
 
 // ReaderProtocol
 
+void ReaderProtocol::Read(IReader& aReader, TUint aBytes, Bwx& aBuf)
+{
+    while (aBytes > 0) {
+        Brn buf = aReader.Read(aBytes);
+        if (buf.Bytes() == 0) {
+            THROW(ReaderError);
+        }
+        aBuf.Append(buf);
+        aBytes -= buf.Bytes();
+    }
+}
+
 ReaderProtocol::~ReaderProtocol()
 {
 }

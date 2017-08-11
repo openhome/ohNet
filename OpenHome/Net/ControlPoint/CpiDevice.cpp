@@ -368,7 +368,7 @@ void CpiDeviceList::NotifyAdded(CpiDevice& aDevice)
         // aDevice has been replaced, probably because its location changed
         return;
     }
-    LOG(kTrace, "Device+ {udn{%.*s}}\n", PBUF(aDevice.Udn()));
+    LOG_TRACE(kDevice, "Device+ {udn{%.*s}}\n", PBUF(aDevice.Udn()));
     iAdded(aDevice);
 }
 
@@ -406,7 +406,7 @@ TBool CpiDeviceList::DoRemove(CpiDevice& aDevice)
     if (callObserver) {
         iRemoved(aDevice);
     }
-    LOG(kTrace, "Device-  {udn{%.*s}}\n", PBUF(aDevice.Udn()));
+    LOG_TRACE(kDevice, "Device-  {udn{%.*s}}\n", PBUF(aDevice.Udn()));
     aDevice.RemoveRef();
     return true;
 }

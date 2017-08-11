@@ -146,7 +146,7 @@ void CpiSubscription::RunInSubscriber()
         }
         catch(...) {
             const Brx& udn = iDevice.Udn();
-            LOG2(kError, kTrace, "Subscribe (%p) for device %.*s failed\n", this, PBUF(udn));
+            LOG_ERROR(kEvent, "Subscribe (%p) for device %.*s failed\n", this, PBUF(udn));
             throw;
         }
         break;
@@ -343,7 +343,7 @@ void CpiSubscription::DoUnsubscribe()
 void CpiSubscription::SetRenewTimer(TUint aMaxSeconds)
 {
     if (aMaxSeconds == 0) {
-        LOG2(kEvent, kError, "ERROR: subscription (%p) sid %.*s has 0s renew time\n", this, PBUF(iSid));
+        LOG_ERROR(kEvent, "ERROR: subscription (%p) sid %.*s has 0s renew time\n", this, PBUF(iSid));
         return;
     }
     TUint64 maxSeconds = aMaxSeconds;
@@ -414,7 +414,7 @@ void CpiSubscription::EventUpdateEnd()
 
 void CpiSubscription::EventUpdateError()
 {
-    LOG2(kEvent, kError, "ERROR: subscription (%p) sid %.*s failure processing update\n", this, PBUF(iSid));
+    LOG_ERROR(kEvent, "ERROR: subscription (%p) sid %.*s failure processing update\n", this, PBUF(iSid));
     SetNotificationError();
     if (iEventProcessor != NULL) {
         iEventProcessor->EventUpdateError();
@@ -464,14 +464,14 @@ void Subscriber::Error(const TChar* /*aErr*/)
 #endif
 {
     gEnv->Mutex().Wait();
-    LOG2(kEvent, kError, "Error - %s - from (%p) SID ", aErr, iSubscription);
+    LOG_ERROR(kEvent, "Error - %s - from (%p) SID ", aErr, iSubscription);
     if (iSubscription->Sid().Bytes() > 0) {
-        LOG2(kEvent, kError, iSubscription->Sid());
+        LOG_ERROR(kEvent, iSubscription->Sid());
     }
     else {
-        LOG2(kEvent, kError, "(null)");
+        LOG_ERROR(kEvent, "(null)");
     }
-    LOG2(kEvent, kError, "\n");
+    LOG_ERROR(kEvent, "\n");
     gEnv->Mutex().Signal();
     // don't try to resubscribe as we may get stuck in an endless cycle of errors
 }

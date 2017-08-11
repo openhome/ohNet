@@ -288,7 +288,10 @@ void TestDvLpec(CpStack& aCpStack, DvStack& aDvStack)
 {
     Print("TestDvLpec - starting\n");
 
-    Debug::SetLevel(Debug::kLpec | Debug::kError | Debug::kEvent);
+    Debug::SetLevel(Debug::kLpec | Debug::kEvent);
+    Debug::SetSeverity(Debug::kSeverityError);
+
+
     Semaphore* sem = new Semaphore("SEM1", 0);
     DeviceLpec* device = new DeviceLpec(aDvStack);
     NetworkAdapter* nif = UpnpLibrary::CurrentSubnetAdapter("TestDvLpec");

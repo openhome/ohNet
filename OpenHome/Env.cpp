@@ -302,7 +302,7 @@ void Environment::RemoveResumeObserver(IResumeObserver& aObserver)
 
 void Environment::NotifySuspended()
 {
-    LOG(kTrace, "NotifySuspended\n");
+    LOG_TRACE(kNetwork, "NotifySuspended\n");
     iSuspendResumeObserverLock->Wait();
     for (TUint i=0; i<iSuspendObservers.size(); i++) {
         iSuspendObservers[i]->NotifySuspended();
@@ -312,7 +312,7 @@ void Environment::NotifySuspended()
 
 void Environment::NotifyResumed()
 {
-    LOG(kTrace, "NotifyResumed\n");
+    LOG_TRACE(kNetwork, "NotifyResumed\n");
     iSuspendResumeObserverLock->Wait();
     for (TUint i=0; i<iResumeObservers.size(); i++) {
         iResumeObservers[i]->NotifyResumed();

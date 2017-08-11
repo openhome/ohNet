@@ -86,7 +86,7 @@ void CpiDeviceLpec::LpecThread()
             Brn method = parser.Next(' ');
             if (starting) {
                 if (method != Lpec::kMethodAlive) {
-                    LOG2(kLpec, kError, "LPEC: unable to find device %.*s, exiting thread\n", PBUF(iLpecName));
+                    LOG_ERROR(kLpec, "LPEC: unable to find device %.*s, exiting thread\n", PBUF(iLpecName));
                     if (iStateChanged) {
                         iStateChanged();
                     }
@@ -124,7 +124,7 @@ void CpiDeviceLpec::LpecThread()
                 HandleEventedUpdate(parser.Remaining());
             }
             else if (iResponseHandler == NULL || !iResponseHandler->HandleLpecResponse(method, parser.Remaining())) {
-                LOG2(kLpec, kError, "Unexpected LPEC message: %.*s\n", PBUF(line));
+                LOG_ERROR(kLpec, "Unexpected LPEC message: %.*s\n", PBUF(line));
             }
         }
     }
@@ -146,7 +146,7 @@ void CpiDeviceLpec::LpecThread()
 
 void CpiDeviceLpec::LogError(const TChar* aError)
 {
-    LOG2(kLpec, kError, "LPEC: error %s for device %.*s, exiting thread\n", aError, PBUF(iLpecName));
+    LOG_ERROR(kLpec, "LPEC: error %s for device %.*s, exiting thread\n", aError, PBUF(iLpecName));
     if (iStateChanged) {
         iStateChanged();
     }
@@ -204,7 +204,7 @@ void CpiDeviceLpec::HandleEventedUpdate(const Brx& aUpdate)
         processor->EventUpdateEnd();
     }
     catch (AsciiError&) {
-        LOG2(kLpec, kError, "LPEC: Invalid evented update - %.*s\n", PBUF(aUpdate));
+        LOG_ERROR(kLpec, "LPEC: Invalid evented update - %.*s\n", PBUF(aUpdate));
         processor->EventUpdateError();
     }
     subscription->Unlock();

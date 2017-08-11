@@ -685,7 +685,7 @@ Library::Library(InitialisationParams* aInitParams)
         iEnv = gEnv;
         iEnv->SetInitParams(aInitParams);
     }
-    //Debug::SetLevel(Debug::kError);
+    //Debug::SetSeverity(Debug::kSeverityError);
 }
 
 Library::~Library()
@@ -753,7 +753,7 @@ Environment* UpnpLibrary::Initialise(InitialisationParams* aInitParams)
 {
     ASSERT(gEnv == NULL);
     Environment* env = Environment::Create(aInitParams);
-    //Debug::SetLevel(Debug::kError);
+    //Debug::SetSeverity(Debug::kSeverityError);
     return env;
 }
 

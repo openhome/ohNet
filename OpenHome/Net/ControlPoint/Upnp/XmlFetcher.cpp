@@ -190,7 +190,7 @@ void XmlFetch::Read()
     const HttpStatus& status = readerResponse.Status();
     if (status != HttpStatus::kOk) {
         const Brx& reason = status.Reason();
-        LOG2(kXmlFetch, kError, "XmlFetch::Read, http error %u %.*s\n", status.Code(), PBUF(reason));
+        LOG_TRACE(kXmlFetch, "XmlFetch::Read, http error %u %.*s\n", status.Code(), PBUF(reason));
         SetError(Error::eHttp, status.Code(), reason);
         THROW(HttpError);
     }
@@ -283,7 +283,7 @@ void XmlFetcher::LogError(const TChar* /*aErr*/)
 #endif
 {
     const Brx& absUri = iFetch->Uri().AbsoluteUri();
-    LOG2(kXmlFetch, kError, "Error - %s - from %.*s\n", aErr, PBUF(absUri));
+    LOG_ERROR(kXmlFetch, "Error - %s - from %.*s\n", aErr, PBUF(absUri));
 }
 
 void XmlFetcher::Run()
