@@ -114,6 +114,15 @@ private:
     TBool iPropertyChanged;
 };
 
+class AutoPropertyLock : private INonCopyable
+{
+public:
+    AutoPropertyLock(DvProvider& aProvider);
+    ~AutoPropertyLock();
+private:
+    DvProvider& iProvider;
+};
+
 } // namespace Net
 } // namespace OpenHome
 

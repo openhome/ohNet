@@ -105,3 +105,17 @@ void DvProvider::TryPublishUpdate()
         iService->PublishPropertyUpdates();
     }
 }    
+
+
+// AutoPropertyLock
+
+AutoPropertyLock::AutoPropertyLock(DvProvider& aProvider)
+    : iProvider(aProvider)
+{
+    iProvider.PropertiesLock();
+}
+
+AutoPropertyLock::~AutoPropertyLock()
+{
+    iProvider.PropertiesUnlock();
+}
