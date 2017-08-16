@@ -40,6 +40,12 @@ public:
      */
     void GetPropertySourceProtocolInfo(Brhz& aValue);
     /**
+     * Output the value of the SourceProtocolInfo property without an intermediate copy.
+     *
+     * Can only be called if EnablePropertySourceProtocolInfo has previously been called.
+     */
+    void WritePropertySourceProtocolInfo(IWriter& aWriter);
+    /**
      * Set the value of the SinkProtocolInfo property
      *
      * Can only be called if EnablePropertySinkProtocolInfo has previously been called.
@@ -54,6 +60,12 @@ public:
      */
     void GetPropertySinkProtocolInfo(Brhz& aValue);
     /**
+     * Output the value of the SinkProtocolInfo property without an intermediate copy.
+     *
+     * Can only be called if EnablePropertySinkProtocolInfo has previously been called.
+     */
+    void WritePropertySinkProtocolInfo(IWriter& aWriter);
+    /**
      * Set the value of the CurrentConnectionIDs property
      *
      * Can only be called if EnablePropertyCurrentConnectionIDs has previously been called.
@@ -67,6 +79,12 @@ public:
      * Can only be called if EnablePropertyCurrentConnectionIDs has previously been called.
      */
     void GetPropertyCurrentConnectionIDs(Brhz& aValue);
+    /**
+     * Output the value of the CurrentConnectionIDs property without an intermediate copy.
+     *
+     * Can only be called if EnablePropertyCurrentConnectionIDs has previously been called.
+     */
+    void WritePropertyCurrentConnectionIDs(IWriter& aWriter);
 protected:
     /**
      * Constructor

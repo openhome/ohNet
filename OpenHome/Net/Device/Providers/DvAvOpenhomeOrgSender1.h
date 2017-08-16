@@ -40,6 +40,12 @@ public:
      */
     void GetPropertyPresentationUrl(Brhz& aValue);
     /**
+     * Output the value of the PresentationUrl property without an intermediate copy.
+     *
+     * Can only be called if EnablePropertyPresentationUrl has previously been called.
+     */
+    void WritePropertyPresentationUrl(IWriter& aWriter);
+    /**
      * Set the value of the Metadata property
      *
      * Can only be called if EnablePropertyMetadata has previously been called.
@@ -53,6 +59,12 @@ public:
      * Can only be called if EnablePropertyMetadata has previously been called.
      */
     void GetPropertyMetadata(Brhz& aValue);
+    /**
+     * Output the value of the Metadata property without an intermediate copy.
+     *
+     * Can only be called if EnablePropertyMetadata has previously been called.
+     */
+    void WritePropertyMetadata(IWriter& aWriter);
     /**
      * Set the value of the Audio property
      *
@@ -82,6 +94,12 @@ public:
      */
     void GetPropertyStatus(Brhz& aValue);
     /**
+     * Output the value of the Status property without an intermediate copy.
+     *
+     * Can only be called if EnablePropertyStatus has previously been called.
+     */
+    void WritePropertyStatus(IWriter& aWriter);
+    /**
      * Set the value of the Attributes property
      *
      * Can only be called if EnablePropertyAttributes has previously been called.
@@ -95,6 +113,12 @@ public:
      * Can only be called if EnablePropertyAttributes has previously been called.
      */
     void GetPropertyAttributes(Brhz& aValue);
+    /**
+     * Output the value of the Attributes property without an intermediate copy.
+     *
+     * Can only be called if EnablePropertyAttributes has previously been called.
+     */
+    void WritePropertyAttributes(IWriter& aWriter);
 protected:
     /**
      * Constructor

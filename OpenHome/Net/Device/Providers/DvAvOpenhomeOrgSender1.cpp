@@ -20,6 +20,11 @@ void DvProviderAvOpenhomeOrgSender1::GetPropertyPresentationUrl(Brhz& aValue)
     aValue.Set(iPropertyPresentationUrl->Value());
 }
 
+void DvProviderAvOpenhomeOrgSender1::WritePropertyPresentationUrl(IWriter& aWriter)
+{
+    iPropertyPresentationUrl->Write(aWriter);
+}
+
 TBool DvProviderAvOpenhomeOrgSender1::SetPropertyMetadata(const Brx& aValue)
 {
     ASSERT(iPropertyMetadata != NULL);
@@ -30,6 +35,11 @@ void DvProviderAvOpenhomeOrgSender1::GetPropertyMetadata(Brhz& aValue)
 {
     ASSERT(iPropertyMetadata != NULL);
     aValue.Set(iPropertyMetadata->Value());
+}
+
+void DvProviderAvOpenhomeOrgSender1::WritePropertyMetadata(IWriter& aWriter)
+{
+    iPropertyMetadata->Write(aWriter);
 }
 
 TBool DvProviderAvOpenhomeOrgSender1::SetPropertyAudio(TBool aValue)
@@ -56,6 +66,11 @@ void DvProviderAvOpenhomeOrgSender1::GetPropertyStatus(Brhz& aValue)
     aValue.Set(iPropertyStatus->Value());
 }
 
+void DvProviderAvOpenhomeOrgSender1::WritePropertyStatus(IWriter& aWriter)
+{
+    iPropertyStatus->Write(aWriter);
+}
+
 TBool DvProviderAvOpenhomeOrgSender1::SetPropertyAttributes(const Brx& aValue)
 {
     ASSERT(iPropertyAttributes != NULL);
@@ -66,6 +81,11 @@ void DvProviderAvOpenhomeOrgSender1::GetPropertyAttributes(Brhz& aValue)
 {
     ASSERT(iPropertyAttributes != NULL);
     aValue.Set(iPropertyAttributes->Value());
+}
+
+void DvProviderAvOpenhomeOrgSender1::WritePropertyAttributes(IWriter& aWriter)
+{
+    iPropertyAttributes->Write(aWriter);
 }
 
 DvProviderAvOpenhomeOrgSender1::DvProviderAvOpenhomeOrgSender1(DvDevice& aDevice)

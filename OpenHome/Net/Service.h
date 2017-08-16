@@ -230,6 +230,7 @@ public:
     void Process(IOutputProcessor& aProcessor, const Brx& aBuffer);
     TBool SetValue(const Brx& aValue);
     void Write(IPropertyWriter& aWriter);
+    void Write(IWriter& aWriter);
 private:
     Brhz iValue;
 };
@@ -298,6 +299,7 @@ public:
     void Process(IOutputProcessor& aProcessor, const Brx& aBuffer);
     TBool SetValue(const Brx& aValue);
     void Write(IPropertyWriter& aWriter);
+    void Write(IWriter& aWriter);
 private:
     Brh iValue;
 };

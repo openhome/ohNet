@@ -82,6 +82,12 @@ public:
      */
     void GetPropertyVarStr(Brhz& aValue);
     /**
+     * Output the value of the VarStr property without an intermediate copy.
+     *
+     * Can only be called if EnablePropertyVarStr has previously been called.
+     */
+    void WritePropertyVarStr(IWriter& aWriter);
+    /**
      * Set the value of the VarBin property
      *
      * Can only be called if EnablePropertyVarBin has previously been called.
@@ -95,6 +101,12 @@ public:
      * Can only be called if EnablePropertyVarBin has previously been called.
      */
     void GetPropertyVarBin(Brh& aValue);
+    /**
+     * Output the value of the VarBin property without an intermediate copy.
+     *
+     * Can only be called if EnablePropertyVarBin has previously been called.
+     */
+    void WritePropertyVarBin(IWriter& aWriter);
 protected:
     /**
      * Constructor

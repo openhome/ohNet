@@ -40,6 +40,12 @@ public:
      */
     void GetPropertyManufacturerName(Brhz& aValue);
     /**
+     * Output the value of the ManufacturerName property without an intermediate copy.
+     *
+     * Can only be called if EnablePropertyManufacturerName has previously been called.
+     */
+    void WritePropertyManufacturerName(IWriter& aWriter);
+    /**
      * Set the value of the ManufacturerInfo property
      *
      * Can only be called if EnablePropertyManufacturerInfo has previously been called.
@@ -53,6 +59,12 @@ public:
      * Can only be called if EnablePropertyManufacturerInfo has previously been called.
      */
     void GetPropertyManufacturerInfo(Brhz& aValue);
+    /**
+     * Output the value of the ManufacturerInfo property without an intermediate copy.
+     *
+     * Can only be called if EnablePropertyManufacturerInfo has previously been called.
+     */
+    void WritePropertyManufacturerInfo(IWriter& aWriter);
     /**
      * Set the value of the ManufacturerUrl property
      *
@@ -68,6 +80,12 @@ public:
      */
     void GetPropertyManufacturerUrl(Brhz& aValue);
     /**
+     * Output the value of the ManufacturerUrl property without an intermediate copy.
+     *
+     * Can only be called if EnablePropertyManufacturerUrl has previously been called.
+     */
+    void WritePropertyManufacturerUrl(IWriter& aWriter);
+    /**
      * Set the value of the ManufacturerImageUri property
      *
      * Can only be called if EnablePropertyManufacturerImageUri has previously been called.
@@ -81,6 +99,12 @@ public:
      * Can only be called if EnablePropertyManufacturerImageUri has previously been called.
      */
     void GetPropertyManufacturerImageUri(Brhz& aValue);
+    /**
+     * Output the value of the ManufacturerImageUri property without an intermediate copy.
+     *
+     * Can only be called if EnablePropertyManufacturerImageUri has previously been called.
+     */
+    void WritePropertyManufacturerImageUri(IWriter& aWriter);
     /**
      * Set the value of the ModelName property
      *
@@ -96,6 +120,12 @@ public:
      */
     void GetPropertyModelName(Brhz& aValue);
     /**
+     * Output the value of the ModelName property without an intermediate copy.
+     *
+     * Can only be called if EnablePropertyModelName has previously been called.
+     */
+    void WritePropertyModelName(IWriter& aWriter);
+    /**
      * Set the value of the ModelInfo property
      *
      * Can only be called if EnablePropertyModelInfo has previously been called.
@@ -109,6 +139,12 @@ public:
      * Can only be called if EnablePropertyModelInfo has previously been called.
      */
     void GetPropertyModelInfo(Brhz& aValue);
+    /**
+     * Output the value of the ModelInfo property without an intermediate copy.
+     *
+     * Can only be called if EnablePropertyModelInfo has previously been called.
+     */
+    void WritePropertyModelInfo(IWriter& aWriter);
     /**
      * Set the value of the ModelUrl property
      *
@@ -124,6 +160,12 @@ public:
      */
     void GetPropertyModelUrl(Brhz& aValue);
     /**
+     * Output the value of the ModelUrl property without an intermediate copy.
+     *
+     * Can only be called if EnablePropertyModelUrl has previously been called.
+     */
+    void WritePropertyModelUrl(IWriter& aWriter);
+    /**
      * Set the value of the ModelImageUri property
      *
      * Can only be called if EnablePropertyModelImageUri has previously been called.
@@ -137,6 +179,12 @@ public:
      * Can only be called if EnablePropertyModelImageUri has previously been called.
      */
     void GetPropertyModelImageUri(Brhz& aValue);
+    /**
+     * Output the value of the ModelImageUri property without an intermediate copy.
+     *
+     * Can only be called if EnablePropertyModelImageUri has previously been called.
+     */
+    void WritePropertyModelImageUri(IWriter& aWriter);
     /**
      * Set the value of the ProductRoom property
      *
@@ -152,6 +200,12 @@ public:
      */
     void GetPropertyProductRoom(Brhz& aValue);
     /**
+     * Output the value of the ProductRoom property without an intermediate copy.
+     *
+     * Can only be called if EnablePropertyProductRoom has previously been called.
+     */
+    void WritePropertyProductRoom(IWriter& aWriter);
+    /**
      * Set the value of the ProductName property
      *
      * Can only be called if EnablePropertyProductName has previously been called.
@@ -165,6 +219,12 @@ public:
      * Can only be called if EnablePropertyProductName has previously been called.
      */
     void GetPropertyProductName(Brhz& aValue);
+    /**
+     * Output the value of the ProductName property without an intermediate copy.
+     *
+     * Can only be called if EnablePropertyProductName has previously been called.
+     */
+    void WritePropertyProductName(IWriter& aWriter);
     /**
      * Set the value of the ProductInfo property
      *
@@ -180,6 +240,12 @@ public:
      */
     void GetPropertyProductInfo(Brhz& aValue);
     /**
+     * Output the value of the ProductInfo property without an intermediate copy.
+     *
+     * Can only be called if EnablePropertyProductInfo has previously been called.
+     */
+    void WritePropertyProductInfo(IWriter& aWriter);
+    /**
      * Set the value of the ProductUrl property
      *
      * Can only be called if EnablePropertyProductUrl has previously been called.
@@ -194,6 +260,12 @@ public:
      */
     void GetPropertyProductUrl(Brhz& aValue);
     /**
+     * Output the value of the ProductUrl property without an intermediate copy.
+     *
+     * Can only be called if EnablePropertyProductUrl has previously been called.
+     */
+    void WritePropertyProductUrl(IWriter& aWriter);
+    /**
      * Set the value of the ProductImageUri property
      *
      * Can only be called if EnablePropertyProductImageUri has previously been called.
@@ -207,6 +279,12 @@ public:
      * Can only be called if EnablePropertyProductImageUri has previously been called.
      */
     void GetPropertyProductImageUri(Brhz& aValue);
+    /**
+     * Output the value of the ProductImageUri property without an intermediate copy.
+     *
+     * Can only be called if EnablePropertyProductImageUri has previously been called.
+     */
+    void WritePropertyProductImageUri(IWriter& aWriter);
     /**
      * Set the value of the Standby property
      *
@@ -264,6 +342,12 @@ public:
      */
     void GetPropertySourceXml(Brhz& aValue);
     /**
+     * Output the value of the SourceXml property without an intermediate copy.
+     *
+     * Can only be called if EnablePropertySourceXml has previously been called.
+     */
+    void WritePropertySourceXml(IWriter& aWriter);
+    /**
      * Set the value of the Attributes property
      *
      * Can only be called if EnablePropertyAttributes has previously been called.
@@ -277,6 +361,12 @@ public:
      * Can only be called if EnablePropertyAttributes has previously been called.
      */
     void GetPropertyAttributes(Brhz& aValue);
+    /**
+     * Output the value of the Attributes property without an intermediate copy.
+     *
+     * Can only be called if EnablePropertyAttributes has previously been called.
+     */
+    void WritePropertyAttributes(IWriter& aWriter);
 protected:
     /**
      * Constructor

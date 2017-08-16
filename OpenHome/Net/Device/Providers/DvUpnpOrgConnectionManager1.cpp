@@ -20,6 +20,11 @@ void DvProviderUpnpOrgConnectionManager1::GetPropertySourceProtocolInfo(Brhz& aV
     aValue.Set(iPropertySourceProtocolInfo->Value());
 }
 
+void DvProviderUpnpOrgConnectionManager1::WritePropertySourceProtocolInfo(IWriter& aWriter)
+{
+    iPropertySourceProtocolInfo->Write(aWriter);
+}
+
 TBool DvProviderUpnpOrgConnectionManager1::SetPropertySinkProtocolInfo(const Brx& aValue)
 {
     ASSERT(iPropertySinkProtocolInfo != NULL);
@@ -32,6 +37,11 @@ void DvProviderUpnpOrgConnectionManager1::GetPropertySinkProtocolInfo(Brhz& aVal
     aValue.Set(iPropertySinkProtocolInfo->Value());
 }
 
+void DvProviderUpnpOrgConnectionManager1::WritePropertySinkProtocolInfo(IWriter& aWriter)
+{
+    iPropertySinkProtocolInfo->Write(aWriter);
+}
+
 TBool DvProviderUpnpOrgConnectionManager1::SetPropertyCurrentConnectionIDs(const Brx& aValue)
 {
     ASSERT(iPropertyCurrentConnectionIDs != NULL);
@@ -42,6 +52,11 @@ void DvProviderUpnpOrgConnectionManager1::GetPropertyCurrentConnectionIDs(Brhz& 
 {
     ASSERT(iPropertyCurrentConnectionIDs != NULL);
     aValue.Set(iPropertyCurrentConnectionIDs->Value());
+}
+
+void DvProviderUpnpOrgConnectionManager1::WritePropertyCurrentConnectionIDs(IWriter& aWriter)
+{
+    iPropertyCurrentConnectionIDs->Write(aWriter);
 }
 
 DvProviderUpnpOrgConnectionManager1::DvProviderUpnpOrgConnectionManager1(DvDevice& aDevice)

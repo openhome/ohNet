@@ -349,6 +349,12 @@ void PropertyString::Write(IPropertyWriter& aWriter)
     aWriter.PropertyWriteString(iParameter->Name(), iValue);
 }
 
+void PropertyString::Write(IWriter& aWriter)
+{
+    AutoMutex _(iLock);
+    aWriter.Write(iValue);
+}
+
 
 // PropertyInt
 
@@ -564,6 +570,12 @@ void PropertyBinary::Write(IPropertyWriter& aWriter)
 {
     AutoMutex _(iLock);
     aWriter.PropertyWriteBinary(iParameter->Name(), iValue);
+}
+
+void PropertyBinary::Write(IWriter& aWriter)
+{
+    AutoMutex _(iLock);
+    aWriter.Write(iValue);
 }
 
 

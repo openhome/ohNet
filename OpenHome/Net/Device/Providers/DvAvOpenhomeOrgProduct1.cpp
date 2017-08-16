@@ -20,6 +20,11 @@ void DvProviderAvOpenhomeOrgProduct1::GetPropertyManufacturerName(Brhz& aValue)
     aValue.Set(iPropertyManufacturerName->Value());
 }
 
+void DvProviderAvOpenhomeOrgProduct1::WritePropertyManufacturerName(IWriter& aWriter)
+{
+    iPropertyManufacturerName->Write(aWriter);
+}
+
 TBool DvProviderAvOpenhomeOrgProduct1::SetPropertyManufacturerInfo(const Brx& aValue)
 {
     ASSERT(iPropertyManufacturerInfo != NULL);
@@ -30,6 +35,11 @@ void DvProviderAvOpenhomeOrgProduct1::GetPropertyManufacturerInfo(Brhz& aValue)
 {
     ASSERT(iPropertyManufacturerInfo != NULL);
     aValue.Set(iPropertyManufacturerInfo->Value());
+}
+
+void DvProviderAvOpenhomeOrgProduct1::WritePropertyManufacturerInfo(IWriter& aWriter)
+{
+    iPropertyManufacturerInfo->Write(aWriter);
 }
 
 TBool DvProviderAvOpenhomeOrgProduct1::SetPropertyManufacturerUrl(const Brx& aValue)
@@ -44,6 +54,11 @@ void DvProviderAvOpenhomeOrgProduct1::GetPropertyManufacturerUrl(Brhz& aValue)
     aValue.Set(iPropertyManufacturerUrl->Value());
 }
 
+void DvProviderAvOpenhomeOrgProduct1::WritePropertyManufacturerUrl(IWriter& aWriter)
+{
+    iPropertyManufacturerUrl->Write(aWriter);
+}
+
 TBool DvProviderAvOpenhomeOrgProduct1::SetPropertyManufacturerImageUri(const Brx& aValue)
 {
     ASSERT(iPropertyManufacturerImageUri != NULL);
@@ -54,6 +69,11 @@ void DvProviderAvOpenhomeOrgProduct1::GetPropertyManufacturerImageUri(Brhz& aVal
 {
     ASSERT(iPropertyManufacturerImageUri != NULL);
     aValue.Set(iPropertyManufacturerImageUri->Value());
+}
+
+void DvProviderAvOpenhomeOrgProduct1::WritePropertyManufacturerImageUri(IWriter& aWriter)
+{
+    iPropertyManufacturerImageUri->Write(aWriter);
 }
 
 TBool DvProviderAvOpenhomeOrgProduct1::SetPropertyModelName(const Brx& aValue)
@@ -68,6 +88,11 @@ void DvProviderAvOpenhomeOrgProduct1::GetPropertyModelName(Brhz& aValue)
     aValue.Set(iPropertyModelName->Value());
 }
 
+void DvProviderAvOpenhomeOrgProduct1::WritePropertyModelName(IWriter& aWriter)
+{
+    iPropertyModelName->Write(aWriter);
+}
+
 TBool DvProviderAvOpenhomeOrgProduct1::SetPropertyModelInfo(const Brx& aValue)
 {
     ASSERT(iPropertyModelInfo != NULL);
@@ -78,6 +103,11 @@ void DvProviderAvOpenhomeOrgProduct1::GetPropertyModelInfo(Brhz& aValue)
 {
     ASSERT(iPropertyModelInfo != NULL);
     aValue.Set(iPropertyModelInfo->Value());
+}
+
+void DvProviderAvOpenhomeOrgProduct1::WritePropertyModelInfo(IWriter& aWriter)
+{
+    iPropertyModelInfo->Write(aWriter);
 }
 
 TBool DvProviderAvOpenhomeOrgProduct1::SetPropertyModelUrl(const Brx& aValue)
@@ -92,6 +122,11 @@ void DvProviderAvOpenhomeOrgProduct1::GetPropertyModelUrl(Brhz& aValue)
     aValue.Set(iPropertyModelUrl->Value());
 }
 
+void DvProviderAvOpenhomeOrgProduct1::WritePropertyModelUrl(IWriter& aWriter)
+{
+    iPropertyModelUrl->Write(aWriter);
+}
+
 TBool DvProviderAvOpenhomeOrgProduct1::SetPropertyModelImageUri(const Brx& aValue)
 {
     ASSERT(iPropertyModelImageUri != NULL);
@@ -102,6 +137,11 @@ void DvProviderAvOpenhomeOrgProduct1::GetPropertyModelImageUri(Brhz& aValue)
 {
     ASSERT(iPropertyModelImageUri != NULL);
     aValue.Set(iPropertyModelImageUri->Value());
+}
+
+void DvProviderAvOpenhomeOrgProduct1::WritePropertyModelImageUri(IWriter& aWriter)
+{
+    iPropertyModelImageUri->Write(aWriter);
 }
 
 TBool DvProviderAvOpenhomeOrgProduct1::SetPropertyProductRoom(const Brx& aValue)
@@ -116,6 +156,11 @@ void DvProviderAvOpenhomeOrgProduct1::GetPropertyProductRoom(Brhz& aValue)
     aValue.Set(iPropertyProductRoom->Value());
 }
 
+void DvProviderAvOpenhomeOrgProduct1::WritePropertyProductRoom(IWriter& aWriter)
+{
+    iPropertyProductRoom->Write(aWriter);
+}
+
 TBool DvProviderAvOpenhomeOrgProduct1::SetPropertyProductName(const Brx& aValue)
 {
     ASSERT(iPropertyProductName != NULL);
@@ -126,6 +171,11 @@ void DvProviderAvOpenhomeOrgProduct1::GetPropertyProductName(Brhz& aValue)
 {
     ASSERT(iPropertyProductName != NULL);
     aValue.Set(iPropertyProductName->Value());
+}
+
+void DvProviderAvOpenhomeOrgProduct1::WritePropertyProductName(IWriter& aWriter)
+{
+    iPropertyProductName->Write(aWriter);
 }
 
 TBool DvProviderAvOpenhomeOrgProduct1::SetPropertyProductInfo(const Brx& aValue)
@@ -140,6 +190,11 @@ void DvProviderAvOpenhomeOrgProduct1::GetPropertyProductInfo(Brhz& aValue)
     aValue.Set(iPropertyProductInfo->Value());
 }
 
+void DvProviderAvOpenhomeOrgProduct1::WritePropertyProductInfo(IWriter& aWriter)
+{
+    iPropertyProductInfo->Write(aWriter);
+}
+
 TBool DvProviderAvOpenhomeOrgProduct1::SetPropertyProductUrl(const Brx& aValue)
 {
     ASSERT(iPropertyProductUrl != NULL);
@@ -152,6 +207,11 @@ void DvProviderAvOpenhomeOrgProduct1::GetPropertyProductUrl(Brhz& aValue)
     aValue.Set(iPropertyProductUrl->Value());
 }
 
+void DvProviderAvOpenhomeOrgProduct1::WritePropertyProductUrl(IWriter& aWriter)
+{
+    iPropertyProductUrl->Write(aWriter);
+}
+
 TBool DvProviderAvOpenhomeOrgProduct1::SetPropertyProductImageUri(const Brx& aValue)
 {
     ASSERT(iPropertyProductImageUri != NULL);
@@ -162,6 +222,11 @@ void DvProviderAvOpenhomeOrgProduct1::GetPropertyProductImageUri(Brhz& aValue)
 {
     ASSERT(iPropertyProductImageUri != NULL);
     aValue.Set(iPropertyProductImageUri->Value());
+}
+
+void DvProviderAvOpenhomeOrgProduct1::WritePropertyProductImageUri(IWriter& aWriter)
+{
+    iPropertyProductImageUri->Write(aWriter);
 }
 
 TBool DvProviderAvOpenhomeOrgProduct1::SetPropertyStandby(TBool aValue)
@@ -212,6 +277,11 @@ void DvProviderAvOpenhomeOrgProduct1::GetPropertySourceXml(Brhz& aValue)
     aValue.Set(iPropertySourceXml->Value());
 }
 
+void DvProviderAvOpenhomeOrgProduct1::WritePropertySourceXml(IWriter& aWriter)
+{
+    iPropertySourceXml->Write(aWriter);
+}
+
 TBool DvProviderAvOpenhomeOrgProduct1::SetPropertyAttributes(const Brx& aValue)
 {
     ASSERT(iPropertyAttributes != NULL);
@@ -222,6 +292,11 @@ void DvProviderAvOpenhomeOrgProduct1::GetPropertyAttributes(Brhz& aValue)
 {
     ASSERT(iPropertyAttributes != NULL);
     aValue.Set(iPropertyAttributes->Value());
+}
+
+void DvProviderAvOpenhomeOrgProduct1::WritePropertyAttributes(IWriter& aWriter)
+{
+    iPropertyAttributes->Write(aWriter);
 }
 
 DvProviderAvOpenhomeOrgProduct1::DvProviderAvOpenhomeOrgProduct1(DvDevice& aDevice)

@@ -71,6 +71,14 @@ void <#=className#>::GetProperty<#=s.name#>(<#=inArgType[s.type]#>& aValue)
     aValue = iProperty<#=s.name#>->Value();
 <#      } #>
 }
+<#      if (s.type == "string" || s.type == "bin.base64" || s.type == "uri") #>
+<#      { #>
+
+void <#=className#>::WriteProperty<#=s.name#>(IWriter& aWriter)
+{
+    iProperty<#=s.name#>->Write(aWriter);
+}
+<#      } #>
 <#  } #>
 
 <#=className#>::<#=className#>(DvDevice& aDevice)

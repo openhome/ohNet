@@ -84,6 +84,15 @@ public:
      * Can only be called if EnableProperty<#=s.name#> has previously been called.
      */
     void GetProperty<#=s.name#>(<#=outArgTypeProperty[s.type]#> aValue);
+<#      if (s.type == "string" || s.type == "bin.base64" || s.type == "uri") #>
+<#      { #>
+    /**
+     * Output the value of the <#=s.name#> property without an intermediate copy.
+     *
+     * Can only be called if EnableProperty<#=s.name#> has previously been called.
+     */
+    void WriteProperty<#=s.name#>(IWriter& aWriter);
+<#      } #>
 <#  } #>
 protected:
     /**

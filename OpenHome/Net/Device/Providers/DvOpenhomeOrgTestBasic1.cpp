@@ -56,6 +56,11 @@ void DvProviderOpenhomeOrgTestBasic1::GetPropertyVarStr(Brhz& aValue)
     aValue.Set(iPropertyVarStr->Value());
 }
 
+void DvProviderOpenhomeOrgTestBasic1::WritePropertyVarStr(IWriter& aWriter)
+{
+    iPropertyVarStr->Write(aWriter);
+}
+
 TBool DvProviderOpenhomeOrgTestBasic1::SetPropertyVarBin(const Brx& aValue)
 {
     ASSERT(iPropertyVarBin != NULL);
@@ -66,6 +71,11 @@ void DvProviderOpenhomeOrgTestBasic1::GetPropertyVarBin(Brh& aValue)
 {
     ASSERT(iPropertyVarBin != NULL);
     aValue.Set(iPropertyVarBin->Value());
+}
+
+void DvProviderOpenhomeOrgTestBasic1::WritePropertyVarBin(IWriter& aWriter)
+{
+    iPropertyVarBin->Write(aWriter);
 }
 
 DvProviderOpenhomeOrgTestBasic1::DvProviderOpenhomeOrgTestBasic1(DvDevice& aDevice)
