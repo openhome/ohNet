@@ -820,7 +820,7 @@ $(objdir)TestKazooServer.$(objext) : OpenHome/Tests/TestKazooServer.cpp $(header
 	$(compiler)TestKazooServer.$(objext) -c $(cppflags) $(includes) OpenHome/Tests/TestKazooServer.cpp
 
 TestShell: $(objdir)TestShell.$(exeext)
-$(objdir)TestShell.$(exeext) :  $(objdir)ShellCommandRun.$(objext) $(objdir)TestShell.$(objext) $(libprefix)TestFramework.$(libext) TestsCore
+$(objdir)TestShell.$(exeext) :  ohNetCore $(objdir)ShellCommandRun.$(objext) $(objdir)TestShell.$(objext) $(libprefix)TestFramework.$(libext) TestsCore
 	$(link) $(linkoutput)$(objdir)TestShell.$(exeext) $(objdir)TestShell.$(objext) $(objdir)ohNetTestsCore.$(libext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
 $(objdir)TestShell.$(objext) : OpenHome/Shell/TestShell.cpp $(headers)
 	$(compiler)TestShell.$(objext) -c $(cppflags) $(includes) OpenHome/Shell/TestShell.cpp
