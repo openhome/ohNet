@@ -1318,7 +1318,7 @@ void SuiteUri::Test()
 #undef REL_TEST
 
     {
-        Uri root(
+        Uri root2(
             Brn("http://10.2.10.211:31888/foo"),
             Brn("http://core/bar"));
         TEST(root.AbsoluteUri() == Brn("http://core/bar"));
