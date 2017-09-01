@@ -60,6 +60,11 @@ void Uri::Replace(const Brx& aBaseUri, const Brx& aRelativeUri)
         iAbsoluteUri.Append(':');
         iAbsoluteUri.Append(iRelative);
     }
+    else if (Ascii::Contains(iRelative, ':'))
+    {
+        // any Uri with ':' must be an absolute uri, because it must declare a scheme.
+        iAbsoluteUri.Replace(iRelative);
+    }
     else if (iRelative.BeginsWith(Brn("/"))) {
         Replace(iBase);
         iBase.Replace(iScheme);

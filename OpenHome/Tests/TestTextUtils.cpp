@@ -1317,6 +1317,13 @@ void SuiteUri::Test()
     REL_TEST("./about.html",       "http://WebReference.com/html/about.html");
 #undef REL_TEST
 
+    {
+        Uri root(
+            Brn("http://10.2.10.211:31888/foo"),
+            Brn("http://core/bar"));
+        TEST(root.AbsoluteUri() == Brn("http://core/bar"));
+    }
+
     Bws<128> uriString("testscheme://testhost:123/testpath");
     Bws<32> uriPath("/testpath");
     for(i=0 ; i<128 ; i++) {
