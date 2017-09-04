@@ -1321,7 +1321,7 @@ void SuiteUri::Test()
         Uri root2(
             Brn("http://10.2.10.211:31888/foo"),
             Brn("http://core/bar"));
-        TEST(root.AbsoluteUri() == Brn("http://core/bar"));
+        TEST(root2.AbsoluteUri() == Brn("http://core/bar"));
     }
 
     Bws<128> uriString("testscheme://testhost:123/testpath");
