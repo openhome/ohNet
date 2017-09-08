@@ -527,7 +527,7 @@ static void* threadEntrypoint(void* aArg)
         if ( nice_value < 0 )
             nice_value = 0;
         //printf("Thread of priority %d asking for niceness %d (current niceness is %d)\n", data->iPriority, nice_value, getpriority(PRIO_PROCESS, 0));
-        int result = setpriority(PRIO_PROCESS, 0, nice_value);
+        /*int result = */setpriority(PRIO_PROCESS, 0, nice_value);
         //if ( result == -1 )
         //    perror("Warning: Could not renice this thread");
     }
