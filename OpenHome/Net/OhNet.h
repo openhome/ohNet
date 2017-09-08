@@ -353,7 +353,6 @@ public:
      * All DvDevice instances with an IResourceManager will be published using Bonjour.
      * If a device sets the "Upnp.MdnsHostName" attribute, its presentation will be available via http://[hostname].local.
      * Behaviour when more than one DvDevice sets the "MdnsHostName" attribute is undefined.
-     * Note that enabling Bonjour will cause the device stack to run a http server on port 80, requiring root privileges on linux.
      */
     void SetDvEnableBonjour(const TChar* aHostName);
     /**
