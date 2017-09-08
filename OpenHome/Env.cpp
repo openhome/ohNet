@@ -134,7 +134,11 @@ Environment* Environment::Create(InitialisationParams* aInitParams)
 void Environment::Construct(FunctorMsg& aLogOutput)
 {
     gEnv = this;
-    iOsContext = OpenHome::Os::Create();
+    Net::InitialisationParams::EThreadScheduling schedulerPolicy = InitialisationParams::EScheduleDefault;
+    if (iInitParams != NULL) {
+        schedulerPolicy = iInitParams->SchedulingPolicy();
+    }
+    iOsContext = OpenHome::Os::Create(schedulerPolicy);
     if (iOsContext == NULL) {
         throw std::bad_alloc();
     }

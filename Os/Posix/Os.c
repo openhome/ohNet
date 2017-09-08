@@ -1,10 +1,7 @@
 // Implementation of Os.h APIs for Posix
 
-#undef ATTEMPT_THREAD_PRIORITIES
-#undef ATTEMPT_THREAD_NICENESS
 #undef SET_PTHREAD_NAMES
 
-//#define ATTEMPT_THREAD_PRIORITIES
 //#define SET_PTHREAD_NAMES
 
 #include <stdio.h>
@@ -14,10 +11,8 @@
 #include <pthread.h>
 #include <errno.h>
 #include <assert.h>
-#ifdef ATTEMPT_THREAD_NICENESS
-#include <sys/time.h>
-#include <sys/resource.h>
-#endif
+#include <sys/time.h> // eScheduleNice only
+#include <sys/resource.h> // eScheduleNice only
 #include <string.h>
 #include <sys/types.h>
 #include <sys/select.h>
@@ -77,6 +72,7 @@ struct OsContext {
     struct timeval iTimeAdjustment; /* Amount to adjust return for OsTimeInUs() by. 
                                        Will be 0 unless time ever jumps backwards. */
     THandle iMutex;
+    OsThreadSchedulePolicy iSchedulerPolicy;
     pthread_key_t iThreadArgKey;
     struct InterfaceChangedObserver* iInterfaceChangedObserver;
     int32_t iThreadPriorityMin;
@@ -85,7 +81,7 @@ struct OsContext {
 static void DestroyInterfaceChangedObserver(OsContext* aContext);
 
 
-OsContext* OsCreate()
+OsContext* OsCreate(OsThreadSchedulePolicy aSchedulerPolicy)
 {
     OsContext* ctx = malloc(sizeof(*ctx));
     gettimeofday(&ctx->iStartTime, NULL);
@@ -96,6 +92,7 @@ OsContext* OsCreate()
         free(ctx);
         return NULL;
     }
+    ctx->iSchedulerPolicy = aSchedulerPolicy;
     if (pthread_key_create(&ctx->iThreadArgKey, NULL) != 0) {
         OsMutexDestroy(ctx->iMutex);
         free(ctx);
@@ -465,20 +462,22 @@ int32_t OsMutexUnlock(THandle aMutex)
 
 void OsThreadGetPriorityRange(OsContext* aContext, uint32_t* aHostMin, uint32_t* aHostMax)
 {
-    // FIXME - 50/150 copied from previous expectations of threadEntrypoint
-#if defined(ATTEMPT_THREAD_PRIORITIES)
-    const int32_t platMin = sched_get_priority_min(kThreadSchedPolicy);
-    const int32_t platMax = sched_get_priority_max(kThreadSchedPolicy);
-    aContext->iThreadPriorityMin = platMin;
-    *aHostMin = 0;
-    *aHostMax = platMax - platMin;
-#elif defined(ATTEMPT_THREAD_NICENESS)
-    *aHostMin = 50;
-    *aHostMax = 150;
-#else
-    *aHostMin = 1;
-    *aHostMax = 100;
-#endif
+    if (aContext->iSchedulerPolicy == eSchedulePriorityEnable) {
+        const int32_t platMin = sched_get_priority_min(kThreadSchedPolicy);
+        const int32_t platMax = sched_get_priority_max(kThreadSchedPolicy);
+        aContext->iThreadPriorityMin = platMin;
+        *aHostMin = 0;
+        *aHostMax = platMax - platMin;
+    }
+    else if (aContext->iSchedulerPolicy == eScheduleNice) {
+        // FIXME - 50/150 copied from previous expectations of threadEntrypoint
+        *aHostMin = 50;
+        *aHostMax = 150;
+    }
+    else {
+        *aHostMin = 1;
+        *aHostMax = 100;
+    }
 }
 
 typedef struct
@@ -502,8 +501,7 @@ static void* threadEntrypoint(void* aArg)
     ThreadData* data = (ThreadData*)aArg;
     assert(data != NULL);
 
-#if defined(ATTEMPT_THREAD_PRIORITIES)
-    {
+    if (data->iCtx->iSchedulerPolicy == eSchedulePriorityEnable) {
         int32_t priority = ((int32_t)data->iPriority) + data->iCtx->iThreadPriorityMin;
         struct sched_param param;
         memset(&param, 0, sizeof(param));
@@ -520,8 +518,7 @@ static void* threadEntrypoint(void* aArg)
             printf("Attempt to set thread priority for '%s' to %d failed with %d(%d)\n", name, priority, status, errno);
         }
     }
-#elif defined(ATTEMPT_THREAD_NICENESS) // ATTEMPT_THREAD_PRIORITIES
-    {
+    else if (data->iCtx->iSchedulerPolicy == eScheduleNice) {
         static const int kMinimumNice = 5; // set MIN
         // Map all prios > 105 -> nice 0 (default), anything else to MIN
         //int nice_value = (data->iPriority > 105 ? 0 : kMinimumNice);
@@ -534,7 +531,6 @@ static void* threadEntrypoint(void* aArg)
         //if ( result == -1 )
         //    perror("Warning: Could not renice this thread");
     }
-#endif
 
     // Disable cancellation - we're in a C++ environment, and
     // don't want to rely on pthreads to mess things up for us.
@@ -633,11 +629,10 @@ void OsThreadDestroy(THandle aThread)
 
 int32_t OsThreadSupportsPriorities(OsContext* aContext)
 {
-#ifdef ATTEMPT_THREAD_PRIORITIES
-    return 1;
-#else
+    if (aContext->iSchedulerPolicy == eSchedulePriorityEnable) {
+        return 1;
+    }
     return 0;
-#endif
 }
 
 typedef struct OsNetworkHandle

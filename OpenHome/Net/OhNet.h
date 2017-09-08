@@ -192,6 +192,13 @@ public:
        ,ELoopbackUse     // exclude everything but loopback from list of available subnets
        ,ELoopbackInclude // include loopback in list of available subnets
     };
+    enum EThreadScheduling
+    {
+        EScheduleDefault
+       ,ESchedulePriority
+       ,EScheduleNice
+       ,EScheduleNone
+    };
 public:
     /**
      * Create a new InitialisationParams instance.
@@ -382,6 +389,12 @@ public:
      * Enable use of debug shell
      */
     void SetEnableShell(TUint aPort = Shell::kServerPortDefault, TUint aSessionPriority = kPriorityNormal);
+    /**
+     * Set thread scheduling policy
+     * EScheduleDefault is suitable for most OSes.
+     * ESchedulePriority is preferable for *nix
+     */
+    void SetSchedulingPolicy(EThreadScheduling aPolicy);
 
     FunctorMsg& LogOutput();
     FunctorMsg& FatalErrorHandler();
@@ -420,6 +433,7 @@ public:
     uint32_t TimerManagerPriority() const;
     const Brx& HttpUserAgent() const;
     TBool IsShellEnabled(TUint& aPort, TUint& aSessionPriority) const;
+    EThreadScheduling SchedulingPolicy() const;
 private:
     InitialisationParams();
     void FatalErrorHandlerDefault(const char* aMsg);
@@ -466,6 +480,7 @@ private:
     TBool iEnableShell;
     TUint iShellPort;
     TUint iShellSessionPriority;
+    EThreadScheduling iSchedulingPolicy;
 };
 
 class CpStack;

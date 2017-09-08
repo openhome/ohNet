@@ -426,6 +426,11 @@ void InitialisationParams::SetEnableShell(TUint aPort, TUint aSessionPriority)
     iShellSessionPriority = aSessionPriority;
 }
 
+void InitialisationParams::SetSchedulingPolicy(EThreadScheduling aPolicy)
+{
+    iSchedulingPolicy = aPolicy;
+}
+
 FunctorMsg& InitialisationParams::LogOutput()
 {
     return iLogOutput;
@@ -618,6 +623,11 @@ TBool InitialisationParams::IsShellEnabled(TUint& aPort, TUint& aSessionPriority
     return iEnableShell;
 }
 
+InitialisationParams::EThreadScheduling InitialisationParams::SchedulingPolicy() const
+{
+    return iSchedulingPolicy;
+}
+
 #if defined(PLATFORM_MACOSX_GNU) || defined (PLATFORM_IOS)
 /* Assume that all Apple products have poor quality networking.
    This won't be the case for a wired Mac desktop but we'd need a way of signalling which
@@ -656,6 +666,7 @@ InitialisationParams::InitialisationParams()
     , iEnableShell(false)
     , iShellPort(0)
     , iShellSessionPriority(kPriorityNormal)
+    , iSchedulingPolicy(EScheduleDefault)
 {
     iDefaultLogger = new DefaultLogger;
     FunctorMsg functor = MakeFunctorMsg(*iDefaultLogger, &OpenHome::Net::DefaultLogger::Log);

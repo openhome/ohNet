@@ -69,7 +69,7 @@ typedef struct OsContext {
 } OsContext;
 
 
-OsContext* OsCreate()
+OsContext* OsCreate(OsThreadSchedulePolicy aSchedulerPolicy)
 {
     FILETIME ft;
     WSADATA wsaData;

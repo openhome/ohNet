@@ -17,7 +17,7 @@ namespace OpenHome {
 class Os
 {
 public:
-    inline static OsContext* Create();
+    inline static OsContext* Create(Net::InitialisationParams::EThreadScheduling aSchedulerPolicy);
     inline static void Destroy(OsContext* aContext);
     inline static void Quit(OsContext* aContext);
     static THandle StackTraceInitialise(OsContext* aContext);

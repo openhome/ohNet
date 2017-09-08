@@ -41,14 +41,25 @@ static INLINE uint32_t SwapEndian32(uint32_t aValue)
         |  ((aValue & 0x000000ff) << 24);
 }
 
+typedef enum
+{
+    eScheduleDefault,         /**< Default policy for host platform */
+    eSchedulePriorityEnable,  /**< Enable priority-based scheduling */
+    eScheduleNice,            /**< Enable 'niceness' */
+    eSchedulePriorityDisable, /**< Disable priority-based scheduling */
+} OsThreadSchedulePolicy;
+
+
 /**
  * Called when the UPnP library is initialised.
  *
  * This function will be called before any other function defined in this header.
  *
+ * @param[in] aSchedulerPolicy     Thread scheduling policy
+ *
  * @return  Valid OsContext on success; NULL on failure
  */
-OsContext* OsCreate();
+OsContext* OsCreate(OsThreadSchedulePolicy aSchedulerPolicy);
 
 /**
  * Called when the UPnP library is closed.
