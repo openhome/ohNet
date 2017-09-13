@@ -55,6 +55,7 @@ public:
     virtual void ValidateBinary(const Brx& aValue) const;
 protected:
     Parameter(const TChar* aName, EType aType);
+    Parameter(const Brx& aName, EType aType);
 private:
     Brhz iName;
     EType iType;
@@ -67,6 +68,7 @@ class ParameterBool : public Parameter
 {
 public:
     DllExport ParameterBool(const TChar* aName);
+    DllExport ParameterBool(const Brx& aName);
     DllExport ~ParameterBool();
     void ValidateBool(TBool aValue) const;
 };
@@ -84,7 +86,8 @@ public:
        ,kStep     = 1
     };
 public:
-    DllExport ParameterInt(const TChar* aName, TInt aMinValue=kValueMin, TInt aMaxValue=kValueMax, TInt aStep=kStep);
+    DllExport ParameterInt(const TChar* aName, TInt aMinValue = kValueMin, TInt aMaxValue = kValueMax, TInt aStep = kStep);
+    DllExport ParameterInt(const Brx& aName, TInt aMinValue=kValueMin, TInt aMaxValue=kValueMax, TInt aStep=kStep);
     DllExport ~ParameterInt();
     void ValidateInt(TInt aValue) const;
     TInt MinValue() const;
@@ -109,7 +112,8 @@ public:
        ,kStep     = 1
     };
 public:
-    DllExport ParameterUint(const TChar* aName, TUint aMinValue=kValueMin, TUint aMaxValue=kValueMax, TUint aStep=kStep);
+    DllExport ParameterUint(const TChar* aName, TUint aMinValue = kValueMin, TUint aMaxValue = kValueMax, TUint aStep = kStep);
+    DllExport ParameterUint(const Brx& aName, TUint aMinValue=kValueMin, TUint aMaxValue=kValueMax, TUint aStep=kStep);
     DllExport ~ParameterUint();
     void ValidateUint(TUint aValue) const;
     TUint MinValue() const;
@@ -129,11 +133,15 @@ class ParameterString : public Parameter
 {
 public:
     DllExport ParameterString(const TChar* aName);
+    DllExport ParameterString(const Brx& aName);
     DllExport ParameterString(const TChar* aName, TChar** aAllowedValues, TUint aCount);
+    DllExport ParameterString(const Brx& aName, TChar** aAllowedValues, TUint aCount);
     DllExport ~ParameterString();
     void ValidateString(const Brx& aValue) const;
     typedef std::map<Brn,Brh*,BufferCmp> Map;
     const Map& AllowedValues() const;
+private:
+    void Construct(TChar** aAllowedValues, TUint aCount);
 private:
     Map iMap;
 };
@@ -145,6 +153,7 @@ class ParameterBinary : public Parameter
 {
 public:
     DllExport ParameterBinary(const TChar* aName);
+    DllExport ParameterBinary(const Brx& aName);
     DllExport ~ParameterBinary();
     void ValidateBinary(const Brx& aValue) const;
 };
@@ -154,6 +163,7 @@ class ParameterRelated : public Parameter
 {
 public:
     DllExport ParameterRelated(const TChar* aName, const OpenHome::Net::Property& aRelated);
+    DllExport ParameterRelated(const Brx& aName, const OpenHome::Net::Property& aRelated);
     DllExport ~ParameterRelated();
     const OpenHome::Net::Property& Related() const;
 private:

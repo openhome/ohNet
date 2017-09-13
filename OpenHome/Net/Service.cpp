@@ -17,6 +17,12 @@ OpenHome::Net::Parameter::Parameter(const TChar* aName, EType aType)
 {
 }
 
+OpenHome::Net::Parameter::Parameter(const Brx& aName, EType aType)
+    : iName(aName)
+    , iType(aType)
+{
+}
+
 OpenHome::Net::Parameter::~Parameter()
 {
 }
@@ -64,6 +70,11 @@ ParameterBool::ParameterBool(const TChar* aName)
 {
 }
 
+ParameterBool::ParameterBool(const Brx& aName)
+    : Parameter(aName, OpenHome::Net::Parameter::eTypeBool)
+{
+}
+
 ParameterBool::~ParameterBool()
 {
 }
@@ -83,6 +94,16 @@ ParameterInt::ParameterInt(const TChar* aName, TInt aMinValue, TInt aMaxValue, T
 {
     ASSERT(iMinValue <= iMaxValue);
     ASSERT((iMaxValue-iMinValue)%iStep == 0);
+}
+
+ParameterInt::ParameterInt(const Brx& aName, TInt aMinValue, TInt aMaxValue, TInt aStep)
+    : Parameter(aName, OpenHome::Net::Parameter::eTypeInt)
+    , iMinValue(aMinValue)
+    , iMaxValue(aMaxValue)
+    , iStep(aStep)
+{
+    ASSERT(iMinValue <= iMaxValue);
+    ASSERT((iMaxValue - iMinValue) % iStep == 0);
 }
 
 ParameterInt::~ParameterInt()
@@ -124,6 +145,16 @@ ParameterUint::ParameterUint(const TChar* aName, TUint aMinValue, TUint aMaxValu
     ASSERT((iMaxValue-iMinValue)%iStep == 0);
 }
 
+ParameterUint::ParameterUint(const Brx& aName, TUint aMinValue, TUint aMaxValue, TUint aStep)
+    : Parameter(aName, OpenHome::Net::Parameter::eTypeUint)
+    , iMinValue(aMinValue)
+    , iMaxValue(aMaxValue)
+    , iStep(aStep)
+{
+    ASSERT(iMinValue <= iMaxValue);
+    ASSERT((iMaxValue - iMinValue) % iStep == 0);
+}
+
 ParameterUint::~ParameterUint()
 {
 }
@@ -158,14 +189,21 @@ ParameterString::ParameterString(const TChar* aName)
 {
 }
 
+ParameterString::ParameterString(const Brx& aName)
+    : Parameter(aName, OpenHome::Net::Parameter::eTypeString)
+{
+}
+
 ParameterString::ParameterString(const TChar* aName, TChar** aAllowedValues, TUint aCount)
     : Parameter(aName, OpenHome::Net::Parameter::eTypeString)
 {
-    for (TUint i=0; i<aCount; i++) {
-        Brh* buf = new Brh(aAllowedValues[i]);
-        Brn key(*buf);
-        iMap.insert(std::pair<Brn,Brh*>(key, buf));
-    }
+    Construct(aAllowedValues, aCount);
+}
+
+ParameterString::ParameterString(const Brx& aName, TChar** aAllowedValues, TUint aCount)
+    : Parameter(aName, OpenHome::Net::Parameter::eTypeString)
+{
+    Construct(aAllowedValues, aCount);
 }
 
 ParameterString::~ParameterString()
@@ -175,6 +213,15 @@ ParameterString::~ParameterString()
         delete it->second;
         it->second = NULL;
         it++;
+    }
+}
+
+void ParameterString::Construct(TChar** aAllowedValues, TUint aCount)
+{
+    for (TUint i = 0; i<aCount; i++) {
+        Brh* buf = new Brh(aAllowedValues[i]);
+        Brn key(*buf);
+        iMap.insert(std::pair<Brn, Brh*>(key, buf));
     }
 }
 
@@ -203,6 +250,11 @@ ParameterBinary::ParameterBinary(const TChar* aName)
 {
 }
 
+ParameterBinary::ParameterBinary(const Brx& aName)
+    : Parameter(aName, OpenHome::Net::Parameter::eTypeBinary)
+{
+}
+
 ParameterBinary::~ParameterBinary()
 {
 }
@@ -215,6 +267,13 @@ void ParameterBinary::ValidateBinary(const Brx& /*aValue*/) const
 // ParameterRelated
 
 ParameterRelated::ParameterRelated(const TChar* aName, const Property& aRelated)
+    : Parameter(aName, OpenHome::Net::Parameter::eTypeRelated)
+    , iRelated(aRelated)
+{
+    ASSERT(&iRelated != NULL);
+}
+
+ParameterRelated::ParameterRelated(const Brx& aName, const Property& aRelated)
     : Parameter(aName, OpenHome::Net::Parameter::eTypeRelated)
     , iRelated(aRelated)
 {
