@@ -47,6 +47,10 @@ ifeq ($(MACHINE),Darwin)
     platform = iOS
     detected_openhome_system = iOs
     detected_openhome_architecture = x86
+  else ifeq ($(iOs-x64),1)
+    platform = iOS
+    detected_openhome_system = iOs
+    detected_openhome_architecture = x64
   else
     platform = IntelMac
     detected_openhome_system = Mac
@@ -150,6 +154,10 @@ ifeq ($(platform),iOS)
 		platform_prefix=iPhoneSimulator
 		platform_compiler=i686-apple-darwin10
 		platform_arch=i386
+	else ifeq ($(detected_openhome_architecture),x64)
+		platform_prefix=iPhoneSimulator
+		platform_compiler=i686-apple-darwin10
+		platform_arch=x86_64
 	endif
 	devroot=/Applications/Xcode.app/Contents/Developer
 	toolroot=$(devroot)/Toolchains/XcodeDefault.xctoolchain/usr/bin
