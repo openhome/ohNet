@@ -166,10 +166,11 @@ ifeq ($(platform),iOS)
 	# TODO: Support armv6 for old devices
 	osbuilddir = $(platform)-$(detected_openhome_architecture)
 	objdir = Build/Obj/$(osbuilddir)/$(build_dir)/
-	platform_linkflags = -L$(sdkroot)/usr/lib/ -arch $(platform_arch)  -L$(sdkroot)/usr/lib/system
+	platform_linkflags = -L$(sdkroot)/usr/lib/ -arch $(platform_arch)
 	compiler = $(toolroot)/clang -arch $(platform_arch) -isysroot $(sdkroot) -o $(objdir)
 	# No support for linking Shared Objects for ARM MAC
 	# link = $(devroot)/usr/bin/llvm-gcc-4.2  -pthread -Wl $(platform_linkflags)
+	link = $(toolroot)/clang++ -pthread -stdlib=libc++ $(platform_linkflags)
 	ar = $(toolroot)/ar rc $(objdir)
     mono_lib_dir=/Developer/MonoTouch/usr/lib/mono/Xamarin.iOS
 	csharpdefines = /define:IOS /r:$(mono_lib_dir)/Xamarin.iOS.dll /r:$(mono_lib_dir)/System.dll /r:$(mono_lib_dir)/System.Core.dll
@@ -336,7 +337,9 @@ endif
 exeext = elf
 linkoutput = -o
 dllprefix = lib
-ifeq ($(MACHINE), Darwin)
+ifeq ($(platform), iOS)
+	link_dll = $(toolroot)/clang++ -pthread -shared -stdlib=libc++ $(platform_linkflags)
+else ifeq ($(MACHINE), Darwin)
 	link_dll = $(version_specific_library_path) clang++ -pthread  $(platform_linkflags) -shared -stdlib=libc++
 else
 	link_dll = $(version_specific_library_path) ${CROSS_COMPILE}g++ -pthread  $(platform_linkflags) -shared -shared-libgcc
