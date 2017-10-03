@@ -11,6 +11,6 @@ Files at the following locations are licensed under separate terms:
   OpenHome/Net/Bindings/Android/jni/ifaddrs.*
   OpenHome/Net/Bindings/Android/jni/LocalArray.h
   OpenHome/Net/Bindings/Js/ControlPoint/lib/ohnet.base64.js
+  OpenHome/Net/ServiceGen/xmltodict.py
   JsDoc/*
   thirdparty/fop-1.0/*
-
