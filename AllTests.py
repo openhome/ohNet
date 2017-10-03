@@ -19,6 +19,8 @@ def objPath():
             plat = 'iOs-arm64'
         elif giOsx86 == 1:
             plat = 'iOs-x86'
+        elif giOsx64 == 1:
+            plat = 'iOs-x64'
         else:
             plat = 'Mac-x86'
     variant = 'Release'
@@ -44,6 +46,8 @@ def buildArgs():
         buildArgs += ' iOs-arm64=1'
     if giOsx86 == 1:
         buildArgs += ' iOs-x86=1'
+    if giOsx64 == 1:
+        buildArgs += ' iOs-x64=1'
     if gAndroid == 1:
         buildArgs += ' Android-anycpu=1'
     if gCore == 1 or gQnap == 1:
@@ -211,6 +215,7 @@ gMac64 = 0
 giOsArmv7 = 0
 giOsArm64 = 0
 giOsx86 = 0
+giOsx64 = 1
 gAndroid = 0
 gQnap = 0
 gWindows81 = 0
@@ -275,6 +280,11 @@ for arg in sys.argv[1:]:
         giOsx86 = 1
         if platform.system() != 'Darwin':
             print 'ERROR - --iOs-x86 only applicable on Darwin'
+            sys.exit(1)
+    elif arg == '--iOs-x64':
+        giOsx64 = 1
+        if platform.system() != 'Darwin':
+            print 'ERROR - --iOs-x64 only applicable on Darwin'
             sys.exit(1)
     elif arg == '--parallel':
         gParallel = True
