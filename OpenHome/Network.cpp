@@ -719,7 +719,12 @@ TUint SocketUdpBase::Port() const
 void SocketUdpBase::Send(const Brx& aBuffer, const Endpoint& aEndpoint)
 {
     //LOG(kNetwork, "> SocketUdpBase::Send\n");
-    SendTo(aBuffer, aEndpoint);
+    try{
+        SendTo(aBuffer, aEndpoint);
+    }
+    catch(NetworkError&) {
+        LOG_ERROR(kNetwork, "SocketUdpBase::Send: NetworkError\n");
+    }
 }
 
 Endpoint SocketUdpBase::Receive(Bwx& aBuffer)
