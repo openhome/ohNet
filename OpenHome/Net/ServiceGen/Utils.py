@@ -144,6 +144,5 @@ def GetParameterAllowedValues(stateVar):
         if 'maximum' in stateVar['allowedValueRange']:
             param += ', {0}'.format(stateVar['allowedValueRange']['maximum'])
         if 'step' in stateVar['allowedValueRange']:
-            param += ', {0}'.format((2 ** 31) - 1)
             param += ', {0}'.format(stateVar['allowedValueRange']['step'])
     return param
