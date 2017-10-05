@@ -170,7 +170,7 @@ ifeq ($(platform),iOS)
 	compiler = $(toolroot)/clang -arch $(platform_arch) -isysroot $(sdkroot) -o $(objdir)
 	# No support for linking Shared Objects for ARM MAC
 	# link = $(devroot)/usr/bin/llvm-gcc-4.2  -pthread -Wl $(platform_linkflags)
-	link = $(toolroot)/clang++ -pthread -stdlib=libc++ $(platform_linkflags)
+	# link = $(toolroot)/clang++ -pthread -stdlib=libc++ $(platform_linkflags)
 	ar = $(toolroot)/ar rc $(objdir)
     mono_lib_dir=/Developer/MonoTouch/usr/lib/mono/Xamarin.iOS
 	csharpdefines = /define:IOS /r:$(mono_lib_dir)/Xamarin.iOS.dll /r:$(mono_lib_dir)/System.dll /r:$(mono_lib_dir)/System.Core.dll
