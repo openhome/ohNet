@@ -145,19 +145,6 @@ def Generate(desc, sDomain, sType, sVersion):
 
                 if arg['direction'] == 'in':
                     if arg['evented'] == 'yes':
-                        if len(avlist):
-                            lines.extend([
-                                '    index = 0;',
-                                '    allowedValues = new TChar*[{0}];'.format(len(avlist))
-                            ])
-                        for av in avlist:
-                            lines.extend([
-                                '    allowedValues[index++] = (TChar*)"{0}";'.format(av)
-                            ])
-                        if len(avlist):
-                            lines.extend([
-                                '    delete[] allowedValues;'
-                            ])
                         lines.extend([
                             '    action->AddInputParameter(new ParameterRelated("{0}", *iProperty{1}));'.format(arg['name'], arg['relatedStateVariable'])
                         ])
