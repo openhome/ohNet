@@ -232,6 +232,10 @@ class JenkinsBuild():
             elif arch == 'arm64':
                 args.append('--iOs-arm64')
                 self.platform_make_args.append('iOs-arm64=1')
+        if os_platform == 'Linux':
+            if arch == 'rpi':
+                args.append('--Linux-rpi')
+                self.platform_make_args.append('Linux-rpi=1')
             # 32 and 64-bit builds run in parallel on the same slave.
             # Overlapping test instances interfere with each other so only run tests for the (assumed more useful) 32-bit build.
             # Temporarily disable all tests on mac as publish jobs hang otherwise
