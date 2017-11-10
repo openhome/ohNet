@@ -5,10 +5,17 @@ import ctypes
 import re
 import sys
 import types
-import urllib2
-import urlparse
 import xml.etree.ElementTree as ET
-import _GenProxy as GenProxy
+import _Cp._GenProxy as GenProxy
+
+try:
+    # python 2.x
+    from urlparse import urljoin
+    from urllib2 import urlopen
+except:
+    # python 3.x
+    from urllib.parse import urljoin
+    from urllib.request import urlopen
 
 
 class Device():
@@ -33,10 +40,13 @@ class Device():
     #
 
     def _GetAttribute( self, aAttr ):
-        request  = ctypes.c_char_p( aAttr )
+        result = ''
+        request  = ctypes.c_char_p( aAttr.encode( 'ascii' ))
         response = ctypes.c_char_p()
         self.lib.CpDeviceCGetAttribute( self.handle, request, ctypes.byref( response ))
-        return response.value
+        if response.value:
+            result = response.value.decode( 'utf8' )
+        return result
 
     def _GetServices( self ):
         """Returns list of services reported by device"""
@@ -51,7 +61,7 @@ class Device():
             services = serviceList.findall( 'service' )
             for service in services:
                 svType = service.find( 'serviceType' ).text
-                url  = urlparse.urljoin( baseUrl, service.find( 'SCPDURL' ).text )
+                url  = urljoin( baseUrl, service.find( 'SCPDURL' ).text )
                 m = re.match('urn:([\w\-\.]+):service:([\w\-\.]+):(\d+)', svType )
                 domain, name, version = m.groups()
                 domainName = ''
@@ -77,7 +87,7 @@ class Device():
             (aService['domain'], aService['name'][0].upper() + aService['name'][1:], aService['version'])
 
         # generate the proxy from the service XML
-        serviceXml = urllib2.urlopen( aService['url'] ).read()
+        serviceXml = urlopen( aService['url'] ).read()
         proxy = GenProxy.GenProxy( aService['type'], serviceXml )
 
         # 'import' the generated proxies
@@ -91,18 +101,19 @@ class Device():
         else:
             proxyModule = types.ModuleType( proxyName )
             sys.modules[proxyName] = proxyModule
-        exec proxy.text in proxyModule.__dict__
+        exec( proxy.text, proxyModule.__dict__ )
 
         # # FOR DEBUG - write generated proxies to, and import from file
         # #             NOTE - no mutex protection on file access, so do NOT use this
         # #                    technique except when debugging is necessary
+        # import os
         # head, tail = os.path.split( os.path.dirname( __file__ ))
         # proxyDir = os.path.join( head, '.GeneratedProxies' )
         # if not os.path.exists( proxyDir ):
         #     os.mkdir( proxyDir )
         # if proxyDir not in sys.path:
         #     sys.path.append( proxyDir )
-        # proxyPath = os.path.join( proxyDir, proxyName+'.py' )
+        # proxyPath = os.path.join( proxyDir, proxyName + '.py' )
         # proxy.Write( proxyPath )
         # exec( 'import %s as proxyModule' % proxyName )
 
@@ -114,7 +125,7 @@ class Device():
         udn = ctypes.c_char_p()
         length = ctypes.c_int()
         self.lib.CpDeviceCGetUdn( self.handle, ctypes.byref( udn ), ctypes.byref( length ))
-        return udn.value
+        return udn.value.decode( 'utf8' )
 
     def _GetFriendlyName( self ):
         return self._GetAttribute( 'Upnp.FriendlyName' )

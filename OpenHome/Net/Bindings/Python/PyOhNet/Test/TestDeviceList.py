@@ -18,18 +18,18 @@ class TestDeviceList:
         ohNet.Shutdown()
 
     def Show1( self ):
-        print( '\nSearching for devices (1) - press ENTER key to continue' )
+        print( "\nSearching for devices (1) - press ENTER key to continue" )
         self.devList = ohNet.Cp.DeviceListUpnpAll( self._Added1, self._Removed1 )
         sys.stdin.read( 1 )
 
     def Show2( self ):
-        print( '\nContinuing searching (2) - press ENTER to continue' )
+        print( "\nContinuing searching (2) - press ENTER to continue" )
         self.devList.AddAddedCb( self._Added2 )
         self.devList.AddRemovedCb( self._Removed2 )
         sys.stdin.read( 1 )
 
     def Show3( self ):
-        print( '\nContinuing searching (3) - press ENTER key to continue' )
+        print( "\nContinuing searching (3) - press ENTER key to continue" )
         self.devList.RemoveAddedCb( self._Added1 )
         self.devList.RemoveRemovedCb( self._Removed1 )
         sys.stdin.read( 1 )
@@ -44,19 +44,19 @@ class TestDeviceList:
 
     @staticmethod
     def _Added1( aDev ):
-        print( '    (1) ADDED ->', aDev.friendlyName, '  ', aDev.handle )
+        print( '    (1) ADDED -> %s %s' % (aDev.friendlyName, aDev.handle) )
 
     @staticmethod
     def _Removed1( aDev ):
-        print( '    (1) REMOVED ->', aDev.friendlyName )
+        print( '    (1) REMOVED -> %s' % aDev.friendlyName )
 
     @staticmethod
     def _Added2( aDev ):
-        print( '    (2) ADDED ->', aDev.friendlyName )
+        print( '    (2) ADDED -> %s' % aDev.friendlyName )
 
     @staticmethod
     def _Removed2( aDev ):
-        print( '    (2) REMOVED ->', aDev.friendlyName )
+        print( '    (2) REMOVED -> %s' % aDev.friendlyName )
 
 
 if __name__ == '__main__':

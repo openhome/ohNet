@@ -46,11 +46,11 @@ class GenProxy:
 
     @staticmethod
     def _ParseXml( aXml ):
-        """Extract service info form XML into Python friendly dicts/lists"""
+        """Extract service info from XML into Python friendly dicts/lists"""
         svs        = []
         actions    = []
         properties = []
-        xml        = re.sub( ' xmlns="[^"]+"', '', aXml )   # remove namespace
+        xml        = re.sub( ' xmlns="[^"]+"', '', aXml.decode( 'utf8' ))   # remove namespace
         scpd       = ET.fromstring( xml )
 
         serviceStateTable = scpd.find( 'serviceStateTable' )
@@ -131,13 +131,9 @@ class GenProxy:
             domain += field[1:]
 
         msg  = '"Proxy for %s:%s:%d service"\n\n' % (domain, aService, aVersion)
-        msg += 'import PyOhNet\n'
-        msg += 'import PyOhNet._Cp._Control  as Control\n'
+        msg += 'import PyOhNet._Cp._Control as Control\n'
         msg += 'import PyOhNet._Cp._Eventing as Eventing\n'
-        msg += 'import PyOhNet._Cp._Proxy    as Proxy\n'
-        msg += 'import ctypes\n'
-        msg += 'import sys\n'
-        msg += 'import threading\n\n\n'
+        msg += 'import PyOhNet._Cp._Proxy as Proxy\n\n\n'
         msg += 'class CpProxy%s%s%d( Proxy.Proxy ):\n\n' % (domain, aService, aVersion)
         return msg
 
@@ -208,7 +204,7 @@ class GenProxy:
         msg  = '\n\n'
         msg += '    #\n'
         msg += '    # ==== Control (action invocation) interface ====\n'
-        msg += '    #\n'
+        msg += '    #\n\n'
 
         for action in aActions:
             inArgs     = []
@@ -238,7 +234,7 @@ class GenProxy:
                         (argType, action['name'], outCount)
                     var = '%s%s' % (arg['name'][0].lower(), arg['name'][1:])
                     outResults.append( '        %s = response.Output%s( %d )\n' % (var, argType, outCount ))
-                    returns.append( "'%s':%s%s" % (arg['name'], arg['name'][0].lower(), arg['name'][1:] ))
+                    returns.append( "'%s': %s%s" % (arg['name'], arg['name'][0].lower(), arg['name'][1:] ))
                     outCount += 1
             if inArgs:
                 inArgStr1 = ', a' + ', a'.join( inArgs )
@@ -254,6 +250,7 @@ class GenProxy:
                     outRes += outResult
                 outRes += '        return( {%s} )\n' % ', '.join( returns )
 
+            msg += '    # ---- %s action ----\n' % action['name']
             msg += '\n    def Sync%s( self%s ):\n' % (action['name'], inArgStr1 )
             msg += '        self.response = None\n'
             msg += '        self.Begin%s( %sself._%sActionComplete )\n' % (action['name'], inArgStr2, action['name'])
@@ -270,7 +267,7 @@ class GenProxy:
             msg += '        response = Control.InvocationResponse( aHandle )\n'
             msg += '        err = response.Error()\n'
             msg += "        if err['err'] is not False:\n"
-            msg += "            return( 'Proxy error - %d: %s' % (err['code'],err['desc']) )\n"
+            msg += "            return( 'Proxy error - %d: %s' % (err['code'], err['desc']) )\n"
             msg += outRes
 
             msg += '\n    def _%sActionComplete( self, aHandle ):\n' % action['name']
@@ -285,16 +282,17 @@ class GenProxy:
         msg += '    # ==== Properties (eventing) interface ===\n'
         msg += '    #\n'
 
+        msg += '\n    # ---- Property Setters ----\n'
         for prop in aProperties:
             msg += '\n    def SetProperty%sChanged( self, aCb ):\n' % prop['name']
             msg += '        self._property%sCb = aCb\n' % prop['name']
 
-        msg += '\n'
+        msg += '\n    # ---- Property Getters ----\n'
         for prop in aProperties:
             msg += '\n    def Property%s( self ):\n' % prop['name']
             msg += '        return self._PropertyValue( self.%s%s )\n' % (prop['name'][0].lower(), prop['name'][1:])
 
-        msg += '\n'
+        msg += '\n    # ---- Property Changed callbacks ----\n'
         for prop in aProperties:
             msg += '\n    def _%sPropertyChanged( self, aDummy ):\n' % prop['name']
             msg += '        if self._property%sCb is not None:\n' % prop['name']
@@ -317,7 +315,7 @@ class GenProxy:
             f.write( self.proxy )
             f.close()
         except:
-            print( 'Failed to write proxy code to <%s>' % aFilePath )
+            print( "Failed to write proxy code to <%s>" % aFilePath )
             raise
 
     text = property( _GetText, None, None, 'Get Text')

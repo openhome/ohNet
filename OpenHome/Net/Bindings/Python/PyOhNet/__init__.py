@@ -8,14 +8,12 @@ lib        = None
 makeCb     = None
 initParams = None
 
+
 #
 # ==== Exception handler for ohNet-python ====
 #
 
-import exceptions
-
-
-class OhNetError( exceptions.Exception ):
+class OhNetError( Exception ):
 
     def __init__( self, aMsg ):
         self.msg = aMsg
@@ -67,9 +65,11 @@ else:
 # ==== Import rest of ohNet-python functionality ====
 #
 
-from _Network import *          # access to Adapter and AdapterList classes
-from _DebugLevels import *      # debug level constants
-import _Cp as Cp                # control point stack
+import sys
+sys.path.append( os.path.dirname( __file__ ))
+from _Network import Adapter, AdapterList   # NOQA
+from _DebugLevels import kDebugLevel
+import _Cp as Cp            # control point stack
 
 #
 # ==== Track ohNet objects (updated on object create/delete) to permit clean shutdown ====

@@ -18,7 +18,7 @@ class Action:
     def __init__( self, aName ):
         self.lib = PyOhNet.lib
         self.lib.ServiceActionCreate.restype = ctypes.c_void_p
-        self.handle = ctypes.c_void_p( self.lib.ServiceActionCreate( aName ))
+        self.handle = ctypes.c_void_p( self.lib.ServiceActionCreate( aName.encode( 'ascii' )))
         self.inputParams = []
         self.outputParams = []
         PyOhNet.actions.append( self )
@@ -47,7 +47,7 @@ class Action:
         strn = ctypes.c_char_p()
         length = ctypes.c_int()
         self.lib.ServiceActionGetName( self.handle, ctypes.byref( strn ), ctypes.byref( length ))
-        return strn.value
+        return strn.value.decode( 'utf8' )
 
     def __str__( self ):
         msg = '      %s:' % self.Name()
@@ -121,7 +121,7 @@ class InvocationResponse:
         length = ctypes.c_int()
         self.lib.CpInvocationGetOutputString( self.handle, aIndex, ctypes.byref( strn ), ctypes.byref( length ))
         if strn.value:
-            string = copy.deepcopy( strn.value )
+            string = copy.deepcopy( strn.value.decode( 'utf8' ))
         self.lib.OhNetFree( strn )
         return string
 
@@ -162,7 +162,7 @@ class ParameterInt( Parameter ):
     def __init__( self, aName, aMinValue=kMinInt32, aMaxValue=kMaxInt32, aStep=1 ):
         Parameter.__init__( self, aName, 'Int' )
         self.lib.ServiceParameterCreateInt.restype = ctypes.c_void_p
-        self.handle = ctypes.c_void_p( self.lib.ServiceParameterCreateInt( aName, aMinValue, aMaxValue, aStep ))
+        self.handle = ctypes.c_void_p( self.lib.ServiceParameterCreateInt( aName.encode( 'ascii' ), aMinValue, aMaxValue, aStep ))
 
 
 class ParameterUint( Parameter ):
@@ -170,7 +170,7 @@ class ParameterUint( Parameter ):
     def __init__( self, aName, aMinValue=0, aMaxValue=kMaxUint, aStep=1 ):
         Parameter.__init__( self, aName, 'Uint' )
         self.lib.ServiceParameterCreateUint.restype = ctypes.c_void_p
-        self.handle = ctypes.c_void_p( self.lib.ServiceParameterCreateUint( aName, aMinValue, aMaxValue, aStep ))
+        self.handle = ctypes.c_void_p( self.lib.ServiceParameterCreateUint( aName.encode( 'ascii' ), aMinValue, aMaxValue, aStep ))
 
 
 class ParameterBool( Parameter ):
@@ -178,7 +178,7 @@ class ParameterBool( Parameter ):
     def __init__( self, aName ):
         Parameter.__init__( self, aName, 'Bool' )
         self.lib.ServiceParameterCreateBool.restype = ctypes.c_void_p
-        self.handle = ctypes.c_void_p( self.lib.ServiceParameterCreateBool( aName ))
+        self.handle = ctypes.c_void_p( self.lib.ServiceParameterCreateBool( aName.encode( 'ascii' )))
 
 
 class ParameterString( Parameter ):
@@ -191,9 +191,9 @@ class ParameterString( Parameter ):
         numAllowedValues = len( aAllowedValues )
         allowed = (ctypes.c_char_p * numAllowedValues)()
         for i in range( numAllowedValues ):
-            allowed[i] = aAllowedValues[i]
+            allowed[i] = aAllowedValues[i].encode( 'ascii' )
         self.lib.ServiceParameterCreateString.restype = ctypes.c_void_p
-        self.handle = ctypes.c_void_p( self.lib.ServiceParameterCreateString( aName, allowed, numAllowedValues ))
+        self.handle = ctypes.c_void_p( self.lib.ServiceParameterCreateString( aName.encode( 'ascii' ), allowed, numAllowedValues ))
 
 
 class ParameterBinary( Parameter ):
@@ -201,7 +201,7 @@ class ParameterBinary( Parameter ):
     def __init__( self, aName ):
         Parameter.__init__( self, aName, 'Binary' )
         self.lib.ServiceParameterCreateBinary.restype = ctypes.c_void_p
-        self.handle = ctypes.c_void_p( self.lib.ServiceParameterCreateBinary( aName ))
+        self.handle = ctypes.c_void_p( self.lib.ServiceParameterCreateBinary( aName.encode( 'ascii' )))
 
 
 class ParameterRelated( Parameter ):
@@ -209,7 +209,7 @@ class ParameterRelated( Parameter ):
     def __init__( self, aName, aProperty ):
         Parameter.__init__( self, aName, 'Related' )
         self.lib.ServiceParameterCreateRelated.restype = ctypes.c_void_p
-        self.handle = ctypes.c_void_p( self.lib.ServiceParameterCreateRelated( aName, aProperty.handle ))
+        self.handle = ctypes.c_void_p( self.lib.ServiceParameterCreateRelated( aName.encode( 'ascii' ), aProperty.handle ))
 
 
 #
@@ -280,7 +280,7 @@ class ArgumentString( Argument ):
     def __init__( self, aParameter, aValue=None ):
         Argument.__init__( self )
         if aValue:
-            val = ctypes.c_char_p( aValue )
+            val = ctypes.c_char_p( aValue.encode( 'ascii' ))
             self.lib.ActionArgumentCreateStringInput.restype = ctypes.c_void_p
             self.handle = ctypes.c_void_p( self.lib.ActionArgumentCreateStringInput( aParameter.handle, val ))
         else:
@@ -291,7 +291,7 @@ class ArgumentString( Argument ):
         strn = ctypes.c_char_p()
         length = ctypes.c_int()
         self.lib.ActionArgumentGetValueString( self.handle, ctypes.byref( strn ), ctypes.byref( length ))
-        return strn.value
+        return strn.value.decode( 'utf8' )
 
 
 class ArgumentBinary( Argument ):
@@ -299,7 +299,7 @@ class ArgumentBinary( Argument ):
     def __init__( self, aParameter, aValue=None ):
         Argument.__init__( self )
         if aValue:
-            val = aValue
+            val = bytes( aValue )
             length = len( val )
             self.lib.ActionArgumentCreateBinaryInput.restype = ctypes.c_void_p
             self.handle = ctypes.c_void_p( self.lib.ActionArgumentCreateBinaryInput( aParameter.handle, val, length ))

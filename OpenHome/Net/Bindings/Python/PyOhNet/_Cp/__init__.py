@@ -2,9 +2,9 @@
 """
 # noinspection PyUnresolvedReferences
 from PyOhNet import lib, OhNetError
-from _DevList import *
-from _Device import *
-from _GenProxy import *
+from _Cp._DevList import *   # NOQA
+from _Cp._Device import *    # NOQA
+from _Cp._GenProxy import *  # NOQA
 
 
 def Start( aAdapter ):

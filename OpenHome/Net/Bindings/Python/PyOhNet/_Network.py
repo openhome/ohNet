@@ -11,7 +11,7 @@ class Adapter():
     def __init__( self, aHandle ):
         self.lib = PyOhNet.lib
         self.handle = aHandle
-        self.cookie = uuid.uuid4().urn
+        self.cookie = uuid.uuid4().urn.encode( 'ascii' )
         self.lib.OhNetNetworkAdapterAddRef( self.handle, self.cookie )
         PyOhNet.adapters.append( self )
 
@@ -38,11 +38,11 @@ class Adapter():
 
     def _GetName( self ):
         self.lib.OhNetNetworkAdapterName.restype = ctypes.c_char_p
-        return self.lib.OhNetNetworkAdapterName( self.handle )
+        return self.lib.OhNetNetworkAdapterName( self.handle ).decode( 'utf8' )
 
     def _GetFullName( self ):
         self.lib.OhNetNetworkAdapterFullName.restype = ctypes.c_char_p
-        return self.lib.OhNetNetworkAdapterFullName( self.handle )
+        return self.lib.OhNetNetworkAdapterFullName( self.handle ).decode( 'utf8' )
 
     def _GetStrAddress( self ):
         return self._Num2DottedQuad( self.address )
@@ -61,7 +61,7 @@ class Adapter():
         while d > 0:
             m, n = divmod( n, d )
             q.append( str( m ))
-            d /= 256
+            d = int( d / 256 )
         q.reverse()
         return '.' . join( q )
 
@@ -69,12 +69,12 @@ class Adapter():
     # ==== Public interface ====
     #
 
-    address    = property( _GetAddress, None, None, '' )        # int in network-byte order
-    addressStr = property( _GetStrAddress, None, None, '' )     # dotted-quad
-    subnet     = property( _GetSubnet, None, None, '' )         # int in network-byte order
-    subnetStr  = property( _GetStrSubnet, None, None, '' )      # dotted-quad
-    mask       = property( _GetMask, None, None, '' )           # int in network-byte order
-    maskStr    = property( _GetStrMask, None, None, '' )        # dotted-quad
+    address    = property( _GetAddress, None, None, '' )     # int in network-byte order
+    addressStr = property( _GetStrAddress, None, None, '' )  # dotted-quad
+    subnet     = property( _GetSubnet, None, None, '' )      # int in network-byte order
+    subnetStr  = property( _GetStrSubnet, None, None, '' )   # dotted-quad
+    mask       = property( _GetMask, None, None, '' )        # int in network-byte order
+    maskStr    = property( _GetStrMask, None, None, '' )     # dotted-quad
     name       = property( _GetName, None, None, '' )
     fullName   = property( _GetFullName, None, None, '' )
 

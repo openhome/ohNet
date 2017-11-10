@@ -39,7 +39,7 @@ class TestControlEventing:
         dev = self.FindDev( aDevName, aDevDomain, aDevType, aDevVersion, aTimeout )
         if dev:
             dev.Start()
-            print( '\n', dev, '\n' )
+            print( '\n' + str( dev ) + '\n' )
             self.testBasic = dev.OpenhomeOrgTestBasic
             self.TestBasicProxy()
             dev.Shutdown()
@@ -111,7 +111,7 @@ class TestControlEventing:
 
         self.initEvent.clear()
         self.testBasic.Subscribe()
-        print( '\nSubscribe to service' )
+        print( "\nSubscribe to service" )
         self.initEvent.wait()
 
         # ==== Sync Set/Get Actions, with event checking ====
@@ -119,7 +119,7 @@ class TestControlEventing:
         self.uintChanged.clear()
         val = random.randint( 0, 99999 )
         res = self.testBasic.SyncSetUint( val )
-        print( '\nSyncSetUint (%d) returned --> %s' % (val, str( res )))
+        print( '\nSyncSetUint (%d) returned --> %s' % (val, str( res )) )
         res = self.testBasic.SyncGetUint()
         print( 'SyncGetUint returned -->', res )
         print( 'Waiting for Uint event' )
@@ -129,7 +129,7 @@ class TestControlEventing:
         self.intChanged.clear()
         val = random.randint( -99999, 99999 )
         res = self.testBasic.SyncSetInt( val )
-        print( '\nSyncSetIint (%d) returned --> %s' % (val, str( res )))
+        print( '\nSyncSetIint (%d) returned --> %s' % (val, str( res )) )
         res = self.testBasic.SyncGetInt()
         print( 'SyncGetInt returned -->', res )
         print( 'Waiting for Int event' )
@@ -149,7 +149,7 @@ class TestControlEventing:
         self.strChanged.clear()
         string = time.asctime()
         res = self.testBasic.SyncSetString( string )
-        print( '\nSyncSetString (%s) returned --> %s ' % (string, str( res )))
+        print( '\nSyncSetString (%s) returned --> %s ' % (string, str( res )) )
         res = self.testBasic.SyncGetString()
         print( 'SyncGetString returned -->', res )
         print( 'Waiting for String event' )
@@ -157,17 +157,18 @@ class TestControlEventing:
         self._CheckSetGet( 'VarString', string, res, self.evVarStr )
 
         self.binChanged.clear()
-        binary = ''
-        binArray = [random.randint( 0, 255 ), 0, random.randint( 0, 255 ), 0, 3, 0]
-        for item in binArray:
-            binary += chr( item )
-        res = self.testBasic.SyncSetBinary( binary )
-        print( '\nSyncSetBinary (%s) returned --> %s' % (binArray, res) )
+        randomData = [random.randint( 0, 255 ), 0, random.randint( 0, 255 ), 0, 3, 0]
+        binArray = bytearray( randomData )  # Py2 and Py3
+        # binArray = ''
+        # for item in randomData:
+        #     binArray += chr( item )       # Py2 ONLY
+        res = self.testBasic.SyncSetBinary( binArray )
+        print( '\nSyncSetBinary (%s) returned --> %s' % (randomData, res) )
         res = self.testBasic.SyncGetBinary()
         print( 'SyncGetBinary returned --> %s' % res )
         print( 'Waiting for Binary event' )
         self.binChanged.wait()
-        self._CheckSetGet( 'VarBin', binArray, res, self.evVarBin )
+        self._CheckSetGet( 'VarBin', randomData, res, self.evVarBin )
 
         self.anyChanged.clear()
         val1 = random.randint( 0, 99999 )
@@ -204,15 +205,16 @@ class TestControlEventing:
         print( '\nSyncEchoString (Echo..) returned -->', res )
         self._CheckCombo( 'SyncEchoString', 'Echo..', res, 'Echo..' )
 
-        binary = ''
-        binArray = [0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0]
-        for item in binArray:
-            binary += chr( item )
-        res = self.testBasic.SyncEchoBinary( binary )
-        print( '\nSyncEchoBinary (%s) returned --> %s' % (binArray, res) )
-        self._CheckCombo( 'SyncEchoBinary', binArray, res, binArray )
+        data = [0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0]
+        binArray = bytearray( data )  # Py2 and Py3
+        # binArray = ''
+        # for item in data:
+        #     binArray += chr( item )   # Py2 ONLY
+        res = self.testBasic.SyncEchoBinary( binArray )
+        print( '\nSyncEchoBinary (%s) returned --> %s' % (data, res) )
+        self._CheckCombo( 'SyncEchoBinary', data, res, data )
 
-        print( '\nUnsubscribe from service - no further events monitored\n' )
+        print( "\nUnsubscribe from service - no further events monitored\n" )
         self.testBasic.Unsubscribe()
 
         # Allowed value / range actions
@@ -220,14 +222,14 @@ class TestControlEventing:
         res = self.testBasic.SyncEchoAllowedRangeUint( 12 )
         print( 'SyncEchoAllowedRangeUint (12) returned -->', res )
 
-        # res = self.testBasic.SyncEchoAllowedRangeUint( 37 )               causes assert
-        # print( 'SyncEchoAllowedRangeUint (37) returned -->', res )        see #1006
+        # res = self.testBasic.SyncEchoAllowedRangeUint( 37 )            causes assert
+        # print 'SyncEchoAllowedRangeUint (37) returned -->', res        see #1006
 
         res = self.testBasic.SyncEchoAllowedValueString( 'One' )
         print( 'SyncEchoAllowedValueString (One) returned -->', res )
 
-        # res = self.testBasic.SyncEchoAllowedValueString( 'Zero' )         causes assert
-        # print( 'SyncEchoAllowedValueString (Zero) returned -->', res )    see #1006
+        # res = self.testBasic.SyncEchoAllowedValueString( 'Zero' )      causes assert
+        # print 'SyncEchoAllowedValueString (Zero) returned -->', res    see #1006
 
         # ==== Misc actions ====
 
