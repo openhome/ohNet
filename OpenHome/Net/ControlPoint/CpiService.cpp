@@ -686,6 +686,9 @@ void Invoker::Run()
         catch (HttpError&) {
             SetError(Error::eHttp, Error::kCodeUnknown, Error::kDescriptionUnknown, "Http");
         }
+        catch (UriError&) {
+            SetError(Error::eHttp, Error::kCodeUnknown, Error::kDescriptionUnknown, "Uri");
+        }
         catch (NetworkError&) {
             SetError(Error::eSocket, Error::kCodeUnknown, Error::kDescriptionUnknown, "Network");
         }
