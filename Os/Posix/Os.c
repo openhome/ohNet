@@ -1140,18 +1140,48 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
         }
     }
     /* ...then allocate/populate the list */
-    iter = networkIf;
     OsNetworkAdapter* head = NULL;
     OsNetworkAdapter* tail = NULL;
-    while (iter != NULL) {
+    for (iter = networkIf; iter != NULL; iter = iter->ifa_next) {
         if (iter->ifa_addr == NULL || iter->ifa_addr->sa_family != AF_INET ||
             (iter->ifa_flags & IFF_RUNNING) == 0 ||
             (includeLoopback == 0 && ((struct sockaddr_in*)iter->ifa_addr)->sin_addr.s_addr == loopbackAddr) ||
             (aUseLoopback == 1 && ((struct sockaddr_in*)iter->ifa_addr)->sin_addr.s_addr != loopbackAddr)) {
-            iter = iter->ifa_next;
             continue;
         }
 
+        // Check for multiple entries with same address and different subnets and
+        // ensure that only the least specific (largest superset) subnet is added.
+        // This code would also work if there are repeated identical address/subnet pairs.
+
+        // first check the entries already added to see if any of them is a superset subnet 
+        TIpAddress address = ((struct sockaddr_in*)iter->ifa_addr)->sin_addr.s_addr;
+        TIpAddress netMask = ((struct sockaddr_in*)iter->ifa_netmask)->sin_addr.s_addr;
+        OsNetworkAdapter* ifaceIter = head;
+        while (ifaceIter != NULL) {
+            if (ifaceIter->iAddress == address && (ifaceIter->iNetMask & netMask) == ifaceIter->iNetMask) {
+                break; // superset subnet has been added already
+            }
+            ifaceIter = ifaceIter->iNext;
+        }
+        if (ifaceIter != NULL) {
+            continue; // superset subnet has been added already
+        }
+
+        // now check the entries not yet added to see if any of them is a superset subnet 
+        struct ifaddrs* addrsIter = iter->ifa_next;
+        while (addrsIter != NULL) {
+            TIpAddress iterAddress = ((struct sockaddr_in*)addrsIter->ifa_addr)->sin_addr.s_addr;
+            TIpAddress iterNetMask = ((struct sockaddr_in*)addrsIter->ifa_netmask)->sin_addr.s_addr;
+            if (iterAddress == address && (iterNetMask & netMask) == iterNetMask) {
+                break; // superset subnet will be added later
+            }
+            addrsIter = addrsIter->ifa_next;
+        }
+        if (addrsIter != NULL) {
+            continue; // superset subnet will be added later
+        }
+        
         OsNetworkAdapter* iface = (OsNetworkAdapter*)calloc(1, sizeof(*iface));
         if (iface == NULL) {
             OsNetworkFreeInterfaces(head);
@@ -1166,13 +1196,12 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
             goto exit;
         }
         (void)strcpy(iface->iName, iter->ifa_name);
-        iface->iAddress = ((struct sockaddr_in*)iter->ifa_addr)->sin_addr.s_addr;
-        iface->iNetMask = ((struct sockaddr_in*)iter->ifa_netmask)->sin_addr.s_addr;
+        iface->iAddress = address;
+        iface->iNetMask = netMask;
         if (tail != NULL) {
             tail->iNext = iface;
         }
         tail = iface;
-        iter = iter->ifa_next;
     }
     ret = 0;
     *aAdapters = head;

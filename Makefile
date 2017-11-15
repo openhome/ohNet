@@ -51,6 +51,10 @@ ifeq ($(MACHINE),Darwin)
     platform = iOS
     detected_openhome_system = iOs
     detected_openhome_architecture = x64
+	else ifeq ($(Linux-rpi),1)
+      platform = Linux
+      detected_openhome_system = Linux
+	  detected_openhome_architecture = rpi
   else
     platform = IntelMac
     detected_openhome_system = Mac

@@ -2,7 +2,7 @@
 """
 # noinspection PyUnresolvedReferences
 from PyOhNet import lib, OhNetError
-from _DevList import *          
+from _DevList import *
 from _Device import *
 from _GenProxy import *
 

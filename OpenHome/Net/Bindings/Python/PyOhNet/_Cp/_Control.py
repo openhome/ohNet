@@ -11,9 +11,10 @@ kMaxUint  = 4294967295
 
 gAsyncCbs = []
 
+
 class Action:
     """Define the controllable ACTION"""
-    
+
     def __init__( self, aName ):
         self.lib = PyOhNet.lib
         self.lib.ServiceActionCreate.restype = ctypes.c_void_p
@@ -31,17 +32,17 @@ class Action:
     def AddInputParameter( self, aParam ):
         self.inputParams.append( aParam )
         self.lib.ServiceActionAddInputParameter( self.handle, aParam.handle )
-        
+
     def AddOutputParameter( self, aParam ):
         self.outputParams.append( aParam )
         self.lib.ServiceActionAddOutputParameter( self.handle, aParam.handle )
-        
+
     def InputParameter( self, aIndex ):
         return self.inputParams[aIndex]
-        
+
     def OutputParameter( self, aIndex ):
         return self.outputParams[aIndex]
-    
+
     def Name( self ):
         strn = ctypes.c_char_p()
         length = ctypes.c_int()
@@ -58,14 +59,14 @@ class Action:
             msg += '\n' + param.__str__()
         return msg
 
+
 #
 # ==== Invocation / Response handling ====
 #
 
-# noinspection PyUnusedLocal
 class Invocation:
     """Define and setup the invocation - called back on action completion/errors"""
-    
+
     def __init__( self, aService, aAction, aCb ):
         global gAsyncCbs
         self.lib = PyOhNet.lib
@@ -74,21 +75,21 @@ class Invocation:
         asyncCb = CB( self.AsyncComplete )
         self.lib.CpServiceInvocation.restype = ctypes.c_void_p
         self.handle = ctypes.c_void_p( self.lib.CpServiceInvocation( aService, aAction.handle, asyncCb, None ))
-        gAsyncCbs.append( {'handle':self.handle, 'cb':asyncCb} )    # keep CB in scope until called
+        gAsyncCbs.append( {'handle': self.handle, 'cb': asyncCb} )    # keep CB in scope until called
 
     def AddInput( self, aArgument ):
         self.lib.CpInvocationAddInput( self.handle, aArgument.handle )
-                
+
     def AddOutput( self, aArgument ):
         self.lib.CpInvocationAddOutput( self.handle, aArgument.handle )
-                
+
     def AsyncComplete( self, aDummy, aHandle ):
         self.callersCb( ctypes.c_void_p( aHandle ))
-        
-        
+
+
 class InvocationResponse:
     """Extract response to an invocation on completion"""
-    
+
     def __init__( self, aHandle ):
         global gAsyncCbs
         self.lib = PyOhNet.lib
@@ -102,18 +103,18 @@ class InvocationResponse:
         code = ctypes.c_int()
         desc = ctypes.c_char_p()
         err = self.lib.CpInvocationError( self.handle, ctypes.byref( code ), ctypes.byref( desc ))
-        return {'err':err!=0, 'code':code.value, 'desc':desc.value}
+        return {'err': err != 0, 'code': code.value, 'desc': desc.value}
 
     def OutputInt( self, aIndex ):
         return self.lib.CpInvocationOutputInt( self.handle, aIndex )
-        
+
     def OutputUint( self, aIndex ):
         return self.lib.CpInvocationOutputUint( self.handle, aIndex )
-            
+
     def OutputBool( self, aIndex ):
         val = self.lib.CpInvocationOutputBool( self.handle, aIndex )
         return val != 0
-    
+
     def OutputString( self, aIndex ):
         string = ''
         strn   = ctypes.c_char_p()
@@ -123,7 +124,7 @@ class InvocationResponse:
             string = copy.deepcopy( strn.value )
         self.lib.OhNetFree( strn )
         return string
-    
+
     def OutputBinary( self, aIndex ):
         binary = []
         pData  = ctypes.pointer( ctypes.c_ubyte() )
@@ -135,28 +136,29 @@ class InvocationResponse:
             binary.append( data[i] )
         self.lib.OhNetFree( pData )
         return binary
-    
+
+
 #
 # ==== Parameters ====
 #
 
 class Parameter:
     __metaclass__ = abc.ABCMeta
-    
+
     @abc.abstractmethod
     def __init__( self, aName, aType ):
         self.lib = PyOhNet.lib
         self.handle = None
         self.name = aName
         self.type = aType
-        
+
     def __str__( self ):
         msg = '          %s (%s)' % (self.name, self.type)
         return msg
-    
+
 
 class ParameterInt( Parameter ):
-    
+
     def __init__( self, aName, aMinValue=kMinInt32, aMaxValue=kMaxInt32, aStep=1 ):
         Parameter.__init__( self, aName, 'Int' )
         self.lib.ServiceParameterCreateInt.restype = ctypes.c_void_p
@@ -164,15 +166,15 @@ class ParameterInt( Parameter ):
 
 
 class ParameterUint( Parameter ):
-    
+
     def __init__( self, aName, aMinValue=0, aMaxValue=kMaxUint, aStep=1 ):
         Parameter.__init__( self, aName, 'Uint' )
         self.lib.ServiceParameterCreateUint.restype = ctypes.c_void_p
         self.handle = ctypes.c_void_p( self.lib.ServiceParameterCreateUint( aName, aMinValue, aMaxValue, aStep ))
 
-        
+
 class ParameterBool( Parameter ):
-    
+
     def __init__( self, aName ):
         Parameter.__init__( self, aName, 'Bool' )
         self.lib.ServiceParameterCreateBool.restype = ctypes.c_void_p
@@ -180,10 +182,11 @@ class ParameterBool( Parameter ):
 
 
 class ParameterString( Parameter ):
-    
+
     # noinspection PyCallingNonCallable
     def __init__( self, aName, aAllowedValues=None ):
-        if not aAllowedValues: aAllowedValues = []
+        if not aAllowedValues:
+            aAllowedValues = []
         Parameter.__init__( self, aName, 'String' )
         numAllowedValues = len( aAllowedValues )
         allowed = (ctypes.c_char_p * numAllowedValues)()
@@ -191,22 +194,23 @@ class ParameterString( Parameter ):
             allowed[i] = aAllowedValues[i]
         self.lib.ServiceParameterCreateString.restype = ctypes.c_void_p
         self.handle = ctypes.c_void_p( self.lib.ServiceParameterCreateString( aName, allowed, numAllowedValues ))
-        
+
 
 class ParameterBinary( Parameter ):
-    
-    def __init__( self, aName ):        
+
+    def __init__( self, aName ):
         Parameter.__init__( self, aName, 'Binary' )
         self.lib.ServiceParameterCreateBinary.restype = ctypes.c_void_p
         self.handle = ctypes.c_void_p( self.lib.ServiceParameterCreateBinary( aName ))
-        
+
 
 class ParameterRelated( Parameter ):
-    
-    def __init__( self, aName, aProperty ):        
+
+    def __init__( self, aName, aProperty ):
         Parameter.__init__( self, aName, 'Related' )
         self.lib.ServiceParameterCreateRelated.restype = ctypes.c_void_p
         self.handle = ctypes.c_void_p( self.lib.ServiceParameterCreateRelated( aName, aProperty.handle ))
+
 
 #
 # ==== Arguments ====
@@ -214,7 +218,7 @@ class ParameterRelated( Parameter ):
 
 class Argument:
     __metaclass__ = abc.ABCMeta
-    
+
     @abc.abstractmethod
     def __init__( self ):
         self.lib = PyOhNet.lib
@@ -222,7 +226,7 @@ class Argument:
 
 
 class ArgumentInt( Argument ):
-    
+
     def __init__( self, aParameter, aValue=None ):
         Argument.__init__( self )
         if aValue:
@@ -237,7 +241,7 @@ class ArgumentInt( Argument ):
 
 
 class ArgumentUint( Argument ):
-    
+
     def __init__( self, aParameter, aValue=None ):
         Argument.__init__( self )
         if aValue:
@@ -252,7 +256,7 @@ class ArgumentUint( Argument ):
 
 
 class ArgumentBool( Argument ):
-    
+
     def __init__( self, aParameter, aValue=None ):
         Argument.__init__( self )
         if aValue:
@@ -268,11 +272,11 @@ class ArgumentBool( Argument ):
 
     def Value( self ):
         val = self.lib.ActionArgumentValueBool( self.handle )
-        return val!=0
+        return val != 0
 
 
 class ArgumentString( Argument ):
-    
+
     def __init__( self, aParameter, aValue=None ):
         Argument.__init__( self )
         if aValue:
@@ -291,7 +295,7 @@ class ArgumentString( Argument ):
 
 
 class ArgumentBinary( Argument ):
-    
+
     def __init__( self, aParameter, aValue=None ):
         Argument.__init__( self )
         if aValue:
