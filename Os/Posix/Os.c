@@ -1172,7 +1172,10 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
         struct ifaddrs* addrsIter = iter->ifa_next;
         while (addrsIter != NULL) {
             TIpAddress iterAddress = ((struct sockaddr_in*)addrsIter->ifa_addr)->sin_addr.s_addr;
-            TIpAddress iterNetMask = ((struct sockaddr_in*)addrsIter->ifa_netmask)->sin_addr.s_addr;
+            TIpAddress iterNetMask = 0;
+            if (addrsIter->ifa_netmask != NULL) {
+                iterNetMask = ((struct sockaddr_in*)addrsIter->ifa_netmask)->sin_addr.s_addr;
+            }
             if (iterAddress == address && (iterNetMask & netMask) == iterNetMask) {
                 break; // superset subnet will be added later
             }
