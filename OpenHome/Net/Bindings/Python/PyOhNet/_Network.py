@@ -11,7 +11,7 @@ class Adapter():
     def __init__( self, aHandle ):
         self.lib = PyOhNet.lib
         self.handle = aHandle
-        self.cookie = uuid.uuid4().urn.encode( 'ascii' )
+        self.cookie = uuid.uuid4().urn.encode( 'utf8' )
         self.lib.OhNetNetworkAdapterAddRef( self.handle, self.cookie )
         PyOhNet.adapters.append( self )
 

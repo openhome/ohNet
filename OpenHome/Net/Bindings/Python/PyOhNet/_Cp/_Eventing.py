@@ -27,7 +27,7 @@ class PropertyInt( Property ):
     def __init__( self, aName, aCb ):
         Property.__init__( self, aName, aCb )
         self.lib.ServicePropertyCreateIntCp.restype = ctypes.c_void_p
-        self.handle = ctypes.c_void_p( self.lib.ServicePropertyCreateIntCp( ctypes.c_char_p( aName.encode( 'ascii' )), self.callback, None ))
+        self.handle = ctypes.c_void_p( self.lib.ServicePropertyCreateIntCp( ctypes.c_char_p( aName.encode( 'utf8' )), self.callback, None ))
 
     def Value( self ):
         val = ctypes.c_int()
@@ -44,7 +44,7 @@ class PropertyUint( Property ):
     def __init__( self, aName, aCb ):
         Property.__init__( self, aName, aCb )
         self.lib.ServicePropertyCreateUintCp.restype = ctypes.c_void_p
-        self.handle = ctypes.c_void_p( self.lib.ServicePropertyCreateUintCp( ctypes.c_char_p( aName.encode( 'ascii' )), self.callback, None ))
+        self.handle = ctypes.c_void_p( self.lib.ServicePropertyCreateUintCp( ctypes.c_char_p( aName.encode( 'utf8' )), self.callback, None ))
 
     def Value( self ):
         val = ctypes.c_uint()
@@ -61,7 +61,7 @@ class PropertyBool( Property ):
     def __init__( self, aName, aCb ):
         Property.__init__( self, aName, aCb )
         self.lib.ServicePropertyCreateBoolCp.restype = ctypes.c_void_p
-        self.handle = ctypes.c_void_p( self.lib.ServicePropertyCreateBoolCp( ctypes.c_char_p( aName.encode( 'ascii' )), self.callback, None ))
+        self.handle = ctypes.c_void_p( self.lib.ServicePropertyCreateBoolCp( ctypes.c_char_p( aName.encode( 'utf8' )), self.callback, None ))
 
     def Value( self ):
         val = ctypes.c_uint()
@@ -81,7 +81,7 @@ class PropertyString( Property ):
     def __init__( self, aName, aCb ):
         Property.__init__( self, aName, aCb )
         self.lib.ServicePropertyCreateStringCp.restype = ctypes.c_void_p
-        self.handle = ctypes.c_void_p( self.lib.ServicePropertyCreateStringCp( ctypes.c_char_p( aName.encode( 'ascii' )), self.callback, None ))
+        self.handle = ctypes.c_void_p( self.lib.ServicePropertyCreateStringCp( ctypes.c_char_p( aName.encode( 'utf8' )), self.callback, None ))
 
     def Value( self ):
         string = ''
@@ -94,7 +94,7 @@ class PropertyString( Property ):
         return string
 
     def SetValue( self, aValue ):
-        val = ctypes.c_char_p( aValue.encode( 'ascii' ))
+        val = ctypes.c_char_p( aValue.encode( 'utf8' ))
         changed = self.lib.ServicePropertySetValueString( self.handle, val )
         return changed != 0
 
@@ -104,7 +104,7 @@ class PropertyBinary( Property ):
     def __init__( self, aName, aCb ):
         Property.__init__( self, aName, aCb )
         self.lib.ServicePropertyCreateBinaryCp.restype = ctypes.c_void_p
-        self.handle = ctypes.c_void_p( self.lib.ServicePropertyCreateBinaryCp( ctypes.c_char_p( aName.encode( 'ascii' )), self.callback, None ))
+        self.handle = ctypes.c_void_p( self.lib.ServicePropertyCreateBinaryCp( ctypes.c_char_p( aName.encode( 'utf8' )), self.callback, None ))
 
     def Value( self ):
         binary = []

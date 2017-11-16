@@ -150,7 +150,7 @@ class DeviceListUpnpDeviceType( DeviceList ):
         DeviceList.__init__( self, aAddedCb, aRemovedCb )
         self.lib.CpDeviceListCreateUpnpDeviceType.restype = ctypes.c_void_p
         self.handle = ctypes.c_void_p( self.lib.CpDeviceListCreateUpnpDeviceType(
-            ctypes.c_char_p( aDomain.encode( 'ascii' )), ctypes.c_char_p( aType.encode( 'ascii' )), aVersion,
+            ctypes.c_char_p( aDomain.encode( 'utf8' )), ctypes.c_char_p( aType.encode( 'utf8' )), aVersion,
             self._PrimaryAddedCb, None, self._PrimaryRemovedCb, None ))
 
 
@@ -161,7 +161,7 @@ class DeviceListUpnpServiceType( DeviceList ):
         DeviceList.__init__( self, aAddedCb, aRemovedCb )
         self.lib.CpDeviceListCreateUpnpServiceType.restype = ctypes.c_void_p
         self.handle = ctypes.c_void_p( self.lib.CpDeviceListCreateUpnpServiceType(
-            ctypes.c_char_p( aDomain.encode( 'ascii' ) ), ctypes.c_char_p( aType.encode( 'ascii' ) ), aVersion,
+            ctypes.c_char_p( aDomain.encode( 'utf8' ) ), ctypes.c_char_p( aType.encode( 'utf8' ) ), aVersion,
             self._PrimaryAddedCb, None, self._PrimaryRemovedCb, None ))
 
 
@@ -172,4 +172,4 @@ class DeviceListUpnpUuid( DeviceList ):
         DeviceList.__init__( self, aAddedCb, aRemovedCb )
         self.lib.CpDeviceListCreateUpnpUuid.restype = ctypes.c_void_p
         self.handle = ctypes.c_void_p( self.lib.CpDeviceListCreateUpnpUuid(
-            ctypes.c_char_p( aUuid.encode( 'ascii' ) ), self._PrimaryAddedCb, None, self._PrimaryRemovedCb, None ))
+            ctypes.c_char_p( aUuid.encode( 'utf8' ) ), self._PrimaryAddedCb, None, self._PrimaryRemovedCb, None ))

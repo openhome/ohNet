@@ -41,7 +41,7 @@ class Device():
 
     def _GetAttribute( self, aAttr ):
         result = ''
-        request  = ctypes.c_char_p( aAttr.encode( 'ascii' ))
+        request  = ctypes.c_char_p( aAttr.encode( 'utf8' ))
         response = ctypes.c_char_p()
         self.lib.CpDeviceCGetAttribute( self.handle, request, ctypes.byref( response ))
         if response.value:
