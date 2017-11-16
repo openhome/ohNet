@@ -113,8 +113,11 @@ void DviServer::SubnetListChanged()
     // add servers for new subnets
     for (i = 0; i < (TInt)subnetList->size(); i++) {
         NetworkAdapter* subnet = (*subnetList)[i];
-        if (FindServer(subnet->Subnet()) == -1) {
-            AddServer(*subnet);
+        if (FindServer(subnet->Subnet()) == -1
+            && (!adapterList.SingleSubnetModeEnabled() ||
+               (current != NULL && subnet->Address() == current->Address()) ||
+                subnet->Address() == kLoopbackAddr)) {
+                AddServer(*subnet);
         }
     }
     NetworkAdapterList::DestroyNetworkAdapterList(nifList);

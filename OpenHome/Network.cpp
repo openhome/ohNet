@@ -15,9 +15,9 @@ using namespace OpenHome;
 
 static THandle SocketCreate(Environment& aEnv, ESocketType aSocketType)
 {
-    //LOG(kNetwork, "SocketCreate  ST = %d, \n", aSocketType);
+    LOG_TRACE(kNetwork, "SocketCreate  ST = %d, \n", aSocketType);
     THandle handle = OpenHome::Os::NetworkCreate(aEnv.OsCtx(), aSocketType);
-    //LOG(kNetwork, "SocketCreate  Socket H = %d\n", handle);
+    LOG_TRACE(kNetwork, "SocketCreate  Socket H = %d\n", handle);
     return handle;
 }
 
@@ -171,7 +171,7 @@ void Socket::Interrupt(TBool aInterrupt)
     if (iHandle == kHandleNull) {
         return;
     }
-    //LOG(kNetwork, "Socket::Interrupt H = %d\n", iHandle);
+    LOG_TRACE(kNetwork, "Socket::Interrupt H = %d\n", iHandle);
     TInt err = OpenHome::Os::NetworkInterrupt(iHandle, aInterrupt);
     if(err != 0) {
         LOG_ERROR(kNetwork, "Socket::Interrupt H = %d, RETURN VALUE = %d\n", iHandle, err);
@@ -181,7 +181,7 @@ void Socket::Interrupt(TBool aInterrupt)
 void Socket::Close()
 {
     // close connection and allow caller to handle any exceptions
-    //LOG(kNetwork, "Socket::Close H = %d\n", iHandle);
+    LOG_TRACE(kNetwork, "Socket::Close H = %d\n", iHandle);
     iLock.Wait();
     TInt err = 0;
     THandle handle = iHandle;
@@ -227,7 +227,7 @@ void Socket::LogVerbose(TBool aLog, TBool aHex)
 
 void Socket::Send(const Brx& aBuffer)
 {
-    //LOG(kNetwork, "Socket::Send  H = %d, BC = %d\n", iHandle, aBuffer.Bytes());
+    LOG_TRACE(kNetwork, "Socket::Send  H = %d, BC = %d\n", iHandle, aBuffer.Bytes());
     //Log("Socket::Send, sending\n", aBuffer);
     TInt sent = OpenHome::Os::NetworkSend(iHandle, aBuffer);
     if(sent < 0) {
@@ -242,7 +242,7 @@ void Socket::Send(const Brx& aBuffer)
 
 void Socket::SendTo(const Brx& aBuffer, const Endpoint& aEndpoint)
 {
-    //LOG(kNetwork, "Socket::SendTo  H = %d, BC = %d, E = %x:%d\n", iHandle, aBuffer.Bytes(), aEndpoint.Address(), aEndpoint.Port());
+    LOG_TRACE(kNetwork, "Socket::SendTo  H = %d, BC = %d, E = %x:%d\n", iHandle, aBuffer.Bytes(), aEndpoint.Address(), aEndpoint.Port());
     //Log("Socket::SendTo, sending\n", aBuffer);
     TInt sent = OpenHome::Os::NetworkSendTo(iHandle, aBuffer, aEndpoint);
     if(sent < 0) {
@@ -259,7 +259,7 @@ void Socket::Receive(Bwx& aBuffer)
 {
     // This variant of Receive will receive any number of bytes in the
     // range [0, aBuffer.MaxBytes()] (0 means socket was closed at the other end)
-    //LOG(kNetwork, ">Socket::Receive H = %d, MAX = %d\n", iHandle, aBuffer.MaxBytes());
+    LOG_TRACE(kNetwork, ">Socket::Receive H = %d, MAX = %d\n", iHandle, aBuffer.MaxBytes());
     aBuffer.SetBytes(0);
     TInt received = OpenHome::Os::NetworkReceive(iHandle, aBuffer);
     if(received < 0) {
@@ -269,7 +269,7 @@ void Socket::Receive(Bwx& aBuffer)
     }
     aBuffer.SetBytes(received);
     //Log("Socket::Receive, got\n", aBuffer);
-    //LOG(kNetwork, "<Socket::Receive H = %d, BC = %d\n", iHandle, aBuffer.Bytes());
+    LOG_TRACE(kNetwork, "<Socket::Receive H = %d, BC = %d\n", iHandle, aBuffer.Bytes());
 }
 
 void Socket::Receive(Bwx& aBuffer, TUint aBytes)
@@ -278,7 +278,7 @@ void Socket::Receive(Bwx& aBuffer, TUint aBytes)
     //  - block until aBytes bytes have been received, or
     //  - throw a NetworkError on a genuine socket error OR if the socket
     //    is closed at the other end
-    //LOG(kNetwork, "Socket::Receive H = %d, BC = %d\n", iHandle, aBytes);
+    LOG_TRACE(kNetwork, "Socket::Receive H = %d, BC = %d\n", iHandle, aBytes);
 
     ASSERT(aBytes <= aBuffer.MaxBytes());
     TUint received = 0;
@@ -294,7 +294,7 @@ void Socket::Receive(Bwx& aBuffer, TUint aBytes)
             // not all requested data received before connection closed
             THROW(NetworkError);
         }
-        //LOG(kNetwork, "Socket::Receive H = %d, BYTES = %d\n", iHandle, ret);
+        LOG_TRACE(kNetwork, "Socket::Receive H = %d, BYTES = %d\n", iHandle, ret);
         received += ret;
         aBuffer.SetBytes(received);
     }
@@ -303,7 +303,7 @@ void Socket::Receive(Bwx& aBuffer, TUint aBytes)
 
 void Socket::ReceiveFrom(Bwx& aBuffer, Endpoint& aEndpoint)
 {
-    //LOG(kNetwork, "Socket::ReceiveFrom H = %d\n", iHandle);
+    LOG_TRACE(kNetwork, "Socket::ReceiveFrom H = %d\n", iHandle);
     TInt received = OpenHome::Os::NetworkReceiveFrom(iHandle, aBuffer, aEndpoint);
     if(received < 0) {
         LOG_ERROR(kNetwork, "Socket::ReceiveFrom H = %d, RETURN VALUE = %d\n", iHandle, received);
@@ -311,12 +311,12 @@ void Socket::ReceiveFrom(Bwx& aBuffer, Endpoint& aEndpoint)
     }
     aBuffer.SetBytes(received);
     //Log("Socket::ReceiveFrom, got\n", aBuffer);
-    //LOG(kNetwork, "<Socket::ReceiveFrom H = %d\n", iHandle);
+    LOG_TRACE(kNetwork, "<Socket::ReceiveFrom H = %d\n", iHandle);
 }
 
 void Socket::Bind(const Endpoint& aEndpoint)
 {
-    //LOG(kNetwork, "Socket::Bind H = %d\n", iHandle);
+    LOG_TRACE(kNetwork, "Socket::Bind H = %d\n", iHandle);
     TInt err = OpenHome::Os::NetworkBind(iHandle, aEndpoint);
     if(err != 0) {
         LOG_ERROR(kNetwork, "Socket::Bind H = %d, RETURN VALUE = %d\n", iHandle, err);
@@ -329,7 +329,7 @@ void Socket::Bind(const Endpoint& aEndpoint)
 
 void Socket::GetPort(TUint& aPort)
 {
-    //LOG(kNetwork, "Socket::GetPort H = %d\n", iHandle);
+    LOG_TRACE(kNetwork, "Socket::GetPort H = %d\n", iHandle);
     TInt err = OpenHome::Os::NetworkPort(iHandle, aPort);
     if(err != 0) {
         LOG_ERROR(kNetwork, "Socket::GetPort H = %d, RETURN VALUE = %d\n", iHandle, err);
@@ -339,7 +339,7 @@ void Socket::GetPort(TUint& aPort)
 
 void Socket::Listen(TUint aSlots)
 {
-    //LOG(kNetwork, "Socket::Listen H = %d S = %d\n", iHandle, aSlots);
+    LOG_TRACE(kNetwork, "Socket::Listen H = %d S = %d\n", iHandle, aSlots);
     TInt err = OpenHome::Os::NetworkListen(iHandle, aSlots);
     if(err != 0) {
         LOG_ERROR(kNetwork, "Socket::Listen H = %d, RETURN VALUE = %d\n", iHandle, err);
@@ -349,9 +349,9 @@ void Socket::Listen(TUint aSlots)
 
 THandle Socket::Accept(Endpoint& aClientEndpoint)
 {
-    //LOG(kNetwork, "Socket::Accept H = %d\n", iHandle);
+    LOG_TRACE(kNetwork, "Socket::Accept H = %d\n", iHandle);
     THandle handle = OpenHome::Os::NetworkAccept(iHandle, aClientEndpoint);
-    //LOG(kNetwork,"Socket::Accept Accepted Handle = %d\n", handle);
+    LOG_TRACE(kNetwork,"Socket::Accept Accepted Handle = %d\n", handle);
     if(handle == kHandleNull) {
         LOG_ERROR(kNetwork, "Socket::Accept H = %d\n", handle);
         THROW(NetworkError);
@@ -422,12 +422,12 @@ AutoSocketReader::~AutoSocketReader()
 
 SocketTcp::SocketTcp()
 {
-    //LOG(kNetwork, "SocketTcp::SocketTcp\n");
+    LOG_TRACE(kNetwork, "SocketTcp::SocketTcp\n");
 }
 
 void SocketTcp::Receive(Bwx& aBuffer, TUint aBytes)
 {
-    //LOG(kNetwork, "SocketTcp::Receive only %d bytes\n", aBytes);
+    LOG_TRACE(kNetwork, "SocketTcp::Receive only %d bytes\n", aBytes);
     Socket::Receive(aBuffer, aBytes);
 }
 
@@ -439,7 +439,7 @@ void SocketTcp::Write(TByte aValue)
 
 void SocketTcp::Write(const Brx& aBuffer)
 {
-    //LOG(kNetwork, "SocketTcp::Write\n");
+    LOG_TRACE(kNetwork, "SocketTcp::Write\n");
     try {
         Send(aBuffer);
     }
@@ -455,7 +455,7 @@ void SocketTcp::WriteFlush()
 
 void SocketTcp::Read(Bwx& aBuffer)
 {
-    //LOG(kNetwork, ">SocketTcp::Read\n");
+    LOG_TRACE(kNetwork, ">SocketTcp::Read\n");
     try {
         Socket::Receive(aBuffer);
     }
@@ -467,12 +467,12 @@ void SocketTcp::Read(Bwx& aBuffer)
         THROW(ReaderError);
     }
     
-    //LOG(kNetwork, "<SocketTcp::Read\n");
+    LOG_TRACE(kNetwork, "<SocketTcp::Read\n");
 }
 
 void SocketTcp::Read(Bwx& aBuffer, TUint aBytes)
 {
-    //LOG(kNetwork, ">SocketTcp::Read\n");
+    LOG_TRACE(kNetwork, ">SocketTcp::Read\n");
     try {
         Socket::Receive(aBuffer, aBytes);
     }
@@ -484,7 +484,7 @@ void SocketTcp::Read(Bwx& aBuffer, TUint aBytes)
         THROW(ReaderError);
     }
     
-    //LOG(kNetwork, "<SocketTcp::Read\n");
+    LOG_TRACE(kNetwork, "<SocketTcp::Read\n");
 }
 
 void SocketTcp::ReadFlush()
@@ -511,14 +511,14 @@ static void TryNetworkTcpSetNoDelay(THandle aHandle)
 
 void SocketTcpClient::Open(Environment& aEnv)
 {
-    //LOG(kNetwork, "SocketTcpClient::Open\n");
+    LOG_TRACE(kNetwork, "SocketTcpClient::Open\n");
     iHandle = SocketCreate(aEnv, eSocketTypeStream);
     TryNetworkTcpSetNoDelay(iHandle);
 }
 
 void SocketTcpClient::Connect(const Endpoint& aEndpoint, TUint aTimeout)
 {
-    //LOG(kNetwork, "SocketTcpClient::Connect\n");
+    LOG_TRACE(kNetwork, "SocketTcpClient::Connect\n");
     OpenHome::Os::NetworkConnect(iHandle, aEndpoint, aTimeout);
 }
 
@@ -531,7 +531,7 @@ SocketTcpServer::SocketTcpServer(Environment& aEnv, const TChar* aName, TUint aP
     , iSessionStackBytes(aSessionStackBytes)
     , iTerminating(false)
 {
-    //LOG(kNetwork, "SocketTcpServer::SocketTcpServer\n");
+    LOG_TRACE(kNetwork, "SocketTcpServer::SocketTcpServer\n");
     iHandle = SocketCreate(aEnv, eSocketTypeStream);
     OpenHome::Os::NetworkSocketSetReuseAddress(iHandle);
     TryNetworkTcpSetNoDelay(iHandle);
@@ -543,7 +543,7 @@ SocketTcpServer::SocketTcpServer(Environment& aEnv, const TChar* aName, TUint aP
 
 void SocketTcpServer::Add(const TChar* aName, SocketTcpSession* aSession, TInt aPriorityOffset)
 {
-    //LOG(kNetwork, "SocketTcpServer::Add\n");
+    LOG_TRACE(kNetwork, "SocketTcpServer::Add\n");
     iSessions.push_back(aSession);                    // Can only throw std::bad_alloc. Don't bother to cleanup as we consider this
                                                     // a fatal exception anyway.
     try {
@@ -558,7 +558,7 @@ void SocketTcpServer::Add(const TChar* aName, SocketTcpSession* aSession, TInt a
 
 THandle SocketTcpServer::Accept(Endpoint& aClientEndpoint)
 {
-    //LOG(kNetwork, "SocketTcpServer::Accept\n");
+    LOG_TRACE(kNetwork, "SocketTcpServer::Accept\n");
     AutoMutex a(iMutex);                        // wait to become the single accepting thread
     if (iTerminating)
         THROW(NetworkError);
@@ -568,13 +568,13 @@ THandle SocketTcpServer::Accept(Endpoint& aClientEndpoint)
 
 TBool SocketTcpServer::Terminating()
 {
-    //LOG(kNetwork, "SocketTcpServer::Terminating %d\n", iTerminating);
+    LOG_TRACE(kNetwork, "SocketTcpServer::Terminating %d\n", iTerminating);
     return (iTerminating);
 }
 
 SocketTcpServer::~SocketTcpServer()
 {
-    //LOG(kNetwork, ">SocketTcpServer::~SocketTcpServer\n");
+    LOG_TRACE(kNetwork, ">SocketTcpServer::~SocketTcpServer\n");
     iTerminating = true;            // indicates terminating phase
 
     // cause exception in pending AND subsequent accept attempts in session threads.
@@ -586,7 +586,7 @@ SocketTcpServer::~SocketTcpServer()
     }
 
     Close();
-    //LOG(kNetwork, "<SocketTcpServer::~SocketTcpServer\n");
+    LOG_TRACE(kNetwork, "<SocketTcpServer::~SocketTcpServer\n");
 }
 
 // Tcp Session
@@ -607,7 +607,7 @@ void SocketTcpSession::Add(SocketTcpServer& aServer, const TChar* aName, TUint a
 // Called when the thread for this session starts
 void SocketTcpSession::Start()
 {
-    //LOG(kNetwork, ">SocketTcpSession::Start()\n");
+    LOG_TRACE(kNetwork, ">SocketTcpSession::Start()\n");
     for (;;) {
         try {
             Open(iServer->Accept(iClientEndpoint));            // accept a connection for this session
@@ -616,7 +616,7 @@ void SocketTcpSession::Start()
             break;
         }
         try {
-            //LOG(kNetwork, "-SocketTcpSession::Start() Run session\n");
+            LOG_TRACE(kNetwork, "-SocketTcpSession::Start() Run session\n");
             Run();                              // execute specific session behaviour
         }
         catch (NetworkError&) {                  // session handle has been shutdown or remote client has shutdown
@@ -628,12 +628,12 @@ void SocketTcpSession::Start()
             LOG_ERROR(kNetwork, "-SocketTcpSession::Start() Network Close Exception\n");
         }
     }
-    //LOG(kNetwork, "<SocketTcpSession::Start()\n");
+    LOG_TRACE(kNetwork, "<SocketTcpSession::Start()\n");
 }
 
 void SocketTcpSession::Open(THandle aHandle)
 {
-    //LOG(kNetwork, "SocketTcpSession::Open %d\n", aHandle);
+    LOG_TRACE(kNetwork, "SocketTcpSession::Open %d\n", aHandle);
     iMutex.Wait();
     iHandle = aHandle;
     TryNetworkTcpSetNoDelay(iHandle);
@@ -654,7 +654,7 @@ Endpoint SocketTcpSession::ClientEndpoint() const
 
 void SocketTcpSession::Close()
 {
-    //LOG(kNetwork, "SocketTcpSession::Close %d\n", iHandle);
+    LOG_TRACE(kNetwork, "SocketTcpSession::Close %d\n", iHandle);
     iMutex.Wait();
     if (iOpen) {
         try {
@@ -670,7 +670,7 @@ void SocketTcpSession::Close()
 
 void SocketTcpSession::Terminate()
 {
-    //LOG(kNetwork, ">SocketTcpSession::Terminate()\n");
+    LOG_TRACE(kNetwork, ">SocketTcpSession::Terminate()\n");
     iMutex.Wait();
     if (iOpen) {
         Interrupt(true); // should kick the thread out of any network receive or send
@@ -679,14 +679,14 @@ void SocketTcpSession::Terminate()
 
     iThread->Kill();    // mark the thread as 'killed' in case it's checking that too.
     iThread->Join();    // Join the TcpSession thread *before* any subclass dtor is invoked.
-    //LOG(kNetwork, "<SocketTcpSession::Terminate()\n");
+    LOG_TRACE(kNetwork, "<SocketTcpSession::Terminate()\n");
 }
 
 SocketTcpSession::~SocketTcpSession()
 {
-    //LOG(kNetwork, ">SocketTcpSession::~SocketTcpSession\n");
+    LOG_TRACE(kNetwork, ">SocketTcpSession::~SocketTcpSession\n");
     delete iThread;
-    //LOG(kNetwork, "<SocketTcpSession::~SocketTcpSession\n");
+    LOG_TRACE(kNetwork, "<SocketTcpSession::~SocketTcpSession\n");
 }
 
 // SocketUdpBase
@@ -694,16 +694,16 @@ SocketTcpSession::~SocketTcpSession()
 SocketUdpBase::SocketUdpBase(Environment& aEnv)
     : iEnv(aEnv)
 {
-    //LOG(kNetwork, "> SocketUdpBase::SocketUdpBase\n");
+    LOG_TRACE(kNetwork, "> SocketUdpBase::SocketUdpBase\n");
     Create();
-    //LOG(kNetwork, "< SocketUdpBase::SocketUdpBase H = %d\n", iHandle);
+    LOG_TRACE(kNetwork, "< SocketUdpBase::SocketUdpBase H = %d\n", iHandle);
 }
 
 void SocketUdpBase::SetTtl(TUint aTtl)
 {
-    //LOG(kNetwork, "> SocketUdp::SetTtl T = %d\n", aTtl);
+    LOG_TRACE(kNetwork, "> SocketUdp::SetTtl T = %d\n", aTtl);
     OpenHome::Os::NetworkSocketSetMulticastTtl(iHandle, (TByte)aTtl);
-    //LOG(kNetwork, "< SocketUdp::SetTtl\n");
+    LOG_TRACE(kNetwork, "< SocketUdp::SetTtl\n");
 }
 
 SocketUdpBase::~SocketUdpBase()
@@ -718,7 +718,7 @@ TUint SocketUdpBase::Port() const
 
 void SocketUdpBase::Send(const Brx& aBuffer, const Endpoint& aEndpoint)
 {
-    //LOG(kNetwork, "> SocketUdpBase::Send\n");
+    LOG_TRACE(kNetwork, "> SocketUdpBase::Send\n");
     try{
         SendTo(aBuffer, aEndpoint);
     }
@@ -729,10 +729,10 @@ void SocketUdpBase::Send(const Brx& aBuffer, const Endpoint& aEndpoint)
 
 Endpoint SocketUdpBase::Receive(Bwx& aBuffer)
 {
-    //LOG(kNetwork, "> SocketUdpBase::Receive\n");
+    LOG_TRACE(kNetwork, "> SocketUdpBase::Receive\n");
     Endpoint endpoint;
     ReceiveFrom(aBuffer, endpoint);
-    //LOG(kNetwork, "< SocketUdpBase::Receive\n");
+    LOG_TRACE(kNetwork, "< SocketUdpBase::Receive\n");
     return endpoint;
 }
 
@@ -754,26 +754,26 @@ void SocketUdpBase::Create()
 SocketUdp::SocketUdp(Environment& aEnv)
     : SocketUdpBase(aEnv)
 {
-    //LOG(kNetwork, "> SocketUdp::SocketUdp\n");
+    LOG_TRACE(kNetwork, "> SocketUdp::SocketUdp\n");
     Bind(0, 0);
     GetPort(iPort);
-    //LOG(kNetwork, "< SocketUdp::SocketUdp H = %d, P = %d\n", iHandle, iPort);
+    LOG_TRACE(kNetwork, "< SocketUdp::SocketUdp H = %d, P = %d\n", iHandle, iPort);
 }
 
 SocketUdp::SocketUdp(Environment& aEnv, TUint aPort)
     : SocketUdpBase(aEnv)
 {
-    //LOG(kNetwork, "> SocketUdp::SocketUdp P = %d\n", aPort);
+    LOG_TRACE(kNetwork, "> SocketUdp::SocketUdp P = %d\n", aPort);
     Bind(aPort, 0);
-    //LOG(kNetwork, "< SocketUdp::SocketUdp H = %d, P = %d\n", iHandle, iPort);
+    LOG_TRACE(kNetwork, "< SocketUdp::SocketUdp H = %d, P = %d\n", iHandle, iPort);
 }
 
 SocketUdp::SocketUdp(Environment& aEnv, TUint aPort, TIpAddress aInterface)
     : SocketUdpBase(aEnv)
 {
-    //LOG(kNetwork, "> SocketUdp::SocketUdp P = %d, I = %x\n", aPort, aInterface);
+    LOG_TRACE(kNetwork, "> SocketUdp::SocketUdp P = %d, I = %x\n", aPort, aInterface);
     Bind(aPort, aInterface);
-    //LOG(kNetwork, "< SocketUdp::SocketUdp H = %d, P = %d\n", iHandle, iPort);
+    LOG_TRACE(kNetwork, "< SocketUdp::SocketUdp H = %d, P = %d\n", iHandle, iPort);
 }
 
 void SocketUdp::ReBind(TUint aPort, TIpAddress aInterface)
@@ -784,9 +784,9 @@ void SocketUdp::ReBind(TUint aPort, TIpAddress aInterface)
 
 void SocketUdp::SetMulticastIf(TIpAddress aInterface)
 {
-    //LOG(kNetwork, "> SocketUdp::SetMulticastIf I = %x\n", aInterface);
+    LOG_TRACE(kNetwork, "> SocketUdp::SetMulticastIf I = %x\n", aInterface);
     OpenHome::Os::NetworkSocketSetMulticastIf(iHandle, aInterface);
-    //LOG(kNetwork, "< SocketUdp::SetMulticastIf\n");
+    LOG_TRACE(kNetwork, "< SocketUdp::SetMulticastIf\n");
 }
 
 void SocketUdp::Bind(TUint aPort, TIpAddress aInterface)
@@ -803,7 +803,7 @@ SocketUdpMulticast::SocketUdpMulticast(Environment& aEnv, TIpAddress aInterface,
     , iInterface(aInterface)
     , iAddress(aEndpoint.Address())
 {
-    //LOG(kNetwork, "> SocketUdpMulticast::SocketUdpMulticast I = %x, E = %x:%d\n", iInterface, aEndpoint.Address(), aEndpoint.Port());
+    LOG_TRACE(kNetwork, "> SocketUdpMulticast::SocketUdpMulticast I = %x, E = %x:%d\n", iInterface, aEndpoint.Address(), aEndpoint.Port());
     const TUint err = OpenHome::Os::NetworkBindMulticast(iHandle, aInterface, aEndpoint);
     if (err != 0) {
         LOG_ERROR(kNetwork, "NetworkBindMulticast for socket %u\n", iHandle);
@@ -811,19 +811,19 @@ SocketUdpMulticast::SocketUdpMulticast(Environment& aEnv, TIpAddress aInterface,
     }
     GetPort(iPort);
     OpenHome::Os::NetworkSocketMulticastAddMembership(iHandle, iInterface, iAddress);
-    //LOG(kNetwork, "< SocketUdpMulticast::SocketUdpMulticast H = %d, I = %x, A = %x, P = %d\n", iHandle, iInterface, iAddress, iPort);
+    LOG_TRACE(kNetwork, "< SocketUdpMulticast::SocketUdpMulticast H = %d, I = %x, A = %x, P = %d\n", iHandle, iInterface, iAddress, iPort);
 }
 
 SocketUdpMulticast::~SocketUdpMulticast()
 {
-    //LOG(kNetwork, "> SocketUdpMulticast::~SocketUdpMulticast\n");
+    LOG_TRACE(kNetwork, "> SocketUdpMulticast::~SocketUdpMulticast\n");
     try {
         OpenHome::Os::NetworkSocketMulticastDropMembership(iHandle, iInterface, iAddress);
     }
     catch (NetworkError&) {
         LOG_ERROR(kNetwork, "DropMembership failed H = %d\n", iHandle);
     }
-    //LOG(kNetwork, "< SocketUdpMulticast::~SocketUdpMulticast\n");
+    LOG_TRACE(kNetwork, "< SocketUdpMulticast::~SocketUdpMulticast\n");
 }
 
 void SocketUdpMulticast::ReCreate()

@@ -175,7 +175,10 @@ void DviProtocolUpnp::HandleInterfaceChange()
         // add listeners for new subnets
         for (i=0; i<subnetList->size(); i++) {
             NetworkAdapter* subnet = (*subnetList)[i];
-            if (FindListenerForSubnet(subnet->Subnet()) == -1) {
+            if (FindListenerForSubnet(subnet->Subnet()) == -1
+                && (!adapterList.SingleSubnetModeEnabled() ||
+                   (current != NULL && subnet->Address() == current->Address()) ||
+                    subnet->Address() == kLoopbackAddr)) {
                 AddInterface(*subnet);
                 update = iDevice.Enabled();
             }

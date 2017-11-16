@@ -1,5 +1,5 @@
 """PyOhNet: entry point for python ohNet bindings
-""" 
+"""
 #
 # ==== Initialise module-level data ====
 #
@@ -13,8 +13,10 @@ initParams = None
 #
 
 import exceptions
+
+
 class OhNetError( exceptions.Exception ):
-    
+
     def __init__( self, aMsg ):
         self.msg = aMsg
 
@@ -60,7 +62,7 @@ if __platform in ['Windows', 'cli']:
     makeCb = ctypes.WINFUNCTYPE
 else:
     makeCb = ctypes.CFUNCTYPE
-    
+
 #
 # ==== Import rest of ohNet-python functionality ====
 #
@@ -68,18 +70,19 @@ else:
 from _Network import *          # access to Adapter and AdapterList classes
 from _DebugLevels import *      # debug level constants
 import _Cp as Cp                # control point stack
-   
+
 #
 # ==== Track ohNet objects (updated on object create/delete) to permit clean shutdown ====
 #
 
 adapters     = []
 adapterLists = []
-devices      = []    
+devices      = []
 devLists     = []
 actions      = []
-cpProxies    = []  
-               
+cpProxies    = []
+
+
 #
 # ==== Public module-level methods ====
 #
@@ -91,15 +94,17 @@ def Initialise( aInitParams=None ):
     lib.OhNetInitParamsCreate.restype = ctypes.c_void_p
     params = ctypes.c_void_p( lib.OhNetInitParamsCreate() )
     if aInitParams:
-        if aInitParams.has_key( 'loopback' ):
+        if 'loopback' in aInitParams:
             if aInitParams['loopback'] is not False:
                 lib.OhNetInitParamsSetUseLoopbackNetworkAdapter( params )
     if lib.OhNetLibraryInitialise( params ):
         raise OhNetError( 'Failed to initialise Library')
 
+
 def SetDebugLevel( aDebugLevel=kDebugLevel['None'] ):
     """Configure debug logging for underlying ohNet library"""
     lib.OhNetDebugSetLevel( aDebugLevel )
+
 
 def Start( aMode='cp', aInterface=None ):
     """Start ohNet (optionally specifying interface by adapter, IP or subnet)"""
@@ -107,7 +112,7 @@ def Start( aMode='cp', aInterface=None ):
     theAdapters = adapterList.adapters
     numAdapters = adapterList.size
     adapter     = None
-         
+
     if numAdapters == 0:
         # no adapters present - throw
         raise OhNetError( 'NO network adapter detected' )
@@ -116,25 +121,26 @@ def Start( aMode='cp', aInterface=None ):
         adapter = theAdapters[0]
     else:
         if aInterface is None:
-            # no host specified - use first adapter 
+            # no host specified - use first adapter
             adapter = theAdapters[0]
         else:
             # host specified - find matching adapter and use it
             for item in theAdapters:
-                if aInterface == item            or \
+                if aInterface == item or \
                    aInterface == item.addressStr or \
                    aInterface == item.subnetStr:
                     adapter = item
                     break
             if not adapter:
                 raise OhNetError( 'NO network adapter matching %s found' % aInterface )
-                
-    if aMode.lower() == 'cp':                
+
+    if aMode.lower() == 'cp':
         Cp.Start( adapter )
     else:
         raise OhNetError( 'Stack mode <%s> not supported' % aMode )
-    
-def Shutdown():    
+
+
+def Shutdown():
     """Cleanly shut down ohNet"""
     while len( adapters ):
         adapters[0].Shutdown()
@@ -149,7 +155,6 @@ def Shutdown():
     while len( cpProxies ):
         cpProxies[0].Shutdown()
     if lib:
-       if initParams: 
-          lib.OhNetInitParamsDestroy( initParams )
-       lib.OhNetLibraryClose()
-    
+        if initParams:
+            lib.OhNetInitParamsDestroy( initParams )
+        lib.OhNetLibraryClose()

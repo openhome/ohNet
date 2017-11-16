@@ -64,7 +64,7 @@ class PostActions():
         if ret != 0:
             print ret
             sys.exit(10)
-    
+
 class JenkinsBuild():
     def get_options(self):
         env_platform = os.environ.get('PLATFORM')
@@ -74,7 +74,7 @@ class JenkinsBuild():
 
         parser = OptionParser()
         parser.add_option("-p", "--platform", dest="platform",
-            help="Linux-x86, Linux-x64, Windows-x86, Windows-x64, Linux-ARM, Linux-armhf, Linux-mipsel, Linux-ppc32, Mac-x64, Core-ppc32, Core-armv6, iOs-armv7, iOs-arm64, iOs-x86, iOs-x64, Qnap-x86, Qnap-x19")
+            help="Linux-x86, Linux-x64, Windows-x86, Windows-x64, Linux-ARM, Linux-armhf, Linux-mipsel, Linux-ppc32, Linux-rpi, Mac-x64, Core-ppc32, Core-armv6, iOs-armv7, iOs-arm64, iOs-x86, iOs-x64, Qnap-x86, Qnap-x19")
         parser.add_option("-n", "--nightly",
                   action="store_true", dest="nightly", default=False,
                   help="Perform a nightly build")
@@ -107,7 +107,7 @@ class JenkinsBuild():
         print "options for build are nightly:%s and release:%s on platform %s" %(self.options.nightly,self.options.release,self.options.platform)
 
     def get_platform(self):
-        platforms = { 
+        platforms = {
                 'Linux-x86': { 'os':'linux', 'arch':'x86', 'publish':True, 'system':'Linux'},
                 'Linux-x64': { 'os':'linux', 'arch':'x64', 'publish':True, 'system':'Linux'},
                 'Linux-ppc32': { 'os':'linux', 'arch':'ppc32', 'publish':True, 'system':'Linux'},
@@ -124,6 +124,7 @@ class JenkinsBuild():
                 'Mac-x86': { 'os': 'macos', 'arch':'x86', 'publish':True, 'system':'Mac'}, # New Jenkins label, matches downstream builds
                 'Linux-ARM': { 'os': 'linux', 'arch': 'armel', 'publish':True, 'system':'Linux'},
                 'Linux-armhf': { 'os': 'linux', 'arch': 'armhf', 'publish':True, 'system':'Linux'},
+                'Linux-rpi': { 'os': 'linux', 'arch': 'rpi', 'publish':True, 'system':'Linux'},
                 'Linux-mipsel': { 'os': 'linux', 'arch': 'mipsel', 'publish':True, 'system':'Linux'},
                 'iOs-ARM': { 'os': 'iOs', 'arch':'armv7', 'publish':True, 'system':'iOs'}, # Old Jenkins label
                 'iOs-x86': { 'os': 'iOs', 'arch':'x86', 'publish':True, 'system':'iOs'},
@@ -176,6 +177,8 @@ class JenkinsBuild():
             os.environ['CROSS_COMPILE'] = '/usr/local/arm-2011.09/bin/arm-none-linux-gnueabi-'
         if os_platform == 'linux' and arch == 'armhf':
             os.environ['CROSS_COMPILE'] = '/opt/gcc-linaro-5.3.1-2016.05-i686_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-'
+        if os_platform == 'linux' and arch == 'rpi':
+            os.environ['CROSS_COMPILE'] = '/opt/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin/arm-linux-gnueabihf-'
         if os_platform == 'linux' and arch == 'mipsel':
             os.environ['CROSS_COMPILE'] = '/opt/mips-2015.05-18/bin/mips-linux-gnu-'
         if os_platform == 'linux' and arch == 'ppc32':
@@ -200,7 +203,7 @@ class JenkinsBuild():
 
         self.platform_make_args = []
 
-        if (arch in ['armel', 'armhf', 'armv7', 'arm64', 'armv5', 'armv6', 'mipsel', 'ppc32']) or (os_platform in ['Android','Windows81','Windows10']):
+        if (arch in ['armel', 'armhf', 'armv7', 'arm64', 'armv5', 'armv6', 'mipsel', 'ppc32', 'rpi']) or (os_platform in ['iOs','Android','Windows81','Windows10']):
             args.append('--buildonly')
         elif arch == 'x64':
             if os_platform  == 'macos':
@@ -229,6 +232,10 @@ class JenkinsBuild():
             elif arch == 'arm64':
                 args.append('--iOs-arm64')
                 self.platform_make_args.append('iOs-arm64=1')
+        if os_platform == 'Linux':
+            if arch == 'rpi':
+                args.append('--Linux-rpi')
+                self.platform_make_args.append('Linux-rpi=1')
             # 32 and 64-bit builds run in parallel on the same slave.
             # Overlapping test instances interfere with each other so only run tests for the (assumed more useful) 32-bit build.
             # Temporarily disable all tests on mac as publish jobs hang otherwise
@@ -247,7 +254,7 @@ class JenkinsBuild():
         if nightly == '1':
             args.append('--full')
             if os_platform == 'linux' and arch == 'x86':
-                args.append('--valgrind')    
+                args.append('--valgrind')
         if self.options.parallel:
             args.append('--parallel')
         self.build_args = args
@@ -259,14 +266,14 @@ class JenkinsBuild():
         build_args = self.build_args
         platform_args = self.platform_args
         common_args = []
-            
+
         if platform_args == []:
             common_args.extend(build_args)
         else:
             common_args.extend(platform_args)
             common_args.append('&&')
             common_args.extend(build_args)
-            
+
         build_targets = []
         build_targets.append('debug')
 
@@ -282,7 +289,7 @@ class JenkinsBuild():
 
             print 'running build with %s' %(build,)
 
-            ret = subprocess.check_call(build)            
+            ret = subprocess.check_call(build)
             if ret != 0:
                 print ret
                 sys.exit(10)
@@ -297,14 +304,14 @@ class JenkinsBuild():
         version = self.options.version
         openhome_system = self.platform['system']
         openhome_architecture = self.platform['arch']
-        
+
         release_targets = []
         release_targets.append('release')
         release_targets.append('debug')
 
         # clean slate so as not to upload random junk inadvertently
         shutil.rmtree(os.path.join('Build', 'Bundles'), ignore_errors=True)
-        
+
         for release in release_targets:
             openhome_configuration = release.title()
             build = []
@@ -351,8 +358,8 @@ class JenkinsBuild():
                 os.remove(native_dest)
             os.rename(native_bundle_name, native_dest)
         rem.check_rsync('releases','builds.openhome.org','Build/Bundles/','~/www/artifacts/ohNet/')
-                        
-    
+
+
     def do_postAction(self):
         nightly = self.options.nightly
         release = self.options.release
@@ -395,4 +402,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

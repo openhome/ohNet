@@ -8,7 +8,7 @@ import PyOhNet
 
 class Property:
     __metaclass__ = abc.ABCMeta
-    
+
     @abc.abstractmethod
     def __init__( self, aName, aCb ):
         self.lib = PyOhNet.lib
@@ -16,19 +16,19 @@ class Property:
         self.name = aName
         CB = PyOhNet.makeCb( None, ctypes.c_void_p )
         self.callback = CB( aCb )
-        
+
     def __str__( self ):
         msg = '      %s' % self.name
         return msg
 
-        
+
 class PropertyInt( Property ):
-    
+
     def __init__( self, aName, aCb ):
         Property.__init__( self, aName, aCb )
         self.lib.ServicePropertyCreateIntCp.restype = ctypes.c_void_p
         self.handle = ctypes.c_void_p( self.lib.ServicePropertyCreateIntCp( ctypes.c_char_p( aName ), self.callback, None ))
-        
+
     def Value( self ):
         val = ctypes.c_int()
         self.lib.ServicePropertyValueInt( self.handle, ctypes.byref( val ) )
@@ -40,12 +40,12 @@ class PropertyInt( Property ):
 
 
 class PropertyUint( Property ):
-    
+
     def __init__( self, aName, aCb ):
         Property.__init__( self, aName, aCb )
         self.lib.ServicePropertyCreateUintCp.restype = ctypes.c_void_p
         self.handle = ctypes.c_void_p( self.lib.ServicePropertyCreateUintCp( ctypes.c_char_p( aName ), self.callback, None ))
-                               
+
     def Value( self ):
         val = ctypes.c_uint()
         self.lib.ServicePropertyValueUint( self.handle, ctypes.byref( val ) )
@@ -57,12 +57,12 @@ class PropertyUint( Property ):
 
 
 class PropertyBool( Property ):
-    
+
     def __init__( self, aName, aCb ):
         Property.__init__( self, aName, aCb )
         self.lib.ServicePropertyCreateBoolCp.restype = ctypes.c_void_p
         self.handle = ctypes.c_void_p( self.lib.ServicePropertyCreateBoolCp( ctypes.c_char_p( aName ), self.callback, None ))
-        
+
     def Value( self ):
         val = ctypes.c_uint()
         self.lib.ServicePropertyValueBool( self.handle, ctypes.byref( val ) )
@@ -71,13 +71,13 @@ class PropertyBool( Property ):
     def SetValue( self, aValue ):
         val = 0
         if aValue:
-            val= 1
+            val = 1
         changed = self.lib.ServicePropertySetValueBool( self.handle, val )
         return changed != 0
 
 
 class PropertyString( Property ):
-    
+
     def __init__( self, aName, aCb ):
         Property.__init__( self, aName, aCb )
         self.lib.ServicePropertyCreateStringCp.restype = ctypes.c_void_p
@@ -100,12 +100,12 @@ class PropertyString( Property ):
 
 
 class PropertyBinary( Property ):
-    
+
     def __init__( self, aName, aCb ):
         Property.__init__( self, aName, aCb )
         self.lib.ServicePropertyCreateBinaryCp.restype = ctypes.c_void_p
         self.handle = ctypes.c_void_p( self.lib.ServicePropertyCreateBinaryCp( ctypes.c_char_p( aName ), self.callback, None ))
-        
+
     def Value( self ):
         binary = []
         pBytes = ctypes.pointer( ctypes.c_ubyte() )

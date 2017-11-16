@@ -101,6 +101,14 @@ JNIEXPORT void JNICALL Java_org_openhome_net_core_Library_OhNetLibraryNotifyResu
  * Signature: (I)V
  */
 JNIEXPORT void JNICALL Java_org_openhome_net_core_Library_OhNetDebugSetLevel
+  (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     org_openhome_net_core_Library
+ * Method:    OhNetDebugSetSeverity
+ * Signature: (I)V
+ */
+JNIEXPORT void JNICALL Java_org_openhome_net_core_Library_OhNetDebugSetSeverity
   (JNIEnv *, jclass, jint);
 
 /*

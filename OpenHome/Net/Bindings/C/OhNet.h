@@ -897,7 +897,16 @@ DllExport void STDCALL OhNetFreeExternal(void* aPtr);
  *
  * @param[in] aLevel           Bit(s) specifying debug level.  See OpenHome/Private/Debug.h.
  */
-DllExport void STDCALL OhNetDebugSetLevel(uint32_t aLevel);
+DllExport void STDCALL OhNetDebugSetLevel(uint64_t aLevel);
+
+/**
+ * Enable debug logging.
+ *
+ * Log messages will be passed to the callback registered in OhNetInitParamsSetLogOutput.
+ *
+ * @param[in] aSeverity        Integer specifying debug severity.  See OpenHome/Private/Debug.h.
+ */
+DllExport void STDCALL OhNetDebugSetSeverity(uint32_t aSeverity);
 
 /**
  * Terminate the ohNet process after a fatal error. On some platforms, this call
