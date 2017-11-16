@@ -702,9 +702,14 @@ void STDCALL OhNetFreeExternal(void* aPtr)
     }
 }
 
-void STDCALL OhNetDebugSetLevel(uint32_t aLevel)
+void STDCALL OhNetDebugSetLevel(uint64_t aLevel)
 {
     Debug::SetLevel(aLevel);
+}
+
+void STDCALL OhNetDebugSetSeverity(uint32_t aSeverity)
+{
+    Debug::SetSeverity(aSeverity);
 }
 
 void STDCALL OhNetAbortProcess()

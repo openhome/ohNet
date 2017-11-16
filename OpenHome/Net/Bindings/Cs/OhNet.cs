@@ -1120,7 +1120,7 @@ namespace OpenHome.Net.Core
 #else
         [DllImport("ohNet")]
 #endif
-        static extern void OhNetDebugSetLevel(uint aLevel);
+        static extern void OhNetDebugSetLevel(ulong aLevel);
 #if IOS
         [DllImport("__Internal")]
 #else
@@ -1343,7 +1343,7 @@ namespace OpenHome.Net.Core
         /// <param name="aLevel">Bit(s) specifying which debug levels to enable</param>
         public static void SetDebugLevel(DebugLevel aLevel)
         {
-            OhNetDebugSetLevel((uint)aLevel);
+            OhNetDebugSetLevel((ulong)aLevel);
         }
 
         /// <summary>
