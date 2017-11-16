@@ -71,6 +71,11 @@ private:
 class Socket : public INonCopyable
 {
 public:
+    /**
+     * Close the socket, freeing any associated memory.
+     * Can only be called after any other calls to this socket from other
+     * threads have returned.
+     */
     void Close();
     void Interrupt(TBool aInterrupt);
     void SetSendBufBytes(TUint aBytes);

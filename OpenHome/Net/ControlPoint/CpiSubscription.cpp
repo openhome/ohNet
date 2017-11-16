@@ -495,6 +495,9 @@ void Subscriber::Run()
         catch (HttpError&) {
             Error("Http");
         }
+        catch (UriError&) {
+            Error("Uri");
+        }
         catch (NetworkError&) {
             Error("Network");
         }
