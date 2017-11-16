@@ -17,7 +17,8 @@ public class Library
     private static native void OhNetRefreshNetworkAdapterList();
     private static native void OhNetLibraryNotifySuspended();
     private static native void OhNetLibraryNotifyResumed();
-    private static native void OhNetDebugSetLevel(int aLevel);
+    private static native void OhNetDebugSetLevel(long aLevel);
+    private static native void OhNetDebugSetSeverity(int aSeverity);
     private static native void OhNetAbortProcess();
 
     static
@@ -210,17 +211,30 @@ public class Library
      }
 
     /**
-     * Enable debug logging.
++     * Set debug logging level.
      * 
      * <p>Log messages can optionally be passed to a callback registered by {@link InitParams#setLogOutput}.
      * 
      * @param aLevel    bit(s) specifying debug level.  The debug level can be any
-     *                  combination of bit-mask values returned by {@link DebugLevel#intValue}.
+     *                  combination of bit-mask values returned by {@link DebugLevel#longValue}.
      *                  See {@link DebugLevel} for details.
      */
-    public void setDebugLevel(int aLevel)
+    public void setDebugLevel(long aLevel)
     {
         OhNetDebugSetLevel(aLevel);
+    }
+
+    /**
+     * Set debug logging severity.
+     * 
+     * <p>Log messages can optionally be passed to a callback registered by {@link InitParams#setLogOutput}.
+     * 
+     * @param aLevel    enum constant specifying debug severity.  The debug severity can be any
+     *                  of the values defined by the {@link DebugSeverity} enum.
+     */
+    public void setDebugSeverity(DebugSeverity aSeverity)
+    {
+        OhNetDebugSetSeverity(aSeverity.intValue());
     }
 
     /**
