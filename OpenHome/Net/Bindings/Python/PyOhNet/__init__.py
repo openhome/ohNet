@@ -103,7 +103,8 @@ def Initialise( aInitParams=None ):
 
 def SetDebugLevel( aDebugLevel=kDebugLevel['None'] ):
     """Configure debug logging for underlying ohNet library"""
-    lib.OhNetDebugSetLevel( aDebugLevel )
+    level = ctypes.c_int64( aDebugLevel )
+    lib.OhNetDebugSetLevel( level )
 
 
 def Start( aMode='cp', aInterface=None ):
