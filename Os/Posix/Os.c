@@ -37,6 +37,10 @@
 #include <execinfo.h>
 #endif
 
+#ifdef PLATFORM_LINUX
+#include <execinfo.h>
+#endif
+
 #include <OpenHome/Os.h>
 
 #define kMinStackBytes (1024 * 512)
@@ -118,7 +122,7 @@ void OsQuit(OsContext* aContext)
     abort();
 }
 
-#if defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_IOS)
+#if (defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_IOS)) || defined(PLATFORM_LINUX)
 # define STACK_TRACE_ENABLE
 #else
 # undef  STACK_TRACE_ENABLE
