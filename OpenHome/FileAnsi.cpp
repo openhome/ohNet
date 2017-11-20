@@ -49,6 +49,13 @@ FileAnsi::FileAnsi(const TChar* aFilename, FileMode aFileMode)
         case eFileWriteOnly:
             iFilePtr = fopen(aFilename, "wb");
             break;
+        case eFileReadWriteCreateIfNotExist:
+            iFilePtr = fopen(aFilename, "r+b");
+            if (iFilePtr == NULL)
+            {
+                iFilePtr = fopen(aFilename, "w+b");
+            }
+            break;
         default:
             iFilePtr = NULL;
             break;
