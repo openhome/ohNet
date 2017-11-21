@@ -110,20 +110,66 @@ public enum DebugLevel {
     App10(1<<27),
     App11(1<<28),
     App12(1<<29),
-    App13(1<<30);
+    App13(1<<30),
+    App14(1<<31),
+    App15(1<<32),
+    App16(1<<33),
+    App17(1<<34),
+    App18(1<<35),
+    App19(1<<36),
+    App20(1<<37),
+    App21(1<<38),
+    App22(1<<39),
+    App23(1<<40),
+    App24(1<<41),
+    App25(1<<42),
+    App26(1<<43),
+    App27(1<<44),
+    App28(1<<45),
+    App29(1<<46),
+    App30(1<<47),
+    App31(1<<48),
+    App32(1<<49),
+    App33(1<<50),
+    App34(1<<51),
+    App35(1<<52),
+    App36(1<<53),
+    App37(1<<54),
+    App38(1<<55),
+    App39(1<<56),
+    App40(1<<57),
+    App41(1<<58),
+    App42(1<<59),
+    App43(1<<60),
+    App44(1<<61),
 
-    private int value;
+     /**
+      * Enable <tt>CpDeviceDv</tt> messages.
+      */
+    CpDeviceDv(1<<62),
 
-    private DebugLevel(int value) {
+     /**
+      * Enable <tt>AdapterChange</tt> messages.
+      */
+    AdapterChange(1<<63),
+
+     /**
+      * Enable all messages.
+      */
+    All(0xFFFFFFFFFFFFFFFFL);
+
+    private long value;
+
+    private DebugLevel(long value) {
         this.value = value;
     }
 
     /**
-     * Returns the integer bit-mask value for a {@link DebugLevel} enum constant.
+     * Returns the long bit-mask value for a {@link DebugLevel} enum constant.
      *
-     * @return      the integer bit-mask value.
+     * @return      the long bit-mask value.
      */
-    public int intValue() {
+    public long longValue() {
         return value;
     }
 }
