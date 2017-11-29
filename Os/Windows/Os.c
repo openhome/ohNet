@@ -75,8 +75,6 @@ OsContext* OsCreate(OsThreadSchedulePolicy aSchedulerPolicy)
     WSADATA wsaData;
     WORD ver = (2<<8)|2; // WinSock v2.2.  Standard on XP and later
 
-    UNUSED(aSchedulerPolicy);
-
 #ifndef DEFINE_WINDOWS_UNIVERSAL
     char* noErrDlgs = getenv("OHNET_NO_ERROR_DIALOGS");
     OsContext* ctx = malloc(sizeof(*ctx));
@@ -86,6 +84,7 @@ OsContext* OsCreate(OsThreadSchedulePolicy aSchedulerPolicy)
 #else
     OsContext* ctx = (OsContext*)malloc(sizeof(*ctx));
 #endif
+    UNUSED(aSchedulerPolicy);
     if (ctx == NULL) {
         return NULL;
     }
