@@ -1154,41 +1154,6 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
             continue;
         }
 
-        // Check for multiple entries with same address and different subnets and
-        // ensure that only the least specific (largest superset) subnet is added.
-        // This code would also work if there are repeated identical address/subnet pairs.
-
-        // first check the entries already added to see if any of them is a superset subnet 
-        TIpAddress address = ((struct sockaddr_in*)iter->ifa_addr)->sin_addr.s_addr;
-        TIpAddress netMask = ((struct sockaddr_in*)iter->ifa_netmask)->sin_addr.s_addr;
-        OsNetworkAdapter* ifaceIter = head;
-        while (ifaceIter != NULL) {
-            if (ifaceIter->iAddress == address && (ifaceIter->iNetMask & netMask) == ifaceIter->iNetMask) {
-                break; // superset subnet has been added already
-            }
-            ifaceIter = ifaceIter->iNext;
-        }
-        if (ifaceIter != NULL) {
-            continue; // superset subnet has been added already
-        }
-
-        // now check the entries not yet added to see if any of them is a superset subnet 
-        struct ifaddrs* addrsIter = iter->ifa_next;
-        while (addrsIter != NULL) {
-            TIpAddress iterAddress = ((struct sockaddr_in*)addrsIter->ifa_addr)->sin_addr.s_addr;
-            TIpAddress iterNetMask = 0;
-            if (addrsIter->ifa_netmask != NULL) {
-                iterNetMask = ((struct sockaddr_in*)addrsIter->ifa_netmask)->sin_addr.s_addr;
-            }
-            if (iterAddress == address && (iterNetMask & netMask) == iterNetMask) {
-                break; // superset subnet will be added later
-            }
-            addrsIter = addrsIter->ifa_next;
-        }
-        if (addrsIter != NULL) {
-            continue; // superset subnet will be added later
-        }
-        
         OsNetworkAdapter* iface = (OsNetworkAdapter*)calloc(1, sizeof(*iface));
         if (iface == NULL) {
             OsNetworkFreeInterfaces(head);
@@ -1203,12 +1168,51 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
             goto exit;
         }
         (void)strcpy(iface->iName, iter->ifa_name);
-        iface->iAddress = address;
-        iface->iNetMask = netMask;
+        iface->iAddress = ((struct sockaddr_in*)iter->ifa_addr)->sin_addr.s_addr;
+        iface->iNetMask = ((struct sockaddr_in*)iter->ifa_netmask)->sin_addr.s_addr;
         if (tail != NULL) {
             tail->iNext = iface;
         }
         tail = iface;
+    }
+
+    // Check for multiple entries with same address and different netmasks and
+    // remove all these except for the least specific (largest superset) netmask.
+    // This code would also work if there are repeated identical address/netmask pairs.
+    OsNetworkAdapter* ifacePrevious = NULL;
+    // outer loop: for each adapter, remove it if another adapter takes priority
+    OsNetworkAdapter* ifaceIter = head;
+    while (ifaceIter != NULL) {
+        int removeIface = 1; // false
+        // inner loop: check other adapters (not ifaceIter) for priority
+        OsNetworkAdapter* addrsIter = head;
+        while (addrsIter != NULL) {
+            if (addrsIter != ifaceIter &&
+                addrsIter->iAddress == ifaceIter->iAddress &&
+                (addrsIter->iNetMask & ifaceIter->iNetMask) == addrsIter->iNetMask) {
+                // found another adapter with same address and same or less specific netmask
+                removeIface = 0; // true
+                break;
+            }
+            addrsIter = addrsIter->iNext;
+        }
+        if (removeIface == 0) {
+            OsNetworkAdapter* ifaceNext = ifaceIter->iNext;
+            if (ifaceIter == head) {
+                head = ifaceNext;
+            }
+            else {
+                ifacePrevious->iNext = ifaceNext;
+            }
+            free(ifaceIter->iName);
+            free(ifaceIter);
+            ifaceIter = ifaceNext;
+            // don't update ifacePrevious
+        }
+        else {
+            ifacePrevious = ifaceIter;
+            ifaceIter = ifaceIter->iNext;
+        }
     }
     ret = 0;
     *aAdapters = head;
