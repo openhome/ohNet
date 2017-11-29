@@ -1126,6 +1126,12 @@ namespace OpenHome.Net.Core
 #else
         [DllImport("ohNet")]
 #endif
+        static extern void OhNetDebugSetSeverity(uint aLevel);
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
         static extern void OhNetAbortProcess();
 #if IOS
         [DllImport("__Internal")]
@@ -1344,6 +1350,27 @@ namespace OpenHome.Net.Core
         public static void SetDebugLevel(DebugLevel aLevel)
         {
             OhNetDebugSetLevel((ulong)aLevel);
+        }
+
+        public enum DebugSeverity : uint
+        {
+            None     = 0,
+            Critical = 1,
+            Error    = 2,
+            Warning  = 3,
+            Info     = 4,
+            Debug    = 5,
+            Trace    = 6
+        }
+
+        /// <summary>
+        /// Set the severity (if any) of debug logging.
+        /// </summary>
+        /// <remarks>Log messages will be passed to the callback registered in InitParams.LogOutput.</remarks>
+        /// <param name="aSeverity">Highest value of debug severity to enable.</param>
+        public static void SetDebugSeverity(DebugSeverity aSeverity)
+        {
+            OhNetDebugSetSeverity((uint)aSeverity);
         }
 
         /// <summary>
