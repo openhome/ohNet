@@ -28,6 +28,7 @@ typedef enum {
     eFileReadOnly,
     eFileReadWrite,
     eFileWriteOnly,
+    eFileReadWriteCreateIfNotExist,
 } FileMode;
 
 class IFile
