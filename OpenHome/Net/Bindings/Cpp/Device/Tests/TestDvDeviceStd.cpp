@@ -113,6 +113,8 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
     }
     aInitParams->SetMsearchTime(1);
     aInitParams->SetDvUpnpServerPort(0);
+    aInitParams->SetDvPublisherModerationTime(10); // arbitrary small value.  Not required here but
+                                                   // useful to have moderation tested somewhere.
     UpnpLibrary::Initialise(aInitParams);
     std::vector<NetworkAdapter*>* subnetList = UpnpLibrary::CreateSubnetList();
     TIpAddress subnet = (*subnetList)[0]->Subnet();
