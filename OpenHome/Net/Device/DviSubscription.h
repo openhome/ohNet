@@ -110,7 +110,7 @@ private:
 class Publisher : public Thread
 {
 public:
-    Publisher(const TChar* aName, TUint aPriority, Fifo<Publisher*>& aFree);
+    Publisher(const TChar* aName, TUint aPriority, Fifo<Publisher*>& aFree, TUint aModerationMs);
     ~Publisher();
     void Publish(DviSubscription* aSubscription);
 private:
@@ -119,6 +119,8 @@ private:
 private:
     Fifo<Publisher*>& iFree;
     DviSubscription* iSubscription;
+    const TUint iModerationMs;
+    Semaphore iModerator;
 };
 
 class DviSubscriptionManager : public Thread, private IInfoProvider

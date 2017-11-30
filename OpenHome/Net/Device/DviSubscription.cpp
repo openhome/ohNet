@@ -419,9 +419,11 @@ void PropertyWriter::PropertyWriteBinary(const Brx& aName, const Brx& aValue)
 
 // Publisher
 
-Publisher::Publisher(const TChar* aName, TUint aPriority, Fifo<Publisher*>& aFree)
+Publisher::Publisher(const TChar* aName, TUint aPriority, Fifo<Publisher*>& aFree, TUint aModerationMs)
     : Thread(aName, aPriority)
     , iFree(aFree)
+    , iModerationMs(aModerationMs)
+    , iModerator("PBMS", 0)
 {
 }
 
@@ -473,6 +475,12 @@ void Publisher::Run()
 
         iSubscription->RemoveRef();
         iFree.Write(this);
+        if (iModerationMs > 0) {
+            try {
+                iModerator.Wait(iModerationMs);
+            }
+            catch (Timeout&) {}
+        }
     }
 }
 
@@ -494,15 +502,17 @@ DviSubscriptionManager::DviSubscriptionManager(DvStack& aDvStack)
         queries.push_back(kQuerySubscriptions);
         infoAggregator->Register(*this, queries);
     }
-    const TUint numPublisherThreads = iDvStack.Env().InitParams()->DvNumPublisherThreads();
-    const TUint priority = iDvStack.Env().InitParams()->DvPublisherThreadPriority();
+    InitialisationParams* initParams = iDvStack.Env().InitParams();
+    const TUint numPublisherThreads = initParams->DvNumPublisherThreads();
+    const TUint priority = initParams->DvPublisherThreadPriority();
+    const TUint moderationMs = initParams->DvPublisherModerationTimeMs();
     LOG(kDvEvent, "> DviSubscriptionManager: creating %u publisher threads\n", numPublisherThreads);
     iPublishers = (Publisher**)malloc(sizeof(*iPublishers) * numPublisherThreads);
     for (TUint i=0; i<numPublisherThreads; i++) {
         Bws<Thread::kMaxNameBytes+1> thName;
         thName.AppendPrintf("Publisher %d", i);
         thName.PtrZ();
-        iPublishers[i] = new Publisher((const TChar*)thName.Ptr(), priority, iFree);
+        iPublishers[i] = new Publisher((const TChar*)thName.Ptr(), priority, iFree, moderationMs);
         iFree.Write(iPublishers[i]);
         iPublishers[i]->Start();
     }

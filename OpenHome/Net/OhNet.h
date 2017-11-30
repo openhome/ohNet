@@ -322,6 +322,15 @@ public:
      */
     void SetDvPublisherThreadPriority(uint32_t aPriority);
     /**
+     * Set a delay between publishing events from a single thread.
+     * A value of 0 implies no delay.
+     * Can be used in systems capable of priority-based scheduling to to allow
+     * eventing to run at a very high priority without risking it blocking out
+     * other high priority tasks.
+     * Note that higher moderation times, give lower maximum eventing throughput.
+     */
+    void SetDvPublisherModerationTime(uint32_t aMillisecs);
+    /**
      * Set the number of threads which will be dedicated to published
      * changes to state variables via WebSockets
      * One thread will be used per active (web browser) connection so a higher
@@ -421,6 +430,7 @@ public:
     uint32_t DvNumServerThreads() const;
     uint32_t DvNumPublisherThreads() const;
     uint32_t DvPublisherThreadPriority() const;
+    uint32_t DvPublisherModerationTimeMs() const;
     uint32_t DvNumWebSocketThreads() const;
     uint32_t CpUpnpEventServerPort() const;
     uint32_t DvUpnpServerPort() const;
@@ -464,6 +474,7 @@ private:
     uint32_t iDvMaxUpdateTimeSecs;
     uint32_t iDvNumServerThreads;
     uint32_t iDvNumPublisherThreads;
+    uint32_t iDvPublisherModerationTimeMs;
     uint32_t iDvPublisherThreadPriority;
     uint32_t iDvNumWebSocketThreads;
     uint32_t iCpUpnpEventServerPort;
