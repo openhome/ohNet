@@ -489,8 +489,8 @@ void Publisher::Run()
 
 const Brn DviSubscriptionManager::kQuerySubscriptions("subscriptions");
 
-DviSubscriptionManager::DviSubscriptionManager(DvStack& aDvStack)
-    : Thread("DvSubscriptionMgr")
+DviSubscriptionManager::DviSubscriptionManager(DvStack& aDvStack, TUint aPriority)
+    : Thread("DvSubscriptionMgr", aPriority)
     , iDvStack(aDvStack)
     , iLock("DSBM")
     , iFree(aDvStack.Env().InitParams()->DvNumPublisherThreads())
@@ -504,7 +504,6 @@ DviSubscriptionManager::DviSubscriptionManager(DvStack& aDvStack)
     }
     InitialisationParams* initParams = iDvStack.Env().InitParams();
     const TUint numPublisherThreads = initParams->DvNumPublisherThreads();
-    const TUint priority = initParams->DvPublisherThreadPriority();
     const TUint moderationMs = initParams->DvPublisherModerationTimeMs();
     LOG(kDvEvent, "> DviSubscriptionManager: creating %u publisher threads\n", numPublisherThreads);
     iPublishers = (Publisher**)malloc(sizeof(*iPublishers) * numPublisherThreads);
@@ -512,7 +511,7 @@ DviSubscriptionManager::DviSubscriptionManager(DvStack& aDvStack)
         Bws<Thread::kMaxNameBytes+1> thName;
         thName.AppendPrintf("Publisher %d", i);
         thName.PtrZ();
-        iPublishers[i] = new Publisher((const TChar*)thName.Ptr(), priority, iFree, moderationMs);
+        iPublishers[i] = new Publisher((const TChar*)thName.Ptr(), aPriority, iFree, moderationMs);
         iFree.Write(iPublishers[i]);
         iPublishers[i]->Start();
     }
