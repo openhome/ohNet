@@ -474,13 +474,13 @@ void Publisher::Run()
         }
 
         iSubscription->RemoveRef();
-        iFree.Write(this);
         if (iModerationMs > 0) {
             try {
                 iModerator.Wait(iModerationMs);
             }
             catch (Timeout&) {}
         }
+        iFree.Write(this);
     }
 }
 
