@@ -84,6 +84,7 @@ objects_core = \
 	$(objdir)DNSDigest.$(objext) \
 	$(objdir)mDNS.$(objext) \
 	$(objdir)uDNS.$(objext) \
+	$(objdir)dnssd_clientshim.$(objext) \
 	$(objdir)MdnsPlatform.$(objext) \
 	$(objdir)MdnsProvider.$(objext) \
 	$(objdir)Md5.$(objext) \
@@ -363,6 +364,8 @@ $(objdir)mDNS.$(objext) : OpenHome/Net/Device/Bonjour/mDNSCore/mDNS.c $(headers)
 	$(compiler)mDNS.$(objext) -c $(cflags_third_party) $(includes) OpenHome/Net/Device/Bonjour/mDNSCore/mDNS.c
 $(objdir)uDNS.$(objext) : OpenHome/Net/Device/Bonjour/mDNSCore/uDNS.c $(headers)
 	$(compiler)uDNS.$(objext) -c $(cflags_third_party) $(includes) OpenHome/Net/Device/Bonjour/mDNSCore/uDNS.c
+$(objdir)dnssd_clientshim.$(objext) : OpenHome/Net/Device/Bonjour/mDNSShared/dnssd_clientshim.c $(headers)
+	$(compiler)dnssd_clientshim.$(objext) -c $(cflags_third_party) $(includes) OpenHome/Net/Device/Bonjour/mDNSShared/dnssd_clientshim.c
 $(objdir)MdnsPlatform.$(objext) : OpenHome/Net/Device/Bonjour/MdnsPlatform.cpp $(headers)
 	$(compiler)MdnsPlatform.$(objext) -c $(cflags_third_party) $(includes) OpenHome/Net/Device/Bonjour/MdnsPlatform.cpp
 $(objdir)MdnsProvider.$(objext) : OpenHome/Net/Device/Bonjour/MdnsProvider.cpp $(headers)
@@ -702,6 +705,12 @@ $(objdir)TestProxyC.$(objext) : OpenHome/Net/Bindings/C/ControlPoint/Tests/TestP
 	$(compiler)TestProxyC.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Bindings/C/ControlPoint/Tests/TestProxyC.cpp
 $(objdir)MainC.$(objext) : Os/$(osdir)/MainC.c $(headers)
 	$(compiler)MainC.$(objext) -c $(cflags) $(includes) Os/$(osdir)/MainC.c
+
+TestCpDeviceListMdns: $(objdir)TestCpDeviceListMdns.$(exeext)
+$(objdir)TestCpDeviceListMdns.$(exeext) :  ohNetCore $(objdir)TestCpDeviceListMdns.$(objext) $(libprefix)TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)TestCpDeviceListMdns.$(exeext) $(objdir)$(libprefix)ohNetCore.$(libext) $(objdir)TestCpDeviceListMdns.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
+$(objdir)TestCpDeviceListMdns.$(objext) : OpenHome/Net/Device/Bonjour/CpDeviceListMdns.cpp $(headers)
+	$(compiler)TestCpDeviceListMdns.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Device/Bonjour/CpDeviceListMdns.cpp
 
 TestDviDiscovery: $(objdir)TestDviDiscovery.$(exeext)
 $(objdir)TestDviDiscovery.$(exeext) :  ohNetCore $(objdir)TestDviDiscovery.$(objext) $(objdir)TestDviDiscoveryMain.$(objext) $(libprefix)TestFramework.$(libext)
