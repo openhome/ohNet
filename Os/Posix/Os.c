@@ -1,8 +1,8 @@
 // Implementation of Os.h APIs for Posix
 
-#undef SET_PTHREAD_NAMES
-
-//#define SET_PTHREAD_NAMES
+#ifdef PLATFORM_LINUX
+# define SET_PTHREAD_NAMES
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>

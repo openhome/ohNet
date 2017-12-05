@@ -29,7 +29,8 @@ DvStack::DvStack(OpenHome::Environment& aEnv)
     TUint port = initParams->DvUpnpServerPort();
     iDviDeviceMap = new DviDeviceMap;
     iDviServerUpnp = new DviServerUpnp(*this, port);
-    iSubscriptionManager = new DviSubscriptionManager(*this);
+    const TUint pubThPriority = initParams->DvPublisherThreadPriority();
+    iSubscriptionManager = new DviSubscriptionManager(*this, pubThPriority);
     iDviServerWebSocket = new DviServerWebSocket(*this);
     const TChar* hostName = NULL;
     if (initParams->DvIsBonjourEnabled(hostName)) {

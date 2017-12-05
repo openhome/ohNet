@@ -127,7 +127,7 @@ class DviSubscriptionManager : public Thread, private IInfoProvider
 {
     static const Brn kQuerySubscriptions;
 public:
-    DviSubscriptionManager(DvStack& aDvStack);
+    DviSubscriptionManager(DvStack& aDvStack, TUint aPriority);
     ~DviSubscriptionManager();
     void AddSubscription(DviSubscription& aSubscription);
     void RemoveSubscription(DviSubscription& aSubscription);
