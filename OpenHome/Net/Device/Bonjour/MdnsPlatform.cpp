@@ -16,6 +16,10 @@
 
 #include <OpenHome/Net/Private/mDNSEmbeddedAPI.h>
 
+extern "C" {
+    mDNS mDNSStorage; // required by dnssd_clientshim.c
+}
+
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
