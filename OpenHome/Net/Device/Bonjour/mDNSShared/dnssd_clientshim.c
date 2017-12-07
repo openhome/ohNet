@@ -31,6 +31,10 @@ extern mDNS mDNSStorage;		// We need to pass the address of this storage to the 
 #pragma export on
 #endif
 
+#ifndef NULL
+# define NULL ((void*)0)
+#endif
+
 //*************************************************************************************************************
 // General Utility Functions
 
