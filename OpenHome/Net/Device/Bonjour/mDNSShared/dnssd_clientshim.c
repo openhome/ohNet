@@ -265,7 +265,7 @@ void                                *context       /* may be NULL */
     err = mDNS_RegisterService(&mDNSStorage, &x->s,
         &x->name, &t, &d,		// Name, type, domain
         &x->host, port,			// Host and port
-        txtRecord, txtLen,		// TXT data, length
+        (const mDNSu8*)txtRecord, txtLen, // TXT data, length
         SubTypes, NumSubTypes,	// Subtypes
         mDNSInterface_Any,		// Interface ID
         RegCallback, x, 0);		// Callback, context, flags
