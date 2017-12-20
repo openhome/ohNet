@@ -20,6 +20,7 @@ class WriterHttpHeader;
 class Http
 {
 public:
+    static const TUint kPortDefault = 80;
     // Methods
     static const Brn kMethodOptions;
     static const Brn kMethodGet;
