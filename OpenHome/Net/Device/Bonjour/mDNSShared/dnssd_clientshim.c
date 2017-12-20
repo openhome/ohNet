@@ -91,6 +91,8 @@ typedef struct
     DNSQuestion                 q;
 } mDNS_DirectOP_QueryRecord;
 
+#ifndef DEFINE_WINDOWS_UNIVERSAL // cannot build as c++ on winrt arm so def it out...
+
 int DNSServiceRefSockFD(DNSServiceRef sdRef)
 {
     (void)sdRef;	// Unused
@@ -792,3 +794,5 @@ const void                         *rdata
     return(kDNSServiceErr_Unsupported);
 }
 #endif
+
+#endif // DEFINE_WINDOWS_UNIVERSAL
