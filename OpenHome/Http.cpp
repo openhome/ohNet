@@ -158,8 +158,10 @@ void Http::WriteHeaderHostAndPort(WriterHttpHeader& aWriter, const Brx& aHost, T
 {
     IWriterAscii& writer = aWriter.WriteHeaderField(Http::kHeaderHost);
     writer.Write(aHost);
-    writer.Write(':');
-    writer.WriteUint(aPort);
+    if (aPort != Http::kPortDefault) {
+        writer.Write(':');
+        writer.WriteUint(aPort);
+    }
     writer.WriteNewline();
 }
 
