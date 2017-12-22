@@ -1,5 +1,6 @@
 #include <OpenHome/Private/NetworkAdapterList.h>
 #include <OpenHome/Types.h>
+#include <OpenHome/Exception.h>
 #include <OpenHome/OsWrapper.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Env.h>
@@ -589,7 +590,16 @@ void NetworkAdapterChangeNotifier::Run()
         UpdateBase* update = iList.front();
         iList.pop_front();
         iLock.Signal();
-        update->Update(iAdapterList);
+        try {
+            update->Update(iAdapterList);
+        }
+        catch (AssertionFailed&) {
+            throw;
+        }
+        catch (Exception& ex) {
+            LOG_ERROR(kAdapterChange, "NetworkAdapterChangeNotifier::Run() exception %s from %s:%u\n",
+                                      ex.Message(), ex.File(), ex.Line());
+        }
         delete update;
     }
 }
