@@ -751,6 +751,7 @@ int32_t OsNetworkSend(THandle aHandle, const uint8_t* aBuffer, uint32_t aBytes)
             if (WAIT_OBJECT_0 == ret) {
                 bytes = 0; // space to write - reset bytes to allow for another iteration
             }
+            (void)WSAResetEvent(handle->iEventSocket);
         }
         else {
             break;
@@ -904,6 +905,7 @@ THandle OsNetworkAccept(THandle aHandle, TIpAddress* aClientAddress, uint32_t* a
     h = accept(handle->iSocket, (struct sockaddr*)&addr, &len);
     while (INVALID_SOCKET==h && WSAEWOULDBLOCK==WSAGetLastError()) {
         ret = WSAWaitForMultipleEvents(2, &handles[0], FALSE, INFINITE, FALSE);
+        (void)WSAResetEvent(handle->iEventSocket);
         if (SocketInterrupted(handle)) {
             break;
         }
