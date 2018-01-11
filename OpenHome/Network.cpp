@@ -228,7 +228,7 @@ void Socket::LogVerbose(TBool aLog, TBool aHex)
 void Socket::Send(const Brx& aBuffer)
 {
     LOG_TRACE(kNetwork, "Socket::Send  H = %d, BC = %d\n", iHandle, aBuffer.Bytes());
-    //Log("Socket::Send, sending\n", aBuffer);
+    Log("Socket::Send, sending\n", aBuffer);
     TInt sent = OpenHome::Os::NetworkSend(iHandle, aBuffer);
     if(sent < 0) {
         LOG_ERROR(kNetwork, "Socket::Send H = %d, RETURN VALUE = %d\n", iHandle, sent);
@@ -243,7 +243,7 @@ void Socket::Send(const Brx& aBuffer)
 void Socket::SendTo(const Brx& aBuffer, const Endpoint& aEndpoint)
 {
     LOG_TRACE(kNetwork, "Socket::SendTo  H = %d, BC = %d, E = %x:%d\n", iHandle, aBuffer.Bytes(), aEndpoint.Address(), aEndpoint.Port());
-    //Log("Socket::SendTo, sending\n", aBuffer);
+    Log("Socket::SendTo, sending\n", aBuffer);
     TInt sent = OpenHome::Os::NetworkSendTo(iHandle, aBuffer, aEndpoint);
     if(sent < 0) {
         LOG_ERROR(kNetwork, "Socket::SendTo H = %d, RETURN VALUE = %d\n", iHandle, sent);
@@ -268,7 +268,7 @@ void Socket::Receive(Bwx& aBuffer)
         THROW(NetworkError);
     }
     aBuffer.SetBytes(received);
-    //Log("Socket::Receive, got\n", aBuffer);
+    Log("Socket::Receive, got\n", aBuffer);
     LOG_TRACE(kNetwork, "<Socket::Receive H = %d, BC = %d\n", iHandle, aBuffer.Bytes());
 }
 
@@ -298,7 +298,7 @@ void Socket::Receive(Bwx& aBuffer, TUint aBytes)
         received += ret;
         aBuffer.SetBytes(received);
     }
-    //Log("Socket::Receive, got\n", aBuffer);
+    Log("Socket::Receive, got\n", aBuffer);
 }
 
 void Socket::ReceiveFrom(Bwx& aBuffer, Endpoint& aEndpoint)
@@ -310,7 +310,7 @@ void Socket::ReceiveFrom(Bwx& aBuffer, Endpoint& aEndpoint)
         THROW(NetworkError);
     }
     aBuffer.SetBytes(received);
-    //Log("Socket::ReceiveFrom, got\n", aBuffer);
+    Log("Socket::ReceiveFrom, got\n", aBuffer);
     LOG_TRACE(kNetwork, "<Socket::ReceiveFrom H = %d\n", iHandle);
 }
 
