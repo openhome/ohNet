@@ -170,7 +170,7 @@ void DviSubscription::WriteChanges()
     if (iExpired) {
         // reads/writes of iExpired assumed not to require thread safety
         // ...if this later turns out wrong, DO NOT USE iLock to protect iExpired - it'll deadlock with TimeManager's lock
-        LOG(kDvEvent, "Subscription %.*s has expired. Don't publish changes\n", PBUF(iSid));
+        LOG_DEBUG(kDvEvent, "Subscription %.*s has expired. Don't publish changes\n", PBUF(iSid));
         Remove();
         return;
     }
@@ -200,14 +200,14 @@ void DviSubscription::WriteChanges()
 
 IPropertyWriter* DviSubscription::CreateWriter()
 {
-    LOG(kDvEvent, "WriteChanges for subscription %.*s seq - %u\n", PBUF(iSid), iSequenceNumber);
+    LOG_DEBUG(kDvEvent, "WriteChanges for subscription %.*s seq - %u\n", PBUF(iSid), iSequenceNumber);
     if (!iDevice.Enabled()) {
-        LOG(kDvEvent, "Device disabled; defer publishing changes\n");
+        LOG_DEBUG(kDvEvent, "Device disabled; defer publishing changes\n");
         return NULL;
     }
 
     if (iService == NULL) {
-        LOG(kDvEvent, "Subscription stopped; don't publish changes\n");
+        LOG_DEBUG(kDvEvent, "Subscription stopped; don't publish changes\n");
         return NULL;
     }
 
@@ -228,7 +228,7 @@ IPropertyWriter* DviSubscription::CreateWriter()
 
     }
     if (!changed) {
-        LOG(kDvEvent, "Found no changes to publish for %.*s\n", PBUF(iSid));
+        LOG_DEBUG(kDvEvent, "Found no changes to publish for %.*s\n", PBUF(iSid));
         return NULL;
     }
     IPropertyWriter* writer = iWriterFactory.ClaimWriter(iUserData, iSid, iSequenceNumber);
@@ -505,7 +505,7 @@ DviSubscriptionManager::DviSubscriptionManager(DvStack& aDvStack, TUint aPriorit
     InitialisationParams* initParams = iDvStack.Env().InitParams();
     const TUint numPublisherThreads = initParams->DvNumPublisherThreads();
     const TUint moderationMs = initParams->DvPublisherModerationTimeMs();
-    LOG(kDvEvent, "> DviSubscriptionManager: creating %u publisher threads\n", numPublisherThreads);
+    LOG_DEBUG(kDvEvent, "> DviSubscriptionManager: creating %u publisher threads\n", numPublisherThreads);
     iPublishers = (Publisher**)malloc(sizeof(*iPublishers) * numPublisherThreads);
     for (TUint i=0; i<numPublisherThreads; i++) {
         Bws<Thread::kMaxNameBytes+1> thName;
@@ -520,7 +520,7 @@ DviSubscriptionManager::DviSubscriptionManager(DvStack& aDvStack, TUint aPriorit
 
 DviSubscriptionManager::~DviSubscriptionManager()
 {
-    LOG(kDvEvent, "> ~DviSubscriptionManager\n");
+    LOG_DEBUG(kDvEvent, "> ~DviSubscriptionManager\n");
 
     iLock.Wait();
     Kill();
@@ -537,7 +537,7 @@ DviSubscriptionManager::~DviSubscriptionManager()
         (*it)->RemoveRef();
     }
 
-    LOG(kDvEvent, "< ~DviSubscriptionManager\n");
+    LOG_DEBUG(kDvEvent, "< ~DviSubscriptionManager\n");
 }
 
 void DviSubscriptionManager::AddSubscription(DviSubscription& aSubscription)

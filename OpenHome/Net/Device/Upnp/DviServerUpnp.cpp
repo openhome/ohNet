@@ -945,7 +945,7 @@ void DviSessionUpnp::Unsubscribe()
 void DviSessionUpnp::Renew()
 {
     const Brx& sid = iHeaderSid.Value();
-    LOG(kDvEvent, "Renew subscription (request): %.*s for %u secs\n", PBUF(sid), iHeaderTimeout.Timeout());
+    LOG_DEBUG(kDvEvent, "Renew subscription (request): %.*s for %u secs\n", PBUF(sid), iHeaderTimeout.Timeout());
 
     if (iHeaderCallback.Received() || iHeaderNt.Received()) {
         Error(HttpStatus::kBadRequest);
@@ -989,7 +989,7 @@ void DviSessionUpnp::Renew()
     iWriterResponse->WriteFlush();
     iResponseEnded = true;
 
-    LOG(kDvEvent, "Renew subscription (complete): %.*s for %u secs\n", PBUF(sid), duration);
+    LOG_DEBUG(kDvEvent, "Renew subscription (complete): %.*s for %u secs\n", PBUF(sid), duration);
 }
 
 void DviSessionUpnp::ParseRequestUri(const Brx& aUrlTail, DviDevice** aDevice, DviService** aService)
