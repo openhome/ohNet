@@ -1,9 +1,5 @@
 // Implementation of Os.h APIs for Posix
 
-#ifdef PLATFORM_LINUX
-# define SET_PTHREAD_NAMES
-#endif
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -37,7 +33,7 @@
 #include <execinfo.h>
 #endif
 
-#ifdef PLATFORM_LINUX
+#ifdef POSIX_STACK_TRACE
 #include <execinfo.h>
 #endif
 
@@ -122,7 +118,7 @@ void OsQuit(OsContext* aContext)
     abort();
 }
 
-#if (defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_IOS)) || defined(PLATFORM_LINUX)
+#if (defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_IOS)) || defined(POSIX_STACK_TRACE)
 # define STACK_TRACE_ENABLE
 #else
 # undef  STACK_TRACE_ENABLE

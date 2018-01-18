@@ -302,11 +302,28 @@ ifeq ($(vanilla_settings), yes)
 		platform_cflags += -EL
 		platform_linkflags += -EL
 	endif
-    ifeq (,$(findstring Qnap,$(platform)))
-        # Enable pthread names for non-Qnap Linux platforms
-        platform_cflags += -DPLATFORM_LINUX
-    endif
+	enablestacktrace = 
+	enablepthreadnames = 
+	ifeq (,$(findstring Qnap,$(platform)))
+		# Enable stacktrace and pthread names for non-Qnap Linux platforms.
+		# These can be disabled by defining disable_stack_trace and
+		# disable_pthread_names when calling make
+		ifeq (,$(disable_stack_trace))
+			enablestacktrace = yes
+		endif
+		ifeq (,$(disable_pthread_names))
+			enablepthreadnames = yes
+		endif
+	endif
+	ifdef enablestacktrace
+		platform_cflags += -DPOSIX_STACK_TRACE
+	endif
+	ifdef enablepthreadnames
+		platform_cflags += -DSET_PTHREAD_NAMES
+	endif
 endif
+
+
 
 
 $(info Building for system ${openhome_system} and architecture ${openhome_architecture})
