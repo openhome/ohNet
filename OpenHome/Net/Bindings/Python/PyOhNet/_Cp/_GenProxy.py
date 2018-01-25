@@ -50,7 +50,7 @@ class GenProxy:
         svs        = []
         actions    = []
         properties = []
-        xml        = re.sub( ' xmlns="[^"]+"', '', aXml.decode( 'utf8' ))   # remove namespace
+        xml        = re.sub( ' xmlns="[^"]+"', '', aXml.decode( 'utf8', 'replace' ))   # remove namespace
         scpd       = ET.fromstring( xml )
 
         serviceStateTable = scpd.find( 'serviceStateTable' )

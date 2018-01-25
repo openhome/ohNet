@@ -41,11 +41,11 @@ class Device():
 
     def _GetAttribute( self, aAttr ):
         result = ''
-        request  = ctypes.c_char_p( aAttr.encode( 'utf8' ))
+        request  = ctypes.c_char_p( aAttr.encode( 'utf8', 'replace' ))
         response = ctypes.c_char_p()
         self.lib.CpDeviceCGetAttribute( self.handle, request, ctypes.byref( response ))
         if response.value:
-            result = response.value.decode( 'utf8' )
+            result = response.value.decode( 'utf8', 'replace' )
         return result
 
     def _GetServices( self ):
@@ -125,7 +125,7 @@ class Device():
         udn = ctypes.c_char_p()
         length = ctypes.c_int()
         self.lib.CpDeviceCGetUdn( self.handle, ctypes.byref( udn ), ctypes.byref( length ))
-        return udn.value.decode( 'utf8' )
+        return udn.value.decode( 'utf8', 'replace' )
 
     def _GetFriendlyName( self ):
         return self._GetAttribute( 'Upnp.FriendlyName' )

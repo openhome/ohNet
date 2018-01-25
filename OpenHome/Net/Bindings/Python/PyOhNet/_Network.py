@@ -11,7 +11,7 @@ class Adapter():
     def __init__( self, aHandle ):
         self.lib = PyOhNet.lib
         self.handle = aHandle
-        self.cookie = uuid.uuid4().urn.encode( 'utf8' )
+        self.cookie = uuid.uuid4().urn.encode( 'utf8', 'replace' )
         self.lib.OhNetNetworkAdapterAddRef( self.handle, self.cookie )
         PyOhNet.adapters.append( self )
 
@@ -38,11 +38,11 @@ class Adapter():
 
     def _GetName( self ):
         self.lib.OhNetNetworkAdapterName.restype = ctypes.c_char_p
-        return self.lib.OhNetNetworkAdapterName( self.handle ).decode( 'utf8' )
+        return self.lib.OhNetNetworkAdapterName( self.handle ).decode( 'utf8', 'replace' )
 
     def _GetFullName( self ):
         self.lib.OhNetNetworkAdapterFullName.restype = ctypes.c_char_p
-        return self.lib.OhNetNetworkAdapterFullName( self.handle ).decode( 'utf8' )
+        return self.lib.OhNetNetworkAdapterFullName( self.handle ).decode( 'utf8', 'replace' )
 
     def _GetStrAddress( self ):
         return self._Num2DottedQuad( self.address )
