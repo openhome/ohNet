@@ -103,7 +103,10 @@ class InvocationResponse:
         code = ctypes.c_int()
         desc = ctypes.c_char_p()
         err = self.lib.CpInvocationError( self.handle, ctypes.byref( code ), ctypes.byref( desc ))
-        return {'err': err != 0, 'code': code.value, 'desc': desc.value}
+        description = None
+        if desc.value:
+            description = desc.value.decode( 'utf8' )
+        return {'err': err != 0, 'code': code.value, 'desc': description}
 
     def OutputInt( self, aIndex ):
         return self.lib.CpInvocationOutputInt( self.handle, aIndex )
