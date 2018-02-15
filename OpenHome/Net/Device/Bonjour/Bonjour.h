@@ -21,7 +21,7 @@ public:
     virtual void MdnsAppendTxtRecord(Bwx& aBuffer, const TChar* aKey, const TChar* aValue) = 0;
     virtual void MdnsRegisterService(TUint aHandle, const TChar* aName, const TChar* aType, TIpAddress aInterface, TUint aPort, const TChar* aInfo) = 0;
     virtual void MdnsDeregisterService(TUint aHandle) = 0;
-    virtual void AddMdnsDeviceListener(IMdnsDeviceListener& aListener) = 0;
+    virtual void AddMdnsDeviceListener(IMdnsDeviceListener* aListener) = 0;
     virtual void FindDevices(const TChar* aServiceName) = 0;
 };
     

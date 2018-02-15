@@ -16,7 +16,6 @@
 #include <OpenHome/Net/Private/dns_sd.h>
 
 #include <vector>
-#include <functional>
 #include <map>
 
 namespace OpenHome {
@@ -57,7 +56,7 @@ public:
     void AppendTxtRecord(Bwx& aBuffer, const TChar* aKey, const TChar* aValue);
 
     void DeviceDiscovered(const Brx& aFriendlyName, const Brx& aUglyName, const Brx&  aIpAddress, TUint aPort); // called from extern C mDNS callback DNSResolveReply
-    void AddMdnsDeviceListener(IMdnsDeviceListener& aListener);
+    void AddMdnsDeviceListener(IMdnsDeviceListener* aListener);
     TBool FindDevices(const TChar* aServiceName);
 private:
     void ServiceThread();
@@ -168,7 +167,7 @@ private:
     TBool iStop;
     TBool iTimerDisabled;
     DNSServiceRef iSdRef;
-    std::vector<std::reference_wrapper<IMdnsDeviceListener>> iDeviceListeners;
+    std::vector<IMdnsDeviceListener*> iDeviceListeners;
 };
 
 } // namespace Net

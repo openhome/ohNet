@@ -52,7 +52,7 @@ void MdnsProvider::FindDevices(const TChar* aServiceName)
     iPlatform.FindDevices(aServiceName);
 }
 
-void MdnsProvider::AddMdnsDeviceListener(IMdnsDeviceListener& aListener)
+void MdnsProvider::AddMdnsDeviceListener(IMdnsDeviceListener* aListener)
 {
     iPlatform.AddMdnsDeviceListener(aListener);
 }

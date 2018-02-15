@@ -789,14 +789,16 @@ TBool MdnsPlatform::FindDevices(const TChar* aServiceName)
 void MdnsPlatform::DeviceDiscovered(const Brx& aFriendlyName, const Brx& aUglyName, const Brx&  aIpAddress, TUint aPort)
 {
     iMutex.Lock();
-    for (IMdnsDeviceListener& listener : iDeviceListeners) {
-        listener.DeviceAdded(aFriendlyName, aUglyName, aIpAddress, aPort);
+    for (TUint i=0; i<iDeviceListeners.size(); i++) {
+        iDeviceListeners[i]->DeviceAdded(aFriendlyName, aUglyName, aIpAddress, aPort);
     }
     iMutex.Unlock();
 }
 
-void MdnsPlatform::AddMdnsDeviceListener(IMdnsDeviceListener& aListener)
+void MdnsPlatform::AddMdnsDeviceListener(IMdnsDeviceListener* aListener)
 {
+    // could not use std::reference_wrapper for iDeviceListeners
+    // pointer is not owned here
     iMutex.Lock();
     iDeviceListeners.push_back(aListener);
     iMutex.Unlock();
