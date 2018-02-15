@@ -16,6 +16,7 @@
 #include <OpenHome/Net/Private/dns_sd.h>
 
 #include <vector>
+#include <functional>
 #include <map>
 
 namespace OpenHome {
