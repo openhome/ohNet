@@ -43,6 +43,7 @@ Build.stripped/
 /xout/
 /ohSongcast/Build/
 /OpenHome/Net/Bindings/python/PyOhNet/.GeneratedProxies
+.vscode/
 
 # android ndk builds to source tree
 OpenHome/Net/Bindings/Android/obj/
