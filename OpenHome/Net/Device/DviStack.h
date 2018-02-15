@@ -44,7 +44,6 @@ public:
     DviServerUpnp& ServerUpnp();
     DviDeviceMap& DeviceMap();
     DviSubscriptionManager& SubscriptionManager();
-    IMdnsProvider* MdnsProvider();
     DviPropertyUpdateCollection& PropertyUpdateCollection();
     DviSsdpNotifierManager& SsdpNotifierManager();
     void AddProtocolFactory(IDvProtocolFactory* aProtocolFactory);
@@ -62,7 +61,6 @@ private:
     DviDeviceMap* iDviDeviceMap;
     DviSubscriptionManager* iSubscriptionManager;
     DviServerWebSocket* iDviServerWebSocket;
-    IMdnsProvider* iMdns;
     DviPropertyUpdateCollection* iPropertyUpdateCollection;
     DviSsdpNotifierManager* iSsdpNotifierManager;
     std::vector<IDvProtocolFactory*> iProtocolFactories;

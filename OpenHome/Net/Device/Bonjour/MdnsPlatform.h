@@ -7,11 +7,13 @@
 #include <OpenHome/Private/Timer.h>
 #include <OpenHome/Private/Network.h>
 #include <OpenHome/Net/Core/OhNet.h>
+#include <OpenHome/Net/Private/FunctorCpiDevice.h>
 
 // Bonjour source code available from  http://developer.apple.com/networking/bonjour/index.html
 // We take the mDNSCore folder from their source release and discard the rest
 
 #include <OpenHome/Net/Private/mDNSEmbeddedAPI.h>
+#include <OpenHome/Net/Private/dns_sd.h>
 
 #include <vector>
 #include <map>
@@ -21,6 +23,13 @@ namespace OpenHome {
 class Environment;
 
 namespace Net {
+
+class IMdnsDeviceListener
+{
+public:
+    virtual void DeviceAdded(const Brx& aFriendlyName, const Brx& aUglyName, const Brx&  aIpAddress, TUint aPort) = 0;
+    virtual ~IMdnsDeviceListener() {}
+};
 
 class MdnsPlatform
 {
@@ -45,6 +54,10 @@ public:
     void RegisterService(TUint aHandle, const TChar* aName, const TChar* aType, TIpAddress aInterface, TUint aPort, const TChar* aInfo);
     void RenameAndReregisterService(TUint aHandle, const TChar* aName);
     void AppendTxtRecord(Bwx& aBuffer, const TChar* aKey, const TChar* aValue);
+
+    void DeviceDiscovered(const Brx& aFriendlyName, const Brx& aUglyName, const Brx&  aIpAddress, TUint aPort); // called from extern C mDNS callback DNSResolveReply
+    void AddMdnsDeviceListener(IMdnsDeviceListener& aListener);
+    TBool FindDevices(const TChar* aServiceName);
 private:
     void ServiceThread();
     void Listen();
@@ -137,6 +150,7 @@ private:
     UdpReader iReaderController;
     SocketUdp iClient;
     mDNS* iMdns;
+    CacheEntity iMdnsCache[CACHE_HASH_SLOTS];
     Mutex iInterfacesLock;
     std::vector<MdnsPlatform::Nif*> iInterfaces;
     TUint iSubnetListChangeListenerId;
@@ -152,6 +166,8 @@ private:
     TUint iNextServiceIndex;
     TBool iStop;
     TBool iTimerDisabled;
+    DNSServiceRef iSdRef;
+    std::vector<std::reference_wrapper<IMdnsDeviceListener>> iDeviceListeners;
 };
 
 } // namespace Net

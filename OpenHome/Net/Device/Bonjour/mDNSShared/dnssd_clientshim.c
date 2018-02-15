@@ -77,10 +77,13 @@ typedef struct
     mDNS_DirectOP_Dispose  *disposefn;
     DNSServiceResolveReply  callback;
     void                   *context;
+    const ResourceRecord   *Av4;
     const ResourceRecord   *SRV;
     const ResourceRecord   *TXT;
+    DNSQuestion             qAv4;
     DNSQuestion             qSRV;
     DNSQuestion             qTXT;
+    domainlabel             Device;
 } mDNS_DirectOP_Resolve;
 
 typedef struct
@@ -441,6 +444,7 @@ fail:
 static void DNSServiceResolveDispose(mDNS_DirectOP *op)
 {
     mDNS_DirectOP_Resolve *x = (mDNS_DirectOP_Resolve*)op;
+    if (x->qAv4.ThisQInterval >= 0) mDNS_StopQuery(&mDNSStorage, &x->qAv4);
     if (x->qSRV.ThisQInterval >= 0) mDNS_StopQuery(&mDNSStorage, &x->qSRV);
     if (x->qTXT.ThisQInterval >= 0) mDNS_StopQuery(&mDNSStorage, &x->qTXT);
     mDNSPlatformMemFree(x);
@@ -452,20 +456,44 @@ mDNSlocal void FoundServiceInfo(mDNS *const m, DNSQuestion *question, const Reso
     (void)m;	// Unused
     if (!AddRecord)
     {
+        if (answer->rrtype == kDNSType_A && x->Av4 == answer) x->Av4 = mDNSNULL;
         if (answer->rrtype == kDNSType_SRV && x->SRV == answer) x->SRV = mDNSNULL;
         if (answer->rrtype == kDNSType_TXT && x->TXT == answer) x->TXT = mDNSNULL;
     }
     else
     {
-        if (answer->rrtype == kDNSType_SRV) x->SRV = answer;
-        if (answer->rrtype == kDNSType_TXT) x->TXT = answer;
-        if (x->SRV && x->TXT && x->callback)
+        if (answer->rrtype == kDNSType_A) x->Av4 = answer;
+        if (answer->rrtype == kDNSType_SRV)
         {
-            char fullname[MAX_ESCAPED_DOMAIN_NAME], targethost[MAX_ESCAPED_DOMAIN_NAME];
-            ConvertDomainNameToCString(answer->name, fullname);
+            x->SRV = answer;
+            x->qAv4.InterfaceID = answer->InterfaceID;
+		    AssignDomainName(&x->qAv4.qname, &answer->rdata->u.srv.target);
+            mStatus err = mDNS_StartQuery(m, &x->qAv4);
+            if (err) {
+                DNSServiceResolveDispose((mDNS_DirectOP*)x);
+                LogMsg("FoundServiceInfo failed (mDNS_StartQuery qAv4): %s", err);
+                return; 
+            }
+        }
+        if (answer->rrtype == kDNSType_TXT) x->TXT = answer;
+        if (x->Av4 && x->SRV && x->TXT && x->callback)
+        {
+            char fullname[MAX_ESCAPED_DOMAIN_LABEL], targethost[MAX_ESCAPED_DOMAIN_NAME];
+            ConvertDomainLabelToCString_unescaped(&x->Device, fullname);
             ConvertDomainNameToCString(&x->SRV->rdata->u.srv.target, targethost);
-            x->callback((DNSServiceRef)x, 0, 0, kDNSServiceErr_NoError, fullname, targethost,
-                x->SRV->rdata->u.srv.port.NotAnInteger, x->TXT->rdlength, (unsigned char*)x->TXT->rdata->u.txt.c, x->context);
+            uint16_t port = (x->SRV->rdata->u.srv.port.b[0] << 8) + x->SRV->rdata->u.srv.port.b[1];
+
+            x->callback((DNSServiceRef)x,
+                         0, 
+                         0, 
+                         kDNSServiceErr_NoError,
+                         fullname,
+                         targethost,
+                         port,
+                         x->Av4->rdata->u.ipv4.b,
+                         x->TXT->rdlength,
+                         (unsigned char*)x->TXT->rdata->u.txt.c,
+                         x->context);
         }
     }
 }
@@ -505,8 +533,30 @@ void                                *context  /* may be NULL */
     x->disposefn = DNSServiceResolveDispose;
     x->callback  = callback;
     x->context   = context;
+    x->Av4       = mDNSNULL;
     x->SRV       = mDNSNULL;
     x->TXT       = mDNSNULL;
+    x->Device    = n;
+
+    x->qAv4.ThisQInterval       = -1;		// So that mDNS_StopResolveService() knows whether to cancel this question
+	x->qAv4.InterfaceID         = mDNSInterface_Any;
+	x->qAv4.Target              = zeroAddr;
+	AssignDomainName(&x->qAv4.qname, &srv);
+	x->qAv4.qtype               = kDNSType_A;
+	x->qAv4.qclass              = kDNSClass_IN;
+	x->qAv4.LongLived           = mDNSfalse;
+	x->qAv4.ExpectUnique        = mDNStrue;
+	x->qAv4.ForceMCast          = mDNSfalse;
+	x->qAv4.ReturnIntermed      = mDNSfalse;
+	x->qAv4.SuppressUnusable    = mDNSfalse;
+	x->qAv4.SearchListIndex     = 0;
+	x->qAv4.AppendSearchDomains = 0;
+	x->qAv4.RetryWithSearchDomains = mDNSfalse;
+	x->qAv4.TimeoutQuestion     = 0;
+	x->qAv4.WakeOnResolve       = 0;
+	x->qAv4.qnameOrig           = mDNSNULL;
+	x->qAv4.QuestionCallback    = FoundServiceInfo;
+	x->qAv4.QuestionContext     = x;
 
     x->qSRV.ThisQInterval       = -1;		// So that DNSServiceResolveDispose() knows whether to cancel this question
     x->qSRV.InterfaceID         = mDNSInterface_Any;

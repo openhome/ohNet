@@ -46,3 +46,13 @@ void MdnsProvider::MdnsDeregisterService(TUint aHandle)
 {
     iPlatform.DeregisterService(aHandle);
 }
+
+void MdnsProvider::FindDevices(const TChar* aServiceName)
+{
+    iPlatform.FindDevices(aServiceName);
+}
+
+void MdnsProvider::AddMdnsDeviceListener(IMdnsDeviceListener& aListener)
+{
+    iPlatform.AddMdnsDeviceListener(aListener);
+}

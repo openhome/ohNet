@@ -425,7 +425,7 @@ void DviProtocolUpnp::SetAttribute(const TChar* aKey, const TChar* aValue)
     }
     if (strcmp(aKey, "MdnsHostName") == 0) {
         ASSERT(iDevice.ResourceManager() != NULL);
-        ASSERT(iDvStack.MdnsProvider() != NULL);
+        ASSERT(iDvStack.Env().MdnsProvider() != NULL);
     }
 
     iAttributeMap.Set(aKey, aValue);
@@ -792,7 +792,7 @@ void DviProtocolUpnpAdapterSpecificData::BonjourRegister(const TChar* aName, con
 {
     if (aName != NULL) {
         if (iBonjourWebPage == 0) {
-            IMdnsProvider* mdnsProvider = iDvStack.MdnsProvider();
+            IMdnsProvider* mdnsProvider = iDvStack.Env().MdnsProvider();
             if (mdnsProvider != NULL) {
                 iBonjourWebPage = new BonjourWebPage(*mdnsProvider);
             }

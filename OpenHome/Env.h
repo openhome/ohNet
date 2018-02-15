@@ -50,6 +50,7 @@ namespace Net {
     class CpStack;
     class DvStack;
     class SsdpListenerMulticast;
+    class IMdnsProvider;
 } // namespace Net
 
 class Environment
@@ -96,6 +97,8 @@ public:
     void ListObjects();
     IStack* CpiStack();
     IStack* DviStack();
+    void CreateMdnsProvider();
+    Net::IMdnsProvider* MdnsProvider();
     void SetInitParams(Net::InitialisationParams* aInitParams);
 private:
     Environment(FunctorMsg& aLogOutput);
@@ -126,6 +129,7 @@ private:
     ObjectMap iObjectMap;
     OpenHome::Mutex* iPrivateLock;
     Bws<128> iHttpUserAgent;
+    Net::IMdnsProvider* iMdns;
 };
 
 } // namespace OpenHome

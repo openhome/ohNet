@@ -6,7 +6,6 @@
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Net/Private/DviServerWebSocket.h>
 #include <OpenHome/Net/Private/Bonjour.h>
-#include <OpenHome/Net/Private/MdnsProvider.h> // replace this to allow clients to set an alternative Bonjour implementation
 #include <OpenHome/Net/Private/DviPropertyUpdateCollection.h>
 #include <OpenHome/Net/Private/DviProtocolLpec.h>
 
@@ -19,7 +18,6 @@ DvStack::DvStack(OpenHome::Environment& aEnv)
     : iEnv(aEnv)
     , iBootId(1)
     , iNextBootId(2)
-    , iMdns(NULL)
     , iControlPoint(OpenHome::Brx::Empty())
 {
     iEnv.SetDvStack(this);
@@ -32,12 +30,7 @@ DvStack::DvStack(OpenHome::Environment& aEnv)
     const TUint pubThPriority = initParams->DvPublisherThreadPriority();
     iSubscriptionManager = new DviSubscriptionManager(*this, pubThPriority);
     iDviServerWebSocket = new DviServerWebSocket(*this);
-    const TChar* hostName = NULL;
-    if (initParams->DvIsBonjourEnabled(hostName)) {
-#ifndef DEFINE_WINDOWS_UNIVERSAL
-        iMdns = new OpenHome::Net::MdnsProvider(iEnv, hostName);
-#endif
-    }
+    iEnv.CreateMdnsProvider(); // will only be created if it has been enabled first: Env.InitParams.SetDvEnableBonjour
     if (initParams->DvNumLpecThreads() > 0) {
         port = initParams->DvLpecServerPort();
         AddProtocolFactory(new DviProtocolFactoryLpec(*this, port));
@@ -49,9 +42,6 @@ DvStack::~DvStack()
     for (TUint i=0; i<iProtocolFactories.size(); i++) {
         delete iProtocolFactories[i];
     }
-#ifndef DEFINE_WINDOWS_UNIVERSAL
-    delete iMdns;
-#endif
     delete iDviServerWebSocket;
     delete iDviServerUpnp;
     delete iDviDeviceMap;
@@ -124,11 +114,6 @@ DviDeviceMap& DvStack::DeviceMap()
 DviSubscriptionManager& DvStack::SubscriptionManager()
 {
     return *iSubscriptionManager;
-}
-
-IMdnsProvider* DvStack::MdnsProvider()
-{
-    return iMdns;
 }
 
 DviPropertyUpdateCollection& DvStack::PropertyUpdateCollection()

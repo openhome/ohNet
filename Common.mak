@@ -709,8 +709,8 @@ $(objdir)MainC.$(objext) : Os/$(osdir)/MainC.c $(headers)
 TestCpDeviceListMdns: $(objdir)TestCpDeviceListMdns.$(exeext)
 $(objdir)TestCpDeviceListMdns.$(exeext) :  ohNetCore $(objdir)TestCpDeviceListMdns.$(objext) $(libprefix)TestFramework.$(libext)
 	$(link) $(linkoutput)$(objdir)TestCpDeviceListMdns.$(exeext) $(objdir)$(libprefix)ohNetCore.$(libext) $(objdir)TestCpDeviceListMdns.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
-$(objdir)TestCpDeviceListMdns.$(objext) : OpenHome/Net/Device/Bonjour/CpDeviceListMdns.cpp $(headers)
-	$(compiler)TestCpDeviceListMdns.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Device/Bonjour/CpDeviceListMdns.cpp
+$(objdir)TestCpDeviceListMdns.$(objext) : OpenHome/Net/Device/Bonjour/Tests/TestCpDeviceListMdns.cpp $(headers)
+	$(compiler)TestCpDeviceListMdns.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Device/Bonjour/Tests/TestCpDeviceListMdns.cpp
 
 TestDviDiscovery: $(objdir)TestDviDiscovery.$(exeext)
 $(objdir)TestDviDiscovery.$(exeext) :  ohNetCore $(objdir)TestDviDiscovery.$(objext) $(objdir)TestDviDiscoveryMain.$(objext) $(libprefix)TestFramework.$(libext)
@@ -861,7 +861,8 @@ tests_core = \
 	$(objdir)TestDvInvocation.$(objext) \
 	$(objdir)TestDvSubscription.$(objext) \
 	$(objdir)TestDvLpec.$(objext) \
-	$(objdir)TestException.$(objext)
+	$(objdir)TestException.$(objext) \
+	$(objdir)TestCpDeviceListMdns.$(objext)
 
 TestsCore: $(tests_core)
 	$(ar)ohNetTestsCore.$(libext) $(tests_core)

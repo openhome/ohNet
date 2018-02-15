@@ -30,6 +30,7 @@ LOCAL_SRC_FILES := $(ohroot)OpenHome/Ascii.cpp \
                    $(ohroot)OpenHome/Net/ControlPoint/CpiDevice.cpp \
                    $(ohroot)OpenHome/Net/ControlPoint/Dv/CpiDeviceDv.cpp \
                    $(ohroot)OpenHome/Net/ControlPoint/Lpec/CpiDeviceLpec.cpp \
+                   $(ohroot)OpenHome/Net/ControlPoint/Odp/CpiDeviceOdp.cpp \
                    $(ohroot)OpenHome/Net/ControlPoint/Upnp/CpiDeviceUpnp.cpp \
                    $(ohroot)OpenHome/Net/ControlPoint/CpiService.cpp \
                    $(ohroot)OpenHome/Net/ControlPoint/CpiStack.cpp \
