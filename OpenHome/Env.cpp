@@ -12,6 +12,7 @@
 #include <OpenHome/Private/Shell.h>
 #include <OpenHome/Private/InfoProvider.h>
 #include <OpenHome/Private/ShellCommandDebug.h>
+#include <OpenHome/Net/Private/MdnsProvider.h>
 
 #ifdef PLATFORM_MACOSX_GNU
 # include <sys/time.h>
@@ -70,6 +71,7 @@ Environment::Environment(FunctorMsg& aLogOutput)
     , iSequenceNumber(0)
     , iCpStack(NULL)
     , iDvStack(NULL)
+    , iMdns(NULL)
 {
     Construct(aLogOutput);
 }
@@ -89,6 +91,7 @@ Environment::Environment(InitialisationParams* aInitParams)
     , iSequenceNumber(0)
     , iCpStack(NULL)
     , iDvStack(NULL)
+    , iMdns(NULL)
 {
     Construct(aInitParams->LogOutput());
 #ifdef PLATFORM_MACOSX_GNU
@@ -155,6 +158,9 @@ Environment::~Environment()
 {
     iPublicLock->Wait();
     iPublicLock->Signal();
+    if (iMdns != NULL) {
+        delete iMdns;
+    }
     delete iCpStack;
     delete iDvStack;
     delete iShellCommandDebug;
@@ -177,6 +183,16 @@ Environment::~Environment()
     delete iThreadPriorityArbitrator;
     delete iLogger;
     Os::Destroy(iOsContext);
+}
+
+void Environment::CreateMdnsProvider()
+{
+    const TChar* hostName = NULL;
+    if (iInitParams->DvIsBonjourEnabled(hostName) && iMdns == NULL) {
+#ifndef DEFINE_WINDOWS_UNIVERSAL
+        iMdns = new OpenHome::Net::MdnsProvider(*this, hostName);
+#endif
+    }
 }
 
 void Environment::GetVersion(TUint& aMajor, TUint& aMinor)
@@ -442,6 +458,11 @@ IStack* Environment::CpiStack()
 IStack* Environment::DviStack()
 {
     return iDvStack;
+}
+
+IMdnsProvider* Environment::MdnsProvider()
+{
+    return iMdns;
 }
 
 void Environment::SetInitParams(InitialisationParams* aInitParams)

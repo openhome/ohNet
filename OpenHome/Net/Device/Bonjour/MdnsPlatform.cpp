@@ -169,9 +169,10 @@ MdnsPlatform::MdnsPlatform(Environment& aEnv, const TChar* aHost)
     iTimer = new Timer(iEnv, MakeFunctor(*this, &MdnsPlatform::TimerExpired), "MdnsPlatform");
     iThreadListen = new ThreadFunctor("Bonjour", MakeFunctor(*this, &MdnsPlatform::Listen));
     iNextServiceIndex = 0;
-    iMdns = new mDNS();
-    Status status = mDNS_Init(iMdns, (mDNS_PlatformSupport*)this, mDNS_Init_NoCache, mDNS_Init_ZeroCacheSize,
-                              mDNS_Init_AdvertiseLocalAddresses, InitCallback, mDNS_Init_NoInitCallbackContext);
+    iMdns = &mDNSStorage;
+    (void)memset(iMdnsCache, 0, sizeof iMdnsCache);
+    Status status = mDNS_Init(iMdns, (mDNS_PlatformSupport*)this, iMdnsCache, sizeof iMdnsCache / sizeof iMdnsCache[0],
+                       mDNS_Init_AdvertiseLocalAddresses, InitCallback, mDNS_Init_NoInitCallbackContext);
     LOG(kBonjour, "Bonjour             Init Status %d\n", status);
     ASSERT(status >= 0);
     LOG(kBonjour, "Bonjour             Init - Start listener thread\n");
@@ -198,7 +199,6 @@ MdnsPlatform::~MdnsPlatform()
     delete iTimer;
     iTimer = NULL;
     mDNS_Close(iMdns);
-    delete iMdns;
     Map::iterator it = iServices.begin();
     while (it != iServices.end()) {
         delete it->second;
@@ -217,6 +217,7 @@ MdnsPlatform::~MdnsPlatform()
     while (iFifoPending.SlotsUsed() > 0) {
         delete iFifoPending.Read();
     }
+    DNSServiceRefDeallocate(iSdRef);
 }
 
 void MdnsPlatform::TimerExpired()
@@ -275,7 +276,7 @@ void MdnsPlatform::CurrentAdapterChanged()
         for (TInt i=(TInt)iInterfaces.size()-1; i>=0; i--) {
             if (InterfaceIndex(iInterfaces[i]->Adapter(), *subnetList) == -1
                 || (current != NULL && current->Address() != iInterfaces[i]->Adapter().Address())) {
-                    mDNS_DeregisterInterface(iMdns, &iInterfaces[i]->Info(), false);
+                mDNS_DeregisterInterface(iMdns, &iInterfaces[i]->Info(), false);
                     delete iInterfaces[i];
                     iInterfaces.erase(iInterfaces.begin()+i);
             }
@@ -704,6 +705,105 @@ void MdnsPlatform::AppendTxtRecord(Bwx& aBuffer, const TChar* aKey, const TChar*
     aBuffer.Append(aValue);
 }
 
+extern "C" 
+void ResolveReply(
+    DNSServiceRef       /*sdRef*/,
+    DNSServiceFlags     flags,
+    uint32_t            interfaceIndex,
+    DNSServiceErrorType errorCode,
+    const char          *fullname,
+    const char          *hosttarget,
+    uint16_t            port,        /* In network byte order */
+    const unsigned char *ipAddr,
+    uint16_t            txtLen,
+    const unsigned char *txtRecord,
+    void                *context)
+{
+    if (errorCode == kDNSServiceErr_NoError) {
+        Brn friendlyName(fullname);
+        Brn uglyName(hosttarget);
+        Bws<20> ip;
+        ip.AppendPrintf("%d.%d.%d.%d", ipAddr[0], ipAddr[1], ipAddr[2], ipAddr[3]);
+        Bwh text(txtLen);
+        TUint8 length = 0;
+        for (const unsigned char* ptr = txtRecord; ptr < txtRecord + txtLen; ptr += length) {
+            length = *ptr;
+            if (ptr > txtRecord) {
+                text.Append(' ');
+            }
+            text.Append(++ptr, length);
+        }
+        Log::Print("mDNS Device discovered: %.*s, target=%.*s, ip=%.*s, port=%d, text=%.*s\n", PBUF(friendlyName), PBUF(uglyName), PBUF(ip), port, PBUF(text));
+        MdnsPlatform& platform = *(MdnsPlatform*)context;
+        platform.DeviceDiscovered(friendlyName, uglyName, ip, port);
+    }
+    else {
+        LOG_ERROR(kBonjour, "mDNS resolve reply: flags=%d, index=%u, err=%d, fullname=%s, hosttarget=%s, txtRecord=%s, context=%p, port=%d, txtLen=%d\n",
+               flags, interfaceIndex, (TInt)errorCode, fullname, hosttarget, txtRecord, context, port, txtLen);
+    }
+}
+
+extern "C" 
+void BrowseReply(DNSServiceRef sdRef,
+    DNSServiceFlags      flags,
+    uint32_t             interfaceIndex,
+    DNSServiceErrorType  errorCode,
+    const char           *serviceName,
+    const char           *regtype,
+    const char           *replyDomain,
+    void                 *context)
+{
+    if (errorCode == kDNSServiceErr_NoError) {      
+        LOG(kBonjour, "mDNS Browse Reply (%s): %s\n", regtype, serviceName);         
+    }
+    else {
+        LOG_ERROR(kBonjour, "mDNS browse Error: flags=%d, index=%u, err=%d, serviceName=%s, regtype=%s, replyDomain=%s, context=%p\n",
+               flags, interfaceIndex, (TInt)errorCode, serviceName, regtype, replyDomain, context);
+    }    
+
+    DNSServiceErrorType err = DNSServiceResolve(&sdRef,
+                                                flags,
+                                                interfaceIndex,
+                                                serviceName,
+                                                regtype,
+                                                replyDomain,
+                                                (DNSServiceResolveReply)ResolveReply,
+                                                context);
+    if (err != kDNSServiceErr_NoError) {
+        LOG_ERROR(kBonjour, "DNSServiceResolve returned error code %d\n", (TInt)err);
+    }
+}
+
+TBool MdnsPlatform::FindDevices(const TChar* aServiceName)
+{
+    DNSServiceErrorType err = DNSServiceBrowse(&iSdRef,
+                                               0, /*flags */
+                                               0, /*interfaceIndex -- not used (defaults to mDNSInterface_Any instead) */
+                                               aServiceName, /*regtype*/
+                                               NULL, /*domain*/
+                                               (DNSServiceBrowseReply)BrowseReply,
+                                               this /*context*/);
+    return (err == kDNSServiceErr_NoError);
+}
+
+void MdnsPlatform::DeviceDiscovered(const Brx& aFriendlyName, const Brx& aUglyName, const Brx&  aIpAddress, TUint aPort)
+{
+    iMutex.Lock();
+    for (TUint i=0; i<iDeviceListeners.size(); i++) {
+        iDeviceListeners[i]->DeviceAdded(aFriendlyName, aUglyName, aIpAddress, aPort);
+    }
+    iMutex.Unlock();
+}
+
+void MdnsPlatform::AddMdnsDeviceListener(IMdnsDeviceListener* aListener)
+{
+    // could not use std::reference_wrapper for iDeviceListeners
+    // pointer is not owned here
+    iMutex.Lock();
+    iDeviceListeners.push_back(aListener);
+    iMutex.Unlock();
+}
+
 
 // MdnsPlatform::MutexRecursive
 
@@ -796,16 +896,16 @@ mStatus mDNSPlatformSendUDP(const mDNS* m, const void* const aMessage, const mDN
     return status;
 }
 
-void* mDNSPlatformMemAllocate(mDNSu32 /*aLength*/)
+void* mDNSPlatformMemAllocate(mDNSu32 aLength)
 {
-    LOG(kBonjour, "Bonjour             mDNSPlatformMemAllocate\n");
-    return 0;
+    LOG(kBonjour, "Bonjour             mDNSPlatformMemAllocate(%u)\n", aLength);
+    return malloc(aLength);
 }
 
-void  mDNSPlatformMemFree(void* /*aPtr*/)
+void  mDNSPlatformMemFree(void* aPtr)
 {
     LOG(kBonjour, "Bonjour             mDNSPlatformMemFree\n");
-    ASSERTS();
+    free(aPtr);
 }
 
 mDNSInterfaceID mDNSPlatformInterfaceIDfromInterfaceIndex(mDNS* /*m*/, mDNSu32 /*aIndex*/)
