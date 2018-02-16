@@ -74,6 +74,7 @@ LOCAL_SRC_FILES := $(ohroot)OpenHome/Ascii.cpp \
                    $(ohroot)OpenHome/Net/Device/Bonjour/mDNSCore/DNSDigest.c \
                    $(ohroot)OpenHome/Net/Device/Bonjour/mDNSCore/mDNS.c \
                    $(ohroot)OpenHome/Net/Device/Bonjour/mDNSCore/uDNS.c \
+                   $(ohroot)OpenHome/Net/Device/Bonjour/mDNSShared/dnssd_clientshim.c \
                    $(ohroot)OpenHome/Net/Device/Bonjour/MdnsPlatform.cpp \
                    $(ohroot)OpenHome/Net/Device/Bonjour/MdnsProvider.cpp \
                    $(ohroot)OpenHome/md5.c \
