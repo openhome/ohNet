@@ -743,6 +743,13 @@ void ResolveReply(
     }
 }
 
+#ifdef DEFINE_WINDOWS_UNIVERSAL
+TBool MdnsPlatform::FindDevices(const TChar* /*aServiceName*/)
+{
+    LOG_ERROR(kBonjour, "MdnsPlatform::FindDevices not supported for WINDOW_UNIVERSAL builds\n");
+    return false;
+}
+#else
 extern "C" 
 void BrowseReply(DNSServiceRef sdRef,
     DNSServiceFlags      flags,
@@ -785,6 +792,7 @@ TBool MdnsPlatform::FindDevices(const TChar* aServiceName)
                                                this /*context*/);
     return (err == kDNSServiceErr_NoError);
 }
+#endif // DEFINE_WINDOWS_UNIVERSAL
 
 void MdnsPlatform::DeviceDiscovered(const Brx& aFriendlyName, const Brx& aUglyName, const Brx&  aIpAddress, TUint aPort)
 {
