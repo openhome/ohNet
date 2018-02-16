@@ -217,7 +217,9 @@ MdnsPlatform::~MdnsPlatform()
     while (iFifoPending.SlotsUsed() > 0) {
         delete iFifoPending.Read();
     }
+#ifndef DEFINE_WINDOWS_UNIVERSAL
     DNSServiceRefDeallocate(iSdRef);
+#endif // !DEFINE_WINDOWS_UNIVERSAL
 }
 
 void MdnsPlatform::TimerExpired()
