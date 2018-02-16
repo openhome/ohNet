@@ -164,6 +164,7 @@ MdnsPlatform::MdnsPlatform(Environment& aEnv, const TChar* aHost)
     , iSem("BNJS", 0)
     , iStop(false)
     , iTimerDisabled(false)
+    , iSdRef(NULL)
 {
     LOG(kBonjour, "Bonjour             Constructor\n");
     iTimer = new Timer(iEnv, MakeFunctor(*this, &MdnsPlatform::TimerExpired), "MdnsPlatform");
@@ -198,6 +199,11 @@ MdnsPlatform::~MdnsPlatform()
     iTimerLock.Signal();
     delete iTimer;
     iTimer = NULL;
+#ifndef DEFINE_WINDOWS_UNIVERSAL
+    if (iSdRef != NULL) {
+        DNSServiceRefDeallocate(iSdRef);
+    }
+#endif // !DEFINE_WINDOWS_UNIVERSAL
     mDNS_Close(iMdns);
     Map::iterator it = iServices.begin();
     while (it != iServices.end()) {
@@ -217,9 +223,6 @@ MdnsPlatform::~MdnsPlatform()
     while (iFifoPending.SlotsUsed() > 0) {
         delete iFifoPending.Read();
     }
-#ifndef DEFINE_WINDOWS_UNIVERSAL
-    DNSServiceRefDeallocate(iSdRef);
-#endif // !DEFINE_WINDOWS_UNIVERSAL
 }
 
 void MdnsPlatform::TimerExpired()
@@ -584,7 +587,7 @@ void MdnsPlatform::InitCallback(mDNS* m, mStatus aStatus)
     if (aStatus != mStatus_NoError) {
         Log::Print("ERROR: mdns status=%d\n", aStatus);
     }
-    ASSERT(aStatus == mStatus_NoError);
+//    ASSERT(aStatus == mStatus_NoError);
 }
 
 void MdnsPlatform::ServiceCallback(mDNS* m, ServiceRecordSet* aRecordSet, mStatus aStatus)
