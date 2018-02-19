@@ -164,7 +164,6 @@ MdnsPlatform::MdnsPlatform(Environment& aEnv, const TChar* aHost)
     , iSem("BNJS", 0)
     , iStop(false)
     , iTimerDisabled(false)
-    , iSdRef(NULL)
 {
     LOG(kBonjour, "Bonjour             Constructor\n");
     iTimer = new Timer(iEnv, MakeFunctor(*this, &MdnsPlatform::TimerExpired), "MdnsPlatform");
@@ -200,8 +199,10 @@ MdnsPlatform::~MdnsPlatform()
     delete iTimer;
     iTimer = NULL;
 #ifndef DEFINE_WINDOWS_UNIVERSAL
-    if (iSdRef != NULL) {
-        DNSServiceRefDeallocate(iSdRef);
+    for (TUint i=0; i<iSdRefs.size(); i++) {
+        DNSServiceRefDeallocate(*iSdRefs[i]);
+        delete iSdRefs[i];
+        iSdRefs.erase(iSdRefs.begin()+i);
     }
 #endif // !DEFINE_WINDOWS_UNIVERSAL
     mDNS_Close(iMdns);
@@ -788,7 +789,11 @@ void BrowseReply(DNSServiceRef sdRef,
 
 TBool MdnsPlatform::FindDevices(const TChar* aServiceName)
 {
-    DNSServiceErrorType err = DNSServiceBrowse(&iSdRef,
+    iMutex.Lock();
+    DNSServiceRef* ref = new DNSServiceRef();
+    iSdRefs.push_back(ref);
+    iMutex.Unlock();
+    DNSServiceErrorType err = DNSServiceBrowse(ref,
                                                0, /*flags */
                                                0, /*interfaceIndex -- not used (defaults to mDNSInterface_Any instead) */
                                                aServiceName, /*regtype*/

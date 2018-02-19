@@ -166,7 +166,7 @@ private:
     TUint iNextServiceIndex;
     TBool iStop;
     TBool iTimerDisabled;
-    DNSServiceRef iSdRef;
+    std::vector<DNSServiceRef*> iSdRefs;
     std::vector<IMdnsDeviceListener*> iDeviceListeners;
 };
 

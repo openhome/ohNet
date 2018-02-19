@@ -23,8 +23,8 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::Init
     std::vector<NetworkAdapter*>* subnetList = lib->CreateSubnetList();
     TIpAddress subnet = (*subnetList)[adapter.Value()]->Subnet();
     Library::DestroySubnetList(subnetList);
-    Debug::SetLevel(Debug::kBonjour);
-    Debug::SetSeverity(Debug::kSeverityTrace);
+    //Debug::SetLevel(Debug::kBonjour);
+    //Debug::SetSeverity(Debug::kSeverityTrace);
 
     Bws<Endpoint::kMaxAddressBytes> addr;
     Endpoint::AppendAddress(addr, subnet);
@@ -38,7 +38,9 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::Init
     lib->StartCombined(subnet, cpStack, dvStack);
 
     lib->Env().MdnsProvider()->FindDevices("_spotify-connect._tcp");
-    Thread::Sleep(40 * 1000);
+    Thread::Sleep(10 * 1000);
+    lib->Env().MdnsProvider()->FindDevices("_raop._tcp");
+    Thread::Sleep(10 * 1000);
 
     delete lib;
 }
