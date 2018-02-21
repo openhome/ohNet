@@ -37,9 +37,14 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::Init
     DvStack* dvStack = NULL;
     lib->StartCombined(subnet, cpStack, dvStack);
 
-    lib->Env().MdnsProvider()->FindDevices("_spotify-connect._tcp");
+    Log::Print("Finding odp mDNS devices...\n");
+    lib->Env().MdnsProvider()->FindDevices("_odp._tcp");
     Thread::Sleep(10 * 1000);
+    Log::Print("Finding raop mDNS devices...\n");
     lib->Env().MdnsProvider()->FindDevices("_raop._tcp");
+    Thread::Sleep(10 * 1000);
+    Log::Print("Finding spotify-connect mDNS devices...\n");
+    lib->Env().MdnsProvider()->FindDevices("_spotify-connect._tcp");
     Thread::Sleep(10 * 1000);
 
     delete lib;

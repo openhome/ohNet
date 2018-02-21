@@ -16,12 +16,28 @@
 
 #include <OpenHome/Net/Private/mDNSEmbeddedAPI.h>
 
-extern "C" {
-    mDNS mDNSStorage; // required by dnssd_clientshim.c
-}
-
 using namespace OpenHome;
 using namespace OpenHome::Net;
+
+extern "C" {
+    mDNS mDNSStorage; // required by dnssd_clientshim.c
+    
+    mDNSlocal void mDNS_StatusCallback(mDNS *const m, mStatus aStatus)
+    {
+        LOG(kBonjour, "Bonjour             StatusCallback - aStatus %d\n", aStatus);
+        if (aStatus == mStatus_GrowCache)
+        {
+            // Allocate another chunk of cache storage
+            Log::Print("WARNING: mDNS cache size insufficient, GROWING...\n");
+            CacheEntity *storage = (CacheEntity*)malloc(sizeof(CacheEntity) * MdnsPlatform::kRRCacheSize);
+            if (storage) mDNS_GrowCache(m, storage, MdnsPlatform::kRRCacheSize);
+        }
+        else if (aStatus != mStatus_NoError) {
+            Log::Print("ERROR: mDNS status=%d\n", aStatus);
+            ASSERTS();
+        }
+    }
+}
 
 // MdnsPlatform
 
@@ -171,8 +187,8 @@ MdnsPlatform::MdnsPlatform(Environment& aEnv, const TChar* aHost)
     iNextServiceIndex = 0;
     iMdns = &mDNSStorage;
     (void)memset(iMdnsCache, 0, sizeof iMdnsCache);
-    Status status = mDNS_Init(iMdns, (mDNS_PlatformSupport*)this, iMdnsCache, sizeof iMdnsCache / sizeof iMdnsCache[0],
-                       mDNS_Init_AdvertiseLocalAddresses, InitCallback, mDNS_Init_NoInitCallbackContext);
+    Status status = mDNS_Init(iMdns, (mDNS_PlatformSupport*)this, iMdnsCache, kRRCacheSize, mDNS_Init_AdvertiseLocalAddresses,
+                    mDNS_StatusCallback, mDNS_Init_NoInitCallbackContext);
     LOG(kBonjour, "Bonjour             Init Status %d\n", status);
     ASSERT(status >= 0);
     LOG(kBonjour, "Bonjour             Init - Start listener thread\n");
@@ -579,16 +595,6 @@ void MdnsPlatform::RenameAndReregisterService(TUint aHandle, const TChar* aName)
     iFifoPending.Write(mdnsService);
 
     LOG(kBonjour, "Bonjour             RenameAndReregisterService - Complete\n");
-}
-
-void MdnsPlatform::InitCallback(mDNS* m, mStatus aStatus)
-{
-    LOG(kBonjour, "Bonjour             InitCallback - aStatus %d\n", aStatus);
-    m->mDNSPlatformStatus = aStatus;
-    if (aStatus != mStatus_NoError) {
-        Log::Print("ERROR: mdns status=%d\n", aStatus);
-    }
-//    ASSERT(aStatus == mStatus_NoError);
 }
 
 void MdnsPlatform::ServiceCallback(mDNS* m, ServiceRecordSet* aRecordSet, mStatus aStatus)

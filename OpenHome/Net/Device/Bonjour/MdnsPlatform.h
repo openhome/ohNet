@@ -39,6 +39,8 @@ class MdnsPlatform
     static const TUint kMaxMessageBytes = 4096;
     static const TUint kMaxQueueLength = 25;
     static const TChar* kNifCookie;
+public:
+    static const TUint kRRCacheSize = 500;
 public: 
     MdnsPlatform(Environment& aStack, const TChar* aHost);
     ~MdnsPlatform();
@@ -74,7 +76,6 @@ private:
     static void SetPort(mDNSIPPort& aPort, TUint aValue);
     static void SetDomainLabel(domainlabel& aLabel, const TChar* aBuffer);
     static void SetDomainName(domainname& aName, const TChar* aBuffer);
-    static void InitCallback(mDNS* aCore, mStatus aStatus);
     static void ServiceCallback(mDNS* aCore, ServiceRecordSet* aRecordSet, mStatus aStatus);
 private:
     class Nif : INonCopyable
@@ -150,7 +151,6 @@ private:
     UdpReader iReaderController;
     SocketUdp iClient;
     mDNS* iMdns;
-    CacheEntity iMdnsCache[CACHE_HASH_SLOTS];
     Mutex iInterfacesLock;
     std::vector<MdnsPlatform::Nif*> iInterfaces;
     TUint iSubnetListChangeListenerId;
@@ -168,6 +168,7 @@ private:
     TBool iTimerDisabled;
     std::vector<DNSServiceRef*> iSdRefs;
     std::vector<IMdnsDeviceListener*> iDeviceListeners;
+    CacheEntity iMdnsCache[kRRCacheSize];
 };
 
 } // namespace Net
