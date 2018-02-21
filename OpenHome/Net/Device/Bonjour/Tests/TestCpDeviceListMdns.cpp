@@ -9,6 +9,36 @@
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
+class MdnsDeviceLogger : public IMdnsDeviceListener
+{
+public:
+    MdnsDeviceLogger();
+    // IMdnsDeviceListener
+    void DeviceAdded(MdnsDevice& aDev) override;
+private:
+    void PrintDeviceInfo(const char* aPrologue, MdnsDevice& aDev);
+private:
+    Mutex iLock;
+};
+
+MdnsDeviceLogger::MdnsDeviceLogger()
+    : iLock("DLMD")
+{
+}
+
+void MdnsDeviceLogger::DeviceAdded(MdnsDevice& aDev)
+{
+    PrintDeviceInfo("Added", aDev);
+}
+
+
+void MdnsDeviceLogger::PrintDeviceInfo(const char* aPrologue, MdnsDevice& aDev)
+{
+    iLock.Wait();
+    Log::Print("%s (%.*s)    %.*s (%.*s) %.*s:%d\n", aPrologue, PBUF(aDev.Type()), PBUF(aDev.FriendlyName()), PBUF(aDev.UglyName()), PBUF(aDev.IpAddress()), aDev.Port());
+    iLock.Signal();
+}
+
 void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::InitialisationParams* aInitParams)
 {
     OptionParser parser;
@@ -37,6 +67,8 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::Init
     DvStack* dvStack = NULL;
     lib->StartCombined(subnet, cpStack, dvStack);
 
+    MdnsDeviceLogger logger;
+    lib->Env().MdnsProvider()->AddMdnsDeviceListener(&logger);
     Log::Print("Finding odp mDNS devices...\n");
     lib->Env().MdnsProvider()->FindDevices("_odp._tcp");
     Thread::Sleep(10 * 1000);

@@ -39,6 +39,41 @@ extern "C" {
     }
 }
 
+// MdnsDevice
+MdnsDevice::MdnsDevice(const Brx& aType, const Brx& aFriendlyName, const Brx& aUglyName, const Brx& aIpAddress, TUint aPort)
+{
+    iType.Set(aType);
+    iFriendlyName.Set(aFriendlyName);
+    iUglyName.Set(aUglyName);
+    iIpAddress.Set(aIpAddress);
+    iPort = aPort;
+}
+
+const Brx& MdnsDevice::Type()
+{
+    return iType;
+}
+
+const Brx& MdnsDevice::FriendlyName()
+{
+    return iFriendlyName;
+}
+
+const Brx& MdnsDevice::UglyName()
+{
+    return iUglyName;
+}
+
+const Brx& MdnsDevice::IpAddress()
+{
+    return iIpAddress;
+}
+
+const TUint MdnsDevice::Port()
+{
+    return iPort;
+}
+
 // MdnsPlatform
 
 MdnsPlatform::Nif::Nif(NetworkAdapter& aNif, NetworkInterfaceInfo* aMdnsInfo)
@@ -727,12 +762,14 @@ void ResolveReply(
     const char          *hosttarget,
     uint16_t            port,        /* In network byte order */
     const unsigned char *ipAddr,
+    const char          *regtype,
     uint16_t            txtLen,
     const unsigned char *txtRecord,
     void                *context)
 {
     if (errorCode == kDNSServiceErr_NoError) {
         Brn friendlyName(fullname);
+        Brn devtype(regtype);
         Brn uglyName(hosttarget);
         Bws<20> ip;
         ip.AppendPrintf("%d.%d.%d.%d", ipAddr[0], ipAddr[1], ipAddr[2], ipAddr[3]);
@@ -745,9 +782,9 @@ void ResolveReply(
             }
             text.Append(++ptr, length);
         }
-        Log::Print("mDNS Device discovered: %.*s, target=%.*s, ip=%.*s, port=%d, text=%.*s\n", PBUF(friendlyName), PBUF(uglyName), PBUF(ip), port, PBUF(text));
+        LOG(kBonjour, "mDNS Device discovered: %.*s, target=%.*s, ip=%.*s, port=%d, text=%.*s\n", PBUF(friendlyName), PBUF(uglyName), PBUF(ip), port, PBUF(text));
         MdnsPlatform& platform = *(MdnsPlatform*)context;
-        platform.DeviceDiscovered(friendlyName, uglyName, ip, port);
+        platform.DeviceDiscovered(devtype, friendlyName, uglyName, ip, port);
     }
     else {
         LOG_ERROR(kBonjour, "mDNS resolve reply: flags=%d, index=%u, err=%d, fullname=%s, hosttarget=%s, txtRecord=%s, context=%p, port=%d, txtLen=%d\n",
@@ -810,12 +847,15 @@ TBool MdnsPlatform::FindDevices(const TChar* aServiceName)
 }
 #endif // DEFINE_WINDOWS_UNIVERSAL
 
-void MdnsPlatform::DeviceDiscovered(const Brx& aFriendlyName, const Brx& aUglyName, const Brx&  aIpAddress, TUint aPort)
+void MdnsPlatform::DeviceDiscovered(const Brx& aType, const Brx& aFriendlyName, const Brx& aUglyName, const Brx&  aIpAddress, TUint aPort)
 {
     iMutex.Lock();
+    MdnsDevice* dev = new MdnsDevice(aType, aFriendlyName, aUglyName, aIpAddress, aPort);
     for (TUint i=0; i<iDeviceListeners.size(); i++) {
-        iDeviceListeners[i]->DeviceAdded(aFriendlyName, aUglyName, aIpAddress, aPort);
+        
+        iDeviceListeners[i]->DeviceAdded(*dev);
     }
+    delete dev;
     iMutex.Unlock();
 }
 

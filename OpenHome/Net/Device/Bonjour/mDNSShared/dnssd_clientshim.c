@@ -84,6 +84,7 @@ typedef struct
     DNSQuestion             qSRV;
     DNSQuestion             qTXT;
     domainlabel             Device;
+    domainname              ServiceType;
 } mDNS_DirectOP_Resolve;
 
 typedef struct
@@ -478,8 +479,9 @@ mDNSlocal void FoundServiceInfo(mDNS *const m, DNSQuestion *question, const Reso
         if (answer->rrtype == kDNSType_TXT) x->TXT = answer;
         if (x->Av4 && x->SRV && x->TXT && x->callback)
         {
-            char fullname[MAX_ESCAPED_DOMAIN_LABEL], targethost[MAX_ESCAPED_DOMAIN_NAME];
+            char fullname[MAX_ESCAPED_DOMAIN_LABEL], targethost[MAX_ESCAPED_DOMAIN_NAME], type[MAX_ESCAPED_DOMAIN_LABEL];
             ConvertDomainLabelToCString_unescaped(&x->Device, fullname);
+            ConvertDomainNameToCString(&x->ServiceType, type);
             ConvertDomainNameToCString(&x->SRV->rdata->u.srv.target, targethost);
             uint16_t port = (x->SRV->rdata->u.srv.port.b[0] << 8) + x->SRV->rdata->u.srv.port.b[1];
 
@@ -491,6 +493,7 @@ mDNSlocal void FoundServiceInfo(mDNS *const m, DNSQuestion *question, const Reso
                          targethost,
                          port,
                          x->Av4->rdata->u.ipv4.b,
+                         type,
                          x->TXT->rdlength,
                          (unsigned char*)x->TXT->rdata->u.txt.c,
                          x->context);
@@ -530,13 +533,14 @@ void                                *context  /* may be NULL */
     if (!x) { err = mStatus_NoMemoryErr; errormsg = "No memory"; goto fail; }
 
     // Set up object
-    x->disposefn = DNSServiceResolveDispose;
-    x->callback  = callback;
-    x->context   = context;
-    x->Av4       = mDNSNULL;
-    x->SRV       = mDNSNULL;
-    x->TXT       = mDNSNULL;
-    x->Device    = n;
+    x->disposefn   = DNSServiceResolveDispose;
+    x->callback    = callback;
+    x->context     = context;
+    x->Av4         = mDNSNULL;
+    x->SRV         = mDNSNULL;
+    x->TXT         = mDNSNULL;
+    x->Device      = n;
+    x->ServiceType = t;
 
     x->qAv4.ThisQInterval       = -1;		// So that mDNS_StopResolveService() knows whether to cancel this question
 	x->qAv4.InterfaceID         = mDNSInterface_Any;

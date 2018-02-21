@@ -24,10 +24,28 @@ class Environment;
 
 namespace Net {
 
+class MdnsDevice{
+public:
+    MdnsDevice(const Brx& aType, const Brx& aFriendlyName, const Brx& aUglyName, const Brx& aIpAddress, TUint aPort);
+    virtual ~MdnsDevice() {};
+
+    const Brx& Type();
+    const Brx& FriendlyName();
+    const Brx& UglyName();
+    const Brx& IpAddress();
+    const TUint Port();
+private:
+    Brn iType;
+    Brn iFriendlyName;
+    Brn iUglyName;
+    Brn iIpAddress;
+    TUint iPort;
+};
+
 class IMdnsDeviceListener
 {
 public:
-    virtual void DeviceAdded(const Brx& aFriendlyName, const Brx& aUglyName, const Brx&  aIpAddress, TUint aPort) = 0;
+    virtual void DeviceAdded(MdnsDevice& aDev) = 0;
     virtual ~IMdnsDeviceListener() {}
 };
 
@@ -57,7 +75,7 @@ public:
     void RenameAndReregisterService(TUint aHandle, const TChar* aName);
     void AppendTxtRecord(Bwx& aBuffer, const TChar* aKey, const TChar* aValue);
 
-    void DeviceDiscovered(const Brx& aFriendlyName, const Brx& aUglyName, const Brx&  aIpAddress, TUint aPort); // called from extern C mDNS callback DNSResolveReply
+    void DeviceDiscovered(const Brx& aType, const Brx& aFriendlyName, const Brx& aUglyName, const Brx&  aIpAddress, TUint aPort); // called from extern C mDNS callback DNSResolveReply
     void AddMdnsDeviceListener(IMdnsDeviceListener* aListener);
     TBool FindDevices(const TChar* aServiceName);
 private:
