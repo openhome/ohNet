@@ -14,7 +14,7 @@ class MdnsDeviceLogger : public IMdnsDeviceListener
 public:
     MdnsDeviceLogger();
     // IMdnsDeviceListener
-    void DeviceAdded(MdnsDevice& aDev) override;
+    void DeviceAdded(MdnsDevice& aDev);
 private:
     void PrintDeviceInfo(const char* aPrologue, MdnsDevice& aDev);
 private:
