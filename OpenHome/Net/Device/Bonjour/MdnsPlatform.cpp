@@ -29,8 +29,12 @@ extern "C" {
         {
             // Allocate another chunk of cache storage
             Log::Print("WARNING: mDNS cache size insufficient, GROWING...\n");
-            CacheEntity *storage = (CacheEntity*)malloc(sizeof(CacheEntity) * MdnsPlatform::kRRCacheSize);
-            if (storage) mDNS_GrowCache(m, storage, MdnsPlatform::kRRCacheSize);
+            #ifndef DEFINE_WINDOWS_UNIVERSAL 
+                CacheEntity *storage = (CacheEntity*)malloc(sizeof(CacheEntity) * MdnsPlatform::kRRCacheSize);
+                if (storage) {
+                    mDNS_GrowCache(m, storage, MdnsPlatform::kRRCacheSize);
+                }
+            #endif
         }
         else if (aStatus != mStatus_NoError) {
             Log::Print("ERROR: mDNS status=%d\n", aStatus);
