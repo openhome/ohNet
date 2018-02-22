@@ -495,7 +495,7 @@ mDNSlocal void FoundServiceInfo(mDNS *const m, DNSQuestion *question, const Reso
                          x->Av4->rdata->u.ipv4.b,
                          type,
                          x->TXT->rdlength,
-                         (unsigned char*)x->TXT->rdata->u.txt.c,
+                         x->TXT->rdata->u.txt.c,
                          x->context);
         }
     }
