@@ -1336,7 +1336,7 @@ typedef void (DNSSD_API *DNSServiceResolveReply)
     const char                          *hosttarget,
     uint16_t                            port,        /* In network byte order */
     const unsigned char                 *ipAddr,
-    const unsigned char                 *serviceName,
+    const char                          *regtype,
     uint16_t                            txtLen,
     const unsigned char                 *txtRecord,
     void                                *context

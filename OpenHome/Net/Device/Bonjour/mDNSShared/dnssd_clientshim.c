@@ -492,10 +492,10 @@ mDNSlocal void FoundServiceInfo(mDNS *const m, DNSQuestion *question, const Reso
                          fullname,
                          targethost,
                          port,
-                         ((const unsigned char*)(x->Av4->rdata->u.ipv4.b)),
+                         x->Av4->rdata->u.ipv4.b,
                          type,
                          x->TXT->rdlength,
-                         ((const unsigned char*)(x->TXT->rdata->u.txt.c)),
+                         x->TXT->rdata->u.txt.c,
                          x->context);
         }
     }
