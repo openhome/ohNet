@@ -25,8 +25,7 @@ extern "C" {
     mDNSlocal void mDNS_StatusCallback(mDNS *const m, mStatus aStatus)
     {
         LOG(kBonjour, "Bonjour             StatusCallback - aStatus %d\n", aStatus);
-        if (aStatus == mStatus_GrowCache)
-        {
+        if (aStatus == mStatus_GrowCache) {
             // Allocate another chunk of cache storage
             Log::Print("WARNING: mDNS cache size insufficient, GROWING...\n");
             (void)m;
@@ -38,6 +37,14 @@ extern "C" {
             #endif
         }
         else if (aStatus != mStatus_NoError) {
+            Log::Print("ERROR: mDNS status=%d\n", aStatus);
+            ASSERTS();
+        }
+    }
+
+    mDNSlocal void mDNS_StatusCallback_NoCache(mDNS *const m, mStatus aStatus)
+    {
+        if (aStatus != mStatus_NoError) {
             Log::Print("ERROR: mDNS status=%d\n", aStatus);
             ASSERTS();
         }
@@ -227,8 +234,10 @@ MdnsPlatform::MdnsPlatform(Environment& aEnv, const TChar* aHost)
     iNextServiceIndex = 0;
     iMdns = &mDNSStorage;
     (void)memset(iMdnsCache, 0, sizeof iMdnsCache);
-    Status status = mDNS_Init(iMdns, (mDNS_PlatformSupport*)this, iMdnsCache, kRRCacheSize, mDNS_Init_AdvertiseLocalAddresses,
-                    mDNS_StatusCallback, mDNS_Init_NoInitCallbackContext);
+    //Status status = mDNS_Init(iMdns, (mDNS_PlatformSupport*)this, iMdnsCache, kRRCacheSize, mDNS_Init_AdvertiseLocalAddresses,
+    //                mDNS_StatusCallback, mDNS_Init_NoInitCallbackContext);
+    Status status = mDNS_Init(iMdns, (mDNS_PlatformSupport*)this, mDNS_Init_NoCache, mDNS_Init_ZeroCacheSize, mDNS_Init_AdvertiseLocalAddresses,
+                    mDNS_StatusCallback_NoCache, mDNS_Init_NoInitCallbackContext);
     LOG(kBonjour, "Bonjour             Init Status %d\n", status);
     ASSERT(status >= 0);
     LOG(kBonjour, "Bonjour             Init - Start listener thread\n");
