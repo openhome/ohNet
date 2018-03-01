@@ -21,27 +21,6 @@ using namespace OpenHome::Net;
 
 extern "C" {
     mDNS mDNSStorage; // required by dnssd_clientshim.c
-    
-    mDNSlocal void mDNS_StatusCallback(mDNS *const m, mStatus aStatus)
-    {
-        LOG(kBonjour, "Bonjour             StatusCallback - aStatus %d\n", aStatus);
-        if (aStatus == mStatus_GrowCache) {
-            // Allocate another chunk of cache storage
-            LOG(kBonjour, "WARNING: mDNS cache size insufficient, GROWING...\n");
-            (void)m;
-            ASSERTS();
-            #ifndef DEFINE_WINDOWS_UNIVERSAL 
-                CacheEntity *storage = (CacheEntity*)malloc(sizeof(CacheEntity) * MdnsPlatform::kRRCacheSize);
-                if (storage) {
-                    mDNS_GrowCache(m, storage, MdnsPlatform::kRRCacheSize);
-                }
-            #endif
-        }
-        else if (aStatus != mStatus_NoError) {
-            Log::Print("ERROR: mDNS status=%d\n", aStatus);
-            ASSERTS();
-        }
-    }
 }
 
 // MdnsDevice
@@ -227,10 +206,8 @@ MdnsPlatform::MdnsPlatform(Environment& aEnv, const TChar* aHost)
     iNextServiceIndex = 0;
     iMdns = &mDNSStorage;
     (void)memset(iMdnsCache, 0, sizeof iMdnsCache);
-    //Status status = mDNS_Init(iMdns, (mDNS_PlatformSupport*)this, iMdnsCache, kRRCacheSize, mDNS_Init_AdvertiseLocalAddresses,
-    //                mDNS_StatusCallback, mDNS_Init_NoInitCallbackContext);
-    Status status = mDNS_Init(iMdns, (mDNS_PlatformSupport*)this, mDNS_Init_NoCache, mDNS_Init_ZeroCacheSize, mDNS_Init_AdvertiseLocalAddresses,
-                    mDNS_StatusCallback, mDNS_Init_NoInitCallbackContext);
+    Status status = mDNS_Init(iMdns, (mDNS_PlatformSupport*)this, iMdnsCache, kRRCacheSize, mDNS_Init_AdvertiseLocalAddresses,
+                    StatusCallback, mDNS_Init_NoInitCallbackContext);
     LOG(kBonjour, "Bonjour             Init Status %d\n", status);
     ASSERT(status >= 0);
     LOG(kBonjour, "Bonjour             Init - Start listener thread\n");
@@ -259,8 +236,6 @@ MdnsPlatform::~MdnsPlatform()
 #ifndef DEFINE_WINDOWS_UNIVERSAL
     for (TUint i=0; i<iSdRefs.size(); i++) {
         DNSServiceRefDeallocate(*iSdRefs[i]);
-        delete iSdRefs[i];
-        iSdRefs.erase(iSdRefs.begin()+i);
     }
 #endif // !DEFINE_WINDOWS_UNIVERSAL
     mDNS_Close(iMdns);
@@ -272,7 +247,9 @@ MdnsPlatform::~MdnsPlatform()
     for (TUint i=0; i<(TUint)iInterfaces.size(); i++) {
         delete iInterfaces[i];
     }
-
+    for (TUint i=0; i<iDynamicCache.size(); i++) {
+        mDNSPlatformMemFree(iDynamicCache[i]);
+    }
     iFifoFree.ReadInterrupt(true);
     iFifoFree.ReadInterrupt(false);
     while (iFifoFree.SlotsUsed() > 0) {
@@ -864,6 +841,38 @@ void MdnsPlatform::DeviceDiscovered(const Brx& aType, const Brx& aFriendlyName, 
     }
     delete dev;
     iMutex.Unlock();
+}
+
+void MdnsPlatform::GrowCache(void* aCacheBlock)
+{
+    iDynamicCache.push_back(aCacheBlock);
+}
+
+void MdnsPlatform::StatusCallback(mDNS *const m, mStatus aStatus)
+{
+    LOG(kBonjour, "Bonjour             StatusCallback - aStatus %d\n", aStatus);
+    if (aStatus == mStatus_GrowCache) {
+        // Allocate another chunk of cache storage
+        (void)m;
+        #ifndef DEFINE_WINDOWS_UNIVERSAL 
+            Log::Print("WARNING: mDNS cache size insufficient, GROWING...\n");
+            //CacheEntity *storage = (CacheEntity*)malloc(sizeof(CacheEntity) * MdnsPlatform::kRRCacheSize);
+            //CacheEntity *storage = (CacheEntity*)calloc(MdnsPlatform::kRRCacheSize, sizeof(CacheEntity));
+
+            CacheEntity *storage = (CacheEntity*)mDNSPlatformMemAllocate(sizeof(CacheEntity) * MdnsPlatform::kRRCacheSize);
+            mDNSPlatformMemZero(storage, sizeof(CacheEntity));
+
+            if (storage) {
+                mDNS_GrowCache(m, storage, MdnsPlatform::kRRCacheSize);
+                MdnsPlatform& platform = *(MdnsPlatform*)(m->p);
+                platform.GrowCache(storage);
+            }
+        #endif
+    }
+    else if (aStatus != mStatus_NoError) {
+        Log::Print("ERROR: mDNS status=%d\n", aStatus);
+        ASSERTS();
+    }
 }
 
 void MdnsPlatform::AddMdnsDeviceListener(IMdnsDeviceListener* aListener)

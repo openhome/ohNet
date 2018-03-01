@@ -76,6 +76,7 @@ public:
     void AppendTxtRecord(Bwx& aBuffer, const TChar* aKey, const TChar* aValue);
 
     void DeviceDiscovered(const Brx& aType, const Brx& aFriendlyName, const Brx& aUglyName, const Brx&  aIpAddress, TUint aPort); // called from extern C mDNS callback DNSResolveReply
+    void GrowCache(void* aCacheBlock); // called from mdns status callback (cache full)
     void AddMdnsDeviceListener(IMdnsDeviceListener* aListener);
     TBool FindDevices(const TChar* aServiceName);
 private:
@@ -95,6 +96,7 @@ private:
     static void SetDomainLabel(domainlabel& aLabel, const TChar* aBuffer);
     static void SetDomainName(domainname& aName, const TChar* aBuffer);
     static void ServiceCallback(mDNS* aCore, ServiceRecordSet* aRecordSet, mStatus aStatus);
+    static void StatusCallback(mDNS *const m, mStatus aStatus);
 private:
     class Nif : INonCopyable
     {
@@ -187,6 +189,7 @@ private:
     std::vector<DNSServiceRef*> iSdRefs;
     std::vector<IMdnsDeviceListener*> iDeviceListeners;
     CacheEntity iMdnsCache[kRRCacheSize];
+    std::vector<void*> iDynamicCache;
 };
 
 } // namespace Net
