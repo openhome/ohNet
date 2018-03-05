@@ -248,7 +248,7 @@ MdnsPlatform::~MdnsPlatform()
         delete iInterfaces[i];
     }
     for (TUint i=0; i<iDynamicCache.size(); i++) {
-        mDNSPlatformMemFree(iDynamicCache[i]);
+        free(iDynamicCache[i]);
     }
     iFifoFree.ReadInterrupt(true);
     iFifoFree.ReadInterrupt(false);
@@ -843,11 +843,6 @@ void MdnsPlatform::DeviceDiscovered(const Brx& aType, const Brx& aFriendlyName, 
     iMutex.Unlock();
 }
 
-void MdnsPlatform::GrowCache(void* aCacheBlock)
-{
-    iDynamicCache.push_back(aCacheBlock);
-}
-
 void MdnsPlatform::StatusCallback(mDNS *const m, mStatus aStatus)
 {
     LOG(kBonjour, "Bonjour             StatusCallback - aStatus %d\n", aStatus);
@@ -855,17 +850,11 @@ void MdnsPlatform::StatusCallback(mDNS *const m, mStatus aStatus)
         // Allocate another chunk of cache storage
         (void)m;
         #ifndef DEFINE_WINDOWS_UNIVERSAL 
-            Log::Print("WARNING: mDNS cache size insufficient, GROWING...\n");
-            //CacheEntity *storage = (CacheEntity*)malloc(sizeof(CacheEntity) * MdnsPlatform::kRRCacheSize);
-            //CacheEntity *storage = (CacheEntity*)calloc(MdnsPlatform::kRRCacheSize, sizeof(CacheEntity));
-
-            CacheEntity *storage = (CacheEntity*)mDNSPlatformMemAllocate(sizeof(CacheEntity) * MdnsPlatform::kRRCacheSize);
-            mDNSPlatformMemZero(storage, sizeof(CacheEntity));
-
+            LOG(kBonjour, "WARNING: mDNS cache size insufficient, GROWING...\n");
+            CacheEntity *storage = (CacheEntity*)calloc(MdnsPlatform::kRRCacheSize, sizeof(CacheEntity));
             if (storage) {
                 mDNS_GrowCache(m, storage, MdnsPlatform::kRRCacheSize);
-                MdnsPlatform& platform = *(MdnsPlatform*)(m->p);
-                platform.GrowCache(storage);
+                reinterpret_cast<MdnsPlatform*>(m->p)->iDynamicCache.push_back(storage);
             }
         #endif
     }

@@ -76,7 +76,6 @@ public:
     void AppendTxtRecord(Bwx& aBuffer, const TChar* aKey, const TChar* aValue);
 
     void DeviceDiscovered(const Brx& aType, const Brx& aFriendlyName, const Brx& aUglyName, const Brx&  aIpAddress, TUint aPort); // called from extern C mDNS callback DNSResolveReply
-    void GrowCache(void* aCacheBlock); // called from mdns status callback (cache full)
     void AddMdnsDeviceListener(IMdnsDeviceListener* aListener);
     TBool FindDevices(const TChar* aServiceName);
 private:
