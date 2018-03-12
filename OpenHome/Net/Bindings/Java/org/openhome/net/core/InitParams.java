@@ -740,7 +740,7 @@ public class InitParams
 		params.setDvNumPublisherThreads(numPublisherThreads + 1);
 		params.setDvNumWebSocketThreads(numWebSocketThreads + 1);
 		params.setDvWebSocketPort(webSocketPort + 1);
-		params.setDvEnableBonjour("");
+		params.setDvEnableBonjour("", false);
 		
 		System.out.println();
 		System.out.println("Params TCP timeout:\t\t\t" + params.getTcpConnectTimeoutMs() + " ms");
