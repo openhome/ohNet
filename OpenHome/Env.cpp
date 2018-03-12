@@ -188,9 +188,10 @@ Environment::~Environment()
 void Environment::CreateMdnsProvider()
 {
     const TChar* hostName = NULL;
-    if (iInitParams->DvIsBonjourEnabled(hostName) && iMdns == NULL) {
+    TBool reqMdnsCache = false;
+    if (iInitParams->DvIsBonjourEnabled(hostName, reqMdnsCache) && iMdns == NULL) {
 #ifndef DEFINE_WINDOWS_UNIVERSAL
-        iMdns = new OpenHome::Net::MdnsProvider(*this, hostName);
+        iMdns = new OpenHome::Net::MdnsProvider(*this, hostName, reqMdnsCache);
 #endif
     }
 }

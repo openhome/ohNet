@@ -325,7 +325,7 @@ JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetD
  * Signature: (JLjava/lang/String;)V
  */
 JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetDvEnableBonjour
-(JNIEnv *, jclass, jlong, jstring);
+(JNIEnv *, jclass, jlong, jstring, jboolean);
 
 /*
  * Class:     org_openhome_net_core_InitParams

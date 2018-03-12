@@ -14,7 +14,7 @@ namespace Net {
 class MdnsProvider : public IMdnsProvider
 {
 public:
-    MdnsProvider(Environment& aStack, const TChar* aHost);
+    MdnsProvider(Environment& aStack, const TChar* aHost, TBool aRequiresMdnsCache);
     virtual ~MdnsProvider();
     virtual void MdnsSetHostName(const TChar* aName);
     virtual TUint MdnsCreateService();

@@ -184,9 +184,10 @@ TUint MdnsPlatform::MdnsService::RenameAndReregister()
 
 const TChar* MdnsPlatform::kNifCookie = "Bonjour";
 
-MdnsPlatform::MdnsPlatform(Environment& aEnv, const TChar* aHost)
+MdnsPlatform::MdnsPlatform(Environment& aEnv, const TChar* aHost, TBool aHasCache)
     : iEnv(aEnv)
     , iHost(aHost)
+    , iHasCache(aHasCache)
     , iTimerLock("BNJ4")
     , iMulticast(5353, Brn("224.0.0.251"))
     , iReader(aEnv, 0, iMulticast)
@@ -205,9 +206,17 @@ MdnsPlatform::MdnsPlatform(Environment& aEnv, const TChar* aHost)
     iThreadListen = new ThreadFunctor("Bonjour", MakeFunctor(*this, &MdnsPlatform::Listen));
     iNextServiceIndex = 0;
     iMdns = &mDNSStorage;
-    (void)memset(iMdnsCache, 0, sizeof iMdnsCache);
-    Status status = mDNS_Init(iMdns, (mDNS_PlatformSupport*)this, iMdnsCache, kRRCacheSize, mDNS_Init_AdvertiseLocalAddresses,
-                    StatusCallback, mDNS_Init_NoInitCallbackContext);
+
+    Status status = mStatus_NoError;
+    if (iHasCache) {
+        (void)memset(iMdnsCache, 0, sizeof iMdnsCache);
+        status = mDNS_Init(iMdns, (mDNS_PlatformSupport*)this, iMdnsCache, kRRCacheSize, mDNS_Init_AdvertiseLocalAddresses,
+                 StatusCallback, mDNS_Init_NoInitCallbackContext);
+    }
+    else {
+        status = mDNS_Init(iMdns, (mDNS_PlatformSupport*)this, mDNS_Init_NoCache, mDNS_Init_ZeroCacheSize, mDNS_Init_AdvertiseLocalAddresses,
+                 StatusCallback, mDNS_Init_NoInitCallbackContext);
+    }
     LOG(kBonjour, "Bonjour             Init Status %d\n", status);
     ASSERT(status >= 0);
     LOG(kBonjour, "Bonjour             Init - Start listener thread\n");
@@ -816,6 +825,11 @@ void BrowseReply(DNSServiceRef sdRef,
 
 TBool MdnsPlatform::FindDevices(const TChar* aServiceName)
 {
+    if (!iHasCache) {
+        LOG_ERROR(kBonjour, "ERROR: Mdns cache is required for MdnsPlatform::FindDevices. See Env.InitParams.SetDvEnableBonjour\n");
+        ASSERTS();
+        return false;
+    }
     iMutex.Lock();
     DNSServiceRef* ref = new DNSServiceRef();
     iSdRefs.push_back(ref);
@@ -846,7 +860,7 @@ void MdnsPlatform::DeviceDiscovered(const Brx& aType, const Brx& aFriendlyName, 
 void MdnsPlatform::StatusCallback(mDNS *const m, mStatus aStatus)
 {
     LOG(kBonjour, "Bonjour             StatusCallback - aStatus %d\n", aStatus);
-    if (aStatus == mStatus_GrowCache) {
+    if (aStatus == mStatus_GrowCache && reinterpret_cast<MdnsPlatform*>(m->p)->iHasCache) {
         // Allocate another chunk of cache storage
         (void)m;
         #ifndef DEFINE_WINDOWS_UNIVERSAL 

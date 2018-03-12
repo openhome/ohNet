@@ -62,7 +62,7 @@ public class InitParams
 	private static native void OhNetInitParamsSetDvNumWebSocketThreads(long aParams, int aNumThreads);
 	private static native void OhNetInitParamsSetDvUpnpServerPort(long aParams, int aPort);
 	private static native void OhNetInitParamsSetDvWebSocketPort(long aParams, int aPort);
-	private static native void OhNetInitParamsSetDvEnableBonjour(long aParams, String aHostName);
+	private static native void OhNetInitParamsSetDvEnableBonjour(long aParams, String aHostName, Bool aRequiresMdnsCache);
     private static native long OhNetInitParamsSetLogOutput(long aParams, IMessageListener aListener);
     private static native long OhNetInitParamsSetFatalErrorHandler(long aParams, IMessageListener aListener);
     private static native void OhNetInitParamsSetThreadExitHandler(long aParams, IThreadExitListener aListener);
@@ -588,9 +588,9 @@ public class InitParams
 	 * <p>Note that enabling Bonjour will cause the device stack to run a HTTP
 	 * server on port 80, requiring root privileges on Linux.
 	 */
-	public void setDvEnableBonjour(String aHostName)
+	public void setDvEnableBonjour(String aHostName, Bool aRequiresMdnsCache)
 	{
-		OhNetInitParamsSetDvEnableBonjour(iHandle, aHostName);
+		OhNetInitParamsSetDvEnableBonjour(iHandle, aHostName, aRequiresMdnsCache);
 	}
     
     /**

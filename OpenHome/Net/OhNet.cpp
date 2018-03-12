@@ -393,10 +393,11 @@ void InitialisationParams::SetDvWebSocketPort(TUint aPort)
     iDvWebSocketPort = aPort;
 }
 
-void InitialisationParams::SetDvEnableBonjour(const TChar* aHostName)
+void InitialisationParams::SetDvEnableBonjour(const TChar* aHostName, TBool aRequiresMdnsCache)
 {
     iDvBonjourHostName.Set(aHostName);
     iEnableBonjour = true;
+    iRequiresMdnsCache = aRequiresMdnsCache;
 }
 
 void InitialisationParams::SetDvNumLpecThreads(uint32_t aNumThreads)
@@ -595,9 +596,10 @@ uint32_t InitialisationParams::DvWebSocketPort() const
     return iDvWebSocketPort;
 }
 
-bool InitialisationParams::DvIsBonjourEnabled(const TChar*& aHostName) const
+bool InitialisationParams::DvIsBonjourEnabled(const TChar*& aHostName, TBool& aRequiresMdnsCache) const
 {
     aHostName = iDvBonjourHostName.CString();
+    aRequiresMdnsCache = iRequiresMdnsCache;
     return iEnableBonjour;
 }
 
@@ -671,6 +673,7 @@ InitialisationParams::InitialisationParams()
     , iDvWebSocketPort(0)
     , iHostUdpLowQuality(HOST_UDP_LOW_QUALITY_DEFAULT)
     , iEnableBonjour(false)
+    , iRequiresMdnsCache(false)
     , iDvNumLpecThreads(0)
     , iDvLpecServerPort(0)
     , iTimerManagerThreadPriority(kPriorityHigh)

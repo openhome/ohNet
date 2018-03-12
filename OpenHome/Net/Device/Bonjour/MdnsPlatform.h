@@ -60,7 +60,7 @@ class MdnsPlatform
 public:
     static const TUint kRRCacheSize = 500;
 public: 
-    MdnsPlatform(Environment& aStack, const TChar* aHost);
+    MdnsPlatform(Environment& aStack, const TChar* aHost, TBool aHasCache);
     ~MdnsPlatform();
     Status Init();
     void Lock();
@@ -161,6 +161,7 @@ private:
 private:
     Environment& iEnv;
     Brhz iHost;
+    TBool iHasCache;
     MutexRecursive iMutex;
     ThreadFunctor* iThreadListen;
     Timer* iTimer;

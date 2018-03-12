@@ -661,13 +661,13 @@ JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetD
  * Signature: (JLjava/lang/String;)V
  */
 JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetDvEnableBonjour
-(JNIEnv *aEnv, jclass aClass, jlong aParams, jstring aHostName)
+(JNIEnv *aEnv, jclass aClass, jlong aParams, jstring aHostName, jboolean aRequiresMdnsCache)
 {
 	OhNetHandleInitParams params = (OhNetHandleInitParams) (size_t)aParams;
     const char* hostName = (*aEnv)->GetStringUTFChars(aEnv, aHostName, NULL);
     aClass = aClass;
 
-    OhNetInitParamsSetDvEnableBonjour(params, hostName);
+    OhNetInitParamsSetDvEnableBonjour(params, hostName, aRequiresMdnsCache);
     (*aEnv)->ReleaseStringUTFChars(aEnv, aHostName, hostName);
 }
 

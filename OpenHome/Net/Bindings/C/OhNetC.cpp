@@ -278,10 +278,10 @@ void STDCALL OhNetInitParamsSetDvWebSocketPort(OhNetHandleInitParams aParams, ui
     ip->SetDvWebSocketPort(aPort);
 }
 
-void STDCALL OhNetInitParamsSetDvEnableBonjour(OhNetHandleInitParams aParams, const char* aHostName)
+void STDCALL OhNetInitParamsSetDvEnableBonjour(OhNetHandleInitParams aParams, const char* aHostName, bool aRequiresMdnsCache)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
-    ip->SetDvEnableBonjour(aHostName);
+    ip->SetDvEnableBonjour(aHostName, aRequiresMdnsCache);
 }
 
 void STDCALL OhNetInitParamsSetHttpUserAgent(OhNetHandleInitParams aParams, const char* aUserAgent)
@@ -403,8 +403,9 @@ uint32_t STDCALL OhNetInitParamsDvWebSocketPort(OhNetHandleInitParams aParams)
 uint32_t STDCALL OhNetInitParamsDvIsBonjourEnabled(OhNetHandleInitParams aParams)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
-    const TChar* ignore = NULL;
-    return (ip->DvIsBonjourEnabled(ignore)? 1 : 0);
+    const TChar* hostIgnore = NULL;
+    TBool cacheIgnore = false;
+    return (ip->DvIsBonjourEnabled(hostIgnore, cacheIgnore)? 1 : 0);
 }
 
 uint32_t STDCALL OhNetInitParamsIsHostUdpLowQuality(OhNetHandleInitParams aParams)

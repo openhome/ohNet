@@ -363,7 +363,7 @@ public:
      * If a device sets the "Upnp.MdnsHostName" attribute, its presentation will be available via http://[hostname].local.
      * Behaviour when more than one DvDevice sets the "MdnsHostName" attribute is undefined.
      */
-    void SetDvEnableBonjour(const TChar* aHostName);
+    void SetDvEnableBonjour(const TChar* aHostName, TBool aRequiresMdnsCache);
     /**
      * Set the number of threads which will be dedicated LPEC clients.
      * One thread will be used per active connection so a higher number of threads
@@ -435,7 +435,7 @@ public:
     uint32_t CpUpnpEventServerPort() const;
     uint32_t DvUpnpServerPort() const;
     uint32_t DvWebSocketPort() const;
-    bool DvIsBonjourEnabled(const TChar*& aHostName) const;
+    bool DvIsBonjourEnabled(const TChar*& aHostName, TBool& aRequiresMdnsCache) const;
     uint32_t DvNumLpecThreads();
     uint32_t DvLpecServerPort();
     bool IsHostUdpLowQuality();
@@ -482,6 +482,7 @@ private:
     uint32_t iDvWebSocketPort;
     bool iHostUdpLowQuality;
     bool iEnableBonjour;
+    bool iRequiresMdnsCache;
     Brhz iDvBonjourHostName;
     uint32_t iDvNumLpecThreads;
     uint32_t iDvLpecServerPort;

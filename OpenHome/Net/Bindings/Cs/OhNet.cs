@@ -530,6 +530,11 @@ namespace OpenHome.Net.Core
         /// <remarks>Only used if DvEnableBonjour is true.</remarks>
         public string DvMdnsHostName { private get; set; }
         /// <summary>
+        /// Sets requirement flag for Mdns cache.
+        /// </summary>
+        /// <remarks>Only used if DvEnableBonjour is true.</remarks>
+        public string DvMdnsRequiresCache { private get; set; }
+        /// <summary>
         /// Set User-Agent reported by HTTP clients
         /// </summary>
         /// <remarks></remarks>
@@ -715,7 +720,7 @@ namespace OpenHome.Net.Core
 #else
         [DllImport("ohNet")]
 #endif
-        static extern void OhNetInitParamsSetDvEnableBonjour(IntPtr aParams, IntPtr aHostName);
+        static extern void OhNetInitParamsSetDvEnableBonjour(IntPtr aParams, IntPtr aHostName, bool aRequiresMdnsCache);
 #if IOS
         [DllImport("__Internal")]
 #else
@@ -952,7 +957,8 @@ namespace OpenHome.Net.Core
             if (DvEnableBonjour)
             {
                 IntPtr hostName = InteropUtils.StringToHGlobalUtf8(DvMdnsHostName);
-                OhNetInitParamsSetDvEnableBonjour(nativeParams, hostName);
+                bool reqMdnsCache = DvMdnsRequiresCache;
+                OhNetInitParamsSetDvEnableBonjour(nativeParams, hostName, reqMdnsCache);
                 Marshal.FreeHGlobal(hostName);
             }
             if (!String.IsNullOrEmpty(HttpUserAgent))

@@ -48,7 +48,7 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::Init
         return;
     }
 
-    aInitParams->SetDvEnableBonjour("Test-CpDevListMdns");
+    aInitParams->SetDvEnableBonjour("Test-CpDevListMdns", true);
     Library* lib = new Library(aInitParams);
     std::vector<NetworkAdapter*>* subnetList = lib->CreateSubnetList();
     TIpAddress subnet = (*subnetList)[adapter.Value()]->Subnet();
