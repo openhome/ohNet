@@ -533,7 +533,7 @@ namespace OpenHome.Net.Core
         /// Sets requirement flag for Mdns cache.
         /// </summary>
         /// <remarks>Only used if DvEnableBonjour is true.</remarks>
-        public string DvMdnsRequiresCache { private get; set; }
+        public bool DvMdnsRequiresCache { private get; set; }
         /// <summary>
         /// Set User-Agent reported by HTTP clients
         /// </summary>
