@@ -322,10 +322,10 @@ JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetD
 /*
  * Class:     org_openhome_net_core_InitParams
  * Method:    OhNetInitParamsSetDvEnableBonjour
- * Signature: (JLjava/lang/String;)V
+ * Signature: (JLjava/lang/String;Z)V
  */
 JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetDvEnableBonjour
-(JNIEnv *, jclass, jlong, jstring, jboolean);
+  (JNIEnv *, jclass, jlong, jstring, jboolean);
 
 /*
  * Class:     org_openhome_net_core_InitParams
@@ -349,7 +349,7 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSet
  * Signature: (JLorg/openhome/net/core/IThreadExitListener;)V
  */
 JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetThreadExitHandler
-  (JNIEnv *, jclass , jlong, jobject);
+  (JNIEnv *, jclass, jlong, jobject);
 
 /*
  * Class:     org_openhome_net_core_InitParams
@@ -362,7 +362,7 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSet
 /*
  * Class:     org_openhome_net_core_InitParams
  * Method:    OhNetInitParamsSetSubnetAddedListener
- * Signature: (JLorg/openhome/net/core/InitParams$NetworkAdapterCallback;)J
+ * Signature: (JLorg/openhome/net/core/InitParams/NetworkAdapterCallback;)J
  */
 JNIEXPORT jlong JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetSubnetAddedListener
   (JNIEnv *, jclass, jlong, jobject);
@@ -370,7 +370,7 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSet
 /*
  * Class:     org_openhome_net_core_InitParams
  * Method:    OhNetInitParamsSetSubnetRemovedListener
- * Signature: (JLorg/openhome/net/core/InitParams$NetworkAdapterCallback;)J
+ * Signature: (JLorg/openhome/net/core/InitParams/NetworkAdapterCallback;)J
  */
 JNIEXPORT jlong JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetSubnetRemovedListener
   (JNIEnv *, jclass, jlong, jobject);
@@ -378,11 +378,22 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSet
 /*
  * Class:     org_openhome_net_core_InitParams
  * Method:    OhNetInitParamsSetNetworkAdapterChangedListener
- * Signature: (JLorg/openhome/net/core/InitParams$NetworkAdapterCallback;)J
+ * Signature: (JLorg/openhome/net/core/InitParams/NetworkAdapterCallback;)J
  */
 JNIEXPORT jlong JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetNetworkAdapterChangedListener
   (JNIEnv *, jclass, jlong, jobject);
 
+#ifdef __cplusplus
+}
+#endif
+#endif
+/* Header for class org_openhome_net_core_InitParams_NetworkAdapterCallback */
+
+#ifndef _Included_org_openhome_net_core_InitParams_NetworkAdapterCallback
+#define _Included_org_openhome_net_core_InitParams_NetworkAdapterCallback
+#ifdef __cplusplus
+extern "C" {
+#endif
 #ifdef __cplusplus
 }
 #endif
