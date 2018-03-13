@@ -281,7 +281,8 @@ void STDCALL OhNetInitParamsSetDvWebSocketPort(OhNetHandleInitParams aParams, ui
 void STDCALL OhNetInitParamsSetDvEnableBonjour(OhNetHandleInitParams aParams, const char* aHostName, uint8_t aRequiresMdnsCache)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
-    ip->SetDvEnableBonjour(aHostName, (TBool)aRequiresMdnsCache);
+    TBool reqCache = (aRequiresMdnsCache == 1);
+    ip->SetDvEnableBonjour(aHostName, reqCache);
 }
 
 void STDCALL OhNetInitParamsSetHttpUserAgent(OhNetHandleInitParams aParams, const char* aUserAgent)
