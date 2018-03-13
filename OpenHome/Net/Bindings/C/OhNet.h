@@ -484,7 +484,7 @@ DllExport void STDCALL OhNetInitParamsSetDvWebSocketPort(OhNetHandleInitParams a
  * @param[in] aParams          Initialisation params
  * @param[in] aHostName        mDNS host name
  */
-DllExport void STDCALL OhNetInitParamsSetDvEnableBonjour(OhNetHandleInitParams aParams, const char* aHostName, uint32_t aRequiresMdnsCache);
+DllExport void STDCALL OhNetInitParamsSetDvEnableBonjour(OhNetHandleInitParams aParams, const char* aHostName, uint8_t aRequiresMdnsCache);
 
 /**
  * Disable control point stack inferring device removal.
