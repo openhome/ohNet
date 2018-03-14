@@ -124,7 +124,7 @@ public:
 
 class IWriterAscii : public IWriter
 {
-public:    
+public:
     virtual void WriteSpace() = 0;
     virtual void WriteNewline() = 0;
     virtual void WriteTab() = 0;
