@@ -29,17 +29,24 @@ SyncProxyAction::SyncProxyAction()
 
 SyncProxyAction::~SyncProxyAction()
 {
-}    
+}
 
 void SyncProxyAction::Completed(IAsync& aAsync)
 {
+    AutoSemaphoreSignal sem(iSem);
     try {
         CompleteRequest(aAsync);
     }
-    catch(ProxyError& aProxyError) {
+    catch (const ProxyError& aProxyError) {
         iError = aProxyError;
-        iSem.Signal();
         throw;
     }
-    iSem.Signal();
+    catch (const AssertionFailed&) {
+        // Don't lose callstack of original assertion.
+        throw;
+    }
+    catch (const Exception&) {
+        // No other type of exception expected to be thrown here.
+        ASSERTS();
+    }
 }
