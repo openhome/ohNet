@@ -892,7 +892,7 @@ void HttpHeaderConnection::Process(const Brx& aValue)
 {
     iClose = false;
     iUpgrade = false;
-    if (aValue == Http::kConnectionClose) {
+    if (Ascii::CaseInsensitiveEquals(aValue, Http::kConnectionClose)) {
         iClose = true;
         SetReceived();
     }
