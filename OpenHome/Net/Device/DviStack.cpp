@@ -30,7 +30,6 @@ DvStack::DvStack(OpenHome::Environment& aEnv)
     const TUint pubThPriority = initParams->DvPublisherThreadPriority();
     iSubscriptionManager = new DviSubscriptionManager(*this, pubThPriority);
     iDviServerWebSocket = new DviServerWebSocket(*this);
-    iEnv.CreateMdnsProvider(); // will only be created if it has been enabled first: Env.InitParams.SetDvEnableBonjour
     if (initParams->DvNumLpecThreads() > 0) {
         port = initParams->DvLpecServerPort();
         AddProtocolFactory(new DviProtocolFactoryLpec(*this, port));

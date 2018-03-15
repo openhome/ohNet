@@ -125,6 +125,7 @@ Environment::Environment(InitialisationParams* aInitParams)
     }
 
     CreateShell();
+    CreateMdnsProvider();
 
     iHttpUserAgent.Replace(iInitParams->HttpUserAgent());
 }

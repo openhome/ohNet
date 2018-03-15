@@ -19,7 +19,6 @@ CpStack::CpStack(OpenHome::Environment& aStack)
     iXmlFetchManager = new OpenHome::Net::XmlFetchManager(*this);
     iSubscriptionManager = new CpiSubscriptionManager(*this);
     iDeviceListUpdater = new CpiDeviceListUpdater();
-    iEnv.CreateMdnsProvider(); // will only be created if it has been enabled first: Env.InitParams.SetDvEnableBonjour
 }
 
 CpStack::~CpStack()
