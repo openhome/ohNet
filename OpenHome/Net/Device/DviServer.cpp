@@ -75,11 +75,16 @@ void DviServer::NotifyServerDeleted(TIpAddress /*aInterface*/)
 {
 }
 
+void DviServer::NotifyServerCreated(TIpAddress /*aInterface*/)
+{
+}
+
 void DviServer::AddServer(NetworkAdapter& aNif)
 {
     SocketTcpServer* tcpServer = CreateServer(aNif);
     DviServer::Server* server = new DviServer::Server(tcpServer, aNif);
     iServers.push_back(server);
+    NotifyServerCreated(aNif.Address());
 }
 
 void DviServer::SubnetListChanged()
