@@ -24,6 +24,7 @@ protected:
     void Deinitialise();
     virtual SocketTcpServer* CreateServer(const NetworkAdapter& aNif) = 0;
     virtual void NotifyServerDeleted(TIpAddress aInterface);
+    virtual void NotifyServerCreated(TIpAddress aInterface);
 private:
     void AddServer(NetworkAdapter& aNif);
     void SubnetListChanged();
