@@ -603,14 +603,6 @@ $(objdir)TestTimerMock.$(objext) : OpenHome/Tests/TestTimerMock.cpp $(headers)
 $(objdir)TestTimerMockMain.$(objext) : OpenHome/Tests/TestTimerMockMain.cpp $(headers)
 	$(compiler)TestTimerMockMain.$(objext) -c $(cppflags) $(includes) OpenHome/Tests/TestTimerMockMain.cpp
 
-TestHttpReader: $(objdir)TestHttpReader.$(exeext)
-$(objdir)TestHttpReader.$(exeext) :  ohNetCore $(objdir)TestHttpReader.$(objext) $(objdir)TestHttpReaderMain.$(objext) $(libprefix)TestFramework.$(libext)
-	$(link) $(linkoutput)$(objdir)TestHttpReader.$(exeext) $(objdir)TestHttpReaderMain.$(objext) $(objdir)TestHttpReader.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
-$(objdir)TestHttpReader.$(objext) : OpenHome/Tests/TestHttpReader.cpp $(headers)
-	$(compiler)TestHttpReader.$(objext) -c $(cppflags) $(includes) OpenHome/Tests/TestHttpReader.cpp
-$(objdir)TestHttpReaderMain.$(objext) : OpenHome/Tests/TestHttpReaderMain.cpp $(headers)
-	$(compiler)TestHttpReaderMain.$(objext) -c $(cppflags) $(includes) OpenHome/Tests/TestHttpReaderMain.cpp
-
 TestSsdpMListen: $(objdir)TestSsdpMListen.$(exeext)
 $(objdir)TestSsdpMListen.$(exeext) :  ohNetCore $(objdir)TestSsdpMListen.$(objext) $(objdir)TestSsdpMListenMain.$(objext) $(libprefix)TestFramework.$(libext)
 	$(link) $(linkoutput)$(objdir)TestSsdpMListen.$(exeext) $(objdir)TestSsdpMListenMain.$(objext) $(objdir)TestSsdpMListen.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
@@ -867,7 +859,7 @@ tests_core = \
 TestsCore: $(tests_core)
 	$(ar)ohNetTestsCore.$(libext) $(tests_core)
 
-TestsNative: TestBuffer TestPrinter TestThread TestFunctorGeneric TestFifo TestStream TestFile TestQueue TestTextUtils TestMulticast TestNetwork TestEcho TestTimer TestTimerMock TestHttpReader TestSsdpMListen TestSsdpUListen TestXmlParser TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLpec TestDvTestBasic TestAdapterChange TestDeviceFinder TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestShell
+TestsNative: TestBuffer TestPrinter TestThread TestFunctorGeneric TestFifo TestStream TestFile TestQueue TestTextUtils TestMulticast TestNetwork TestEcho TestTimer TestTimerMock TestSsdpMListen TestSsdpUListen TestXmlParser TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLpec TestDvTestBasic TestAdapterChange TestDeviceFinder TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestShell
 
 TestsCs: TestProxyCs TestDvDeviceCs TestCpDeviceDvCs TestPerformanceDv TestPerformanceCp TestPerformanceDvCs TestPerformanceCpCs
 

@@ -189,8 +189,9 @@ void Environment::CreateMdnsProvider()
 {
     const TChar* hostName = NULL;
     TBool reqMdnsCache = false;
-    if (iInitParams->DvIsBonjourEnabled(hostName, reqMdnsCache) && iMdns == NULL) {
+    if (iInitParams->DvIsBonjourEnabled(hostName, reqMdnsCache)) {
 #ifndef DEFINE_WINDOWS_UNIVERSAL
+        ASSERT(iMdns == NULL);
         iMdns = new OpenHome::Net::MdnsProvider(*this, hostName, reqMdnsCache);
 #endif
     }
@@ -471,6 +472,7 @@ void Environment::SetInitParams(InitialisationParams* aInitParams)
     delete iInitParams;
     iInitParams = aInitParams;
     CreateShell();
+    CreateMdnsProvider();
 }
 
 

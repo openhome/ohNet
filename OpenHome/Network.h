@@ -77,6 +77,7 @@ public:
      * threads have returned.
      */
     void Close();
+    void CloseThrows();
     void Interrupt(TBool aInterrupt);
     void SetSendBufBytes(TUint aBytes);
     void SetRecvBufBytes(TUint aBytes);
@@ -85,7 +86,6 @@ public:
 protected:
     Socket();
     virtual ~Socket() {}
-    TBool TryClose();
     void Send(const Brx& aBuffer);
     void SendTo(const Brx& aBuffer, const Endpoint& aEndpoint);
     void Receive(Bwx& aBuffer);

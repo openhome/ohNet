@@ -180,6 +180,15 @@ void Socket::Interrupt(TBool aInterrupt)
 
 void Socket::Close()
 {
+    try {
+        CloseThrows();
+    }
+    catch (const Exception&) {
+    }
+}
+
+void Socket::CloseThrows()
+{
     // close connection and allow caller to handle any exceptions
     LOG_TRACE(kNetwork, "Socket::Close H = %d\n", iHandle);
     iLock.Wait();
@@ -511,6 +520,7 @@ static void TryNetworkTcpSetNoDelay(THandle aHandle)
 
 void SocketTcpClient::Open(Environment& aEnv)
 {
+    ASSERT(iHandle == kHandleNull);     // Ensure there isn't an open socket handle that's about to be leaked.
     LOG_TRACE(kNetwork, "SocketTcpClient::Open\n");
     iHandle = SocketCreate(aEnv, eSocketTypeStream);
     TryNetworkTcpSetNoDelay(iHandle);
@@ -739,6 +749,7 @@ void SocketUdpBase::ReCreate()
 
 void SocketUdpBase::Create()
 {
+    ASSERT(iHandle == kHandleNull);     // Ensure there isn't an open socket handle that's about to be leaked.
     iHandle = SocketCreate(iEnv, eSocketTypeDatagram);
     OpenHome::Os::NetworkSocketSetReuseAddress(iHandle);
 }
