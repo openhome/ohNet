@@ -190,6 +190,7 @@ private:
     std::vector<IMdnsDeviceListener*> iDeviceListeners;
     CacheEntity iMdnsCache[kRRCacheSize];
     std::vector<void*> iDynamicCache;
+    Mutex iDiscoveryLock;
 };
 
 } // namespace Net
