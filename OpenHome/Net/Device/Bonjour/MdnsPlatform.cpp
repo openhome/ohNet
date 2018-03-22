@@ -201,6 +201,7 @@ MdnsPlatform::MdnsPlatform(Environment& aEnv, const TChar* aHost, TBool aHasCach
     , iStop(false)
     , iTimerDisabled(false)
     , iDiscoveryLock("BNJ6")
+    , iPrevTimerRequest(0)
 {
     LOG(kBonjour, "Bonjour             Constructor\n");
     iTimer = new Timer(iEnv, MakeFunctor(*this, &MdnsPlatform::TimerExpired), "MdnsPlatform");
@@ -644,11 +645,21 @@ void MdnsPlatform::Unlock()
 {
     TInt next = iMdns->NextScheduledEvent - iMdns->timenow_adjust;
     iTimerLock.Wait();
-    if (!iTimerDisabled) {
-        iTimer->FireAt(next);
+    if (next < 0) {
+        Log::Print("MdnsPlatform::Unlock Impossible Event detected: %d\n", next);
+        ASSERTS();
+    }
+    else if (iPrevTimerRequest == next) {
+        LOG(kBonjour, "Bonjour             Ignore Duplicate Event %d\n", next);
+    }
+    else {
+        iPrevTimerRequest = next;
+        if (!iTimerDisabled) {
+            iTimer->FireAt(next);
+        }
+        LOG(kBonjour, "Bonjour             Next Scheduled Event %d\n", next);
     }
     iTimerLock.Signal();
-    LOG(kBonjour, "Bonjour             Next Scheduled Event %d\n", next);
     LOG(kBonjour, "Bonjour             Unlock\n");
     iMutex.Unlock();
 }
