@@ -200,6 +200,8 @@ MdnsPlatform::MdnsPlatform(Environment& aEnv, const TChar* aHost, TBool aHasCach
     , iSem("BNJS", 0)
     , iStop(false)
     , iTimerDisabled(false)
+    , iDiscoveryLock("BNJ6")
+    , iPrevTimerRequest(0)
 {
     LOG(kBonjour, "Bonjour             Constructor\n");
     iTimer = new Timer(iEnv, MakeFunctor(*this, &MdnsPlatform::TimerExpired), "MdnsPlatform");
@@ -643,11 +645,21 @@ void MdnsPlatform::Unlock()
 {
     TInt next = iMdns->NextScheduledEvent - iMdns->timenow_adjust;
     iTimerLock.Wait();
-    if (!iTimerDisabled) {
-        iTimer->FireAt(next);
+    if (next < 0) {
+        Log::Print("MdnsPlatform::Unlock Impossible Event detected: %d\n", next);
+        ASSERTS();
+    }
+    else if (iPrevTimerRequest == next) {
+        LOG(kBonjour, "Bonjour             Ignore Duplicate Event %d\n", next);
+    }
+    else {
+        iPrevTimerRequest = next;
+        if (!iTimerDisabled) {
+            iTimer->FireAt(next);
+        }
+        LOG(kBonjour, "Bonjour             Next Scheduled Event %d\n", next);
     }
     iTimerLock.Signal();
-    LOG(kBonjour, "Bonjour             Next Scheduled Event %d\n", next);
     LOG(kBonjour, "Bonjour             Unlock\n");
     iMutex.Unlock();
 }
@@ -830,10 +842,10 @@ TBool MdnsPlatform::FindDevices(const TChar* aServiceName)
         ASSERTS();
         return false;
     }
-    iMutex.Lock();
+    iDiscoveryLock.Wait();
     DNSServiceRef* ref = new DNSServiceRef();
     iSdRefs.push_back(ref);
-    iMutex.Unlock();
+    iDiscoveryLock.Signal();
     DNSServiceErrorType err = DNSServiceBrowse(ref,
                                                0, /*flags */
                                                0, /*interfaceIndex -- not used (defaults to mDNSInterface_Any instead) */
@@ -847,14 +859,13 @@ TBool MdnsPlatform::FindDevices(const TChar* aServiceName)
 
 void MdnsPlatform::DeviceDiscovered(const Brx& aType, const Brx& aFriendlyName, const Brx& aUglyName, const Brx&  aIpAddress, TUint aPort)
 {
-    iMutex.Lock();
+    AutoMutex _(iDiscoveryLock);
     MdnsDevice* dev = new MdnsDevice(aType, aFriendlyName, aUglyName, aIpAddress, aPort);
     for (TUint i=0; i<iDeviceListeners.size(); i++) {
         
         iDeviceListeners[i]->DeviceAdded(*dev);
     }
     delete dev;
-    iMutex.Unlock();
 }
 
 void MdnsPlatform::StatusCallback(mDNS *const m, mStatus aStatus)
@@ -882,9 +893,8 @@ void MdnsPlatform::AddMdnsDeviceListener(IMdnsDeviceListener* aListener)
 {
     // could not use std::reference_wrapper for iDeviceListeners
     // pointer is not owned here
-    iMutex.Lock();
+    AutoMutex _(iDiscoveryLock);
     iDeviceListeners.push_back(aListener);
-    iMutex.Unlock();
 }
 
 
