@@ -183,6 +183,9 @@ void Socket::Close()
     try {
         CloseThrows();
     }
+    catch (AssertionFailed&) {
+        throw;
+    }
     catch (const Exception&) {
     }
 }
@@ -195,8 +198,8 @@ void Socket::CloseThrows()
     TInt err = 0;
     THandle handle = iHandle;
     if (iHandle != kHandleNull){
-        err = OpenHome::Os::NetworkClose(iHandle);
         iHandle = kHandleNull;
+        err = OpenHome::Os::NetworkClose(handle);
     }
     iLock.Signal();
     if(err != 0) {
