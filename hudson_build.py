@@ -392,6 +392,7 @@ class JenkinsBuild():
         for entry in entries:
             src = 'Build/Bundles/' + entry
             dst = 's3://linn.artifacts.public/artifacts/ohnet/' + entry.split('/')[-1]
+            print ('Publish %s --> %s' % (src, dst))
             resource = boto3.resource('s3')
             bucket = resource.Bucket(dst.split('/')[2])
             with open( src, 'rb' ) as data:
