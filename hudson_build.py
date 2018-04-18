@@ -1,12 +1,18 @@
 #!/usr/bin/env python
 #
-import os, subprocess
+import os
+import subprocess
 import shutil
+import sys
 from optparse import OptionParser
 from Helpers.valgrind_parser import *
 from Helpers.remote import *
-import sys
 from os import path
+sys.path.append( os.path.abspath( 'ohdevtools' ))
+sys.path.append( os.path.abspath( '../ohdevtools' ))
+sys.path.append( os.path.abspath( '../../ohdevtools' ))
+import aws
+
 
 class PostActions():
     def valgrind_parse(self):
@@ -357,7 +363,12 @@ class JenkinsBuild():
             if os.path.exists(native_dest):
                 os.remove(native_dest)
             os.rename(native_bundle_name, native_dest)
-        rem.check_rsync('releases','builds.openhome.org','Build/Bundles/','~/www/artifacts/ohNet/')
+
+        entries = os.fileList('Build/Bundles/')
+        for entry in entries:
+            src = entry
+            dst = 's3://linn.artifacts.public/artifacts/ohnet/' + entry.split('/')[-1]
+            aws.copy(src, dst)
 
 
     def do_postAction(self):
