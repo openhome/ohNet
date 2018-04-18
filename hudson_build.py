@@ -388,7 +388,7 @@ class JenkinsBuild():
                 os.remove(native_dest)
             os.rename(native_bundle_name, native_dest)
 
-        entries = os.fileList('Build/Bundles/')
+        entries = os.filelist('Build/Bundles/')
         for entry in entries:
             src = entry
             dst = 's3://linn.artifacts.public/artifacts/ohnet/' + entry.split('/')[-1]
