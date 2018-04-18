@@ -8,10 +8,34 @@ from optparse import OptionParser
 from Helpers.valgrind_parser import *
 from Helpers.remote import *
 from os import path
-sys.path.append( os.path.abspath( 'ohdevtools' ))
-sys.path.append( os.path.abspath( '../ohdevtools' ))
-sys.path.append( os.path.abspath( '../../ohdevtools' ))
-import aws
+
+try:
+    import boto3
+except:
+    print('\nAWS fetch requires boto3 module')
+    print("Please install this using 'pip install boto3'\n")
+else:
+    # create AWS credentials file (if not already present)
+    home = None
+    if 'HOMEPATH' in os.environ and 'HOMEDRIVE' in os.environ:
+        home = os.path.join(os.environ['HOMEDRIVE'], os.environ['HOMEPATH'])
+    elif 'HOME' in os.environ:
+        home = os.environ['HOME']
+    if home:
+        awsCreds = os.path.join(home, '.aws', 'credentials')
+        if not os.path.exists(awsCreds):
+            if sys.version_info[0] == 2:
+                from urllib2 import urlopen
+            else:
+                from urllib.request import urlopen
+            try:
+                os.mkdir(os.path.join(home, '.aws'))
+            except:
+                pass
+            credsFile = urlopen('http://core.linn.co.uk/~artifacts/artifacts/aws-credentials' )
+            creds = credsFile.read()
+            with open(awsCreds, 'wt') as f:
+                f.write(creds)
 
 
 class PostActions():
@@ -368,8 +392,10 @@ class JenkinsBuild():
         for entry in entries:
             src = entry
             dst = 's3://linn.artifacts.public/artifacts/ohnet/' + entry.split('/')[-1]
-            aws.copy(src, dst)
-
+            resource = boto3.resource('s3')
+            bucket = resource.Bucket(dst.split('/')[2])
+            with open( src, 'rb' ) as data:
+                bucket.upload_fileobj(data, '/'.join(dst.split('/')[3:]))
 
     def do_postAction(self):
         nightly = self.options.nightly
