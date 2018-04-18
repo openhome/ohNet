@@ -391,13 +391,11 @@ class JenkinsBuild():
         entries = os.listdir('Build/Bundles/')
         for entry in entries:
             src = 'Build/Bundles/' + entry
-            dst = 's3://linn.artifacts.public/artifacts/ohnet/' + entry.split('/')[-1]
+            dst = 's3://linn.artifacts.public/artifacts/ohNet/' + entry.split('/')[-1]
             print ('Publish %s --> %s' % (src, dst))
             resource = boto3.resource('s3')
             bucket = resource.Bucket(dst.split('/')[2])
             key = '/'.join(dst.split('/')[3:])
-            print('Bucket --> %s' % dst.split('/')[2])
-            print('Key --> %s' % key)
             with open( src, 'rb' ) as data:
                 bucket.upload_fileobj(data, key)
 
