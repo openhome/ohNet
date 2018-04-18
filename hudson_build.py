@@ -395,9 +395,9 @@ class JenkinsBuild():
             print ('Publish %s --> %s' % (src, dst))
             resource = boto3.resource('s3')
             bucket = resource.Bucket(dst.split('/')[2])
-            key = '/'.join(dst.split('/')[3:]
-            print ('Bucket --> %s' % dst.split('/')[2])
-            print ('Key --> %s' % key)
+            key = '/'.join(dst.split('/')[3:])
+            print('Bucket --> %s' % dst.split('/')[2])
+            print('Key --> %s' % key)
             with open( src, 'rb' ) as data:
                 bucket.upload_fileobj(data, key)
 
