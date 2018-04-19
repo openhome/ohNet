@@ -388,6 +388,7 @@ class JenkinsBuild():
                 os.remove(native_dest)
             os.rename(native_bundle_name, native_dest)
 
+        boto3.s3.transfer.TransferConfig(multipart_threshold=33554432, max_concurrency=10, multipart_chunksize=33554432, num_download_attempts=5, max_io_queue=100, io_chunksize=262144, use_threads=True)
         entries = os.listdir('Build/Bundles/')
         for entry in entries:
             src = 'Build/Bundles/' + entry
