@@ -11,6 +11,7 @@ from os import path
 
 try:
     import boto3
+    import boto3.s3.transfer
 except:
     print('\nAWS fetch requires boto3 module')
     print("Please install this using 'pip install boto3'\n")
