@@ -9,8 +9,6 @@ from Helpers.valgrind_parser import *
 from Helpers.remote import *
 from os import path
 
-AWS transfers abandoned for now (see below at transfer code for details)
-
 try:
     import boto3
     import boto3.s3.transfer
