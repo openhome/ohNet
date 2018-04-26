@@ -646,8 +646,7 @@ void MdnsPlatform::Unlock()
     TInt next = iMdns->NextScheduledEvent - iMdns->timenow_adjust;
     iTimerLock.Wait();
     if (next < 0) {
-        Log::Print("MdnsPlatform::Unlock Impossible Event detected: %d\n", next);
-        ASSERTS();
+        Log::Print("MdnsPlatform::Unlock Ignore Impossible Event: %d\n", next);
     }
     else if (iPrevTimerRequest == next) {
         LOG(kBonjour, "Bonjour             Ignore Duplicate Event %d\n", next);
