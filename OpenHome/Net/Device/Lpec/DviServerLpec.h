@@ -191,7 +191,6 @@ private:
     static const TUint kMaxSubscriptions = 16; // imposed by public LPEC docs
     static const TUint kMaxReadBytes = 12000;
     static const TUint kWriteBufferBytes = 4000;
-    static const TUint kMaxSubscriptionCount = 16; // FIXME - limitation copied from volkano.  Is it necessary?
     DvStack& iDvStack;
     TIpAddress iAdapter;
     TUint iPort;

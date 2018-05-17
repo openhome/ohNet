@@ -76,7 +76,7 @@ const LpecError LpecError::kInvalidArgBool = LpecErrorMaker(201, "Boolean argume
 const LpecError LpecError::kInvalidArgUint = LpecErrorMaker(203, "Unsigned numeric argument invalid");
 const LpecError LpecError::kInvalidArgInt = LpecErrorMaker(204, "Signed numeric invalid");
 const LpecError LpecError::kAlreadySubscribed = LpecErrorMaker(401, "Already subscribed");
-const LpecError LpecError::kTooManySubscriptions = LpecErrorMaker(402, "Client has too many subscriptions");
+//const LpecError LpecError::kTooManySubscriptions = LpecErrorMaker(402, "Client has too many subscriptions");
 const LpecError LpecError::kSubscriptionNotFound = LpecErrorMaker(404, "Subscription not found");
 const LpecError LpecError::kServiceNotSubscribed = LpecErrorMaker(405, "Service not subscribed");
 
@@ -499,10 +499,6 @@ void DviSessionLpec::Subscribe()
     TUint lpecSid = UINT_MAX;
     {
         AutoMutex a(iSubscriptionLock);
-        if (iSubscriptions.size() == kMaxSubscriptions) {
-            ReportError(LpecError::kTooManySubscriptions);
-        }
-
         AutoMutex b(iDeviceLock);
         ParseDeviceAndService();
 
