@@ -81,3 +81,7 @@ void FileBrx::Seek(TInt32 aBytes, SeekWhence aWhence)
 void FileBrx::Flush()
 {
 }
+
+void FileBrx::Sync()
+{
+}
