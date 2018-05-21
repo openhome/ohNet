@@ -49,8 +49,8 @@ public:
     virtual void Seek(TInt32 aBytes, SeekWhence aWhence = eSeekFromStart) = 0; // Seeks, or throws FileSeekError
     virtual TUint32 Tell() const = 0;                           // Current position in file
     virtual TUint32 Bytes() const = 0;                          // Size of file
-    virtual void Flush() = 0;
-    virtual void Sync() = 0;
+    virtual void Flush() = 0;                                   // Ensure file changes visible to other IFiles (fflush)
+    virtual void Sync() = 0;                                    // Ensure file changes written to disk (fsync/_commit)
 };
 
 // IFileSystem
