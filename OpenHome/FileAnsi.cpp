@@ -6,7 +6,6 @@
 #include <direct.h>
 #else
 #include <sys/stat.h>
-#include <unistd.h>
 #endif
 
 using namespace OpenHome;
@@ -160,16 +159,4 @@ void FileAnsi::Flush()
 {
     ASSERT(iFilePtr);
     std::fflush(iFilePtr);
-}
-
-void FileAnsi::Sync()
-{
-    ASSERT(iFilePtr);
-    const int fd = fileno(iFilePtr);
-    ASSERT(fd != -1);
-    #if defined(_WIN32)
-    _commit(fd);
-    #else
-    fsync(fd);
-    #endif
 }
