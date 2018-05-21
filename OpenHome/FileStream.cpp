@@ -93,6 +93,7 @@ void FileStream::Write(const Brx& aBuffer)
 void FileStream::WriteFlush()
 {
     iFile->Flush();
+    iFile->Sync();
 }
 
 void FileStream::Read(Bwx& aBuffer)

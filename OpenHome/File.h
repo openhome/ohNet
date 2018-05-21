@@ -50,6 +50,7 @@ public:
     virtual TUint32 Tell() const = 0;                           // Current position in file
     virtual TUint32 Bytes() const = 0;                          // Size of file
     virtual void Flush() = 0;
+    virtual void Sync() = 0;
 };
 
 // IFileSystem
@@ -84,6 +85,7 @@ public: // from IFile
     TUint32 Tell() const;
     TUint32 Bytes() const;
     void Flush();
+    void Sync();
 private:
     FILE* iFilePtr;
 };
@@ -102,6 +104,7 @@ public: // from IFile
     TUint32 Tell() const;
     TUint32 Bytes() const;
     void Flush();
+    void Sync();
 private:
     Brn     iBuffer;
     TUint32 iCursor;
