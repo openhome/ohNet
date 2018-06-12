@@ -61,6 +61,8 @@ public:
     void Renew(TUint& aSeconds);
     void WriteChanges();
     const Brx& Sid() const;
+    DviService* Service(); // claims a ref for non-NULL return
+    DviService* ServiceLocked(); // claims a ref for non-NULL return
     void Log(IWriter& aWriter);
 private: // from IStackObject
     void ListObjectDetails() const;
@@ -82,6 +84,15 @@ private:
     TUint iSequenceNumber;
     Timer* iTimer;
     TBool iExpired;
+};
+
+class AutoSubscriptionRef : public INonCopyable
+{
+public:
+    AutoSubscriptionRef(DviSubscription& aSubscription);
+    ~AutoSubscriptionRef();
+private:
+    DviSubscription& iSubscription;
 };
 
 class PropertyWriter : public IPropertyWriter

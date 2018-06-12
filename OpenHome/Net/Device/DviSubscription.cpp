@@ -259,6 +259,20 @@ const Brx& DviSubscription::Sid() const
     return iSid;
 }
 
+DviService* DviSubscription::Service()
+{
+    AutoMutex _(iLock);
+    return ServiceLocked();
+}
+
+DviService* DviSubscription::ServiceLocked()
+{
+    if (iService != NULL) {
+        iService->AddRef();
+    }
+    return iService;
+}
+
 void DviSubscription::Log(IWriter& aWriter)
 {
     AutoMutex _(iLock);
@@ -328,6 +342,19 @@ void DviSubscription::Expired()
        locks in the opposite order to Publisher threads.
        Instead, queue an update; this will happen on a Publisher thread where the subscription can safely be removed. */
     iDvStack.SubscriptionManager().QueueUpdate(*this);
+}
+
+
+// AutoSubscriptionRef
+
+AutoSubscriptionRef::AutoSubscriptionRef(DviSubscription& aSubscription)
+    : iSubscription(aSubscription)
+{
+}
+
+AutoSubscriptionRef::~AutoSubscriptionRef()
+{
+    iSubscription.RemoveRef();
 }
 
 
