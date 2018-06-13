@@ -7,6 +7,7 @@
 #else
 #include <sys/stat.h>
 #include <unistd.h>
+extern int fileno(FILE*);
 #endif
 
 using namespace OpenHome;
@@ -165,11 +166,13 @@ void FileAnsi::Flush()
 void FileAnsi::Sync()
 {
     ASSERT(iFilePtr);
+#if defined(_WIN32)
+    const int fd = _fileno(iFilePtr);
+    ASSERT(fd != -1);
+    _commit(fd);
+#else
     const int fd = fileno(iFilePtr);
     ASSERT(fd != -1);
-    #if defined(_WIN32)
-    _commit(fd);
-    #else
     fsync(fd);
-    #endif
+#endif
 }
