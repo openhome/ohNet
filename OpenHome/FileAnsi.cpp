@@ -4,10 +4,11 @@
 
 #if defined(_WIN32)
 #include <direct.h>
+#include <io.h>
 #else
 #include <sys/stat.h>
 #include <unistd.h>
-extern int fileno(FILE*);
+extern int fileno(std::FILE*);
 #endif
 
 using namespace OpenHome;
