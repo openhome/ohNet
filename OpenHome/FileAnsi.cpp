@@ -5,7 +5,7 @@
 #if defined(_WIN32)
 #include <direct.h>
 #include <io.h>
-#else
+#elif !defined(__ANDROID__)
 #include <sys/stat.h>
 #include <unistd.h>
 extern int fileno(std::FILE*);
@@ -171,6 +171,8 @@ void FileAnsi::Sync()
     const int fd = _fileno(iFilePtr);
     ASSERT(fd != -1);
     _commit(fd);
+#elif defined __ANDROID__
+    ASSERTS();
 #else
     const int fd = fileno(iFilePtr);
     ASSERT(fd != -1);
