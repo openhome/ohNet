@@ -22,6 +22,8 @@ void FileSystemAnsi::MakeDir(const TChar* aDirname)
 {
 #if defined(_WIN32)
     const int error = _mkdir(aDirname);
+#elif defined __ANDROID__
+    const int error = -1;
 #else
     const int error = mkdir(aDirname, 0777);
 #endif
