@@ -8,7 +8,9 @@
 #elif !defined(__ANDROID__)
 #include <sys/stat.h>
 #include <unistd.h>
+extern "C" {
 extern int fileno(std::FILE*);
+}
 #endif
 
 using namespace OpenHome;
