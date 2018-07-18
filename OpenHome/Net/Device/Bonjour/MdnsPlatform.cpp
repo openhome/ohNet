@@ -180,6 +180,46 @@ TUint MdnsPlatform::MdnsService::RenameAndReregister()
 }
 
 
+// ReadWriteLock
+
+ReadWriteLock::ReadWriteLock(const TChar* aId)
+    : iId(aId)
+    , iReaderCount(0)
+    , iLockReaders("RWLR")
+    , iLockWriter("RWLW")
+{
+}
+
+void ReadWriteLock::AcquireReadLock()
+{
+    AutoMutex amx(iLockReaders);
+    iReaderCount++;
+    if (iReaderCount == 1) {
+        iLockWriter.Wait();
+    }
+}
+
+void ReadWriteLock::ReleaseReadLock()
+{
+    AutoMutex amx(iLockReaders);
+    ASSERT(iReaderCount > 0);
+    iReaderCount--;
+    if (iReaderCount == 0) {
+        iLockWriter.Signal();
+    }
+}
+
+void ReadWriteLock::AcquireWriteLock()
+{
+    iLockWriter.Wait();
+}
+
+void ReadWriteLock::ReleaseWriteLock()
+{
+    iLockWriter.Signal();
+}
+
+
 // MdnsPlatform
 
 const TChar* MdnsPlatform::kNifCookie = "Bonjour";
@@ -190,8 +230,10 @@ MdnsPlatform::MdnsPlatform(Environment& aEnv, const TChar* aHost, TBool aHasCach
     , iHasCache(aHasCache)
     , iTimerLock("BNJ4")
     , iMulticast(5353, Brn("224.0.0.251"))
-    , iReader(aEnv, 0, iMulticast)
-    , iReaderController(iReader)
+    , iReader(NULL)
+    , iReaderController(NULL)
+    , iMulticastLock("MdnsPlatformMcast")
+    , iSemReaderReady("BNS2", 0)
     , iClient(aEnv, 5353)
     , iInterfacesLock("BNJ2")
     , iServicesLock("BNJ3")
@@ -236,7 +278,14 @@ MdnsPlatform::MdnsPlatform(Environment& aEnv, const TChar* aHost, TBool aHasCach
 
 MdnsPlatform::~MdnsPlatform()
 {
-    iReaderController.ReadInterrupt();
+    {
+        iMulticastLock.AcquireReadLock();
+        if (iReaderController != NULL) {
+            iReaderController->ReadInterrupt();
+        }
+        iMulticastLock.ReleaseReadLock();
+    }
+
     iEnv.NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
     iEnv.NetworkAdapterList().RemoveCurrentChangeListener(iCurrentAdapterChangeListenerId);
     iTimerLock.Wait();
@@ -312,6 +361,8 @@ void MdnsPlatform::SubnetListChanged()
         current->RemoveRef(kNifCookie);
     }
     iInterfacesLock.Signal();
+
+    RebindMulticastAdapters(*subnetList);   // May throw NetworkError.
     nifList.DestroySubnetList(subnetList);
 }
 
@@ -361,6 +412,8 @@ void MdnsPlatform::CurrentAdapterChanged()
         }
     }
     iInterfacesLock.Signal();
+
+    RebindMulticastAdapters(*subnetList);   // May throw NetworkError.
     nifList.DestroySubnetList(subnetList);
 }
 
@@ -410,6 +463,62 @@ TInt MdnsPlatform::InterfaceIndex(const NetworkAdapter& aNif, const std::vector<
     return -1;
 }
 
+void MdnsPlatform::RebindMulticastAdapters(std::vector<NetworkAdapter*>& aAdapters)
+{
+    // Throws NetworkError if unable to bind to any (non-localhost) adapter.
+
+    iMulticastLock.AcquireReadLock();
+    if (iReader != NULL) {
+        iReaderController->ReadInterrupt();
+        iReader->Interrupt(true);
+    }
+    iMulticastLock.ReleaseReadLock();
+
+
+    iMulticastLock.AcquireWriteLock();
+
+    // iReader no longer available. Clear any signals.
+    iSemReaderReady.Clear();
+
+    delete iReaderController;
+    iReaderController = NULL;
+    delete iReader;
+    iReader = NULL;
+
+    for (TUint i=0; i<aAdapters.size(); i++) {
+        const TIpAddress addr = aAdapters[i]->Address();
+        const Endpoint epAddr(0, addr);
+        TByte addrOctets[4];
+        epAddr.GetAddressOctets(addrOctets);
+
+        LOG(kBonjour, "MdnsPlatform::RebindMulticastAdapters aAdapters.size(): %u, i: %u, addrOctets: %u.%u.%u.%u\n", aAdapters.size(), i, addrOctets[0], addrOctets[1], addrOctets[2], addrOctets[3]);
+        if (addrOctets[0] != 127) {
+            // Found a non-localhost adapter.
+            try {
+                iReader = new SocketUdpMulticast(iEnv, aAdapters[0]->Address(), iMulticast);
+                iReaderController = new UdpReader(*iReader);
+                iSemReaderReady.Signal();
+                LOG(kBonjour, "MdnsPlatform::RebindMulticastAdapters successfully created multicast socket on %u.%u.%u.%u\n", addrOctets[0], addrOctets[1], addrOctets[2], addrOctets[3]);
+            }
+            catch (const NetworkError&) {
+                LOG(kBonjour, "MdnsPlatform::RebindMulticastAdapters NetworkError creating multicast socket on %u.%u.%u.%u\n", addrOctets[0], addrOctets[1], addrOctets[2], addrOctets[3]);
+                delete iReaderController;
+                iReaderController = NULL;
+                delete iReader;
+                iReader = NULL;
+                iMulticastLock.ReleaseWriteLock();
+
+                throw;
+            }
+
+            // FIXME - only binds to first available (non-localhost) adapter.
+            break;
+        }
+    }
+
+    iMulticastLock.ReleaseWriteLock();
+}
+
 TBool MdnsPlatform::NifsMatch(const NetworkAdapter& aNif1, const NetworkAdapter& aNif2)
 {
     if (aNif1.Address() == aNif2.Address() && aNif1.Subnet() == aNif2.Subnet() && strcmp(aNif1.Name(), aNif2.Name()) == 0) {
@@ -457,39 +566,55 @@ void MdnsPlatform::Listen()
 
     mDNSAddr src;
     mDNSIPPort srcport;
-    while (!iStop) {
-        try {
-            LOG(kBonjour, "Bonjour             Listen - Wait For Message\n");
-            iReaderController.Read(iMessage);
-            LOG(kBonjour, "Bonjour             Listen - Message Received\n");
 
-            TByte* ptr = (TByte*)iMessage.Ptr();
-            TUint bytes = iMessage.Bytes();
-            Endpoint sender = iReaderController.Sender();
-            SetAddress(src, sender);
-            SetPort(srcport, sender);
-            iInterfacesLock.Wait();
-            TIpAddress senderAddr = sender.Address();
-            mDNSInterfaceID interfaceId = (mDNSInterfaceID)0;
-            for (TUint i=0; i<(TUint)iInterfaces.size(); i++) {
-                if (iInterfaces[i]->ContainsAddress(senderAddr)) {
+    TBool waitOnReady = false;
+
+    while (!iStop) {
+
+        if (waitOnReady) {
+            iSemReaderReady.Wait();
+            waitOnReady = false;
+        }
+
+        iMulticastLock.AcquireReadLock();
+        if (iReader == NULL) {
+            waitOnReady = true;
+        }
+        else {
+            try {
+                LOG(kBonjour, "Bonjour             Listen - Wait For Message\n");
+                iReaderController->Read(iMessage);
+                LOG(kBonjour, "Bonjour             Listen - Message Received\n");
+
+                TByte* ptr = (TByte*)iMessage.Ptr();
+                TUint bytes = iMessage.Bytes();
+                Endpoint sender = iReaderController->Sender();
+                SetAddress(src, sender);
+                SetPort(srcport, sender);
+                iInterfacesLock.Wait();
+                TIpAddress senderAddr = sender.Address();
+                mDNSInterfaceID interfaceId = (mDNSInterfaceID)0;
+                for (TUint i=0; i<(TUint)iInterfaces.size(); i++) {
+                    if (iInterfaces[i]->ContainsAddress(senderAddr)) {
 #ifndef DEFINE_WINDOWS_UNIVERSAL
-                    interfaceId = (mDNSInterfaceID)iInterfaces[i]->Address();
+                        interfaceId = (mDNSInterfaceID)iInterfaces[i]->Address();
 #endif // DEFINE_WINDOWS_UNIVERSAL
-                    break;
+                        break;
+                    }
+                }
+                iInterfacesLock.Signal();
+                if (interfaceId != (mDNSInterfaceID)0) {
+                    mDNSCoreReceive(iMdns, ptr, ptr + bytes, &src, srcport, &dst, dstport, interfaceId);
+                }
+                iReaderController->ReadFlush();
+            }
+            catch (ReaderError) {
+                if (!iStop) {
+                    LOG(kBonjour, "Bonjour             Listen - Reader Error\n");
                 }
             }
-            iInterfacesLock.Signal();
-            if (interfaceId != (mDNSInterfaceID)0) {
-                mDNSCoreReceive(iMdns, ptr, ptr + bytes, &src, srcport, &dst, dstport, interfaceId);
-            }
-            iReaderController.ReadFlush();
         }
-        catch (ReaderError) {
-            if (!iStop) {
-                LOG(kBonjour, "Bonjour             Listen - Reader Error\n");
-            }
-        }
+        iMulticastLock.ReleaseReadLock();
     }
 }
 
@@ -678,19 +803,12 @@ MdnsPlatform::Status MdnsPlatform::Init()
     Functor functorAdapter = MakeFunctor(*this, &MdnsPlatform::CurrentAdapterChanged);
     iCurrentAdapterChangeListenerId = nifList.AddCurrentChangeListener(functorAdapter, "MdnsPlatform-current");
 
-    NetworkAdapter* current = iEnv.NetworkAdapterList().CurrentAdapter(kNifCookie);
-    if (current == NULL) { // Listening on all adapters.
-        std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
-        for (TUint i=0; i<(TUint)subnetList->size() && status==mStatus_NoError; i++) {
-            status = AddInterface((*subnetList)[i]);
-        }
-        nifList.DestroySubnetList(subnetList);
-    }
-    else { // Using a single adapter.
-        status = AddInterface(current);
-        iClient.SetMulticastIf(current->Address());
-        current->RemoveRef(kNifCookie);
-    }
+    // Attempt initial bind of multicast adapters, as subnet list changed and current adapter changed callbacks do not happen on registration.
+    std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
+    // This will throw NetworkAdapter if there is a valid (non-localhost) adapter which is unable to listen for multicast.
+    // Allow exception to bubble up, as can't use mDNS without listening for multicast!
+    RebindMulticastAdapters(*subnetList);
+    nifList.DestroySubnetList(subnetList);
 
     iInterfacesLock.Signal();
     if (status == mStatus_NoError) {
@@ -737,7 +855,16 @@ void MdnsPlatform::Close()
     ASSERT(iTimerDisabled);
     iStop = true;
     iThreadListen->Kill();
-    iReader.Interrupt(true);
+
+    {
+        iMulticastLock.AcquireReadLock();
+        if (iReader != NULL) {
+            iReader->Interrupt(true);
+        }
+        iMulticastLock.ReleaseReadLock();
+    }
+    iSemReaderReady.Signal();
+
     delete iThreadListen;
 
     iThreadService->Kill();

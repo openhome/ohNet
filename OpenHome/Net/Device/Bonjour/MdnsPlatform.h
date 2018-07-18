@@ -49,6 +49,22 @@ public:
     virtual ~IMdnsDeviceListener() {}
 };
 
+class ReadWriteLock
+{
+public:
+    ReadWriteLock(const TChar* aId);
+public:
+    void AcquireReadLock();
+    void ReleaseReadLock();
+    void AcquireWriteLock();
+    void ReleaseWriteLock();
+private:
+    const TChar* iId;
+    TUint iReaderCount;
+    Mutex iLockReaders;
+    Mutex iLockWriter;
+};
+
 class MdnsPlatform
 {
     typedef mStatus Status;
@@ -88,6 +104,7 @@ private:
     Status AddInterface(NetworkAdapter* aNif);
     TInt InterfaceIndex(const NetworkAdapter& aNif);
     TInt InterfaceIndex(const NetworkAdapter& aNif, const std::vector<NetworkAdapter*>& aList);
+    void RebindMulticastAdapters(std::vector<NetworkAdapter*>& aAdapters);
     static TBool NifsMatch(const NetworkAdapter& aNif1, const NetworkAdapter& aNif2);
     static void SetAddress(mDNSAddr& aAddress, const Endpoint& aEndpoint);
     static void SetPort(mDNSIPPort& aPort, const Endpoint& aEndpoint);
@@ -167,8 +184,13 @@ private:
     Timer* iTimer;
     Mutex iTimerLock;
     Endpoint iMulticast;
-    SocketUdpMulticast iReader;
-    UdpReader iReaderController;
+
+    // iReader and iReaderController must be protected by iMulticastLock.
+    SocketUdpMulticast* iReader;
+    UdpReader* iReaderController;
+    ReadWriteLock iMulticastLock;
+    Semaphore iSemReaderReady;
+
     SocketUdp iClient;
     mDNS* iMdns;
     Mutex iInterfacesLock;
