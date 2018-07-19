@@ -79,7 +79,6 @@ class MulticastListener : private INonCopyable
 {
 private:
     static const TUint kMaxMessageBytes = 4096;
-    static const Endpoint kMulticast;
 public:
     MulticastListener(Environment& aEnv, IMdnsMulticastPacketReceiver& aReceiver);
     ~MulticastListener();
@@ -95,6 +94,7 @@ public:
 private:
     void ThreadListen();
 private:
+    const Endpoint iMulticast;
     Environment& iEnv;
     IMdnsMulticastPacketReceiver& iReceiver;
 

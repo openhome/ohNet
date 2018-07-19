@@ -223,10 +223,10 @@ void ReadWriteLock::ReleaseWriteLock()
 // MulticastListener
 
 const TUint MulticastListener::kMaxMessageBytes;
-const Endpoint MulticastListener::kMulticast(5353, Brn("224.0.0.251"));
 
 MulticastListener::MulticastListener(Environment& aEnv, IMdnsMulticastPacketReceiver& aReceiver)
-    : iEnv(aEnv)
+    : iMulticast(5353, Brn("224.0.0.251"))
+    , iEnv(aEnv)
     , iReceiver(aReceiver)
     , iReader(NULL)
     , iReaderController(NULL)
@@ -320,7 +320,7 @@ void MulticastListener::Bind(TIpAddress aAddress)
 
     LOG(kBonjour, "MulticastListener::Bind aAddress: %u (%u.%u.%u.%u)\n", aAddress, addrOctets[0], addrOctets[1], addrOctets[2], addrOctets[3]);
     try {
-        iReader = new SocketUdpMulticast(iEnv, aAddress, kMulticast);
+        iReader = new SocketUdpMulticast(iEnv, aAddress, iMulticast);
         iReaderController = new UdpReader(*iReader);
         iSemReader.Signal();
         LOG(kBonjour, "MulticastListener::Bind successfully created multicast socket on %u.%u.%u.%u\n", addrOctets[0], addrOctets[1], addrOctets[2], addrOctets[3]);
@@ -362,7 +362,7 @@ void MulticastListener::ThreadListen()
                 iReaderController->Read(iMessage);
                 LOG(kBonjour, "MulticastListener::ThreadListen - Message Received\n");
                 const Endpoint src = iReaderController->Sender();
-                iReceiver.ReceiveMulticastPacket(iMessage, src, kMulticast);
+                iReceiver.ReceiveMulticastPacket(iMessage, src, iMulticast);
 
                 iReaderController->ReadFlush();
             }
