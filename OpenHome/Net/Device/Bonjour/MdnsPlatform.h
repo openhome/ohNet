@@ -65,6 +65,9 @@ private:
     Mutex iLockWriter;
 };
 
+/*
+ * Implementation must be thread-safe, as there may be multiple callers on different threads.
+ */
 class IMdnsMulticastPacketReceiver
 {
 public:
@@ -72,7 +75,7 @@ public:
     virtual void ReceiveMulticastPacket(const Brx& aMsg, const Endpoint aSrc, const Endpoint aDst) = 0;
 };
 
-class MulticastListener
+class MulticastListener : private INonCopyable
 {
 private:
     static const TUint kMaxMessageBytes = 4096;
@@ -104,6 +107,33 @@ private:
     ThreadFunctor* iThreadListen;
     Bws<kMaxMessageBytes> iMessage;
     TBool iStop;
+    Mutex iLock;
+};
+
+class MulticastListeners : private INonCopyable
+{
+private:
+    static const TUint kPreAllocatedListenerCount = 0;
+public:
+    MulticastListeners(Environment& aEnv, IMdnsMulticastPacketReceiver& aReceiver);
+    ~MulticastListeners();
+public:
+    void Start();
+    void Stop();
+    /*
+     * THROWS NetworkError if failure to bind to any adapter.
+     *
+     * This must be called on ANY subnet list change or adapter change event to
+     * allow this class to determine what adapters have appeared/disappeared
+     * and bind/unbind as appropriate to/from those adapters.
+     */
+    void Rebind(std::vector<NetworkAdapter*>& aAdapters);
+private:
+    Environment& iEnv;
+    IMdnsMulticastPacketReceiver& iReceiver;
+    TBool iStarted;
+    TBool iStopped;
+    std::vector<MulticastListener*> iListeners;
     Mutex iLock;
 };
 
@@ -146,7 +176,6 @@ private:
     Status AddInterface(NetworkAdapter* aNif);
     TInt InterfaceIndex(const NetworkAdapter& aNif);
     TInt InterfaceIndex(const NetworkAdapter& aNif, const std::vector<NetworkAdapter*>& aList);
-    void RebindMulticastAdapters(std::vector<NetworkAdapter*>& aAdapters);
     static TBool NifsMatch(const NetworkAdapter& aNif1, const NetworkAdapter& aNif2);
     static void SetAddress(mDNSAddr& aAddress, const Endpoint& aEndpoint);
     static void SetPort(mDNSIPPort& aPort, const Endpoint& aEndpoint);
@@ -224,7 +253,7 @@ private:
     MutexRecursive iMutex;
     Timer* iTimer;
     Mutex iTimerLock;
-    MulticastListener iListener;
+    MulticastListeners iListeners;
     SocketUdp iClient;
     mDNS* iMdns;
     Mutex iInterfacesLock;
@@ -247,6 +276,7 @@ private:
     std::vector<void*> iDynamicCache;
     Mutex iDiscoveryLock;
     TInt iPrevTimerRequest;
+    Mutex iMulticastReceiveLock;
 };
 
 } // namespace Net
