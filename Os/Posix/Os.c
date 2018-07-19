@@ -119,6 +119,8 @@ OsContext* OsCreate(OsThreadSchedulePolicy aSchedulerPolicy)
     ctx->iThreadPriorityMin = 0;
 
 #if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD)
+    aContext->iDnsRefreshHandle = NULL;
+    aContext->iDnsRefreshThread = NULL;
     InitDnsRefreshThread(ctx);
 #endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD */
 
