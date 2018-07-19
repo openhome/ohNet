@@ -18,8 +18,11 @@
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD)
-# include <linux/netlink.h>
-# include <linux/rtnetlink.h>
+#include <linux/netlink.h>
+#include <linux/rtnetlink.h>
+#include <sys/inotify.h>
+#include <arpa/nameser.h>
+#include <resolv.h>
 #endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD */
 #include <arpa/inet.h>
 #include <netdb.h>
@@ -66,6 +69,12 @@
 # define MAX_FILE_DESCRIPTOR __FD_SETSIZE
 #endif
 
+#if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD)
+static void DnsRefreshThread(void* aPtr);
+#endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD */
+
+typedef struct OsNetworkHandle OsNetworkHandle;
+
 struct OsContext {
     struct timeval iStartTime; /* Time OsCreate was called */
     struct timeval iPrevTime; /* Last time OsTimeInUs() was called */
@@ -76,9 +85,17 @@ struct OsContext {
     pthread_key_t iThreadArgKey;
     struct InterfaceChangedObserver* iInterfaceChangedObserver;
     int32_t iThreadPriorityMin;
+
+#if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD)
+    OsNetworkHandle* iDnsRefreshHandle;
+    THandle iDnsRefreshThread;
+#endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD */
 };
 
+
 static void DestroyInterfaceChangedObserver(OsContext* aContext);
+static void InitDnsRefreshThread(OsContext* aContext);
+static void DestroyDnsRefreshThread(OsContext* aContext);
 
 
 OsContext* OsCreate(OsThreadSchedulePolicy aSchedulerPolicy)
@@ -100,12 +117,22 @@ OsContext* OsCreate(OsThreadSchedulePolicy aSchedulerPolicy)
     }
     ctx->iInterfaceChangedObserver = NULL;
     ctx->iThreadPriorityMin = 0;
+
+#if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD)
+    InitDnsRefreshThread(ctx);
+#endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD */
+
     return ctx;
 }
 
 void OsDestroy(OsContext* aContext)
 {
     if (aContext != NULL) {
+
+#if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD)
+        DestroyDnsRefreshThread(aContext);
+#endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD */
+
         DestroyInterfaceChangedObserver(aContext);
         pthread_key_delete(aContext->iThreadArgKey);
         OsMutexDestroy(aContext->iMutex);
@@ -992,21 +1019,31 @@ THandle OsNetworkAccept(THandle aHandle, TIpAddress* aClientAddress, uint32_t* a
 
 int32_t OsNetworkGetHostByName(const char* aAddress, TIpAddress* aHost)
 {
-    int32_t ret = 0;
     struct addrinfo *res;
     struct addrinfo hints;
     memset(&hints, 0, sizeof(hints));
     hints.ai_family = AF_INET;
-    if (0 != getaddrinfo(aAddress, NULL, &hints, &res)) {
-        ret = -1;
-        *aHost = 0;
-    }
-    else {
+
+    if (getaddrinfo(aAddress, NULL, &hints, &res) == 0) {
         struct sockaddr_in* s = (struct sockaddr_in*)res->ai_addr;
         *aHost = s->sin_addr.s_addr;
         freeaddrinfo(res);
-    }    
-    return ret;
+        return 0;
+    }
+
+    // getaddinfo() failed, possibly because configuration is stale and configuration files need to be re-read.
+    // Try re-read configuration files.
+    if (res_init() == 0) {
+        // Configuration files were re-read. Try getaddrinfo() again.
+        if (getaddrinfo(aAddress, NULL, &hints, &res) == 0) {
+            struct sockaddr_in* s = (struct sockaddr_in*)res->ai_addr;
+            *aHost = s->sin_addr.s_addr;
+            freeaddrinfo(res);
+            return 0;
+        }
+    }
+    *aHost = 0;
+    return -1;
 }
 
 int32_t OsNetworkSocketSetSendBufBytes(THandle aHandle, uint32_t aBytes)
@@ -1142,6 +1179,7 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
     /* ...then allocate/populate the list */
     OsNetworkAdapter* head = NULL;
     OsNetworkAdapter* tail = NULL;
+
     for (iter = networkIf; iter != NULL; iter = iter->ifa_next) {
         if (iter->ifa_addr == NULL || iter->ifa_addr->sa_family != AF_INET ||
             (iter->ifa_flags & IFF_RUNNING) == 0 ||
@@ -1385,9 +1423,14 @@ void adapterChangeObserverThread(void* aPtr)
                 while (NLMSG_OK(nlh, len) && (nlh->nlmsg_type != NLMSG_DONE)) {
                     if (nlh->nlmsg_type == RTM_NEWADDR || 
                         nlh->nlmsg_type == RTM_DELADDR || 
-                        nlh->nlmsg_type == RTM_NEWLINK) {              
+                        nlh->nlmsg_type == RTM_NEWLINK) {
+
+                        // Adapter change; speculatively attempt to reload resolver configuration.
+                        (void)res_init();
+
                         observer->iCallback(observer->iArg);
                     }
+
                     nlh = NLMSG_NEXT(nlh, len);
                 }
             }
@@ -1410,7 +1453,6 @@ static void DestroyInterfaceChangedObserver_Linux(OsContext* aContext)
             ThreadJoin(aContext->iInterfaceChangedObserver->iThread);
             OsThreadDestroy(aContext->iInterfaceChangedObserver->iThread);
         }
-                   
         OsNetworkClose(aContext->iInterfaceChangedObserver->netHnd);
 
         free(aContext->iInterfaceChangedObserver);
@@ -1464,6 +1506,97 @@ Error:
     DestroyInterfaceChangedObserver_Linux(aContext);
 }
 
+static void InitDnsRefreshThread(OsContext* aContext)
+{
+    assert(aContext != NULL);
+    uint32_t minPrio, maxPrio;
+    OsThreadGetPriorityRange(aContext, &minPrio, &maxPrio);
+
+    assert(aContext->iDnsRefreshHandle == NULL);
+    assert(aContext->iDnsRefreshThread == NULL);
+
+    const int32_t fd = inotify_init();
+    if (fd != -1) {
+        OsNetworkHandle* handle = aContext->iDnsRefreshHandle = CreateHandle(aContext, fd);
+        if (handle != NULL) {
+            aContext->iDnsRefreshHandle = handle;
+            aContext->iDnsRefreshThread = DoThreadCreate(aContext,
+                                                         "DnsRefreshThread",
+                                                         (maxPrio - minPrio) / 2,   // Same as adapterChangeObserverThread
+                                                         16 * 1024,                 // Same as adapterChangeObserverThread
+                                                         1,                         // Joinable
+                                                         DnsRefreshThread,
+                                                         handle);
+        }
+        else {
+            close(fd);
+        }
+    }
+}
+
+static void DestroyDnsRefreshThread(OsContext* aContext)
+{
+    assert(aContext != NULL);
+    if (aContext->iDnsRefreshThread != NULL) {
+        OsNetworkInterrupt(aContext->iDnsRefreshHandle, 1);
+        ThreadJoin(aContext->iDnsRefreshThread);
+        OsThreadDestroy(aContext->iDnsRefreshThread);
+    }
+    OsNetworkClose(aContext->iDnsRefreshHandle);
+    aContext->iDnsRefreshHandle = NULL;
+    aContext->iDnsRefreshThread = NULL;
+}
+
+void DnsRefreshThread(void* aPtr)
+{
+    /*
+     * glibc prior to 2.26 only reads in resolv.conf at startup.
+     *
+     * The result is that a resolv.conf which does not contain suitable entries
+     * for ohNet's use may be read in and will persist for the lifetime of the
+     * ohNet stack.
+     *
+     * This will manifest itself as calls to getaddrinfo() failing.
+     *
+     * To work around the above issue, manually watch for changes in
+     * resolv.conf and trigger res_init() to force glibc to reload resolv.conf.
+     */
+    OsNetworkHandle* handle = (OsNetworkHandle*) aPtr;
+    const int watchDesc = inotify_add_watch(handle->iSocket, "/etc/resolv.conf", IN_CLOSE_WRITE);
+
+    if (watchDesc != -1) {
+        // Watch descriptor was successfully created; start reading events.
+        const size_t bytesToRead = sizeof(struct inotify_event) + NAME_MAX + 1;
+        int32_t ret;
+        fd_set rfds, errfds;
+
+        for (;;) {
+            if (SocketInterrupted(handle)) {
+                // Quitting. Remove watcher.
+                (void)inotify_rm_watch(handle->iSocket, watchDesc);
+                return;
+            }
+
+            FD_ZERO(&rfds);
+            FD_SET(handle->iPipe[0], &rfds);
+            FD_SET(handle->iSocket, &rfds);
+
+            FD_ZERO(&errfds);
+            FD_SET(handle->iSocket, &errfds);
+
+            ret = TEMP_FAILURE_RETRY_2(select(nfds(handle), &rfds, NULL, &errfds, NULL), handle);
+            if ((ret > 0) && FD_ISSET(handle->iSocket, &rfds)) {
+                char* buffer[bytesToRead];
+                int32_t len = read(handle->iSocket, buffer, bytesToRead);
+                if (len > 0) {
+                    // Only one watcher. If len > 0, assume message is from that single watcher.
+                    res_init();
+                }
+            }
+        }
+    }
+}
+
 #endif /* !PLATFORM_MACOSX_GNU  && !PLATFORM_FREEBSD */
 
 static void DestroyInterfaceChangedObserver(OsContext* aContext)
@@ -1486,10 +1619,7 @@ void OsNetworkSetInterfaceChangedObserver(OsContext* aContext, InterfaceListChan
     SetInterfaceChangedObserver_MacDesktop(aContext, aCallback, aArg);
 # endif /* !PLATFORM_IOS */
 #elif defined(PLATFORM_FREEBSD)
-#else /* !PLATFOTM_MACOSX_GNU */
+#else /* !PLATFORM_MACOSX_GNU */
     SetInterfaceChangedObserver_Linux(aContext, aCallback, aArg);
-#endif /* PLATFOTM_MACOSX_GNU */
+#endif /* PLATFORM_MACOSX_GNU */
 }
-
-
-
