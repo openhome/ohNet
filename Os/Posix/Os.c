@@ -20,10 +20,12 @@
 #if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD)
 #include <linux/netlink.h>
 #include <linux/rtnetlink.h>
+#endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD */
+#if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD) && !defined(__ANDROID__)
 #include <sys/inotify.h>
 #include <arpa/nameser.h>
 #include <resolv.h>
-#endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD */
+#endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD && !defined(__ANDROID__) */
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <fcntl.h>
@@ -69,9 +71,9 @@
 # define MAX_FILE_DESCRIPTOR __FD_SETSIZE
 #endif
 
-#if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD)
+#if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD) && !defined(__ANDROID__)
 static void DnsRefreshThread(void* aPtr);
-#endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD */
+#endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD && !defined(__ANDROID__) */
 
 typedef struct OsNetworkHandle OsNetworkHandle;
 
@@ -86,10 +88,10 @@ struct OsContext {
     struct InterfaceChangedObserver* iInterfaceChangedObserver;
     int32_t iThreadPriorityMin;
 
-#if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD)
+#if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD) && !defined(__ANDROID__)
     OsNetworkHandle* iDnsRefreshHandle;
     THandle iDnsRefreshThread;
-#endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD */
+#endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD && !defined(__ANDROID__) */
 };
 
 
@@ -118,11 +120,11 @@ OsContext* OsCreate(OsThreadSchedulePolicy aSchedulerPolicy)
     ctx->iInterfaceChangedObserver = NULL;
     ctx->iThreadPriorityMin = 0;
 
-#if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD)
+#if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD) && !defined(__ANDROID__)
     ctx->iDnsRefreshHandle = NULL;
     ctx->iDnsRefreshThread = NULL;
     InitDnsRefreshThread(ctx);
-#endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD */
+#endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD && !defined(__ANDROID__) */
 
     return ctx;
 }
@@ -131,9 +133,9 @@ void OsDestroy(OsContext* aContext)
 {
     if (aContext != NULL) {
 
-#if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD)
+#if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD) && !defined(__ANDROID__)
         DestroyDnsRefreshThread(aContext);
-#endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD */
+#endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD && !defined(__ANDROID__) */
 
         DestroyInterfaceChangedObserver(aContext);
         pthread_key_delete(aContext->iThreadArgKey);
@@ -1033,7 +1035,7 @@ int32_t OsNetworkGetHostByName(const char* aAddress, TIpAddress* aHost)
         return 0;
     }
 
-#if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD)
+#if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD) && !defined(__ANDROID__)
     // getaddinfo() failed, possibly because configuration is stale and configuration files need to be re-read.
     // Try re-read configuration files.
     if (res_init() == 0) {
@@ -1045,7 +1047,7 @@ int32_t OsNetworkGetHostByName(const char* aAddress, TIpAddress* aHost)
             return 0;
         }
     }
-#endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD */
+#endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD && !defined(__ANDROID__) */
 
     *aHost = 0;
     return -1;
@@ -1511,6 +1513,11 @@ Error:
     DestroyInterfaceChangedObserver_Linux(aContext);
 }
 
+#endif /* !PLATFORM_MACOSX_GNU  && !PLATFORM_FREEBSD */
+
+
+#if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD) && !defined(__ANDROID__)
+
 static void InitDnsRefreshThread(OsContext* aContext)
 {
     assert(aContext != NULL);
@@ -1602,7 +1609,7 @@ void DnsRefreshThread(void* aPtr)
     }
 }
 
-#endif /* !PLATFORM_MACOSX_GNU  && !PLATFORM_FREEBSD */
+#endif /* !PLATFORM_MACOSX_GNU  && !PLATFORM_FREEBSD && !defined(__ANDROID__) */
 
 static void DestroyInterfaceChangedObserver(OsContext* aContext)
 {
