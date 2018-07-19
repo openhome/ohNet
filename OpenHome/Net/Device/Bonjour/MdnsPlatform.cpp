@@ -459,8 +459,8 @@ void MulticastListeners::Rebind(std::vector<NetworkAdapter*>& aAdapters)
             catch (const NetworkError&) {
                 // Failed to create multicast socket on adapter. Clear all listeners and rethrow exception.
                 LOG(kBonjour, "MulticastListeners::Rebind NetworkError creating multicast socket on %u.%u.%u.%u\n", addrOctets[0], addrOctets[1], addrOctets[2], addrOctets[3]);
-                for (TUint i=0; i<iListeners.size(); i++) {
-                    iListeners[i]->Clear();
+                for (TUint j=0; j<iListeners.size(); j++) {
+                    iListeners[j]->Clear();
                 }
                 throw;
             }
