@@ -1031,6 +1031,7 @@ int32_t OsNetworkGetHostByName(const char* aAddress, TIpAddress* aHost)
         return 0;
     }
 
+#if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD)
     // getaddinfo() failed, possibly because configuration is stale and configuration files need to be re-read.
     // Try re-read configuration files.
     if (res_init() == 0) {
@@ -1042,6 +1043,8 @@ int32_t OsNetworkGetHostByName(const char* aAddress, TIpAddress* aHost)
             return 0;
         }
     }
+#endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD */
+
     *aHost = 0;
     return -1;
 }
