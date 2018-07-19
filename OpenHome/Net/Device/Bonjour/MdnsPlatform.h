@@ -65,12 +65,53 @@ private:
     Mutex iLockWriter;
 };
 
-class MdnsPlatform
+class IMdnsMulticastPacketReceiver
+{
+public:
+    virtual ~IMdnsMulticastPacketReceiver() {}
+    virtual void ReceiveMulticastPacket(const Brx& aMsg, const Endpoint aSrc, const Endpoint aDst) = 0;
+};
+
+class MulticastListener
+{
+private:
+    static const TUint kMaxMessageBytes = 4096;
+    static const Endpoint kMulticast;
+public:
+    MulticastListener(Environment& aEnv, IMdnsMulticastPacketReceiver& aReceiver);
+    ~MulticastListener();
+    void Start();
+    void Stop();
+    void Clear();
+    /*
+     * THROWS NetworkError if failure to bind to aAddress.
+     *
+     * For anything other than the first call to Bind(), Clear() must have been called first.
+     */
+    void Bind(TIpAddress aAddress);
+private:
+    void ThreadListen();
+private:
+    Environment& iEnv;
+    IMdnsMulticastPacketReceiver& iReceiver;
+
+    // iReader and iReaderController must be protected by iMulticastLock.
+    SocketUdpMulticast* iReader;
+    UdpReader* iReaderController;
+    ReadWriteLock iMulticastLock;
+    Semaphore iSemReader;
+
+    ThreadFunctor* iThreadListen;
+    Bws<kMaxMessageBytes> iMessage;
+    TBool iStop;
+    Mutex iLock;
+};
+
+class MdnsPlatform : public IMdnsMulticastPacketReceiver
 {
     typedef mStatus Status;
 
     static const TUint kMaxHostBytes = 16;
-    static const TUint kMaxMessageBytes = 4096;
     static const TUint kMaxQueueLength = 25;
     static const TChar* kNifCookie;
 public:
@@ -94,9 +135,10 @@ public:
     void DeviceDiscovered(const Brx& aType, const Brx& aFriendlyName, const Brx& aUglyName, const Brx&  aIpAddress, TUint aPort); // called from extern C mDNS callback DNSResolveReply
     void AddMdnsDeviceListener(IMdnsDeviceListener* aListener);
     TBool FindDevices(const TChar* aServiceName);
+private: // from IMdnsMulticastPacketReceiver
+    void ReceiveMulticastPacket(const Brx& aMsg, const Endpoint aSrc, const Endpoint aDst);
 private:
     void ServiceThread();
-    void Listen();
     void TimerExpired();
     void SubnetListChanged();
     void CurrentAdapterChanged();
@@ -180,24 +222,15 @@ private:
     Brhz iHost;
     TBool iHasCache;
     MutexRecursive iMutex;
-    ThreadFunctor* iThreadListen;
     Timer* iTimer;
     Mutex iTimerLock;
-    Endpoint iMulticast;
-
-    // iReader and iReaderController must be protected by iMulticastLock.
-    SocketUdpMulticast* iReader;
-    UdpReader* iReaderController;
-    ReadWriteLock iMulticastLock;
-    Semaphore iSemReaderReady;
-
+    MulticastListener iListener;
     SocketUdp iClient;
     mDNS* iMdns;
     Mutex iInterfacesLock;
     std::vector<MdnsPlatform::Nif*> iInterfaces;
     TUint iSubnetListChangeListenerId;
     TUint iCurrentAdapterChangeListenerId;
-    Bws<kMaxMessageBytes> iMessage;
     typedef std::map<TUint, ServiceRecordSet*> Map;
     Mutex iServicesLock;
     Fifo<MdnsService*> iFifoFree;
