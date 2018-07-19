@@ -71,7 +71,13 @@
 # define MAX_FILE_DESCRIPTOR __FD_SETSIZE
 #endif
 
-typedef struct OsNetworkHandle OsNetworkHandle;
+typedef struct OsNetworkHandle
+{
+    int32_t    iSocket;
+    int32_t    iPipe[2];
+    int32_t    iInterrupted;
+    OsContext* iCtx;
+} OsNetworkHandle;
 
 struct OsContext {
     struct timeval iStartTime; /* Time OsCreate was called */
@@ -663,14 +669,6 @@ int32_t OsThreadSupportsPriorities(OsContext* aContext)
     }
     return 0;
 }
-
-typedef struct OsNetworkHandle
-{
-    int32_t    iSocket;
-    int32_t    iPipe[2];
-    int32_t    iInterrupted;
-    OsContext* iCtx;
-}OsNetworkHandle;
 
 static int nfds(const OsNetworkHandle* aHandle)
 {
