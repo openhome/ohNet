@@ -71,10 +71,6 @@
 # define MAX_FILE_DESCRIPTOR __FD_SETSIZE
 #endif
 
-#if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD) && !defined(__ANDROID__)
-static void DnsRefreshThread(void* aPtr);
-#endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD && !defined(__ANDROID__) */
-
 typedef struct OsNetworkHandle OsNetworkHandle;
 
 struct OsContext {
@@ -96,8 +92,10 @@ struct OsContext {
 
 
 static void DestroyInterfaceChangedObserver(OsContext* aContext);
+#if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD) && !defined(__ANDROID__)
 static void InitDnsRefreshThread(OsContext* aContext);
 static void DestroyDnsRefreshThread(OsContext* aContext);
+#endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD && !defined(__ANDROID__) */
 
 
 OsContext* OsCreate(OsThreadSchedulePolicy aSchedulerPolicy)
@@ -1432,8 +1430,10 @@ void adapterChangeObserverThread(void* aPtr)
                         nlh->nlmsg_type == RTM_DELADDR || 
                         nlh->nlmsg_type == RTM_NEWLINK) {
 
+#if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD) && !defined(__ANDROID__)
                         // Adapter change; speculatively attempt to reload resolver configuration.
                         (void)res_init();
+#endif /* !PLATFORM_MACOSX_GNU  && !PLATFORM_FREEBSD && !defined(__ANDROID__) */
 
                         observer->iCallback(observer->iArg);
                     }
@@ -1518,47 +1518,6 @@ Error:
 
 #if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD) && !defined(__ANDROID__)
 
-static void InitDnsRefreshThread(OsContext* aContext)
-{
-    assert(aContext != NULL);
-    uint32_t minPrio, maxPrio;
-    OsThreadGetPriorityRange(aContext, &minPrio, &maxPrio);
-
-    assert(aContext->iDnsRefreshHandle == NULL);
-    assert(aContext->iDnsRefreshThread == NULL);
-
-    const int32_t fd = inotify_init();
-    if (fd != -1) {
-        OsNetworkHandle* handle = aContext->iDnsRefreshHandle = CreateHandle(aContext, fd);
-        if (handle != NULL) {
-            aContext->iDnsRefreshHandle = handle;
-            aContext->iDnsRefreshThread = DoThreadCreate(aContext,
-                                                         "DnsRefreshThread",
-                                                         (maxPrio - minPrio) / 2,   // Same as adapterChangeObserverThread
-                                                         16 * 1024,                 // Same as adapterChangeObserverThread
-                                                         1,                         // Joinable
-                                                         DnsRefreshThread,
-                                                         handle);
-        }
-        else {
-            close(fd);
-        }
-    }
-}
-
-static void DestroyDnsRefreshThread(OsContext* aContext)
-{
-    assert(aContext != NULL);
-    if (aContext->iDnsRefreshThread != NULL) {
-        OsNetworkInterrupt(aContext->iDnsRefreshHandle, 1);
-        ThreadJoin(aContext->iDnsRefreshThread);
-        OsThreadDestroy(aContext->iDnsRefreshThread);
-    }
-    OsNetworkClose(aContext->iDnsRefreshHandle);
-    aContext->iDnsRefreshHandle = NULL;
-    aContext->iDnsRefreshThread = NULL;
-}
-
 void DnsRefreshThread(void* aPtr)
 {
     /*
@@ -1607,6 +1566,47 @@ void DnsRefreshThread(void* aPtr)
             }
         }
     }
+}
+
+static void InitDnsRefreshThread(OsContext* aContext)
+{
+    assert(aContext != NULL);
+    uint32_t minPrio, maxPrio;
+    OsThreadGetPriorityRange(aContext, &minPrio, &maxPrio);
+
+    assert(aContext->iDnsRefreshHandle == NULL);
+    assert(aContext->iDnsRefreshThread == NULL);
+
+    const int32_t fd = inotify_init();
+    if (fd != -1) {
+        OsNetworkHandle* handle = aContext->iDnsRefreshHandle = CreateHandle(aContext, fd);
+        if (handle != NULL) {
+            aContext->iDnsRefreshHandle = handle;
+            aContext->iDnsRefreshThread = DoThreadCreate(aContext,
+                                                         "DnsRefreshThread",
+                                                         (maxPrio - minPrio) / 2,   // Same as adapterChangeObserverThread
+                                                         16 * 1024,                 // Same as adapterChangeObserverThread
+                                                         1,                         // Joinable
+                                                         DnsRefreshThread,
+                                                         handle);
+        }
+        else {
+            close(fd);
+        }
+    }
+}
+
+static void DestroyDnsRefreshThread(OsContext* aContext)
+{
+    assert(aContext != NULL);
+    if (aContext->iDnsRefreshThread != NULL) {
+        OsNetworkInterrupt(aContext->iDnsRefreshHandle, 1);
+        ThreadJoin(aContext->iDnsRefreshThread);
+        OsThreadDestroy(aContext->iDnsRefreshThread);
+    }
+    OsNetworkClose(aContext->iDnsRefreshHandle);
+    aContext->iDnsRefreshHandle = NULL;
+    aContext->iDnsRefreshThread = NULL;
 }
 
 #endif /* !PLATFORM_MACOSX_GNU  && !PLATFORM_FREEBSD && !defined(__ANDROID__) */
