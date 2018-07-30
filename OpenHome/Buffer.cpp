@@ -282,6 +282,16 @@ void OpenHome::Bwx::AppendThrow(const Brx& aBuf)
     }
 }
 
+void OpenHome::Bwx::AppendThrow(const TChar* aStr)
+{
+    AppendThrow(Brn(aStr));
+}
+
+void OpenHome::Bwx::AppendThrow(const TByte* aPtr, TUint aBytes)
+{
+    AppendThrow(Brn(aPtr, aBytes));
+}
+
 TBool OpenHome::Bwx::TryAppend(TChar aChar)
 {
     if ((iMaxBytes-Bytes())<1)

@@ -470,6 +470,7 @@ class ReaderHttpChunked : public IReader
 public:
     ReaderHttpChunked(IReader& aReader);
     void SetChunked(TBool aChunked);
+    TBool IsChunked() const;
 public: // from IReader
     Brn Read(TUint aBytes);
     void ReadFlush();

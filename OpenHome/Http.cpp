@@ -980,6 +980,11 @@ void ReaderHttpChunked::SetChunked(TBool aChunked)
     iChunkBytesRemaining = 0;
 }
 
+TBool ReaderHttpChunked::IsChunked() const
+{
+    return iChunked;
+}
+
 Brn ReaderHttpChunked::Read(TUint aBytes)
 {
     if (!iChunked) {
