@@ -239,6 +239,20 @@ MakeFunctorGeneric(Object& aC, void(CallType::* const &aF)(Type))
     return MemberTranslatorGeneric<Type,Object,MemFunc>(aC,aF);
     }
 
+class AutoFunctor
+{
+public:
+    AutoFunctor(Functor aFunctor)
+        : iFunctor(aFunctor)
+    {}
+    ~AutoFunctor()
+    {
+        iFunctor();
+    }
+private:
+    Functor iFunctor;
+};
+
 } // namespace OpenHome
 
 #endif // HEADER_FUNCTOR

@@ -11,35 +11,8 @@
 
 #include <stdlib.h>
 
-
-namespace OpenHome {
-namespace Net {
-class AutoFunctor
-{
-public:
-    AutoFunctor(Functor aFunctor);
-    ~AutoFunctor();
-private:
-    Functor iFunctor;
-};
-} // namespace Net
-} // namespace OpenHome
-
 using namespace OpenHome;
 using namespace OpenHome::Net;
-
-// AutoFunctor
-
-AutoFunctor::AutoFunctor(Functor aFunctor)
-    : iFunctor(aFunctor)
-{
-}
-
-AutoFunctor::~AutoFunctor()
-{
-    iFunctor();
-}
-
 
 // DvAction
 
