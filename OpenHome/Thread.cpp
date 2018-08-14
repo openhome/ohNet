@@ -111,7 +111,7 @@ Thread::Thread(const TChar* aName, TUint aPriority, TUint aStackBytes)
     , iKillMutex("KMTX")
 {
     ASSERT(aName != NULL);
-    const TUint bytes = std::min(iName.MaxBytes(), (TUint)strlen(aName));
+    const TUint bytes = std::min(iName.MaxBytes()-1, (TUint)strlen(aName));
     iName.Replace((TByte*)aName, bytes);
     iName.PtrZ();
     const TUint priority = OpenHome::gEnv->PriorityArbitrator().CalculatePriority(aName, aPriority);
