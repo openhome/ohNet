@@ -509,7 +509,16 @@ void CpiDeviceListUpdater::Run()
         UpdateBase* update = iList.front();
         iList.pop_front();
         iLock.Signal();
-        update->Update();
+        try {
+            update->Update();
+        }
+        catch (AssertionFailed&) {
+            throw;
+        }
+        catch (Exception& ex) {
+            LOG_ERROR(kDevice, "CpiDeviceListUpdater::Run exception - %s - from %s:%d\n",
+                               ex.Message(), ex.File(), ex.Line());
+        }
         delete update;
     }
 }
