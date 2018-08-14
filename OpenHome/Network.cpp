@@ -237,6 +237,14 @@ void Socket::LogVerbose(TBool aLog, TBool aHex)
     }
 }
 
+void Socket::Create(Environment& aEnv, ESocketType aSocketType)
+{
+    THandle handle = SocketCreate(aEnv, aSocketType);
+    iLock.Wait();
+    iHandle = handle;
+    iLock.Signal();
+}
+
 void Socket::Send(const Brx& aBuffer)
 {
     LOG_TRACE(kNetwork, "Socket::Send  H = %d, BC = %d\n", iHandle, aBuffer.Bytes());
@@ -525,7 +533,7 @@ void SocketTcpClient::Open(Environment& aEnv)
 {
     ASSERT(iHandle == kHandleNull);     // Ensure there isn't an open socket handle that's about to be leaked.
     LOG_TRACE(kNetwork, "SocketTcpClient::Open\n");
-    iHandle = SocketCreate(aEnv, eSocketTypeStream);
+    Create(aEnv, eSocketTypeStream);
     TryNetworkTcpSetNoDelay(iHandle);
 }
 
@@ -753,7 +761,7 @@ void SocketUdpBase::ReCreate()
 void SocketUdpBase::Create()
 {
     ASSERT(iHandle == kHandleNull);     // Ensure there isn't an open socket handle that's about to be leaked.
-    iHandle = SocketCreate(iEnv, eSocketTypeDatagram);
+    Socket::Create(iEnv, eSocketTypeDatagram);
     OpenHome::Os::NetworkSocketSetReuseAddress(iHandle);
 }
 

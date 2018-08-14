@@ -86,6 +86,7 @@ public:
 protected:
     Socket();
     virtual ~Socket() {}
+    void Create(Environment& aEnv, ESocketType aSocketType);
     void Send(const Brx& aBuffer);
     void SendTo(const Brx& aBuffer, const Endpoint& aEndpoint);
     void Receive(Bwx& aBuffer);
