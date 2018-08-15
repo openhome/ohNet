@@ -596,7 +596,7 @@ DviSessionUpnp::DviSessionUpnp(DvStack& aDvStack, TIpAddress aInterface, TUint a
     iReadBuffer = new Srs<1024>(*this);
     iReaderUntil = new ReaderUntilS<4096>(*iReadBuffer);
     iReaderRequest = new ReaderHttpRequest(aDvStack.Env(), *iReaderUntil);
-    iDechunker = new ReaderHttpChunked(*iReaderUntil);
+    iReaderEntity = new ReaderHttpEntity(*iReaderUntil);
     iWriterChunked = new WriterHttpChunked(*this);
     iWriterBuffer = new Sws<kMaxResponseBytes>(*iWriterChunked);
     iWriterResponse = new WriterHttpResponse(*iWriterBuffer);
@@ -628,7 +628,7 @@ DviSessionUpnp::~DviSessionUpnp()
     delete iWriterResponse;
     delete iWriterBuffer;
     delete iWriterChunked;
-    delete iDechunker;
+    delete iReaderEntity;
     delete iReaderRequest;
     delete iReaderUntil;
     delete iReadBuffer;
@@ -643,8 +643,7 @@ void DviSessionUpnp::Run()
     iInvocationService = NULL;
     iResourceWriterHeadersOnly = false;
     iSoapRequest.SetBytes(0);
-    iDechunker->SetChunked(false);
-    iDechunker->ReadFlush();
+    iReaderEntity->ReadFlush();
     iResponseStarted = false;
     iResponseEnded = false;
     Brn method;
@@ -780,31 +779,20 @@ void DviSessionUpnp::Post()
                 iWriterResponse->WriteStatus(HttpStatus::kContinue, Http::eHttp11);
                 iWriterResponse->WriteFlush();
             }
-            if (iHeaderContentLength.ContentLength() != 0) {
-                TUint remaining = iHeaderContentLength.ContentLength();
-                do {
-                    Brn buf = iReaderUntil->Read(remaining);
-                    iSoapRequest.Append(buf);
-                    remaining -= buf.Bytes();
-                } while (remaining > 0);
-            }
-            else if (!iHeaderTransferEncoding.IsChunked()) {
-                iErrorStatus = &HttpStatus::kLengthRequired;
-                THROW(HttpError);
-            }
-            else {
-                iDechunker->SetChunked(true);
-                for (;;) {
-                    Brn buf = iDechunker->Read(kMaxRequestBytes); // expect much less than this to be returned
-                    if (buf.Bytes() == 0) { // end of stream
-                        break;
-                    }
-                    if (iSoapRequest.Bytes() + buf.Bytes() > iSoapRequest.MaxBytes()) {
-                        iErrorStatus = &HttpStatus::kRequestEntityTooLarge;
-                        THROW(ReaderError);
-                    }
-                    iSoapRequest.Append(buf);
+
+            iErrorStatus = &HttpStatus::kLengthRequired;
+            iReaderEntity->Set(iHeaderContentLength, iHeaderTransferEncoding, ReaderHttpEntity::Server);
+            iErrorStatus = &HttpStatus::kOk;
+            for (;;) {
+                Brn buf = iReaderEntity->Read(kMaxRequestBytes); // expect much less than this to be returned
+                if (buf.Bytes() == 0) { // end of stream
+                    break;
                 }
+                if (iSoapRequest.Bytes() + buf.Bytes() > iSoapRequest.MaxBytes()) {
+                    iErrorStatus = &HttpStatus::kRequestEntityTooLarge;
+                    THROW(ReaderError);
+                }
+                iSoapRequest.Append(buf);
             }
 
             Invoke();

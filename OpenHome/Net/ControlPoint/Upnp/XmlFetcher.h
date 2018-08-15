@@ -64,6 +64,7 @@ private:
     Srs<1024> iReadBuffer;
     ReaderUntilS<1024> iReaderUntil;
     ReaderHttpChunked iDechunker;
+    ReaderHttpEntity iReaderEntity;
 
     friend class XmlFetchManager;
 };

@@ -1025,6 +1025,117 @@ void ReaderHttpChunked::ReadInterrupt()
 }
 
 
+// ReaderHttpEntity
+
+ReaderHttpEntity::ReaderHttpEntity(IReader& aReader)
+    : iReader(aReader)
+    , iDechunker(aReader)
+    , iBytesToRead(0)
+    , iChunked(false)
+    , iUnknownLength(false)
+{
+}
+
+void ReaderHttpEntity::Set(const HttpHeaderContentLength& aHeaderContentLength,
+                           const HttpHeaderTransferEncoding& aHeaderTransferEncoding,
+                           Mode aMode)
+{
+    if (aHeaderTransferEncoding.IsChunked()) {
+        SetChunked();
+    }
+    else {
+        const TUint contentLength = aHeaderContentLength.ContentLength();
+        if (contentLength > 0) {
+            SetContentLength(contentLength);
+        }
+        else {
+            if (aMode == Server) {
+                THROW(HttpError);
+            }
+            SetUnknownLength();
+        }
+    }
+}
+
+void ReaderHttpEntity::SetChunked()
+{
+    iBytesToRead = 0;
+    iChunked = true;
+    iUnknownLength = false;
+}
+
+void ReaderHttpEntity::SetContentLength(TUint aBytes)
+{
+    iBytesToRead = aBytes;
+    iChunked = false;
+    iUnknownLength = false;
+}
+
+void ReaderHttpEntity::SetUnknownLength()
+{
+    iBytesToRead = 0;
+    iChunked = false;
+    iUnknownLength = true;
+}
+
+void ReaderHttpEntity::ReadAll(IWriter& aWriter,
+                               const HttpHeaderContentLength& aHeaderContentLength,
+                               const HttpHeaderTransferEncoding& aHeaderTransferEncoding,
+                               Mode aMode)
+{
+    Set(aHeaderContentLength, aHeaderTransferEncoding, aMode);
+    static const TUint kMaxReadBytes = 4 * 1024;
+    for (;;) {
+        Brn buf = Read(kMaxReadBytes);
+        if (buf.Bytes() == 0) { // end of stream
+            break;
+        }
+        aWriter.Write(buf);
+    }
+}
+
+Brn ReaderHttpEntity::Read(TUint aBytes)
+{
+    if (iChunked) {
+        return iDechunker.Read(aBytes);
+    }
+    else if (iUnknownLength) {
+        Brn buf;
+        try {
+            buf.Set(iReader.Read(aBytes));
+        }
+        catch (ReaderError&) {}
+        return buf;
+    }
+    else {
+        Brn buf;
+        if (iBytesToRead == 0) {
+            return buf;
+        }
+        buf.Set(iReader.Read(aBytes));
+        iBytesToRead -= buf.Bytes();
+        return buf;
+    }
+}
+
+void ReaderHttpEntity::ReadFlush()
+{
+    // always pass the flush through the dechunker - this does no harm and
+    // allows for clients who reset state before flushing
+    iDechunker.ReadFlush();
+}
+
+void ReaderHttpEntity::ReadInterrupt()
+{
+    if (iChunked) {
+        iDechunker.ReadInterrupt();
+    }
+    else {
+        iReader.ReadInterrupt();
+    }
+}
+
+
 // WriterHttpChunked
 
 WriterHttpChunked::WriterHttpChunked(IWriter& aWriter)

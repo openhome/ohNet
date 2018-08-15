@@ -236,7 +236,7 @@ private:
     Srx* iReadBuffer;
     ReaderUntil* iReaderUntil;
     ReaderHttpRequest* iReaderRequest;
-    ReaderHttpChunked* iDechunker;
+    ReaderHttpEntity* iReaderEntity;
     WriterHttpChunked* iWriterChunked;
     Sws<kMaxResponseBytes>* iWriterBuffer;
     WriterHttpResponse* iWriterResponse;

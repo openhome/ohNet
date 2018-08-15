@@ -161,6 +161,7 @@ XmlFetch::XmlFetch(CpStack& aCpStack)
     , iReadBuffer(iSocket)
     , iReaderUntil(iReadBuffer)
     , iDechunker(iReaderUntil)
+    , iReaderEntity(iReaderUntil)
 {
 }
 
@@ -179,7 +180,7 @@ void XmlFetch::WriteRequest()
 
 void XmlFetch::Read()
 {
-    iDechunker.ReadFlush();
+    iReaderEntity.ReadFlush();
     ReaderHttpResponse readerResponse(iCpStack.Env(), iReaderUntil);
     HttpHeaderContentLength headerContentLength;
     HttpHeaderTransferEncoding headerTransferEncoding;
@@ -201,35 +202,8 @@ void XmlFetch::Read()
 
     WriterBwh writer(1024);
     static const TUint kMaxReadBytes = 4 * 1024;
-    if (headerTransferEncoding.IsChunked()) {
-        iDechunker.SetChunked(true);
-        for (;;) {
-            Brn buf = iDechunker.Read(kMaxReadBytes);
-            writer.Write(buf);
-            if (buf.Bytes() == 0) { // end of stream
-                break;
-            }
-        }
-    }
-    else {
-        TUint remaining = headerContentLength.ContentLength();
-        if (remaining == 0) { // no content length - read until connection closed by server
-            try {
-                for (;;) {
-                    writer.Write(iReaderUntil.Read(kMaxReadBytes));
-                }
-            }
-            catch (ReaderError&) {
-            }
-        }
-        else {
-            do {
-                Brn buf = iReaderUntil.Read(kMaxReadBytes);
-                remaining -= buf.Bytes();
-                writer.Write(buf);
-            } while (remaining > 0);
-        }
-    }
+    iReaderEntity.ReadAll(writer, headerContentLength, headerTransferEncoding,
+                          ReaderHttpEntity::Client);
     writer.TransferTo(iXml);
 }
 
