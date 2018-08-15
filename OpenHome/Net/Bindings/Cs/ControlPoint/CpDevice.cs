@@ -248,9 +248,9 @@ namespace OpenHome.Net.ControlPoint
             {
                 aDelegate(aList, aDevice);
             }
-            catch (ProxyError e)
+            catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("WARNING: ProxyError thrown in device list change delegate: {0}", new object[] { e });
+                System.Diagnostics.Debug.WriteLine(String.Format("WARNING: Unhandled exception in device list change delegate.\n\tDevice is {0}\n\tException is {1}", aDevice.Udn(), new object[] { e }));
             }
         }
     }
