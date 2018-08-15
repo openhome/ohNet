@@ -52,6 +52,10 @@ CpiService::~CpiService()
     iLock.Signal();
     if (wait) {
         iShutdownSignal.Wait();
+        // iShutdownSignal is signalled with iLock held. Claim iLock one final time
+        // to ensure that signalling thread has released the lock before we destroy it.
+        iLock.Wait();
+        iLock.Signal();
     }
     Environment& env = iDevice.GetCpStack().Env();
     iDevice.RemoveRef();
