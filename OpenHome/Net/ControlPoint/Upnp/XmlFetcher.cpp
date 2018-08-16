@@ -201,7 +201,6 @@ void XmlFetch::Read()
     }
 
     WriterBwh writer(1024);
-    static const TUint kMaxReadBytes = 4 * 1024;
     iReaderEntity.ReadAll(writer, headerContentLength, headerTransferEncoding,
                           ReaderHttpEntity::Client);
     writer.TransferTo(iXml);
