@@ -589,12 +589,20 @@ WriterBuffer::WriterBuffer(Bwx& aBuffer)
 
 void WriterBuffer::Write(TByte aValue)
 {
+    if (iBuffer.Bytes() == iBuffer.MaxBytes()) {
+        THROW(WriterError);
+    }
     iBuffer.Append(aValue);
 }
 
 void WriterBuffer::Write(const Brx& aBuffer)
 {
-    iBuffer.Append(aBuffer);
+    try {
+        iBuffer.AppendThrow(aBuffer);
+    }
+    catch (BufferOverflow&) {
+        THROW(WriterError);
+    }
 }
 
 void WriterBuffer::WriteFlush()
