@@ -1078,12 +1078,8 @@ void ReaderHttpEntity::SetUnknownLength()
     iUnknownLength = true;
 }
 
-void ReaderHttpEntity::ReadAll(IWriter& aWriter,
-                               const HttpHeaderContentLength& aHeaderContentLength,
-                               const HttpHeaderTransferEncoding& aHeaderTransferEncoding,
-                               Mode aMode)
+void ReaderHttpEntity::ReadAll(IWriter& aWriter)
 {
-    Set(aHeaderContentLength, aHeaderTransferEncoding, aMode);
     static const TUint kMaxReadBytes = 4 * 1024;
     for (;;) {
         Brn buf = Read(kMaxReadBytes);
@@ -1092,6 +1088,15 @@ void ReaderHttpEntity::ReadAll(IWriter& aWriter,
         }
         aWriter.Write(buf);
     }
+}
+
+void ReaderHttpEntity::ReadAll(IWriter& aWriter,
+                               const HttpHeaderContentLength& aHeaderContentLength,
+                               const HttpHeaderTransferEncoding& aHeaderTransferEncoding,
+                               Mode aMode)
+{
+    Set(aHeaderContentLength, aHeaderTransferEncoding, aMode);
+    ReadAll(aWriter);
 }
 
 Brn ReaderHttpEntity::Read(TUint aBytes)

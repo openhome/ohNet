@@ -782,18 +782,10 @@ void DviSessionUpnp::Post()
 
             iErrorStatus = &HttpStatus::kLengthRequired;
             iReaderEntity->Set(iHeaderContentLength, iHeaderTransferEncoding, ReaderHttpEntity::Server);
+            iErrorStatus = &HttpStatus::kRequestEntityTooLarge;
+            WriterBuffer writer(iSoapRequest);
+            iReaderEntity->ReadAll(writer);
             iErrorStatus = &HttpStatus::kOk;
-            for (;;) {
-                Brn buf = iReaderEntity->Read(kMaxRequestBytes); // expect much less than this to be returned
-                if (buf.Bytes() == 0) { // end of stream
-                    break;
-                }
-                if (iSoapRequest.Bytes() + buf.Bytes() > iSoapRequest.MaxBytes()) {
-                    iErrorStatus = &HttpStatus::kRequestEntityTooLarge;
-                    THROW(ReaderError);
-                }
-                iSoapRequest.Append(buf);
-            }
 
             Invoke();
         }

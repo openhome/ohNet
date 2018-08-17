@@ -498,6 +498,7 @@ public:
     void SetChunked(); // 0 byte buffer implies all content read
     void SetContentLength(TUint aBytes); // 0 byte buffer implies all content read
     void SetUnknownLength(); // HTTP 1.0 client only.  0 byte buffer implies either all content read or error 
+    void ReadAll(IWriter& aWriter);
     void ReadAll(IWriter& aWriter,
                  const HttpHeaderContentLength& aHeaderContentLength,
                  const HttpHeaderTransferEncoding& aHeaderTransferEncoding,
