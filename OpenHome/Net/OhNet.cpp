@@ -317,6 +317,12 @@ void InitialisationParams::SetNumSubscriberThreads(uint32_t aNumThreads)
     iNumSubscriberThreads = aNumThreads;
 }
 
+void InitialisationParams::SetInvocationTimeout(uint32_t aMs)
+{
+    ASSERT(aMs > 0);
+    iInvocationTimeoutMs = aMs;
+}
+
 void InitialisationParams::SetSubscriptionDuration(uint32_t aDurationSecs)
 {
     ASSERT(aDurationSecs > 0);
@@ -527,6 +533,11 @@ uint32_t InitialisationParams::NumSubscriberThreads() const
     return iNumSubscriberThreads;
 }
 
+uint32_t InitialisationParams::InvocationTimeoutMs() const
+{
+    return iInvocationTimeoutMs;
+}
+
 uint32_t InitialisationParams::SubscriptionDurationSecs() const
 {
     return iSubscriptionDurationSecs;
@@ -658,6 +669,7 @@ InitialisationParams::InitialisationParams()
     , iNumActionInvokerThreads(4)
     , iNumInvocations(20)
     , iNumSubscriberThreads(4)
+    , iInvocationTimeoutMs(60 * 1000)
     , iSubscriptionDurationSecs(30 * 60)
     , iPendingSubscriptionTimeoutMs(2000)
     , iFreeExternal(NULL)

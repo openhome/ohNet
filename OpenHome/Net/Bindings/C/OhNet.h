@@ -364,6 +364,14 @@ DllExport void STDCALL OhNetInitParamsSetNumInvocations(OhNetHandleInitParams aP
 DllExport void STDCALL OhNetInitParamsSetNumSubscriberThreads(OhNetHandleInitParams aParams, uint32_t aNumThreads);
 
 /**
+ * Set the maximum time control points will wait for action invocations to begin responding.
+ *
+ * @param[in] aParams          Initialisation params
+ * @param[in] aDurationSecs    Timeout in milliseconds.  Must be greater than zero.
+ */
+DllExport void STDCALL OhNetInitParamsSetInvocationTimeout(OhNetHandleInitParams aParams, uint32_t aTimeoutMs);
+
+/**
  * Set the duration control point subscriptions will request.
  *
  * @param[in] aParams          Initialisation params
@@ -581,6 +589,15 @@ DllExport uint32_t STDCALL OhNetInitParamsNumInvocations(OhNetHandleInitParams a
  * @return  number of threads
  */
 DllExport uint32_t STDCALL OhNetInitParamsNumSubscriberThreads(OhNetHandleInitParams aParams);
+
+/**
+ * Query the timeout for action invocations.
+ *
+ * @param[in] aParams          Initialisation params
+ *
+ * @return  timeout for device to begin responding (in milliseconds)
+ */
+DllExport uint32_t STDCALL OhNetInitParamsInvocationTimeoutMs(OhNetHandleInitParams aParams);
 
 /**
  * Query the duration control points will request for subscriptions.

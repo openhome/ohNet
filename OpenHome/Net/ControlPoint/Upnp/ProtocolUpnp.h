@@ -35,7 +35,6 @@ private:
     void Interrupt();
 private:
     static const TUint kMaxReadBytes = 16 * 1024;
-    static const TUint kResponseTimeoutMs = 60 * 1000;
     CpStack& iCpStack;
     Invocation& iInvocation;
     OpenHome::SocketTcpClient iSocket;

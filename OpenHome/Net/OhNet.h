@@ -275,6 +275,11 @@ public:
      */
     void SetNumSubscriberThreads(uint32_t aNumThreads);
     /**
+     * Set the maximum time to wait for a (remote) device to begin responding
+     * to an invoked action.
+     */
+    void SetInvocationTimeout(uint32_t aMs);
+    /**
      * Set the duration control point subscriptions will request.
      */
     void SetSubscriptionDuration(uint32_t aDurationSecs);
@@ -422,6 +427,7 @@ public:
     uint32_t NumActionInvokerThreads() const;
     uint32_t NumInvocations() const;
     uint32_t NumSubscriberThreads() const;
+    uint32_t InvocationTimeoutMs() const;
     uint32_t SubscriptionDurationSecs() const;
     uint32_t PendingSubscriptionTimeoutMs() const;
     OhNetCallbackFreeExternal FreeExternal() const;
@@ -467,6 +473,7 @@ private:
     uint32_t iNumActionInvokerThreads;
     uint32_t iNumInvocations;
     uint32_t iNumSubscriberThreads;
+    uint32_t iInvocationTimeoutMs;
     uint32_t iSubscriptionDurationSecs;
     uint32_t iPendingSubscriptionTimeoutMs;
     OhNetCallbackFreeExternal iFreeExternal;

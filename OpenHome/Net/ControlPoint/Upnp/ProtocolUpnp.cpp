@@ -90,7 +90,7 @@ void InvocationUpnp::ReadResponse()
 
     iReaderResponse.AddHeader(headerContentLength);
     iReaderResponse.AddHeader(headerTransferEncoding);
-    iReaderResponse.Read(kResponseTimeoutMs);
+    iReaderResponse.Read(iCpStack.Env().InitParams()->InvocationTimeoutMs());
     const HttpStatus& status = iReaderResponse.Status();
     if (status != HttpStatus::kOk) {
         const Brx& reason = status.Reason();
@@ -102,41 +102,8 @@ void InvocationUpnp::ReadResponse()
     }
 
     WriterBwh writer(1024);
-    if (headerTransferEncoding.IsChunked()) {
-        ReaderHttpChunked dechunker(iReaderUntil);
-        dechunker.SetChunked(true);
-        for (;;) {
-            Brn buf = dechunker.Read(kMaxReadBytes);
-            writer.Write(buf);
-            if (buf.Bytes() == 0) { // end of stream
-                break;
-            }
-        }
-    }
-    else {
-        TUint length = headerContentLength.ContentLength();
-        if (length != 0) {
-            TUint remaining = length;
-            do {
-                TUint bytes = remaining;
-                if (bytes > kMaxReadBytes) {
-                    bytes = kMaxReadBytes;
-                }
-                Brn buf = iReaderUntil.Read(bytes);
-                remaining -= buf.Bytes();
-                writer.Write(buf);
-            } while (remaining > 0);
-        }
-        else { // no content length - read until connection closed by server
-            try {
-                for (;;) {
-                    writer.Write(iReaderUntil.Read(kMaxReadBytes));
-                }
-            }
-            catch (ReaderError&) {
-            }
-        }
-    }
+    ReaderHttpEntity readerEntity(iReaderUntil);
+    readerEntity.ReadAll(writer, headerContentLength, headerTransferEncoding, ReaderHttpEntity::Client);
     writer.TransferTo(entity);
 
     if (status == HttpStatus::kInternalServerError) {
