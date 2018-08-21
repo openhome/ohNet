@@ -97,6 +97,8 @@ def Initialise( aInitParams=None ):
         if 'loopback' in aInitParams:
             if aInitParams['loopback'] is not False:
                 lib.OhNetInitParamsSetUseLoopbackNetworkAdapter( params )
+        if 'invokeTimeout' in aInitParams:
+            lib.OhNetInitParamsSetInvocationTimeout( params, aInitParams['invokeTimeout'] )     # in millisecs
     if lib.OhNetLibraryInitialise( params ):
         raise OhNetError( 'Failed to initialise Library')
 
