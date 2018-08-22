@@ -457,6 +457,13 @@ THandle OsMutexCreate(OsContext* aContext, const char* aName)
     pthread_mutexattr_t attr;
     pthread_mutexattr_init(&attr);
     (void)pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_ERRORCHECK);
+    if (aContext->iSchedulerPolicy == eSchedulePriorityEnable) {
+        int err = pthread_mutexattr_setprotocol(&attr, PTHREAD_PRIO_INHERIT);
+        if (err != 0) {
+            fprintf(stderr, "OsMutexCreate - failed to set PTHREAD_PRIO_INHERIT - error=%d\n", err);
+            return kHandleNull;
+        }
+    }
     pthread_mutex_t* mutex = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t));
     if (mutex == NULL) {
         return kHandleNull;
