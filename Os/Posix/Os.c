@@ -457,6 +457,7 @@ THandle OsMutexCreate(OsContext* aContext, const char* aName)
     pthread_mutexattr_t attr;
     pthread_mutexattr_init(&attr);
     (void)pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_ERRORCHECK);
+#ifndef __ANDROID__
     if (aContext->iSchedulerPolicy == eSchedulePriorityEnable) {
         int err = pthread_mutexattr_setprotocol(&attr, PTHREAD_PRIO_INHERIT);
         if (err != 0) {
@@ -464,6 +465,7 @@ THandle OsMutexCreate(OsContext* aContext, const char* aName)
             return kHandleNull;
         }
     }
+#endif /* !__ANDROID__ */
     pthread_mutex_t* mutex = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t));
     if (mutex == NULL) {
         return kHandleNull;
