@@ -6,6 +6,7 @@
 
 #include <OpenHome/Os.h>
 #include <OpenHome/Types.h>
+#include <OpenHome/Private/Env.h>
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Private/Network.h>
 #include <OpenHome/Net/Core/OhNet.h>
@@ -17,7 +18,7 @@ namespace OpenHome {
 class Os
 {
 public:
-    inline static OsContext* Create(Net::InitialisationParams::EThreadScheduling aSchedulerPolicy);
+    inline static OsContext* Create(Environment::EThreadScheduling aSchedulerPolicy);
     inline static void Destroy(OsContext* aContext);
     inline static void Quit(OsContext* aContext);
     static THandle StackTraceInitialise(OsContext* aContext);

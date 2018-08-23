@@ -1,7 +1,7 @@
 #ifndef HEADER_OSWRAPPER_INL
 #define HEADER_OSWRAPPER_INL
 
-inline OsContext* Os::Create(Net::InitialisationParams::EThreadScheduling aSchedulerPolicy)
+inline OsContext* Os::Create(Environment::EThreadScheduling aSchedulerPolicy)
 { return OsCreate((OsThreadSchedulePolicy)aSchedulerPolicy); }
 inline void Os::Destroy(OsContext* aContext)
 { OsDestroy(aContext); }

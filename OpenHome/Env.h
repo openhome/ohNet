@@ -58,7 +58,18 @@ class Environment
     friend class Net::CpStack;
     friend class Net::DvStack;
 public:
+    enum EThreadScheduling
+    {
+        EScheduleDefault,
+        ESchedulePriority,
+        EScheduleNice,
+        EScheduleNone
+    };
+public:
     static Environment* Create(FunctorMsg& aLogOutput);
+    static Environment* Create(FunctorMsg& aLogOutput,
+                               TUint aTimerManagerPriority,
+                               EThreadScheduling aSchedulerPolicy);
     static Environment* Create(Net::InitialisationParams* aInitParams);
     ~Environment();
 
@@ -102,8 +113,12 @@ public:
     void SetInitParams(Net::InitialisationParams* aInitParams);
 private:
     Environment(FunctorMsg& aLogOutput);
+    Environment(FunctorMsg& aLogOutput,
+                TUint aTimerManagerPriority,
+                EThreadScheduling aSchedulerPolicy);
     Environment(Net::InitialisationParams* aInitParams);
-    void Construct(FunctorMsg& aLogOutput);
+    void Construct(FunctorMsg& aLogOutput, EThreadScheduling aSchedulerPolicy);
+    void DoSetInitParams(Net::InitialisationParams* aInitParams);
     void CreateShell();
     void SetCpStack(IStack* aStack);
     void SetDvStack(IStack* aStack);

@@ -438,7 +438,7 @@ void InitialisationParams::SetEnableShell(TUint aPort, TUint aSessionPriority)
     iShellSessionPriority = aSessionPriority;
 }
 
-void InitialisationParams::SetSchedulingPolicy(EThreadScheduling aPolicy)
+void InitialisationParams::SetSchedulingPolicy(Environment::EThreadScheduling aPolicy)
 {
     iSchedulingPolicy = aPolicy;
 }
@@ -646,7 +646,7 @@ TBool InitialisationParams::IsShellEnabled(TUint& aPort, TUint& aSessionPriority
     return iEnableShell;
 }
 
-InitialisationParams::EThreadScheduling InitialisationParams::SchedulingPolicy() const
+Environment::EThreadScheduling InitialisationParams::SchedulingPolicy() const
 {
     return iSchedulingPolicy;
 }
@@ -692,7 +692,7 @@ InitialisationParams::InitialisationParams()
     , iEnableShell(false)
     , iShellPort(0)
     , iShellSessionPriority(kPriorityNormal)
-    , iSchedulingPolicy(EScheduleDefault)
+    , iSchedulingPolicy(Environment::EScheduleDefault)
 {
     iDefaultLogger = new DefaultLogger;
     FunctorMsg functor = MakeFunctorMsg(*iDefaultLogger, &OpenHome::Net::DefaultLogger::Log);
