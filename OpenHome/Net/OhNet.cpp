@@ -342,12 +342,12 @@ void InitialisationParams::SetFreeExternalCallback(OhNetCallbackFreeExternal aCa
 
 void InitialisationParams::SetUseLoopbackNetworkAdapter()
 {
-    iUseLoopbackNetworkAdapter = ELoopbackUse;
+    iUseLoopbackNetworkAdapter = Environment::ELoopbackUse;
 }
 
 void InitialisationParams::SetIncludeLoopbackNetworkAdapter()
 {
-    iUseLoopbackNetworkAdapter = ELoopbackInclude;
+    iUseLoopbackNetworkAdapter = Environment::ELoopbackInclude;
 }
 
 void InitialisationParams::SetDvMaxUpdateTime(uint32_t aSecs)
@@ -438,7 +438,7 @@ void InitialisationParams::SetEnableShell(TUint aPort, TUint aSessionPriority)
     iShellSessionPriority = aSessionPriority;
 }
 
-void InitialisationParams::SetSchedulingPolicy(EThreadScheduling aPolicy)
+void InitialisationParams::SetSchedulingPolicy(Environment::EThreadScheduling aPolicy)
 {
     iSchedulingPolicy = aPolicy;
 }
@@ -553,7 +553,7 @@ OhNetCallbackFreeExternal InitialisationParams::FreeExternal() const
     return iFreeExternal;
 }
 
-InitialisationParams::ELoopback InitialisationParams::LoopbackNetworkAdapter() const
+Environment::ELoopback InitialisationParams::LoopbackNetworkAdapter() const
 {
     return iUseLoopbackNetworkAdapter;
 }
@@ -646,7 +646,7 @@ TBool InitialisationParams::IsShellEnabled(TUint& aPort, TUint& aSessionPriority
     return iEnableShell;
 }
 
-InitialisationParams::EThreadScheduling InitialisationParams::SchedulingPolicy() const
+Environment::EThreadScheduling InitialisationParams::SchedulingPolicy() const
 {
     return iSchedulingPolicy;
 }
@@ -673,7 +673,7 @@ InitialisationParams::InitialisationParams()
     , iSubscriptionDurationSecs(30 * 60)
     , iPendingSubscriptionTimeoutMs(2000)
     , iFreeExternal(NULL)
-    , iUseLoopbackNetworkAdapter(ELoopbackExclude)
+    , iUseLoopbackNetworkAdapter(Environment::ELoopbackExclude)
     , iDvMaxUpdateTimeSecs(1800)
     , iDvNumServerThreads(4)
     , iDvNumPublisherThreads(4)
@@ -692,7 +692,7 @@ InitialisationParams::InitialisationParams()
     , iEnableShell(false)
     , iShellPort(0)
     , iShellSessionPriority(kPriorityNormal)
-    , iSchedulingPolicy(EScheduleDefault)
+    , iSchedulingPolicy(Environment::EScheduleDefault)
 {
     iDefaultLogger = new DefaultLogger;
     FunctorMsg functor = MakeFunctorMsg(*iDefaultLogger, &OpenHome::Net::DefaultLogger::Log);

@@ -10,6 +10,7 @@
 #include <OpenHome/Net/Core/FunctorAsync.h>
 #include <OpenHome/FunctorMsg.h>
 #include <OpenHome/FunctorNetworkAdapter.h>
+#include <OpenHome/Private/Env.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Net/C/OhNet.h> // for OhNetCallbackFreeExternal only
 #include <OpenHome/Private/Shell.h> // for Shell::kServerPortDefault only
@@ -185,20 +186,6 @@ class DefaultLogger;
  */
 class DllExportClass InitialisationParams
 {
-public:
-    enum ELoopback
-    {
-        ELoopbackExclude // exclude loopback from list of available subnets
-       ,ELoopbackUse     // exclude everything but loopback from list of available subnets
-       ,ELoopbackInclude // include loopback in list of available subnets
-    };
-    enum EThreadScheduling
-    {
-        EScheduleDefault
-       ,ESchedulePriority
-       ,EScheduleNice
-       ,EScheduleNone
-    };
 public:
     /**
      * Create a new InitialisationParams instance.
@@ -407,7 +394,7 @@ public:
      * EScheduleDefault is suitable for most OSes.
      * ESchedulePriority is preferable for *nix
      */
-    void SetSchedulingPolicy(EThreadScheduling aPolicy);
+    void SetSchedulingPolicy(Environment::EThreadScheduling aPolicy);
 
     FunctorMsg& LogOutput();
     FunctorMsg& FatalErrorHandler();
@@ -431,7 +418,7 @@ public:
     uint32_t SubscriptionDurationSecs() const;
     uint32_t PendingSubscriptionTimeoutMs() const;
     OhNetCallbackFreeExternal FreeExternal() const;
-    ELoopback LoopbackNetworkAdapter() const;
+    Environment::ELoopback LoopbackNetworkAdapter() const;
     uint32_t DvMaxUpdateTimeSecs() const;
     uint32_t DvNumServerThreads() const;
     uint32_t DvNumPublisherThreads() const;
@@ -448,7 +435,7 @@ public:
     uint32_t TimerManagerPriority() const;
     const Brx& HttpUserAgent() const;
     TBool IsShellEnabled(TUint& aPort, TUint& aSessionPriority) const;
-    EThreadScheduling SchedulingPolicy() const;
+    Environment::EThreadScheduling SchedulingPolicy() const;
 private:
     InitialisationParams();
     void FatalErrorHandlerDefault(const char* aMsg);
@@ -477,7 +464,7 @@ private:
     uint32_t iSubscriptionDurationSecs;
     uint32_t iPendingSubscriptionTimeoutMs;
     OhNetCallbackFreeExternal iFreeExternal;
-    ELoopback iUseLoopbackNetworkAdapter;
+    Environment::ELoopback iUseLoopbackNetworkAdapter;
     uint32_t iDvMaxUpdateTimeSecs;
     uint32_t iDvNumServerThreads;
     uint32_t iDvNumPublisherThreads;
@@ -498,7 +485,7 @@ private:
     TBool iEnableShell;
     TUint iShellPort;
     TUint iShellSessionPriority;
-    EThreadScheduling iSchedulingPolicy;
+    Environment::EThreadScheduling iSchedulingPolicy;
 };
 
 class CpStack;

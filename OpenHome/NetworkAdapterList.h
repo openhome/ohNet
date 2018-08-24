@@ -32,7 +32,7 @@ class NetworkAdapterList : private IStackObject, private INetworkAdapterChangeNo
 public:
     static const TUint kListenerIdNull = 0;
 public:
-    NetworkAdapterList(Environment& aEnv, TIpAddress aDefaultSubnet=0);
+    NetworkAdapterList(Environment& aEnv, Environment::ELoopback aLoopbackPolicy, TIpAddress aDefaultSubnet=0);
     virtual ~NetworkAdapterList();
     TBool SingleSubnetModeEnabled() const;
     NetworkAdapter* CurrentAdapter(const char* aCookie) const;
@@ -112,6 +112,7 @@ private: // IResumeObserver
     void NotifyResumed();
 private:
     Environment& iEnv;
+    Environment::ELoopback iLoopbackPolicy;
     mutable Mutex iListLock;
     Mutex iListenerLock;
     std::vector<NetworkAdapter*>* iNetworkAdapters;

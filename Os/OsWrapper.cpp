@@ -200,7 +200,7 @@ void OpenHome::Os::NetworkSocketSetMulticastIf(THandle aHandle, TIpAddress aInte
 }
 
 std::vector<NetworkAdapter*>* OpenHome::Os::NetworkListAdapters(Environment& aEnv,
-                                                                Net::InitialisationParams::ELoopback aUseLoopback,
+                                                                Environment::ELoopback aUseLoopback,
                                                                 const TChar* aCookie)
 {
     OsNetworkAdapter* cIfs = NULL;

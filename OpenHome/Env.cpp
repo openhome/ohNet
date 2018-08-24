@@ -73,12 +73,41 @@ Environment::Environment(FunctorMsg& aLogOutput)
     , iDvStack(NULL)
     , iMdns(NULL)
 {
-    Construct(aLogOutput);
+    Construct(aLogOutput, EScheduleDefault);
 }
 
 Environment* Environment::Create(FunctorMsg& aLogOutput)
 {
     return new Environment(aLogOutput);
+}
+
+
+Environment* Environment::Create(FunctorMsg& aLogOutput,
+                                 TUint aTimerManagerPriority,
+                                 EThreadScheduling aSchedulerPolicy,
+                                 ELoopback aLoopbackPolicy)
+{
+    return new Environment(aLogOutput, aTimerManagerPriority, aSchedulerPolicy, aLoopbackPolicy);
+}
+
+Environment::Environment(FunctorMsg& aLogOutput,
+                         TUint aTimerManagerPriority,
+                         EThreadScheduling aSchedulerPolicy,
+                         ELoopback aLoopbackPolicy)
+    : iOsContext(NULL)
+    , iInitParams(NULL)
+    , iNetworkAdapterList(NULL)
+    , iShell(NULL)
+    , iInfoAggregator(NULL)
+    , iShellCommandDebug(NULL)
+    , iSequenceNumber(0)
+    , iCpStack(NULL)
+    , iDvStack(NULL)
+    , iMdns(NULL)
+{
+    Construct(aLogOutput, aSchedulerPolicy);
+    iTimerManager = new OpenHome::TimerManager(*this, aTimerManagerPriority);
+    iNetworkAdapterList = new OpenHome::NetworkAdapterList(*this, aLoopbackPolicy, 0);
 }
 
 Environment::Environment(InitialisationParams* aInitParams)
@@ -93,7 +122,8 @@ Environment::Environment(InitialisationParams* aInitParams)
     , iDvStack(NULL)
     , iMdns(NULL)
 {
-    Construct(aInitParams->LogOutput());
+    ASSERT(aInitParams != NULL);
+    Construct(aInitParams->LogOutput(), aInitParams->SchedulingPolicy());
 #ifdef PLATFORM_MACOSX_GNU
     /* Non-portable way of setting a better random seed than time(NULL)
        This is needed on Mac as CI for x86 and x64 tests use the same host
@@ -105,29 +135,10 @@ Environment::Environment(InitialisationParams* aInitParams)
 #else
     SetRandomSeed((TUint)(time(NULL) % UINT32_MAX));
 #endif // PLATFORM_MACOSX_GNU
-    iTimerManager = new OpenHome::TimerManager(*this, iInitParams->TimerManagerPriority());
-    iNetworkAdapterList = new OpenHome::NetworkAdapterList(*this, 0);
-    Functor& subnetListChangeListener = iInitParams->SubnetListChangedListener();
-    if (subnetListChangeListener) {
-        iNetworkAdapterList->AddSubnetListChangeListener(subnetListChangeListener, "Env", false);
-    }
-    FunctorNetworkAdapter &subnetAddedListener = iInitParams->SubnetAddedListener();
-    if (subnetAddedListener) {
-        iNetworkAdapterList->AddSubnetAddedListener(subnetAddedListener, "Env");
-    }
-    FunctorNetworkAdapter &subnetRemovedListener = iInitParams->SubnetRemovedListener();
-    if (subnetRemovedListener) {
-        iNetworkAdapterList->AddSubnetRemovedListener(subnetRemovedListener, "Env");
-    }
-    FunctorNetworkAdapter &networkAdapterChangeListener = iInitParams->NetworkAdapterChangedListener();
-    if (networkAdapterChangeListener) {
-        iNetworkAdapterList->AddNetworkAdapterChangeListener(networkAdapterChangeListener, "Env");
-    }
+    iTimerManager = new OpenHome::TimerManager(*this, aInitParams->TimerManagerPriority());
+    iNetworkAdapterList = new OpenHome::NetworkAdapterList(*this, aInitParams->LoopbackNetworkAdapter(), 0);
 
-    CreateShell();
-    CreateMdnsProvider();
-
-    iHttpUserAgent.Replace(iInitParams->HttpUserAgent());
+    DoSetInitParams(aInitParams);
 }
 
 Environment* Environment::Create(InitialisationParams* aInitParams)
@@ -135,14 +146,10 @@ Environment* Environment::Create(InitialisationParams* aInitParams)
     return new Environment(aInitParams);
 }
 
-void Environment::Construct(FunctorMsg& aLogOutput)
+void Environment::Construct(FunctorMsg& aLogOutput, EThreadScheduling aSchedulerPolicy)
 {
     gEnv = this;
-    Net::InitialisationParams::EThreadScheduling schedulerPolicy = InitialisationParams::EScheduleDefault;
-    if (iInitParams != NULL) {
-        schedulerPolicy = iInitParams->SchedulingPolicy();
-    }
-    iOsContext = OpenHome::Os::Create(schedulerPolicy);
+    iOsContext = OpenHome::Os::Create(aSchedulerPolicy);
     if (iOsContext == NULL) {
         throw std::bad_alloc();
     }
@@ -471,9 +478,32 @@ IMdnsProvider* Environment::MdnsProvider()
 void Environment::SetInitParams(InitialisationParams* aInitParams)
 {
     delete iInitParams;
+    DoSetInitParams(aInitParams);
+}
+
+void Environment::DoSetInitParams(InitialisationParams* aInitParams)
+{
     iInitParams = aInitParams;
+
+    Functor& subnetListChangeListener = iInitParams->SubnetListChangedListener();
+    if (subnetListChangeListener) {
+        iNetworkAdapterList->AddSubnetListChangeListener(subnetListChangeListener, "Env", false);
+    }
+    FunctorNetworkAdapter &subnetAddedListener = iInitParams->SubnetAddedListener();
+    if (subnetAddedListener) {
+        iNetworkAdapterList->AddSubnetAddedListener(subnetAddedListener, "Env");
+    }
+    FunctorNetworkAdapter &subnetRemovedListener = iInitParams->SubnetRemovedListener();
+    if (subnetRemovedListener) {
+        iNetworkAdapterList->AddSubnetRemovedListener(subnetRemovedListener, "Env");
+    }
+    FunctorNetworkAdapter &networkAdapterChangeListener = iInitParams->NetworkAdapterChangedListener();
+    if (networkAdapterChangeListener) {
+        iNetworkAdapterList->AddNetworkAdapterChangeListener(networkAdapterChangeListener, "Env");
+    }
     CreateShell();
     CreateMdnsProvider();
+    iHttpUserAgent.Replace(iInitParams->HttpUserAgent());
 }
 
 

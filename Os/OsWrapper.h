@@ -6,6 +6,7 @@
 
 #include <OpenHome/Os.h>
 #include <OpenHome/Types.h>
+#include <OpenHome/Private/Env.h>
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Private/Network.h>
 #include <OpenHome/Net/Core/OhNet.h>
@@ -17,7 +18,7 @@ namespace OpenHome {
 class Os
 {
 public:
-    inline static OsContext* Create(Net::InitialisationParams::EThreadScheduling aSchedulerPolicy);
+    inline static OsContext* Create(Environment::EThreadScheduling aSchedulerPolicy);
     inline static void Destroy(OsContext* aContext);
     inline static void Quit(OsContext* aContext);
     static THandle StackTraceInitialise(OsContext* aContext);
@@ -71,7 +72,7 @@ public:
     static void NetworkSocketMulticastAddMembership(THandle aHandle, TIpAddress aInterface, TIpAddress aAddrsss);
     static void NetworkSocketMulticastDropMembership(THandle aHandle, TIpAddress aInterface, TIpAddress aAddress);
     static void NetworkSocketSetMulticastIf(THandle aHandle, TIpAddress aInterface);
-    static std::vector<NetworkAdapter*>* NetworkListAdapters(Environment& aEnv, Net::InitialisationParams::ELoopback aUseLoopback, const TChar* aCookie);
+    static std::vector<NetworkAdapter*>* NetworkListAdapters(Environment& aEnv, Environment::ELoopback aUseLoopback, const TChar* aCookie);
     inline static void NetworkSetInterfaceChangedObserver(OsContext* aContext, InterfaceListChanged aCallback, void* aArg);
 };
 
