@@ -84,14 +84,16 @@ Environment* Environment::Create(FunctorMsg& aLogOutput)
 
 Environment* Environment::Create(FunctorMsg& aLogOutput,
                                  TUint aTimerManagerPriority,
-                                 EThreadScheduling aSchedulerPolicy)
+                                 EThreadScheduling aSchedulerPolicy,
+                                 ELoopback aLoopbackPolicy)
 {
-    return new Environment(aLogOutput, aTimerManagerPriority, aSchedulerPolicy);
+    return new Environment(aLogOutput, aTimerManagerPriority, aSchedulerPolicy, aLoopbackPolicy);
 }
 
 Environment::Environment(FunctorMsg& aLogOutput,
                          TUint aTimerManagerPriority,
-                         EThreadScheduling aSchedulerPolicy)
+                         EThreadScheduling aSchedulerPolicy,
+                         ELoopback aLoopbackPolicy)
     : iOsContext(NULL)
     , iInitParams(NULL)
     , iNetworkAdapterList(NULL)
@@ -105,7 +107,7 @@ Environment::Environment(FunctorMsg& aLogOutput,
 {
     Construct(aLogOutput, aSchedulerPolicy);
     iTimerManager = new OpenHome::TimerManager(*this, aTimerManagerPriority);
-    iNetworkAdapterList = new OpenHome::NetworkAdapterList(*this, 0);
+    iNetworkAdapterList = new OpenHome::NetworkAdapterList(*this, aLoopbackPolicy, 0);
 }
 
 Environment::Environment(InitialisationParams* aInitParams)
@@ -134,7 +136,7 @@ Environment::Environment(InitialisationParams* aInitParams)
     SetRandomSeed((TUint)(time(NULL) % UINT32_MAX));
 #endif // PLATFORM_MACOSX_GNU
     iTimerManager = new OpenHome::TimerManager(*this, aInitParams->TimerManagerPriority());
-    iNetworkAdapterList = new OpenHome::NetworkAdapterList(*this, 0);
+    iNetworkAdapterList = new OpenHome::NetworkAdapterList(*this, aInitParams->LoopbackNetworkAdapter(), 0);
 
     DoSetInitParams(aInitParams);
 }

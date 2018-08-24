@@ -58,6 +58,12 @@ class Environment
     friend class Net::CpStack;
     friend class Net::DvStack;
 public:
+    enum ELoopback
+    {
+        ELoopbackExclude, // exclude loopback from list of available subnets
+        ELoopbackUse,     // exclude everything but loopback from list of available subnets
+        ELoopbackInclude  // include loopback in list of available subnets
+    };
     enum EThreadScheduling
     {
         EScheduleDefault,
@@ -69,7 +75,8 @@ public:
     static Environment* Create(FunctorMsg& aLogOutput);
     static Environment* Create(FunctorMsg& aLogOutput,
                                TUint aTimerManagerPriority,
-                               EThreadScheduling aSchedulerPolicy);
+                               EThreadScheduling aSchedulerPolicy,
+                               ELoopback aLoopbackPolicy);
     static Environment* Create(Net::InitialisationParams* aInitParams);
     ~Environment();
 
@@ -115,7 +122,8 @@ private:
     Environment(FunctorMsg& aLogOutput);
     Environment(FunctorMsg& aLogOutput,
                 TUint aTimerManagerPriority,
-                EThreadScheduling aSchedulerPolicy);
+                EThreadScheduling aSchedulerPolicy,
+                ELoopback aLoopbackPolicy);
     Environment(Net::InitialisationParams* aInitParams);
     void Construct(FunctorMsg& aLogOutput, EThreadScheduling aSchedulerPolicy);
     void DoSetInitParams(Net::InitialisationParams* aInitParams);

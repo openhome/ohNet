@@ -187,13 +187,6 @@ class DefaultLogger;
 class DllExportClass InitialisationParams
 {
 public:
-    enum ELoopback
-    {
-        ELoopbackExclude // exclude loopback from list of available subnets
-       ,ELoopbackUse     // exclude everything but loopback from list of available subnets
-       ,ELoopbackInclude // include loopback in list of available subnets
-    };
-public:
     /**
      * Create a new InitialisationParams instance.
      * All properties default to sensible values.
@@ -425,7 +418,7 @@ public:
     uint32_t SubscriptionDurationSecs() const;
     uint32_t PendingSubscriptionTimeoutMs() const;
     OhNetCallbackFreeExternal FreeExternal() const;
-    ELoopback LoopbackNetworkAdapter() const;
+    Environment::ELoopback LoopbackNetworkAdapter() const;
     uint32_t DvMaxUpdateTimeSecs() const;
     uint32_t DvNumServerThreads() const;
     uint32_t DvNumPublisherThreads() const;
@@ -471,7 +464,7 @@ private:
     uint32_t iSubscriptionDurationSecs;
     uint32_t iPendingSubscriptionTimeoutMs;
     OhNetCallbackFreeExternal iFreeExternal;
-    ELoopback iUseLoopbackNetworkAdapter;
+    Environment::ELoopback iUseLoopbackNetworkAdapter;
     uint32_t iDvMaxUpdateTimeSecs;
     uint32_t iDvNumServerThreads;
     uint32_t iDvNumPublisherThreads;

@@ -342,12 +342,12 @@ void InitialisationParams::SetFreeExternalCallback(OhNetCallbackFreeExternal aCa
 
 void InitialisationParams::SetUseLoopbackNetworkAdapter()
 {
-    iUseLoopbackNetworkAdapter = ELoopbackUse;
+    iUseLoopbackNetworkAdapter = Environment::ELoopbackUse;
 }
 
 void InitialisationParams::SetIncludeLoopbackNetworkAdapter()
 {
-    iUseLoopbackNetworkAdapter = ELoopbackInclude;
+    iUseLoopbackNetworkAdapter = Environment::ELoopbackInclude;
 }
 
 void InitialisationParams::SetDvMaxUpdateTime(uint32_t aSecs)
@@ -553,7 +553,7 @@ OhNetCallbackFreeExternal InitialisationParams::FreeExternal() const
     return iFreeExternal;
 }
 
-InitialisationParams::ELoopback InitialisationParams::LoopbackNetworkAdapter() const
+Environment::ELoopback InitialisationParams::LoopbackNetworkAdapter() const
 {
     return iUseLoopbackNetworkAdapter;
 }
@@ -673,7 +673,7 @@ InitialisationParams::InitialisationParams()
     , iSubscriptionDurationSecs(30 * 60)
     , iPendingSubscriptionTimeoutMs(2000)
     , iFreeExternal(NULL)
-    , iUseLoopbackNetworkAdapter(ELoopbackExclude)
+    , iUseLoopbackNetworkAdapter(Environment::ELoopbackExclude)
     , iDvMaxUpdateTimeSecs(1800)
     , iDvNumServerThreads(4)
     , iDvNumPublisherThreads(4)
