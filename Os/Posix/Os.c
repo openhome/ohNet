@@ -110,12 +110,12 @@ OsContext* OsCreate(OsThreadSchedulePolicy aSchedulerPolicy)
     gettimeofday(&ctx->iStartTime, NULL);
     ctx->iPrevTime = ctx->iStartTime;
     memset(&ctx->iTimeAdjustment, 0, sizeof(ctx->iTimeAdjustment));
+    ctx->iSchedulerPolicy = aSchedulerPolicy;
     ctx->iMutex = OsMutexCreate(ctx, "DNSM");
     if (ctx->iMutex == kHandleNull) {
         free(ctx);
         return NULL;
     }
-    ctx->iSchedulerPolicy = aSchedulerPolicy;
     if (pthread_key_create(&ctx->iThreadArgKey, NULL) != 0) {
         OsMutexDestroy(ctx->iMutex);
         free(ctx);
