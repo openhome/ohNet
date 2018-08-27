@@ -1190,7 +1190,6 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
     }
     /* ...then allocate/populate the list */
     OsNetworkAdapter* head = NULL;
-    OsNetworkAdapter* tail = NULL;
 
     for (iter = networkIf; iter != NULL; iter = iter->ifa_next) {
         if (iter->ifa_addr == NULL || iter->ifa_addr->sa_family != AF_INET ||
@@ -1205,9 +1204,12 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
             OsNetworkFreeInterfaces(head);
             goto exit;
         }
-        if (head == NULL) {
-            head = iface;
+
+        if (head != NULL) {
+            iface->iNext = head;
         }
+        head = iface;
+
         iface->iName = (char*)malloc(strlen(iter->ifa_name) + 1);
         if (iface->iName == NULL) {
             OsNetworkFreeInterfaces(head);
@@ -1216,10 +1218,6 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
         (void)strcpy(iface->iName, iter->ifa_name);
         iface->iAddress = ((struct sockaddr_in*)iter->ifa_addr)->sin_addr.s_addr;
         iface->iNetMask = ((struct sockaddr_in*)iter->ifa_netmask)->sin_addr.s_addr;
-        if (tail != NULL) {
-            tail->iNext = iface;
-        }
-        tail = iface;
     }
 
     // Check for multiple entries with same address and different netmasks and
