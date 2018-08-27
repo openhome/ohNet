@@ -1188,36 +1188,66 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
             iter = iter->ifa_next;
         }
     }
-    /* ...then allocate/populate the list */
-    OsNetworkAdapter* head = NULL;
+
+    OsNetworkAdapter* head = NULL;          /* List of non-loopback adapters */
+    OsNetworkAdapter* loopHead = NULL;      /* List of loopback adapters */
 
     for (iter = networkIf; iter != NULL; iter = iter->ifa_next) {
+
+        const int ifaceIsLoopback = (((struct sockaddr_in*)iter->ifa_addr)->sin_addr.s_addr == loopbackAddr) ? 1 : 0;
+
         if (iter->ifa_addr == NULL || iter->ifa_addr->sa_family != AF_INET ||
             (iter->ifa_flags & IFF_RUNNING) == 0 ||
-            (includeLoopback == 0 && ((struct sockaddr_in*)iter->ifa_addr)->sin_addr.s_addr == loopbackAddr) ||
-            (aUseLoopback == 1 && ((struct sockaddr_in*)iter->ifa_addr)->sin_addr.s_addr != loopbackAddr)) {
+            (includeLoopback == 0 && ifaceIsLoopback == 1) ||
+            (aUseLoopback == 1    && ifaceIsLoopback == 0)) {
             continue;
         }
 
         OsNetworkAdapter* iface = (OsNetworkAdapter*)calloc(1, sizeof(*iface));
         if (iface == NULL) {
             OsNetworkFreeInterfaces(head);
+            OsNetworkFreeInterfaces(loopHead);
             goto exit;
         }
 
-        if (head != NULL) {
-            iface->iNext = head;
+        if (! ifaceIsLoopback) {
+            if (head != NULL) {
+                iface->iNext = head;
+            }
+            head = iface;
         }
-        head = iface;
+        else {
+            if (loopHead != NULL) {
+                iface->iNext = loopHead;
+            }
+            loopHead = iface;
+        }
 
         iface->iName = (char*)malloc(strlen(iter->ifa_name) + 1);
         if (iface->iName == NULL) {
             OsNetworkFreeInterfaces(head);
+            OsNetworkFreeInterfaces(loopHead);
             goto exit;
         }
         (void)strcpy(iface->iName, iter->ifa_name);
         iface->iAddress = ((struct sockaddr_in*)iter->ifa_addr)->sin_addr.s_addr;
         iface->iNetMask = ((struct sockaddr_in*)iter->ifa_netmask)->sin_addr.s_addr;
+    }
+
+    // Attach any loopback interfaces to the end of the list
+    if (! head) {
+        // No non-loopback interfaces: Adopt loopHead.
+        head = loopHead;
+    }
+    else {
+        // Walk to end of non-loopback list.
+        OsNetworkAdapter* ptr = head;
+        while (ptr->iNext != NULL) {
+            ptr = ptr->iNext;
+        }
+        // Append here
+        ptr->iNext = loopHead;
+        loopHead = NULL;
     }
 
     // Check for multiple entries with same address and different netmasks and
