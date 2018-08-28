@@ -170,7 +170,7 @@ void Endpoint::Internalise(IReader& aReader)
 #else
 # error No endianess defined
 #endif
-    iPort = rb.ReadUintBe(2);
+    iPort = (TUint16)rb.ReadUintBe(2);
 }
 
 // Replace the endpoint with the supplied endpoint
