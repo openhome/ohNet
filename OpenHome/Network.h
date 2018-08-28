@@ -62,6 +62,8 @@ public:
     void AppendAddress(Bwx& aAddress) const;
     void AppendEndpoint(Bwx& aEndpoint) const;
     void GetAddressOctets(TByte (&aOctets)[4]) const;
+    void Externalise(IWriter& aWriter);
+    void Internalise(IReader& aReader);
     static void AppendAddress(Bwx& aAddressBuffer, TIpAddress aAddress);
 private:
     TIpAddress iAddress;

@@ -143,6 +143,36 @@ void Endpoint::GetAddressOctets(TByte (&aOctets)[4]) const
 #endif
 }
 
+void Endpoint::Externalise(IWriter& aWriter)
+{
+    TByte octets[4];
+    GetAddressOctets(octets);
+    Brn octetsBuf(octets, sizeof octets);
+    aWriter.Write(octetsBuf);
+    WriterBinary wb(aWriter);
+    wb.WriteUint16Be(iPort);
+}
+
+void Endpoint::Internalise(IReader& aReader)
+{
+    ReaderProtocolS<4> rb(aReader);
+    Brn octets = rb.Read(4);
+#ifdef DEFINE_LITTLE_ENDIAN
+    iAddress  = octets[0];
+    iAddress |= (octets[1] << 8);
+    iAddress |= (octets[2] << 16);
+    iAddress |= (octets[3] << 24);
+#elif defined DEFINE_BIG_ENDIAN
+    iAddress  = (octets[0] << 24);
+    iAddress |= (octets[1] << 16);
+    iAddress |= (octets[2] << 8);
+    iAddress |= octets[3];
+#else
+# error No endianess defined
+#endif
+    iPort = rb.ReadUintBe(2);
+}
+
 // Replace the endpoint with the supplied endpoint
 void Endpoint::Replace(const Endpoint& aEndpoint)
 {
