@@ -261,6 +261,12 @@ protected:
      */
     void EnableActionToggleBool();
     /**
+     * Signal that the action ReportError is supported.
+     * The action's availability will be published in the device's service.xml.
+     * ReportError must be overridden if this is called.
+     */
+    void EnableActionReportError();
+    /**
      * Signal that the action WriteFile is supported.
      * The action's availability will be published in the device's service.xml.
      * WriteFile must be overridden if this is called.
@@ -434,6 +440,14 @@ private:
      */
     virtual void ToggleBool(IDvInvocation& aInvocation);
     /**
+     * ReportError action.
+     *
+     * Will be called when the device stack receives an invocation of the
+     * ReportError action for the owning device.
+     * Must be implemented iff EnableActionReportError was called.
+     */
+    virtual void ReportError(IDvInvocation& aInvocation);
+    /**
      * WriteFile action.
      *
      * Will be called when the device stack receives an invocation of the
@@ -472,6 +486,7 @@ private:
     void DoSetBinary(IDviInvocation& aInvocation);
     void DoGetBinary(IDviInvocation& aInvocation);
     void DoToggleBool(IDviInvocation& aInvocation);
+    void DoReportError(IDviInvocation& aInvocation);
     void DoWriteFile(IDviInvocation& aInvocation);
     void DoShutdown(IDviInvocation& aInvocation);
 private:

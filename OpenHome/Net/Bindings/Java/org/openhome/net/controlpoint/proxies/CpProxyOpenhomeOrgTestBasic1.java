@@ -70,6 +70,9 @@ interface ICpProxyOpenhomeOrgTestBasic1 extends ICpProxy
     public void syncToggleBool();
     public void beginToggleBool(ICpProxyListener aCallback);
     public void endToggleBool(long aAsyncHandle);
+    public void syncReportError();
+    public void beginReportError(ICpProxyListener aCallback);
+    public void endReportError(long aAsyncHandle);
     public void syncWriteFile(String aData, String aFileFullName);
     public void beginWriteFile(String aData, String aFileFullName, ICpProxyListener aCallback);
     public void endWriteFile(long aAsyncHandle);
@@ -478,6 +481,21 @@ class SyncToggleBoolOpenhomeOrgTestBasic1 extends SyncProxyAction
     }
 }
 
+class SyncReportErrorOpenhomeOrgTestBasic1 extends SyncProxyAction
+{
+    private CpProxyOpenhomeOrgTestBasic1 iService;
+
+    public SyncReportErrorOpenhomeOrgTestBasic1(CpProxyOpenhomeOrgTestBasic1 aProxy)
+    {
+        iService = aProxy;
+    }
+    protected void completeRequest(long aAsyncHandle)
+    {
+        iService.endReportError(aAsyncHandle);
+        
+    }
+}
+
 class SyncWriteFileOpenhomeOrgTestBasic1 extends SyncProxyAction
 {
     private CpProxyOpenhomeOrgTestBasic1 iService;
@@ -564,6 +582,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
     private Action iActionSetBinary;
     private Action iActionGetBinary;
     private Action iActionToggleBool;
+    private Action iActionReportError;
     private Action iActionWriteFile;
     private Action iActionShutdown;
     private PropertyUint iVarUint;
@@ -695,6 +714,8 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
         iActionGetBinary.addOutputParameter(param);
 
         iActionToggleBool = new Action("ToggleBool");
+
+        iActionReportError = new Action("ReportError");
 
         iActionWriteFile = new Action("WriteFile");
         param = new ParameterString("Data", allowedValues);
@@ -1841,6 +1862,51 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
+    public void syncReportError()
+    {
+        SyncReportErrorOpenhomeOrgTestBasic1 sync = new SyncReportErrorOpenhomeOrgTestBasic1(this);
+        beginReportError(sync.getListener());
+        sync.waitToComplete();
+        sync.reportError();
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endReportError}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginReportError(ICpProxyListener aCallback)
+    {
+        Invocation invocation = iService.getInvocation(iActionReportError, aCallback);
+        iService.invokeAction(invocation);
+    }
+
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
+     * This may only be called from the callback set in the
+     * {@link #beginReportError} method.
+     *
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginReportError} method.
+     */
+    public void endReportError(long aAsyncHandle)
+    {
+        ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
+        {
+            throw errObj;
+        }
+    }
+        
+    /**
+     * Invoke the action synchronously.
+     * Blocks until the action has been processed on the device and sets any
+     * output arguments.
+     */
     public void syncWriteFile(String aData, String aFileFullName)
     {
         SyncWriteFileOpenhomeOrgTestBasic1 sync = new SyncWriteFileOpenhomeOrgTestBasic1(this);
@@ -2162,6 +2228,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
             iActionSetBinary.destroy();
             iActionGetBinary.destroy();
             iActionToggleBool.destroy();
+            iActionReportError.destroy();
             iActionWriteFile.destroy();
             iActionShutdown.destroy();
             iVarUint.destroy();

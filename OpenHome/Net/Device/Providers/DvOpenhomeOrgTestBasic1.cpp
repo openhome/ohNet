@@ -308,6 +308,13 @@ void DvProviderOpenhomeOrgTestBasic1::EnableActionToggleBool()
     iService->AddAction(action, functor);
 }
 
+void DvProviderOpenhomeOrgTestBasic1::EnableActionReportError()
+{
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("ReportError");
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestBasic1::DoReportError);
+    iService->AddAction(action, functor);
+}
+
 void DvProviderOpenhomeOrgTestBasic1::EnableActionWriteFile()
 {
     OpenHome::Net::Action* action = new OpenHome::Net::Action("WriteFile");
@@ -519,6 +526,14 @@ void DvProviderOpenhomeOrgTestBasic1::DoToggleBool(IDviInvocation& aInvocation)
     ToggleBool(invocation);
 }
 
+void DvProviderOpenhomeOrgTestBasic1::DoReportError(IDviInvocation& aInvocation)
+{
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    DviInvocation invocation(aInvocation);
+    ReportError(invocation);
+}
+
 void DvProviderOpenhomeOrgTestBasic1::DoWriteFile(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
@@ -635,6 +650,11 @@ void DvProviderOpenhomeOrgTestBasic1::GetBinary(IDvInvocation& /*aResponse*/, ID
 }
 
 void DvProviderOpenhomeOrgTestBasic1::ToggleBool(IDvInvocation& /*aResponse*/)
+{
+    ASSERTS();
+}
+
+void DvProviderOpenhomeOrgTestBasic1::ReportError(IDvInvocation& /*aResponse*/)
 {
     ASSERTS();
 }

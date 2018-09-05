@@ -463,6 +463,27 @@ void SyncToggleBoolOpenhomeOrgTestBasic1Cpp::CompleteRequest(IAsync& aAsync)
 }
 
 
+class SyncReportErrorOpenhomeOrgTestBasic1Cpp : public SyncProxyAction
+{
+public:
+    SyncReportErrorOpenhomeOrgTestBasic1Cpp(CpProxyOpenhomeOrgTestBasic1Cpp& aProxy);
+    virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncReportErrorOpenhomeOrgTestBasic1Cpp() {}
+private:
+    CpProxyOpenhomeOrgTestBasic1Cpp& iService;
+};
+
+SyncReportErrorOpenhomeOrgTestBasic1Cpp::SyncReportErrorOpenhomeOrgTestBasic1Cpp(CpProxyOpenhomeOrgTestBasic1Cpp& aProxy)
+    : iService(aProxy)
+{
+}
+
+void SyncReportErrorOpenhomeOrgTestBasic1Cpp::CompleteRequest(IAsync& aAsync)
+{
+    iService.EndReportError(aAsync);
+}
+
+
 class SyncWriteFileOpenhomeOrgTestBasic1Cpp : public SyncProxyAction
 {
 public:
@@ -619,6 +640,8 @@ CpProxyOpenhomeOrgTestBasic1Cpp::CpProxyOpenhomeOrgTestBasic1Cpp(CpDeviceCpp& aD
 
     iActionToggleBool = new Action("ToggleBool");
 
+    iActionReportError = new Action("ReportError");
+
     iActionWriteFile = new Action("WriteFile");
     param = new OpenHome::Net::ParameterString("Data");
     iActionWriteFile->AddInputParameter(param);
@@ -668,6 +691,7 @@ CpProxyOpenhomeOrgTestBasic1Cpp::~CpProxyOpenhomeOrgTestBasic1Cpp()
     delete iActionSetBinary;
     delete iActionGetBinary;
     delete iActionToggleBool;
+    delete iActionReportError;
     delete iActionWriteFile;
     delete iActionShutdown;
 }
@@ -1343,6 +1367,33 @@ void CpProxyOpenhomeOrgTestBasic1Cpp::EndToggleBool(IAsync& aAsync)
     ASSERT(((Async&)aAsync).Type() == Async::eInvocation);
     Invocation& invocation = (Invocation&)aAsync;
     ASSERT(invocation.Action().Name() == Brn("ToggleBool"));
+
+    Error::ELevel level;
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
+        THROW_PROXYERROR(level, code);
+    }
+}
+
+void CpProxyOpenhomeOrgTestBasic1Cpp::SyncReportError()
+{
+    SyncReportErrorOpenhomeOrgTestBasic1Cpp sync(*this);
+    BeginReportError(sync.Functor());
+    sync.Wait();
+}
+
+void CpProxyOpenhomeOrgTestBasic1Cpp::BeginReportError(FunctorAsync& aFunctor)
+{
+    Invocation* invocation = iCpProxy.GetService().Invocation(*iActionReportError, aFunctor);
+    iCpProxy.GetInvocable().InvokeAction(*invocation);
+}
+
+void CpProxyOpenhomeOrgTestBasic1Cpp::EndReportError(IAsync& aAsync)
+{
+    ASSERT(((Async&)aAsync).Type() == Async::eInvocation);
+    Invocation& invocation = (Invocation&)aAsync;
+    ASSERT(invocation.Action().Name() == Brn("ReportError"));
 
     Error::ELevel level;
     TUint code;

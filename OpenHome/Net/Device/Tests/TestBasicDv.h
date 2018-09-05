@@ -34,6 +34,7 @@ private:
     void GetString(IDvInvocation& aInvocation, IDvInvocationResponseString& aValueStr);
     void SetBinary(IDvInvocation& aInvocation, const Brx& aValueBin);
     void GetBinary(IDvInvocation& aInvocation, IDvInvocationResponseBinary& aValueBin);
+    void ReportError(IDvInvocation& aInvocation);
     void WriteFile(IDvInvocation& aInvocation, const Brx& aData, const Brx& aFileFullName);
     void Shutdown(IDvInvocation& aInvocation);
 };

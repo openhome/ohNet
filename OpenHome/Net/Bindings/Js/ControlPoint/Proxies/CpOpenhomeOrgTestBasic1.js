@@ -541,6 +541,25 @@ CpProxyOpenhomeOrgTestBasic1.prototype.ToggleBool = function(successFunction, er
 
 
 /**
+* A service action to ReportError
+* @method ReportError
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+CpProxyOpenhomeOrgTestBasic1.prototype.ReportError = function(successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("ReportError", this.url, this.domain, this.type, this.version);     
+    request.send(function(result){
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
+}
+
+
+/**
 * A service action to WriteFile
 * @method WriteFile
 * @param {String} Data An action parameter

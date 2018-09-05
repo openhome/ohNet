@@ -53,6 +53,7 @@ public:
     void EnableActionSetBinary(CallbackTestBasic1SetBinary aCallback, void* aPtr);
     void EnableActionGetBinary(CallbackTestBasic1GetBinary aCallback, void* aPtr);
     void EnableActionToggleBool(CallbackTestBasic1ToggleBool aCallback, void* aPtr);
+    void EnableActionReportError(CallbackTestBasic1ReportError aCallback, void* aPtr);
     void EnableActionWriteFile(CallbackTestBasic1WriteFile aCallback, void* aPtr);
     void EnableActionShutdown(CallbackTestBasic1Shutdown aCallback, void* aPtr);
 private:
@@ -76,6 +77,7 @@ private:
     void DoSetBinary(IDviInvocation& aInvocation);
     void DoGetBinary(IDviInvocation& aInvocation);
     void DoToggleBool(IDviInvocation& aInvocation);
+    void DoReportError(IDviInvocation& aInvocation);
     void DoWriteFile(IDviInvocation& aInvocation);
     void DoShutdown(IDviInvocation& aInvocation);
 private:
@@ -119,6 +121,8 @@ private:
     void* iPtrGetBinary;
     CallbackTestBasic1ToggleBool iCallbackToggleBool;
     void* iPtrToggleBool;
+    CallbackTestBasic1ReportError iCallbackReportError;
+    void* iPtrReportError;
     CallbackTestBasic1WriteFile iCallbackWriteFile;
     void* iPtrWriteFile;
     CallbackTestBasic1Shutdown iCallbackShutdown;
@@ -446,6 +450,15 @@ void DvProviderOpenhomeOrgTestBasic1C::EnableActionToggleBool(CallbackTestBasic1
     iPtrToggleBool = aPtr;
     OpenHome::Net::Action* action = new OpenHome::Net::Action("ToggleBool");
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestBasic1C::DoToggleBool);
+    iService->AddAction(action, functor);
+}
+
+void DvProviderOpenhomeOrgTestBasic1C::EnableActionReportError(CallbackTestBasic1ReportError aCallback, void* aPtr)
+{
+    iCallbackReportError = aCallback;
+    iPtrReportError = aPtr;
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("ReportError");
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestBasic1C::DoReportError);
     iService->AddAction(action, functor);
 }
 
@@ -913,6 +926,24 @@ void DvProviderOpenhomeOrgTestBasic1C::DoToggleBool(IDviInvocation& aInvocation)
     invocation.EndResponse();
 }
 
+void DvProviderOpenhomeOrgTestBasic1C::DoReportError(IDviInvocation& aInvocation)
+{
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    DviInvocation invocation(aInvocation);
+    ASSERT(iCallbackReportError != NULL);
+    if (0 != iCallbackReportError(iPtrReportError, invocationC, invocationCPtr)) {
+        invocation.Error(502, Brn("Action failed"));
+        return;
+    }
+    invocation.StartResponse();
+    invocation.EndResponse();
+}
+
 void DvProviderOpenhomeOrgTestBasic1C::DoWriteFile(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
@@ -1063,6 +1094,11 @@ void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionGetBinary(THandle aProvi
 void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionToggleBool(THandle aProvider, CallbackTestBasic1ToggleBool aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->EnableActionToggleBool(aCallback, aPtr);
+}
+
+void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionReportError(THandle aProvider, CallbackTestBasic1ReportError aCallback, void* aPtr)
+{
+    reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->EnableActionReportError(aCallback, aPtr);
 }
 
 void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionWriteFile(THandle aProvider, CallbackTestBasic1WriteFile aCallback, void* aPtr)

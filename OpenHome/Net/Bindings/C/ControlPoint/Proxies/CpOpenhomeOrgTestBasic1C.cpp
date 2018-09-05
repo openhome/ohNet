@@ -103,6 +103,10 @@ public:
     void BeginToggleBool(FunctorAsync& aFunctor);
     void EndToggleBool(IAsync& aAsync);
 
+    void SyncReportError();
+    void BeginReportError(FunctorAsync& aFunctor);
+    void EndReportError(IAsync& aAsync);
+
     void SyncWriteFile(const Brx& aData, const Brx& aFileFullName);
     void BeginWriteFile(const Brx& aData, const Brx& aFileFullName, FunctorAsync& aFunctor);
     void EndWriteFile(IAsync& aAsync);
@@ -150,6 +154,7 @@ private:
     Action* iActionSetBinary;
     Action* iActionGetBinary;
     Action* iActionToggleBool;
+    Action* iActionReportError;
     Action* iActionWriteFile;
     Action* iActionShutdown;
     PropertyUint* iVarUint;
@@ -615,6 +620,27 @@ void SyncToggleBoolOpenhomeOrgTestBasic1C::CompleteRequest(IAsync& aAsync)
 }
 
 
+class SyncReportErrorOpenhomeOrgTestBasic1C : public SyncProxyAction
+{
+public:
+    SyncReportErrorOpenhomeOrgTestBasic1C(CpProxyOpenhomeOrgTestBasic1C& aProxy);
+    virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncReportErrorOpenhomeOrgTestBasic1C() {};
+private:
+    CpProxyOpenhomeOrgTestBasic1C& iService;
+};
+
+SyncReportErrorOpenhomeOrgTestBasic1C::SyncReportErrorOpenhomeOrgTestBasic1C(CpProxyOpenhomeOrgTestBasic1C& aProxy)
+    : iService(aProxy)
+{
+}
+
+void SyncReportErrorOpenhomeOrgTestBasic1C::CompleteRequest(IAsync& aAsync)
+{
+    iService.EndReportError(aAsync);
+}
+
+
 class SyncWriteFileOpenhomeOrgTestBasic1C : public SyncProxyAction
 {
 public:
@@ -771,6 +797,8 @@ CpProxyOpenhomeOrgTestBasic1C::CpProxyOpenhomeOrgTestBasic1C(CpDeviceC aDevice)
 
     iActionToggleBool = new Action("ToggleBool");
 
+    iActionReportError = new Action("ReportError");
+
     iActionWriteFile = new Action("WriteFile");
     param = new OpenHome::Net::ParameterString("Data");
     iActionWriteFile->AddInputParameter(param);
@@ -820,6 +848,7 @@ CpProxyOpenhomeOrgTestBasic1C::~CpProxyOpenhomeOrgTestBasic1C()
     delete iActionSetBinary;
     delete iActionGetBinary;
     delete iActionToggleBool;
+    delete iActionReportError;
     delete iActionWriteFile;
     delete iActionShutdown;
 }
@@ -1465,6 +1494,33 @@ void CpProxyOpenhomeOrgTestBasic1C::EndToggleBool(IAsync& aAsync)
     ASSERT(((Async&)aAsync).Type() == Async::eInvocation);
     Invocation& invocation = (Invocation&)aAsync;
     ASSERT(invocation.Action().Name() == Brn("ToggleBool"));
+
+    Error::ELevel level;
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
+        THROW_PROXYERROR(level, code);
+    }
+}
+
+void CpProxyOpenhomeOrgTestBasic1C::SyncReportError()
+{
+    SyncReportErrorOpenhomeOrgTestBasic1C sync(*this);
+    BeginReportError(sync.Functor());
+    sync.Wait();
+}
+
+void CpProxyOpenhomeOrgTestBasic1C::BeginReportError(FunctorAsync& aFunctor)
+{
+    Invocation* invocation = Service()->Invocation(*iActionReportError, aFunctor);
+    Invocable().InvokeAction(*invocation);
+}
+
+void CpProxyOpenhomeOrgTestBasic1C::EndReportError(IAsync& aAsync)
+{
+    ASSERT(((Async&)aAsync).Type() == Async::eInvocation);
+    Invocation& invocation = (Invocation&)aAsync;
+    ASSERT(invocation.Action().Name() == Brn("ReportError"));
 
     Error::ELevel level;
     TUint code;
@@ -2466,6 +2522,44 @@ int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndToggleBool(THandle aHandle, OhNet
     ASSERT(async != NULL);
     try {
         proxyC->EndToggleBool(*async);
+    }
+    catch(...) {
+        err = -1;
+    }
+    return err;
+}
+
+int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncReportError(THandle aHandle)
+{
+    CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    int32_t err = 0;
+    try {
+        proxyC->SyncReportError();
+    }
+    catch (ProxyError& ) {
+        err = -1;
+    }
+    return err;
+}
+
+void STDCALL CpProxyOpenhomeOrgTestBasic1BeginReportError(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
+{
+    CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
+    proxyC->BeginReportError(functor);
+}
+
+int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndReportError(THandle aHandle, OhNetHandleAsync aAsync)
+{
+    int32_t err = 0;
+    CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    ASSERT(async != NULL);
+    try {
+        proxyC->EndReportError(*async);
     }
     catch(...) {
         err = -1;

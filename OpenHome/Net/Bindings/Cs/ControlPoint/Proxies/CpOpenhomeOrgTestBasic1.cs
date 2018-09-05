@@ -70,6 +70,9 @@ namespace OpenHome.Net.ControlPoint.Proxies
         void SyncToggleBool();
         void BeginToggleBool(CpProxy.CallbackAsyncComplete aCallback);
         void EndToggleBool(IntPtr aAsyncHandle);
+        void SyncReportError();
+        void BeginReportError(CpProxy.CallbackAsyncComplete aCallback);
+        void EndReportError(IntPtr aAsyncHandle);
         void SyncWriteFile(String aData, String aFileFullName);
         void BeginWriteFile(String aData, String aFileFullName, CpProxy.CallbackAsyncComplete aCallback);
         void EndWriteFile(IntPtr aAsyncHandle);
@@ -443,6 +446,20 @@ namespace OpenHome.Net.ControlPoint.Proxies
         }
     };
 
+    internal class SyncReportErrorOpenhomeOrgTestBasic1 : SyncProxyAction
+    {
+        private CpProxyOpenhomeOrgTestBasic1 iService;
+
+        public SyncReportErrorOpenhomeOrgTestBasic1(CpProxyOpenhomeOrgTestBasic1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndReportError(aAsyncHandle);
+        }
+    };
+
     internal class SyncWriteFileOpenhomeOrgTestBasic1 : SyncProxyAction
     {
         private CpProxyOpenhomeOrgTestBasic1 iService;
@@ -496,6 +513,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         private OpenHome.Net.Core.Action iActionSetBinary;
         private OpenHome.Net.Core.Action iActionGetBinary;
         private OpenHome.Net.Core.Action iActionToggleBool;
+        private OpenHome.Net.Core.Action iActionReportError;
         private OpenHome.Net.Core.Action iActionWriteFile;
         private OpenHome.Net.Core.Action iActionShutdown;
         private PropertyUint iVarUint;
@@ -625,6 +643,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
             iActionGetBinary.AddOutputParameter(param);
 
             iActionToggleBool = new OpenHome.Net.Core.Action("ToggleBool");
+
+            iActionReportError = new OpenHome.Net.Core.Action("ReportError");
 
             iActionWriteFile = new OpenHome.Net.Core.Action("WriteFile");
             param = new ParameterString("Data", allowedValues);
@@ -1652,6 +1672,48 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
+        public void SyncReportError()
+        {
+            SyncReportErrorOpenhomeOrgTestBasic1 sync = new SyncReportErrorOpenhomeOrgTestBasic1(this);
+            BeginReportError(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+        }
+
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndReportError().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
+        public void BeginReportError(CallbackAsyncComplete aCallback)
+        {
+            Invocation invocation = iService.Invocation(iActionReportError, aCallback);
+            iService.InvokeAction(invocation);
+        }
+
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        public void EndReportError(IntPtr aAsyncHandle)
+        {
+            uint code;
+            string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
+            {
+                throw new ProxyError(code, desc);
+            }
+        }
+
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
         /// <param name="aData"></param>
         /// <param name="aFileFullName"></param>
         public void SyncWriteFile(String aData, String aFileFullName)
@@ -1990,6 +2052,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
             iActionSetBinary.Dispose();
             iActionGetBinary.Dispose();
             iActionToggleBool.Dispose();
+            iActionReportError.Dispose();
             iActionWriteFile.Dispose();
             iActionShutdown.Dispose();
             iVarUint.Dispose();

@@ -100,6 +100,7 @@ namespace OpenHome.Net.Device.Providers
         private ActionDelegate iDelegateSetBinary;
         private ActionDelegate iDelegateGetBinary;
         private ActionDelegate iDelegateToggleBool;
+        private ActionDelegate iDelegateReportError;
         private ActionDelegate iDelegateWriteFile;
         private ActionDelegate iDelegateShutdown;
         private PropertyUint iPropertyVarUint;
@@ -567,6 +568,18 @@ namespace OpenHome.Net.Device.Providers
         }
 
         /// <summary>
+        /// Signal that the action ReportError is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// ReportError must be overridden if this is called.</remarks>
+        protected void EnableActionReportError()
+        {
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("ReportError");
+            iDelegateReportError = new ActionDelegate(DoReportError);
+            EnableAction(action, iDelegateReportError, GCHandle.ToIntPtr(iGch));
+        }
+
+        /// <summary>
         /// Signal that the action WriteFile is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
@@ -879,6 +892,19 @@ namespace OpenHome.Net.Device.Providers
         /// Must be implemented iff EnableActionToggleBool was called.</remarks>
         /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
         protected virtual void ToggleBool(IDvInvocation aInvocation)
+        {
+            throw (new ActionDisabledError());
+        }
+
+        /// <summary>
+        /// ReportError action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// ReportError action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionReportError was called.</remarks>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
+        protected virtual void ReportError(IDvInvocation aInvocation)
         {
             throw (new ActionDisabledError());
         }
@@ -1846,6 +1872,50 @@ namespace OpenHome.Net.Device.Providers
             catch (System.Exception e)
             {
                 System.Diagnostics.Debug.WriteLine("WARNING: unexpected exception {0} thrown by {1}", new object[] { e, "ToggleBool" });
+                System.Diagnostics.Debug.WriteLine("       Only ActionError can be thrown by action response writer");
+            }
+            return 0;
+        }
+
+        private static int DoReportError(IntPtr aPtr, IntPtr aInvocation)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            DvProviderOpenhomeOrgTestBasic1 self = (DvProviderOpenhomeOrgTestBasic1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.ReportError(invocation);
+            }
+            catch (ActionError e)
+            {
+                invocation.ReportActionError(e, "ReportError");
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", new object[] { "ReportError" }));
+                return -1;
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine("WARNING: unexpected exception {0} thrown by {1}", new object[] { e, "ReportError" });
+                System.Diagnostics.Debug.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (System.Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine("WARNING: unexpected exception {0} thrown by {1}", new object[] { e, "ReportError" });
                 System.Diagnostics.Debug.WriteLine("       Only ActionError can be thrown by action response writer");
             }
             return 0;

@@ -50,6 +50,7 @@ ProviderTestBasic::ProviderTestBasic(DvDevice& aDevice)
     EnableActionGetString();
     EnableActionSetBinary();
     EnableActionGetBinary();
+    EnableActionReportError();
     EnableActionWriteFile();
     EnableActionShutdown();
 }
@@ -212,6 +213,11 @@ void ProviderTestBasic::GetBinary(IDvInvocation& aInvocation, IDvInvocationRespo
     aValueBin.Write(val);
     aValueBin.WriteFlush();
     aInvocation.EndResponse();
+}
+
+void ProviderTestBasic::ReportError(IDvInvocation& aInvocation)
+{
+    aInvocation.Error(801, Brn("intentionally throws"));
 }
 
 void ProviderTestBasic::WriteFile(IDvInvocation& aInvocation, const Brx& aData, const Brx& aFileFullName)

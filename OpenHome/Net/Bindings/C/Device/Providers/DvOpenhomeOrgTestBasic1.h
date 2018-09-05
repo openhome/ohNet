@@ -274,6 +274,17 @@ typedef int32_t (STDCALL *CallbackTestBasic1GetBinary)(void* aPtr, IDvInvocation
  */
 typedef int32_t (STDCALL *CallbackTestBasic1ToggleBool)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr);
 /**
+ * Callback which runs when the ReportError action is invoked
+ *
+ * @param[in]  aPtr           Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionReportError
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
+ *
+ * @return  0 if the action succeeded; non-zero if the action failed
+ */
+typedef int32_t (STDCALL *CallbackTestBasic1ReportError)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr);
+/**
  * Callback which runs when the WriteFile action is invoked
  *
  * @param[in]  aPtr           Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionWriteFile
@@ -555,6 +566,17 @@ DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionGetBinary(THan
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
 DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionToggleBool(THandle aProvider, CallbackTestBasic1ToggleBool aCallback, void* aPtr);
+/**
+ * Register a callback for the action ReportError
+ *
+ * If this is called, the action's availability will be published in the device's service.xml.
+ * If this is not called, any attempt to invoke the action on a control point will fail.
+ *
+ * @param[in] aProvider  Handle returned by DvProviderOpenhomeOrgTestBasic1Create
+ * @param[in] aCallback  Callback which will be run when the action is invoked
+ * @param[in] aPtr       Client-specified data which will be passed to the callback
+ */
+DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionReportError(THandle aProvider, CallbackTestBasic1ReportError aCallback, void* aPtr);
 /**
  * Register a callback for the action WriteFile
  *

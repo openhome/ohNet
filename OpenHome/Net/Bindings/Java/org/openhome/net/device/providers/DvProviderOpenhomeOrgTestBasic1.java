@@ -147,6 +147,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
     private IDvInvocationListener iDelegateSetBinary;
     private IDvInvocationListener iDelegateGetBinary;
     private IDvInvocationListener iDelegateToggleBool;
+    private IDvInvocationListener iDelegateReportError;
     private IDvInvocationListener iDelegateWriteFile;
     private IDvInvocationListener iDelegateShutdown;
     private PropertyUint iPropertyVarUint;
@@ -617,6 +618,19 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
     }
 
     /**
+     * Signal that the action ReportError is supported.
+     *
+     * <p>The action's availability will be published in the device's service.xml.
+     * ReportError must be overridden if this is called.
+     */      
+    protected void enableActionReportError()
+    {
+        Action action = new Action("ReportError");
+        iDelegateReportError = new DoReportError();
+        enableAction(action, iDelegateReportError);
+    }
+
+    /**
      * Signal that the action WriteFile is supported.
      *
      * <p>The action's availability will be published in the device's service.xml.
@@ -955,6 +969,21 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
      * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
      */
     protected void toggleBool(IDvInvocation aInvocation)
+    {
+        throw (new ActionDisabledError());
+    }
+
+    /**
+     * ReportError action.
+     *
+     * <p>Will be called when the device stack receives an invocation of the
+     * ReportError action for the owning device.
+     *
+     * <p>Must be implemented iff {@link #enableActionReportError} was called.</remarks>
+     *
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
+     */
+    protected void reportError(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -1960,6 +1989,52 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
             catch (ActionError ae)
             {
                 invocation.reportActionError(ae, "ToggleBool");
+                return;
+            }
+            catch (PropertyUpdateError pue)
+            {
+                invocation.reportError(501, "Invalid XML");
+                return;
+            }
+            catch (Exception e)
+            {
+                System.out.println("WARNING: unexpected exception: " + e.getMessage());
+                System.out.println("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                e.printStackTrace();
+                return;
+            }
+            try
+            {
+                invocation.writeStart();
+                invocation.writeEnd();
+            }
+            catch (ActionError ae)
+            {
+                return;
+            }
+            catch (Exception e)
+            {
+                System.out.println("ERROR: unexpected exception: " + e.getMessage());
+                System.out.println("       Only ActionError can be thrown by action response writer");
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private class DoReportError implements IDvInvocationListener
+    {
+        public void actionInvoked(long aInvocation)
+        {
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            try
+            {
+                invocation.readStart();
+                invocation.readEnd();
+                reportError(invocation);
+            }
+            catch (ActionError ae)
+            {
+                invocation.reportActionError(ae, "ReportError");
                 return;
             }
             catch (PropertyUpdateError pue)
