@@ -166,12 +166,12 @@ ifeq ($(platform),iOS)
 	devroot=/Applications/Xcode.app/Contents/Developer
 	toolroot=$(devroot)/Toolchains/XcodeDefault.xctoolchain/usr/bin
 	sdkroot=$(devroot)/Platforms/$(platform_prefix).platform/Developer/SDKs/$(platform_prefix).sdk
-	platform_cflags = -I$(sdkroot)/usr/include/ -miphoneos-version-min=2.2 -pipe -no-cpp-precomp -isysroot $(sdkroot) -DPLATFORM_MACOSX_GNU -DPLATFORM_IOS
+	platform_cflags = -I$(sdkroot)/usr/include/ -miphoneos-version-min=5.0 -pipe -no-cpp-precomp -isysroot $(sdkroot) -DPLATFORM_MACOSX_GNU -DPLATFORM_IOS
 	# TODO: Support armv6 for old devices
 	osbuilddir = $(platform)-$(detected_openhome_architecture)
 	objdir = Build/Obj/$(osbuilddir)/$(build_dir)/
 	platform_linkflags = -L$(sdkroot)/usr/lib/ -arch $(platform_arch)
-	compiler = $(toolroot)/clang -arch $(platform_arch) -isysroot $(sdkroot) -o $(objdir)
+	compiler = $(toolroot)/clang -stdlib=libc++ -arch $(platform_arch) -isysroot $(sdkroot) -o $(objdir)
 	# No support for linking Shared Objects for ARM MAC
 	# link = $(devroot)/usr/bin/llvm-gcc-4.2  -pthread -Wl $(platform_linkflags)
 	# link = $(toolroot)/clang++ -pthread -stdlib=libc++ $(platform_linkflags)
