@@ -105,6 +105,7 @@ private:
     DvStack& iDvStack;
     AttributeMap iAttributeMap;
     Mutex iLock;
+    Mutex iLockDisable;
     std::vector<DviProtocolUpnpAdapterSpecificData*> iAdapters;
     TInt iCurrentAdapterChangeListenerId;
     TInt iSubnetListChangeListenerId;
