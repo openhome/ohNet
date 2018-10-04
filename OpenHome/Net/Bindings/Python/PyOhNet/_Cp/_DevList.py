@@ -45,7 +45,7 @@ class DeviceList():
         length = ctypes.c_int()
         self.lib.CpDeviceCGetUdn( handle, ctypes.byref( udn ), ctypes.byref( length ))
         for dev in self.devices:
-            if dev.udn == udn.value:
+            if dev.udn == udn.value.decode( 'ascii' ):
                 for cb in self.removedCbs:
                     cb( dev )
                 self.devices.remove( dev )
