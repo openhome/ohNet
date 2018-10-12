@@ -652,16 +652,18 @@ TBool CpiDeviceListUpnp::IsLocationReachable(const Brx& aLocation) const
     catch (UriError&) {
         return false;
     }
-    iLock.Wait();
-    Endpoint endpt(0, uri.Host());
-    NetworkAdapter* nif = iCpStack.Env().NetworkAdapterList().CurrentAdapter("CpiDeviceListUpnp::IsLocationReachable");
-    if (nif != NULL) {
-        if (nif->Address() == iInterface && nif->ContainsAddress(endpt.Address())) {
-            reachable = true;
+    try {
+        AutoMutex _(iLock);
+        Endpoint endpt(0, uri.Host());
+        NetworkAdapter* nif = iCpStack.Env().NetworkAdapterList().CurrentAdapter("CpiDeviceListUpnp::IsLocationReachable");
+        if (nif != NULL) {
+            if (nif->Address() == iInterface && nif->ContainsAddress(endpt.Address())) {
+                reachable = true;
+            }
+            nif->RemoveRef("CpiDeviceListUpnp::IsLocationReachable");
         }
-        nif->RemoveRef("CpiDeviceListUpnp::IsLocationReachable");
     }
-    iLock.Signal();
+    catch (NetworkError&) {}
     return reachable;
 }
 
