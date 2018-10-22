@@ -1055,6 +1055,7 @@ void ReaderHttpEntity::Set(const HttpHeaderContentLength& aHeaderContentLength,
             SetUnknownLength();
         }
     }
+    iDechunker.SetChunked(iChunked);
 }
 
 void ReaderHttpEntity::SetChunked()
