@@ -1190,6 +1190,7 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
     }
 
     OsNetworkAdapter* head = NULL;          /* List of non-loopback adapters */
+    OsNetworkAdapter* tail = NULL;          /* List of non-loopback adapters */
     OsNetworkAdapter* loopHead = NULL;      /* List of loopback adapters */
 
     for (iter = networkIf; iter != NULL; iter = iter->ifa_next) {
@@ -1211,10 +1212,13 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
         }
 
         if (! ifaceIsLoopback) {
-            if (head != NULL) {
-                iface->iNext = head;
+            if (tail != NULL) {
+                tail->iNext = iface;
             }
-            head = iface;
+            else {
+                head = iface;
+            }
+            tail = iface;
         }
         else {
             if (loopHead != NULL) {
@@ -1240,13 +1244,7 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
         head = loopHead;
     }
     else {
-        // Walk to end of non-loopback list.
-        OsNetworkAdapter* ptr = head;
-        while (ptr->iNext != NULL) {
-            ptr = ptr->iNext;
-        }
-        // Append here
-        ptr->iNext = loopHead;
+        tail->iNext = loopHead;
         loopHead = NULL;
     }
 
