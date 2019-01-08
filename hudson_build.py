@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 #
+import json
 import os
+import requests
 import subprocess
 import shutil
 import sys
@@ -11,32 +13,45 @@ from os import path
 
 try:
     import boto3
-    import boto3.s3.transfer
 except:
     print('\nAWS fetch requires boto3 module')
     print("Please install this using 'pip install boto3'\n")
 else:
-    # create AWS credentials file (if not already present)
-    home = None
-    if 'HOMEPATH' in os.environ and 'HOMEDRIVE' in os.environ:
-        home = os.path.join(os.environ['HOMEDRIVE'], os.environ['HOMEPATH'])
-    elif 'HOME' in os.environ:
-        home = os.environ['HOME']
-    if home:
-        awsCreds = os.path.join(home, '.aws', 'credentials')
-        if not os.path.exists(awsCreds):
-            if sys.version_info[0] == 2:
-                from urllib2 import urlopen
-            else:
-                from urllib.request import urlopen
-            try:
-                os.mkdir(os.path.join(home, '.aws'))
-            except:
-                pass
-            credsFile = urlopen('http://core.linn.co.uk/~artifacts/artifacts/aws-credentials' )
-            creds = credsFile.read()
-            with open(awsCreds, 'wt') as f:
-                f.write(creds)
+    awsSlave = False
+    try:
+        resp = requests.get( kAwsMetadataService )
+        meta = json.loads( resp.text )
+        if 'InstanceProfileArn' in meta:
+            if 'dev-tools-EC2SlaveInstanceProfile' in meta['InstanceProfileArn']:
+                awsSlave = True
+    except:
+        pass
+
+    if not awsSlave:
+        # create AWS credentials file (if not already present)
+        home = None
+        if 'HOMEPATH' in os.environ and 'HOMEDRIVE' in os.environ:
+            home = os.path.join(os.environ['HOMEDRIVE'], os.environ['HOMEPATH'])
+        elif 'HOME' in os.environ:
+            home = os.environ['HOME']
+        if home:
+            awsCreds = os.path.join(home, '.aws', 'credentials')
+            if not os.path.exists(awsCreds):
+                if sys.version_info[0] == 2:
+                    from urllib2 import urlopen
+                else:
+                    from urllib.request import urlopen
+                try:
+                    os.mkdir(os.path.join(home, '.aws'))
+                except:
+                    pass
+                try:
+                    credsFile = urlopen('http://core.linn.co.uk/aws-credentials' )
+                    creds = credsFile.read()
+                    with open(awsCreds, 'wt') as f:
+                        f.write(creds)
+                except:
+                    pass
 
 
 class PostActions():
@@ -57,9 +72,9 @@ class PostActions():
     def gen_docs(self):
         ret = subprocess.check_call('make docs', shell=True)
         if ret != 0:
-            print ret
+            print( ret )
             sys.exit(10)
-        print 'WARNING: publication of API docs disabled'
+        print( 'WARNING: publication of API docs disabled' )
 
     def armel_tests(self, type, release):
         self.__remote_tests('sheeva010.linn.co.uk', 'root', type, release)
@@ -70,11 +85,11 @@ class PostActions():
         rem = remote()
         ret = rem.rsync(user, host, 'Build', '~/', excludes=['*.o', '*.a', 'Bundles'])
         if ret != 0:
-            print ret
+            print( ret )
             sys.exit(10)
         ret = rem.rsync(user, host, 'AllTests.py', '~/')
         if ret != 0:
-            print ret
+            print( ret )
             sys.exit(10)
 
         alltests_cmd = 'python AllTests.py -t --native'  # Setup AllTests cmd line to run tests only.
@@ -86,7 +101,7 @@ class PostActions():
 
         ret = rem.rssh(user, host, alltests_cmd)
         if ret != 0:
-            print ret
+            print( ret )
             sys.exit(10)
 
 
@@ -129,7 +144,7 @@ class JenkinsBuild():
         else:
             self.options.release = '0'
 
-        print "options for build are nightly:%s and release:%s on platform %s" % (self.options.nightly, self.options.release, self.options.platform)
+        print( "options for build are nightly:%s and release:%s on platform %s" % (self.options.nightly, self.options.release, self.options.platform))
 
     def get_platform(self):
         platforms = {
@@ -310,11 +325,11 @@ class JenkinsBuild():
             if build_t == 'release':
                 build.append('--incremental')
 
-            print 'running build with %s' % (build,)
+            print( 'running build with %s' % (build,))
 
             ret = subprocess.check_call(build)
             if ret != 0:
-                print ret
+                print( ret )
                 sys.exit(10)
 
     def do_release(self):
@@ -345,7 +360,7 @@ class JenkinsBuild():
                 build.append('platform=' + platform)
             ret = subprocess.check_call(build)
             if ret != 0:
-                print ret
+                print( ret )
                 sys.exit(10)
 
             build = []
@@ -362,11 +377,11 @@ class JenkinsBuild():
             build.append('openhome_architecture=' + openhome_architecture)
             build.append('openhome_configuration=' + openhome_configuration)
             build.extend(self.platform_make_args)
-            print "doing release with bundle %s" % (build,)
+            print( "doing release with bundle %s" % (build,))
 
             ret = subprocess.check_call(build)
             if ret != 0:
-                print ret
+                print( ret )
                 sys.exit(10)
 
             native_bundle_name = os.path.join('Build/Bundles', "ohNet-%s-%s-%s.tar.gz" % (openhome_system, openhome_architecture, openhome_configuration))
@@ -379,7 +394,7 @@ class JenkinsBuild():
         for entry in entries:
             src = 'Build/Bundles/' + entry
             dst = 's3://linn-artifacts-public/artifacts/ohNet/' + entry.split('/')[-1]
-            print ('Publish %s --> %s' % (src, dst))
+            print('Publish %s --> %s' % (src, dst))
             resource = boto3.resource('s3')
             bucket = resource.Bucket(dst.split('/')[2])
             key = '/'.join(dst.split('/')[3:])
