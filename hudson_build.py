@@ -11,6 +11,7 @@ from Helpers.valgrind_parser import *
 from Helpers.remote import *
 from os import path
 
+
 try:
     import boto3
 except:
@@ -19,7 +20,7 @@ except:
 else:
     awsSlave = False
     try:
-        resp = requests.get( kAwsMetadataService )
+        resp = requests.get( 'http://169.254.169.254/latest/meta-data/iam/info' )
         meta = json.loads( resp.text )
         if 'InstanceProfileArn' in meta:
             if 'dev-tools-EC2SlaveInstanceProfile' in meta['InstanceProfileArn']:
