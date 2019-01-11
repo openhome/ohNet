@@ -1195,9 +1195,12 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
 
     for (iter = networkIf; iter != NULL; iter = iter->ifa_next) {
 
+        if (iter->ifa_addr == NULL) {
+            continue;
+        }
         const int ifaceIsLoopback = (((struct sockaddr_in*)iter->ifa_addr)->sin_addr.s_addr == loopbackAddr) ? 1 : 0;
 
-        if (iter->ifa_addr == NULL || iter->ifa_addr->sa_family != AF_INET ||
+        if (iter->ifa_addr->sa_family != AF_INET ||
             (iter->ifa_flags & IFF_RUNNING) == 0 ||
             (includeLoopback == 0 && ifaceIsLoopback == 1) ||
             (aUseLoopback == 1    && ifaceIsLoopback == 0)) {
