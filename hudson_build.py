@@ -167,6 +167,7 @@ class JenkinsBuild():
             'Linux-armhf': { 'os': 'linux', 'arch': 'armhf', 'publish': True, 'system': 'Linux'},
             'Linux-rpi': { 'os': 'linux', 'arch': 'rpi', 'publish': True, 'system': 'Linux'},
             'Linux-mipsel': { 'os': 'linux', 'arch': 'mipsel', 'publish': True, 'system': 'Linux'},
+            'Linux-arm64': { 'os': 'linux', 'arch': 'arm64', 'publish': True, 'system': 'Linux'},
             'iOs-ARM': { 'os': 'iOs', 'arch': 'armv7', 'publish': True, 'system': 'iOs'},  # Old Jenkins label
             'iOs-x86': { 'os': 'iOs', 'arch': 'x86', 'publish': True, 'system': 'iOs'},
             'iOs-x64': { 'os': 'iOs', 'arch': 'x64', 'publish': True, 'system': 'iOs'},
@@ -244,7 +245,7 @@ class JenkinsBuild():
 
         self.platform_make_args = []
 
-        if (arch in ['armel', 'armhf', 'armv7', 'arm64', 'armv5', 'armv6', 'mipsel', 'ppc32', 'rpi']) or (os_platform in ['iOs', 'Android', 'Windows81', 'Windows10']):
+        if (arch in ['armel', 'armhf', 'armv7', 'arm64', 'armv5', 'armv6', 'mipsel', 'ppc32', 'rpi', 'arm64']) or (os_platform in ['iOs', 'Android', 'Windows81', 'Windows10']):
             args.append('--buildonly')
         elif arch == 'x64':
             if os_platform  == 'macos':
