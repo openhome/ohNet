@@ -1190,13 +1190,17 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
     }
 
     OsNetworkAdapter* head = NULL;          /* List of non-loopback adapters */
+    OsNetworkAdapter* tail = NULL;          /* List of non-loopback adapters */
     OsNetworkAdapter* loopHead = NULL;      /* List of loopback adapters */
 
     for (iter = networkIf; iter != NULL; iter = iter->ifa_next) {
 
+        if (iter->ifa_addr == NULL) {
+            continue;
+        }
         const int ifaceIsLoopback = (((struct sockaddr_in*)iter->ifa_addr)->sin_addr.s_addr == loopbackAddr) ? 1 : 0;
 
-        if (iter->ifa_addr == NULL || iter->ifa_addr->sa_family != AF_INET ||
+        if (iter->ifa_addr->sa_family != AF_INET ||
             (iter->ifa_flags & IFF_RUNNING) == 0 ||
             (includeLoopback == 0 && ifaceIsLoopback == 1) ||
             (aUseLoopback == 1    && ifaceIsLoopback == 0)) {
@@ -1211,10 +1215,13 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
         }
 
         if (! ifaceIsLoopback) {
-            if (head != NULL) {
-                iface->iNext = head;
+            if (tail != NULL) {
+                tail->iNext = iface;
             }
-            head = iface;
+            else {
+                head = iface;
+            }
+            tail = iface;
         }
         else {
             if (loopHead != NULL) {
@@ -1240,13 +1247,7 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
         head = loopHead;
     }
     else {
-        // Walk to end of non-loopback list.
-        OsNetworkAdapter* ptr = head;
-        while (ptr->iNext != NULL) {
-            ptr = ptr->iNext;
-        }
-        // Append here
-        ptr->iNext = loopHead;
+        tail->iNext = loopHead;
         loopHead = NULL;
     }
 
