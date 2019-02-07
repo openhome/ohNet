@@ -223,11 +223,11 @@ void CpiSubscription::DoSubscribe()
     Bws<Uri::kMaxUriBytes> uri;
     uri.Append(Http::kSchemeHttp);
     NetworkAdapter* nif = iEnv.NetworkAdapterList().CurrentAdapter("CpiSubscription::DoSubscribe");
-    if (nif == NULL) {
-        THROW(NetworkError);
+    TIpAddress nifAddr = 0;
+    if (nif != NULL) {
+        nifAddr = nif->Address();
+        nif->RemoveRef("CpiSubscription::DoSubscribe");
     }
-    TIpAddress nifAddr = nif->Address();
-    nif->RemoveRef("CpiSubscription::DoSubscribe");
     Endpoint endpt(iCpStack.SubscriptionManager().EventServerPort(), nifAddr);
     Endpoint::EndpointBuf buf;
     endpt.AppendEndpoint(buf);
