@@ -175,14 +175,16 @@ void CpiDeviceDv::NotifySubscriptionCreated(const Brx& /*aSid*/)
 
 void CpiDeviceDv::NotifySubscriptionDeleted(const Brx& aSid)
 {
-    AutoMutex _(iLock);
-    Brn sid(aSid);
-    SubscriptionMap::iterator it = iSubscriptions.find(sid);
-    ASSERT(it != iSubscriptions.end());
-    delete it->second;
-    iSubscriptions.erase(it);
-    if (iSubscriptions.size() == 0) {
-        iShutdownSem.Signal(); // unblock shutdown now we have no subscriptions that may be trying to event out updates
+    {
+        AutoMutex _(iLock);
+        Brn sid(aSid);
+        SubscriptionMap::iterator it = iSubscriptions.find(sid);
+        ASSERT(it != iSubscriptions.end());
+        delete it->second;
+        iSubscriptions.erase(it);
+        if (iSubscriptions.size() == 0) {
+            iShutdownSem.Signal(); // unblock shutdown now we have no subscriptions that may be trying to event out updates
+        }
     }
     iDeviceCp->RemoveRef();
 }

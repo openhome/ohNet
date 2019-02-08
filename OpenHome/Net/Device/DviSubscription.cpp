@@ -201,10 +201,6 @@ void DviSubscription::WriteChanges()
 IPropertyWriter* DviSubscription::CreateWriter()
 {
     LOG_DEBUG(kDvEvent, "WriteChanges for subscription %.*s seq - %u\n", PBUF(iSid), iSequenceNumber);
-    if (!iDevice.Enabled()) {
-        LOG_DEBUG(kDvEvent, "Device disabled; defer publishing changes\n");
-        return NULL;
-    }
 
     if (iService == NULL) {
         LOG_DEBUG(kDvEvent, "Subscription stopped; don't publish changes\n");

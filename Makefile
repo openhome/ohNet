@@ -120,6 +120,9 @@ else
     ifneq (,$(findstring mips,$(gcc_machine)))
       detected_openhome_architecture = mipsel
     endif
+    ifneq (,$(findstring aarch64,$(gcc_machine)))
+      detected_openhome_architecture = arm64
+    endif
 endif
 
 detected_openhome_system ?= Unknown
