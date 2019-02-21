@@ -3,6 +3,7 @@
 import PyOhNet
 import abc
 import ctypes
+import time
 import _Cp._Device as Device
 
 
@@ -44,6 +45,7 @@ class DeviceList():
         udn = ctypes.c_char_p()
         length = ctypes.c_int()
         self.lib.CpDeviceCGetUdn( handle, ctypes.byref( udn ), ctypes.byref( length ))
+        time.sleep( 0.01 )  # udn not populated correctly without this delay (on Win10)
         for dev in self.devices:
             if dev.udn == udn.value.decode( 'ascii' ):
                 for cb in self.removedCbs:
