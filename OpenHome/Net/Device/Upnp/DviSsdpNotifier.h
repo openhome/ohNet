@@ -108,7 +108,7 @@ private:
 
 class DviSsdpNotifierManager : private ISsdpNotifyListener
 {
-    static const TUint kMaxMsearchResponsesPerEndpoint;
+    static const TUint kMaxMsearchResponses; // Maximum number of pending m-search responses per device per endpoint.
 public:
     DviSsdpNotifierManager(DvStack& aDvStack);
     ~DviSsdpNotifierManager();
