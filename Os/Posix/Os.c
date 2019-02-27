@@ -1041,7 +1041,7 @@ int32_t OsNetworkGetHostByName(const char* aAddress, TIpAddress* aHost)
     }
 
 #if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD) && !defined(__ANDROID__)
-    // getaddinfo() failed, possibly because configuration is stale and configuration files need to be re-read.
+    // getaddrinfo() failed, possibly because configuration is stale and configuration files need to be re-read.
     // Try re-read configuration files.
     if (res_init() == 0) {
         // Configuration files were re-read. Try getaddrinfo() again.
@@ -1542,7 +1542,7 @@ static void SetInterfaceChangedObserver_Linux(OsContext* aContext, InterfaceList
                                                             aContext->iInterfaceChangedObserver)) == NULL) {
         goto Error;
     }
-    
+
     return;
 
 Error:
