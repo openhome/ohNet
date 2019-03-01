@@ -20,7 +20,7 @@ except:
 else:
     awsSlave = False
     try:
-        resp = requests.get( 'http://169.254.169.254/latest/meta-data/iam/info' )
+        resp = requests.get( 'http://169.254.169.254/latest/meta-data/iam/info', timeout=1 )
         meta = json.loads( resp.text )
         if 'InstanceProfileArn' in meta:
             if 'dev-tools-EC2SlaveInstanceProfile' in meta['InstanceProfileArn']:

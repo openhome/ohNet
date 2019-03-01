@@ -298,7 +298,7 @@ void DeviceAnnouncement::NotifyComplete(TBool aCancelled)
 
 // DviSsdpNotifierManager
 
-const TUint DviSsdpNotifierManager::kMaxMsearchResponsesPerEndpoint = 5;
+const TUint DviSsdpNotifierManager::kMaxMsearchResponses = 2;
 
 DviSsdpNotifierManager::DviSsdpNotifierManager(DvStack& aDvStack)
     : iDvStack(aDvStack)
@@ -447,11 +447,13 @@ void DviSsdpNotifierManager::Delete(std::list<Notifier*>& aList)
 
 DviSsdpNotifierManager::Responder* DviSsdpNotifierManager::GetResponder(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote)
 {
-    TUint responsesPerEndpoint = 0;
+    TUint responsesCount = 0; // Active responses for the device described by "aAnnouncementData" to endpoint "aRemote".
     for (std::list<Notifier*>::iterator it = iActiveResponders.begin(); it != iActiveResponders.end(); ++it) {
-        Endpoint remote = static_cast<Responder*>(*it)->Response().Remote();
-        if (remote == aRemote) {
-            if (++responsesPerEndpoint > kMaxMsearchResponsesPerEndpoint) {
+        Responder& responder = static_cast<Responder&>(**it);
+        Endpoint remote = responder.Response().Remote();
+        const TBool udnMatches = responder.MatchesDevice(aAnnouncementData.Udn());
+        if (remote == aRemote && udnMatches) {
+            if (++responsesCount > kMaxMsearchResponses) {
                 Endpoint::EndpointBuf epBuf;
                 remote.AppendEndpoint(epBuf);
                 LOG(kDvSsdpNotifier, "DviSsdpNotifierManager ignoring excess msearch from %.*s\n", PBUF(epBuf));
