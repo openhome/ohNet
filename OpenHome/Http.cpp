@@ -1144,18 +1144,49 @@ void ReaderHttpEntity::ReadInterrupt()
 
 // WriterHttpChunked
 
-WriterHttpChunked::WriterHttpChunked(IWriter& aWriter)
-    : iBuffer(aWriter)
+WriterHttpChunked::WriterHttpChunked(IWriter& aWriter, TUint aBufferBytes)
+    : iChunker(aWriter, aBufferBytes)
+    , iBuffer(iChunker)
+{
+    SetChunked(false);
+}
+
+void WriterHttpChunked::SetChunked(TBool aChunked)
+{
+    iChunker.SetChunked(aChunked);
+    iWriter = aChunked ? static_cast<IWriter*>(&iBuffer) : static_cast<IWriter*>(&iChunker);
+}
+
+void WriterHttpChunked::Write(TByte aValue)
+{
+    iWriter->Write(aValue);
+}
+
+void WriterHttpChunked::Write(const Brx& aBuffer)
+{
+    iWriter->Write(aBuffer);
+}
+
+void WriterHttpChunked::WriteFlush()
+{
+    iWriter->WriteFlush();
+}
+
+
+// WriterHttpChunked::Chunker
+
+WriterHttpChunked::Chunker::Chunker(IWriter& aWriter, TUint aBufferBytes)
+    : iBuffer(aBufferBytes, aWriter)
     , iChunked(false)
 {
 }
 
-void WriterHttpChunked::SetChunked(TBool aValue)
+void WriterHttpChunked::Chunker::SetChunked(TBool aChunked)
 {
-    iChunked = aValue;
+    iChunked = aChunked;
 }
 
-void WriterHttpChunked::Write(TByte aValue)
+void WriterHttpChunked::Chunker::Write(TByte aValue)
 {
     if (iChunked) {
         iBuffer.Write('1');
@@ -1168,7 +1199,7 @@ void WriterHttpChunked::Write(TByte aValue)
     }
 }
 
-void WriterHttpChunked::Write(const Brx& aBuffer)
+void WriterHttpChunked::Chunker::Write(const Brx& aBuffer)
 {
     if (iChunked) {
         Bws<16> count;
@@ -1183,7 +1214,7 @@ void WriterHttpChunked::Write(const Brx& aBuffer)
     }
 }
 
-void WriterHttpChunked::WriteFlush()
+void WriterHttpChunked::Chunker::WriteFlush()
 {
     if (iChunked) {
         iBuffer.Write('0');

@@ -580,6 +580,25 @@ void Swx::WriteFlush()
 }
 
 
+// Swd
+
+Swd::Swd(TUint aMaxBytes, IWriter& aWriter)
+    : Swx(aMaxBytes, aWriter)
+    , iPtr(new TByte[aMaxBytes])
+{
+}
+
+TByte* Swd::Ptr()
+{
+    return iPtr;
+}
+
+Swd::~Swd()
+{
+    delete[] iPtr;
+}
+
+
 // WriterBuffer
 
 WriterBuffer::WriterBuffer(Bwx& aBuffer)

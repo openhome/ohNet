@@ -233,6 +233,17 @@ private:
     TByte iBuf[S];
 };
 
+class Swd : public Swx
+{
+public:
+    Swd(TUint aMaxBytes, IWriter& aWriter);
+    virtual ~Swd();
+private:
+    virtual TByte* Ptr();
+private:
+    TByte* iPtr;
+};
+
 class WriterBuffer : public IWriter, public INonCopyable
 {
 public:

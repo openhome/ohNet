@@ -517,17 +517,31 @@ private:
 
 class WriterHttpChunked : public IWriter
 {
-    static const TUint kMaxBufferBytes = 6000;
 public:
-    WriterHttpChunked(IWriter& aWriter);
-    void SetChunked(TBool aValue);
+    WriterHttpChunked(IWriter& aWriter, TUint aBufferBytes = 4096);
+    void SetChunked(TBool aChunked);
 public: // from IWriter
     void Write(TByte aValue);
     void Write(const Brx& aBuffer);
     void WriteFlush();
 private:
-    Sws<kMaxBufferBytes> iBuffer;
-    TBool iChunked;
+    class Chunker : public IWriter
+    {
+    public:
+        Chunker(IWriter& aWriter, TUint aBufferBytes);
+        void SetChunked(TBool aChunked);
+    public: // from IWriter
+        void Write(TByte aValue);
+        void Write(const Brx& aBuffer);
+        void WriteFlush();
+    private:
+        Swd iBuffer;
+        TBool iChunked;
+    };
+private:
+    Chunker iChunker;
+    Sws<2048> iBuffer;
+    IWriter* iWriter;
 };
 
 } // namespace OpenHome
