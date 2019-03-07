@@ -5,7 +5,7 @@ include $(CLEAR_VARS)
 ohroot := ../../../../../
 
 LOCAL_C_INCLUDES := $(ohroot)Build/Include
-LOCAL_CFLAGS := -fexceptions -Wall -Werror -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE -fvisibility=hidden -Wno-psabi -Wno-unused-but-set-variable
+LOCAL_CFLAGS := -fexceptions -Wall -Werror -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE -fvisibility=hidden -Wno-unused
 LOCAL_LDLIBS := -llog
 LOCAL_MODULE    := ohNet
 LOCAL_SRC_FILES := $(ohroot)OpenHome/Ascii.cpp \
