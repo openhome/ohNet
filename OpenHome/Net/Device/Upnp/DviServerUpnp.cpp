@@ -691,7 +691,7 @@ void DviSessionUpnp::Run()
         }
     }
     catch (ReaderError&) {
-        if(OpenHome::Debug::TestLevel(OpenHome::Debug::kDvDevice|OpenHome::Debug::kDvDevice)) {
+        if(OpenHome::Debug::TestLevel(OpenHome::Debug::kDvDevice | OpenHome::Debug::kDvEvent)) {
             Log::Print("ReaderError handling %.*s for %.*s\n", PBUF(method), PBUF(reqUri));
         }
         
@@ -700,7 +700,7 @@ void DviSessionUpnp::Run()
         }
     }
     catch (WriterError&) {
-        if(OpenHome::Debug::TestLevel(OpenHome::Debug::kDvDevice|OpenHome::Debug::kDvDevice)) {
+        if(OpenHome::Debug::TestLevel(OpenHome::Debug::kDvDevice | OpenHome::Debug::kDvEvent)) {
             Log::Print("WriterError handling %.*s for %.*s\n", PBUF(method), PBUF(reqUri));
         }
     }
@@ -718,7 +718,7 @@ void DviSessionUpnp::Run()
         }
     }
     catch (WriterError&) {
-        if(OpenHome::Debug::TestLevel(OpenHome::Debug::kDvDevice|OpenHome::Debug::kDvDevice)) {
+        if(OpenHome::Debug::TestLevel(OpenHome::Debug::kDvDevice|OpenHome::Debug::kDvEvent)) {
            Log::Print("WriterError(2) handling %.*s for %.*s\n", PBUF(method), PBUF(reqUri));
         }
     }
