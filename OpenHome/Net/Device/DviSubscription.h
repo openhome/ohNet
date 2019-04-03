@@ -45,9 +45,12 @@ public:
 class DviDevice;
 class DviService;
 class DvStack;
+class DviSubscriptionManager;
+class IPublisherQueue;
 
 class DviSubscription : private IStackObject
 {
+    friend class DviSubscriptionManager;
 public:
     DviSubscription(DvStack& aDvStack, DviDevice& aDevice, IPropertyWriterFactory& aWriterFactory,
                     IDviSubscriptionUserData* aUserData, Brh& aSid);
@@ -74,6 +77,7 @@ private:
 private:
     DvStack& iDvStack;
     mutable Mutex iLock;
+    Mutex iLockExpired;
     TUint iRefCount;
     DviDevice& iDevice;
     IPropertyWriterFactory& iWriterFactory;
@@ -83,6 +87,9 @@ private:
     std::vector<TUint> iPropertySequenceNumbers;
     TUint iSequenceNumber;
     Timer* iTimer;
+    TUint iPublisherFailures;
+    TUint iPublisherSuccesses;
+    IPublisherQueue* iPublisherQueue;
     TBool iExpired;
 };
 
@@ -118,25 +125,62 @@ private:
     IWriter* iWriter;
 };
 
+class IPublisherQueue
+{
+public:
+    virtual ~IPublisherQueue() {}
+    virtual void QueueUpdate(DviSubscription& aSubscription) = 0; 
+};
+
+class IPublisherObserver
+{
+public:
+    virtual ~IPublisherObserver() {}
+    virtual void NotifyPublishSuccess(DviSubscription& aSubscription) = 0;
+    virtual void NotifyPublishError(DviSubscription& aSubscription) = 0;
+};
+
 class Publisher : public Thread
 {
 public:
-    Publisher(const TChar* aName, TUint aPriority, Fifo<Publisher*>& aFree, TUint aModerationMs);
+    Publisher(const TChar* aName, TUint aPriority, IPublisherObserver& aObserver, Fifo<Publisher*>& aFree, TUint aModerationMs);
     ~Publisher();
     void Publish(DviSubscription* aSubscription);
 private:
     void Error(const TChar* aErr);
     void Run();
 private:
+    IPublisherObserver& iObserver;
     Fifo<Publisher*>& iFree;
     DviSubscription* iSubscription;
     const TUint iModerationMs;
     Semaphore iModerator;
 };
 
-class DviSubscriptionManager : public Thread, private IInfoProvider
+class PublisherPool : public Thread, public IPublisherQueue
+{
+public:
+    PublisherPool(const TChar* aName, TUint aPriority, IPublisherObserver& aObserver, TUint aNumPublisherThreads, TUint aPoolNumber, TUint aModerationMs);
+    ~PublisherPool();
+    std::list<DviSubscription*> GetUpdates();
+public: // from IPublisherQueue
+    void QueueUpdate(DviSubscription& aSubscription);
+private: // from Thread
+    void Run();
+private:
+    TUint iNumPublishers;
+    Fifo<Publisher*> iFree;
+    Mutex iLock;
+    std::list<DviSubscription*> iPendingUpdates;
+    Publisher** iPublishers;
+};
+
+class DviSubscriptionManager : private IPublisherObserver
+                             , private IInfoProvider
 {
     static const Brn kQuerySubscriptions;
+    static const TUint kMaxFailures = 3;
+    static const TUint kPublisherSuccessThreshold = 3;
 public:
     DviSubscriptionManager(DvStack& aDvStack, TUint aPriority);
     ~DviSubscriptionManager();
@@ -144,19 +188,20 @@ public:
     void RemoveSubscription(DviSubscription& aSubscription);
     DviSubscription* Find(const Brx& aSid);
     void QueueUpdate(DviSubscription& aSubscription);
+private: // from IPublisherObserver
+    void NotifyPublishSuccess(DviSubscription& aSubscription);
+    void NotifyPublishError(DviSubscription& aSubscription);
 private: // from IInfoProvider
     void QueryInfo(const Brx& aQuery, IWriter& aWriter);
 private:
-    void Run();
-private:
     DvStack& iDvStack;
     Mutex iLock;
-    std::list<DviSubscription*> iPengingUpdates;
-    Fifo<Publisher*> iFree;
-    Publisher** iPublishers;
     typedef std::map<Brn,DviSubscription*,BufferCmp> Map;
+    std::list<DviSubscription*> iAllPendingUpdates;
     Map iMap;
     TUint iCount;
+    PublisherPool* iPublishersQuick;
+    PublisherPool* iPublishersSlow;
 };
 
 } // namespace Net
