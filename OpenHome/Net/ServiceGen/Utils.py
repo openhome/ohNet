@@ -1,6 +1,3 @@
-import types
-
-
 class TypeLookup:
 
     def __init__(self):
@@ -71,7 +68,7 @@ def GetFilename(prefix, domain, type, version, suffix):
 
 def GetActions(desc):
     """Extrace actions list from service JSON"""
-    if isinstance(desc['actionList']['action'], types.ListType):
+    if isinstance(desc['actionList']['action'], list):
         actions  = desc['actionList']['action']
     else:
         actions = [desc['actionList']['action']]
@@ -80,7 +77,7 @@ def GetActions(desc):
 
 def GetStateVars(desc):
     """Extrace state variable list from service JSON"""
-    if isinstance(desc['serviceStateTable']['stateVariable'], types.ListType):
+    if isinstance(desc['serviceStateTable']['stateVariable'], list):
         stateVars  = desc['serviceStateTable']['stateVariable']
     else:
         stateVars = [desc['serviceStateTable']['stateVariable']]
@@ -93,7 +90,7 @@ def GetActionArgs(action, svs):
 
     args = []
     if 'argumentList' in action:
-        if isinstance(action['argumentList']['argument'], types.ListType):    # list if >1 arg
+        if isinstance(action['argumentList']['argument'], list):    # list if >1 arg
             for arg in action['argumentList']['argument']:
                 rsv = arg['relatedStateVariable']
                 name = arg['name']
@@ -116,7 +113,7 @@ def GetActionArgs(action, svs):
 def GetAllowedValueList(stateVar):
     avlist = []
     if 'allowedValueList' in stateVar:
-        if isinstance(stateVar['allowedValueList']['allowedValue'], types.ListType):    # list if >1 allowed value
+        if isinstance(stateVar['allowedValueList']['allowedValue'], list):    # list if >1 allowed value
             for item in stateVar['allowedValueList']['allowedValue']:
                 avlist.append( item )
         else:

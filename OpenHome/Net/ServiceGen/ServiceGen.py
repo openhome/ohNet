@@ -5,6 +5,7 @@ Generate ohnet service providers from UPnP Service XML, This uses
 a python 'template' file (passed as parameter) to define the output
 file format
 """
+import importlib
 import optparse
 import os
 import sys
@@ -53,7 +54,7 @@ class ServiceGen:
         with open(self.opts.xml, 'r') as f:
             xml = f.read()
         desc = xmltodict.parse( xml )
-        exec 'import Templates.' + self.opts.template.strip('.py') + ' as template'
+        template = importlib.import_module( 'Templates.' + self.opts.template.strip('.py') )
         filename, lines = template.Generate(desc['scpd'], self.opts.domain, self.opts.type, int(self.opts.version))     # NOQA
         filepath = os.path.join(self.opts.output, filename)
         with open(filepath, 'wt') as f:
