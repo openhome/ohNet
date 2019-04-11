@@ -674,13 +674,10 @@ void DviSubscriptionManager::QueueUpdate(DviSubscription& aSubscription)
 void DviSubscriptionManager::NotifyPublishSuccess(DviSubscription& aSubscription)
 {
     aSubscription.iPublisherFailures = 0;
-    if (aSubscription.iPublisherSuccesses < kPublisherSuccessThreshold) {
-        aSubscription.iPublisherSuccesses++;
-        if (aSubscription.iPublisherSuccesses == kPublisherSuccessThreshold) {
-            LOG_INFO(kDvEvent, "DviSubscriptionManager - %u successful publishes, moving to quick queue. SID is %.*s\n"
-                      , kPublisherSuccessThreshold, PBUF(aSubscription.Sid()));
-            aSubscription.iPublisherQueue = iPublishersQuick;
-        }
+    if (++aSubscription.iPublisherSuccesses == kPublisherSuccessThreshold && aSubscription.iPublisherQueue == iPublishersSlow) {
+        LOG_INFO(kDvEvent, "DviSubscriptionManager - %u successful publishes, moving to quick queue. SID is %.*s\n"
+                    , kPublisherSuccessThreshold, PBUF(aSubscription.Sid()));
+        aSubscription.iPublisherQueue = iPublishersQuick;
     }
 }
 
