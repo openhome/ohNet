@@ -46,7 +46,6 @@ DviSubscription::DviSubscription(DvStack& aDvStack, DviDevice& aDevice, IPropert
                                  IDviSubscriptionUserData* aUserData, Brh& aSid)
     : iDvStack(aDvStack)
     , iLock("MDSB")
-    , iLockExpired("SBEX")
     , iRefCount(1)
     , iDevice(aDevice)
     , iWriterFactory(aWriterFactory)
@@ -171,7 +170,6 @@ void DviSubscription::DoRenew(TUint& aSeconds)
 
 void DviSubscription::WriteChanges()
 {
-    AutoMutex ex(iLockExpired);
     if (iExpired) {
         // reads/writes of iExpired assumed not to require thread safety
         // ...if this later turns out wrong, DO NOT USE iLock to protect iExpired - it'll deadlock with TimeManager's lock
@@ -196,8 +194,8 @@ void DviSubscription::WriteChanges()
     }
     catch (Exception& ex) {
         LOG_ERROR(kDvEvent, "Exception - %s - eventing update for %.*s\n", ex.Message(), PBUF(iSid));
-        /* For cases when NetworkTimeout is not the cause of a failure, its reasonable 
-         * to assume that later attempts are also likely to fail, so its better if we 
+        /* For cases when NetworkTimeout is not the cause of a failure, its reasonable
+         * to assume that later attempts are also likely to fail, so its better if we
          * don't keep blocking and instead remove the subscription */
         iExpired = true;
         Remove();
@@ -281,7 +279,6 @@ DviService* DviSubscription::ServiceLocked()
 void DviSubscription::Log(IWriter& aWriter)
 {
     AutoMutex _(iLock);
-    AutoMutex ex(iLockExpired);
 
     aWriter.Write(Brn("sid: "));
     aWriter.Write(iSid);
@@ -348,12 +345,10 @@ DviSubscription::~DviSubscription()
 void DviSubscription::Expired()
 {
     LOG(kDvEvent, "Subscription %.*s expired\n", PBUF(iSid));
-    iLockExpired.Wait();
     iExpired = true;
-    iLockExpired.Signal();
     // reads/writes of iExpired assumed not to require thread safety
     // ...if this later turns out wrong, DO NOT USE iLock to protect iExpired - it'll deadlock with TimeManager's lock
-    
+
     /* can't call iService->RemoveSubscription from this thread as we'd then take TimerManager/DviSubscription
        locks in the opposite order to Publisher threads.
        Instead, queue an update; this will happen on a Publisher thread where the subscription can safely be removed. */
@@ -678,11 +673,11 @@ void DviSubscriptionManager::QueueUpdate(DviSubscription& aSubscription)
 
 void DviSubscriptionManager::NotifyPublishSuccess(DviSubscription& aSubscription)
 {
-    if (aSubscription.iPublisherFailures != 0) {
+    aSubscription.iPublisherFailures = 0;
+    if (aSubscription.iPublisherSuccesses < kPublisherSuccessThreshold) {
         aSubscription.iPublisherSuccesses++;
         if (aSubscription.iPublisherSuccesses == kPublisherSuccessThreshold) {
-            aSubscription.iPublisherFailures = aSubscription.iPublisherSuccesses = 0;
-            LOG_DEBUG(kDvEvent, "DviSubscriptionManager - %u successful publishes, moving to quick queue. SID is %.*s\n"
+            LOG_INFO(kDvEvent, "DviSubscriptionManager - %u successful publishes, moving to quick queue. SID is %.*s\n"
                       , kPublisherSuccessThreshold, PBUF(aSubscription.Sid()));
             aSubscription.iPublisherQueue = iPublishersQuick;
         }
@@ -691,15 +686,15 @@ void DviSubscriptionManager::NotifyPublishSuccess(DviSubscription& aSubscription
 
 void DviSubscriptionManager::NotifyPublishError(DviSubscription& aSubscription)
 {
+    aSubscription.iPublisherSuccesses = 0;
     aSubscription.iPublisherFailures++;
-    LOG_ERROR(kDvEvent, "DviSubscriptionManager - Publishing Failure %u of %u. SID is %.*s\n",
+    LOG_INFO(kDvEvent, "DviSubscriptionManager - Publishing Failure %u of %u. SID is %.*s\n",
               aSubscription.iPublisherFailures, kMaxFailures, PBUF(aSubscription.Sid()));
     if (aSubscription.iPublisherFailures == 1) {
         aSubscription.iPublisherQueue = iPublishersSlow;
     }
     else if (aSubscription.iPublisherFailures == kMaxFailures) {
         LOG_ERROR(kDvEvent, "DviSubscriptionManager - Publisher Max Failures: Removing SID %.*s\n", PBUF(aSubscription.Sid()));
-        AutoMutex ex(aSubscription.iLockExpired);
         aSubscription.iExpired = true;
     }
 }

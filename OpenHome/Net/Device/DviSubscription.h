@@ -77,7 +77,6 @@ private:
 private:
     DvStack& iDvStack;
     mutable Mutex iLock;
-    Mutex iLockExpired;
     TUint iRefCount;
     DviDevice& iDevice;
     IPropertyWriterFactory& iWriterFactory;
@@ -129,7 +128,7 @@ class IPublisherQueue
 {
 public:
     virtual ~IPublisherQueue() {}
-    virtual void QueueUpdate(DviSubscription& aSubscription) = 0; 
+    virtual void QueueUpdate(DviSubscription& aSubscription) = 0;
 };
 
 class IPublisherObserver
@@ -180,7 +179,7 @@ class DviSubscriptionManager : private IPublisherObserver
 {
     static const Brn kQuerySubscriptions;
     static const TUint kMaxFailures = 3;
-    static const TUint kPublisherSuccessThreshold = 3;
+    static const TUint kPublisherSuccessThreshold = 5;
 public:
     DviSubscriptionManager(DvStack& aDvStack, TUint aPriority);
     ~DviSubscriptionManager();
