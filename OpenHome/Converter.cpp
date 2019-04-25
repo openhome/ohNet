@@ -1,6 +1,7 @@
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
+#include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Printer.h>
 
@@ -251,29 +252,28 @@ void Converter::FromXmlEscaped(Bwx& aValue)
             }
             else if (aValue[i] == '#') {
                 if (++i < bytes) {
-                    if (aValue[i] == 'x') {
+                    TUint8 val = 0;
+                    if (aValue[i] == 'x') { // hex
                         if (++i < bytes) {
-                            if (aValue[i] == 'A') {
-                                if (++i < bytes) {
-                                    if (aValue[i] == ';') {
-                                        aValue[j++] = '\n';
-                                        continue;
-                                    }
+                            do {
+                                if (aValue[i] == ';') {
+                                    aValue[j++] = val;
+                                    break;
                                 }
-                            }
+                                val *= 16;
+                                val += (TUint8)Ascii::HexValue(aValue[i]);
+                            } while (++i < bytes);
                         }
                     }
-                    else if (aValue[i] == '1') {
-                        if (++i < bytes) {
-                            if (aValue[i] == '0') {
-                                if (++i < bytes) {
-                                    if (aValue[i] == ';') {
-                                        aValue[j++] = '\n';
-                                        continue;
-                                    }
-                                }
+                    else { // decimal
+                        do {
+                            if (aValue[i] == ';') {
+                                aValue[j++] = val;
+                                break;
                             }
-                        }
+                            val *= 10;
+                            val += (TUint8)Ascii::DecValue(aValue[i]);
+                        } while (++i < bytes);
                     }
                 }
             }

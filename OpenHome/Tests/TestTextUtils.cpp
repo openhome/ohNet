@@ -1672,6 +1672,69 @@ void SuiteUnicode::Test()
 }
 
 
+class SuiteXml : public Suite
+{
+public:
+    SuiteXml() : Suite("Test xml decoding") {}
+    void Test();
+};
+
+void SuiteXml::Test()
+{
+    Bws<64> buf;
+    // hello -> hello
+    buf.Replace("hello");
+    Converter::FromXmlEscaped(buf);
+    TEST(buf == Brn("hello"));
+
+    // &lt; -> <
+    buf.Replace("&lt;");
+    Converter::FromXmlEscaped(buf);
+    TEST(buf == Brn("<"));
+
+    // &gt; -> >
+    buf.Replace("&gt;");
+    Converter::FromXmlEscaped(buf);
+    TEST(buf == Brn(">"));
+
+    // &amp; -> &
+    buf.Replace("&amp;");
+    Converter::FromXmlEscaped(buf);
+    TEST(buf == Brn("&"));
+
+    // &apos; -> '
+    buf.Replace("&apos;");
+    Converter::FromXmlEscaped(buf);
+    TEST(buf == Brn("'"));
+
+    // &quot; -> "
+    buf.Replace("&quot;");
+    Converter::FromXmlEscaped(buf);
+    TEST(buf == Brn("\""));
+
+    // &#65; -> A
+    buf.Replace("&#65;");
+    Converter::FromXmlEscaped(buf);
+    TEST(buf == Brn("A"));
+
+    // &#x41; -> A
+    buf.Replace("&#x41;");
+    Converter::FromXmlEscaped(buf);
+    TEST(buf == Brn("A"));
+
+    // &#xA; -> \n
+    buf.Replace("&#xA;");
+    Converter::FromXmlEscaped(buf);
+    TEST(buf == Brn("\n"));
+
+    // &lt;tag&gt;foo&#61;&apos;&amp;bar&lt;/tag&gt; -> <tag>foo='&bar</tag>
+    buf.Replace("&lt;tag&gt;foo&#61;&apos;&amp;bar&lt;/tag&gt;");
+    Converter::FromXmlEscaped(buf);
+    TEST(buf == Brn("<tag>foo='&bar</tag>"));
+}
+
+
+
 void TestTextUtils()
 {
     Runner runner("Ascii System");
@@ -1680,5 +1743,6 @@ void TestTextUtils()
     runner.Add(new SuiteUri());
     runner.Add(new SuiteSwap());
     runner.Add(new SuiteUnicode());
+    runner.Add(new SuiteXml());
     runner.Run();
 }
