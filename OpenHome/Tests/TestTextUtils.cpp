@@ -1677,60 +1677,29 @@ class SuiteXml : public Suite
 public:
     SuiteXml() : Suite("Test xml decoding") {}
     void Test();
+private:
+    void Unescape(const TChar* aEscaped, const TChar* aExpected);
 };
+
+void SuiteXml::Unescape(const TChar* aEscaped, const TChar* aExpected)
+{
+    Bws<64> buf(aEscaped);
+    Converter::FromXmlEscaped(buf);
+    TEST(buf == Brn(aExpected));
+}
 
 void SuiteXml::Test()
 {
-    Bws<64> buf;
-    // hello -> hello
-    buf.Replace("hello");
-    Converter::FromXmlEscaped(buf);
-    TEST(buf == Brn("hello"));
-
-    // &lt; -> <
-    buf.Replace("&lt;");
-    Converter::FromXmlEscaped(buf);
-    TEST(buf == Brn("<"));
-
-    // &gt; -> >
-    buf.Replace("&gt;");
-    Converter::FromXmlEscaped(buf);
-    TEST(buf == Brn(">"));
-
-    // &amp; -> &
-    buf.Replace("&amp;");
-    Converter::FromXmlEscaped(buf);
-    TEST(buf == Brn("&"));
-
-    // &apos; -> '
-    buf.Replace("&apos;");
-    Converter::FromXmlEscaped(buf);
-    TEST(buf == Brn("'"));
-
-    // &quot; -> "
-    buf.Replace("&quot;");
-    Converter::FromXmlEscaped(buf);
-    TEST(buf == Brn("\""));
-
-    // &#65; -> A
-    buf.Replace("&#65;");
-    Converter::FromXmlEscaped(buf);
-    TEST(buf == Brn("A"));
-
-    // &#x41; -> A
-    buf.Replace("&#x41;");
-    Converter::FromXmlEscaped(buf);
-    TEST(buf == Brn("A"));
-
-    // &#xA; -> \n
-    buf.Replace("&#xA;");
-    Converter::FromXmlEscaped(buf);
-    TEST(buf == Brn("\n"));
-
-    // &lt;tag&gt;foo&#61;&apos;&amp;bar&lt;/tag&gt; -> <tag>foo='&bar</tag>
-    buf.Replace("&lt;tag&gt;foo&#61;&apos;&amp;bar&lt;/tag&gt;");
-    Converter::FromXmlEscaped(buf);
-    TEST(buf == Brn("<tag>foo='&bar</tag>"));
+    Unescape("hello", "hello");
+    Unescape("&lt;", "<");
+    Unescape("&gt;", ">");
+    Unescape("&amp;", "&");
+    Unescape("&apos;", "'");
+    Unescape("&quot;", "\"");
+    Unescape("&#65;", "A");
+    Unescape("&#x41;", "A");
+    Unescape("&#xA;", "\n");
+    Unescape("&lt;tag&gt;foo&#61;&apos;&amp;bar&lt;/tag&gt;", "<tag>foo='&bar</tag>");
 }
 
 
