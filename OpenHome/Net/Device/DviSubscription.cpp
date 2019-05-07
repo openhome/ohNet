@@ -560,6 +560,7 @@ PublisherPool::PublisherPool(const TChar* aName, TUint aPriority, IPublisherObse
 
 std::list<DviSubscription*> PublisherPool::GetUpdates()
 {
+    AutoMutex amx(iLock);
     return iPendingUpdates;
 }
 
@@ -720,7 +721,8 @@ void DviSubscriptionManager::QueryInfo(const Brx& aQuery, IWriter& aWriter)
     aWriter.Write(Brn("\n\nPending updates:"));
     std::list<DviSubscription*>::iterator it2;
     iAllPendingUpdates = iPublishersQuick->GetUpdates();
-    iAllPendingUpdates.merge(iPublishersSlow->GetUpdates(), SidComparison);
+    std::list<DviSubscription*> slowUpdates = iPublishersSlow->GetUpdates();
+    iAllPendingUpdates.merge(slowUpdates, SidComparison);
     for (it2=iAllPendingUpdates.begin(); it2!=iAllPendingUpdates.end(); ++it2) {
         aWriter.Write(Brn("\n\t"));
         it->second->Log(aWriter);
