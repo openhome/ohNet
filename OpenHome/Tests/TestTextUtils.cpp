@@ -1672,6 +1672,38 @@ void SuiteUnicode::Test()
 }
 
 
+class SuiteXml : public Suite
+{
+public:
+    SuiteXml() : Suite("Test xml decoding") {}
+    void Test();
+private:
+    void Unescape(const TChar* aEscaped, const TChar* aExpected);
+};
+
+void SuiteXml::Unescape(const TChar* aEscaped, const TChar* aExpected)
+{
+    Bws<64> buf(aEscaped);
+    Converter::FromXmlEscaped(buf);
+    TEST(buf == Brn(aExpected));
+}
+
+void SuiteXml::Test()
+{
+    Unescape("hello", "hello");
+    Unescape("&lt;", "<");
+    Unescape("&gt;", ">");
+    Unescape("&amp;", "&");
+    Unescape("&apos;", "'");
+    Unescape("&quot;", "\"");
+    Unescape("&#65;", "A");
+    Unescape("&#x41;", "A");
+    Unescape("&#xA;", "\n");
+    Unescape("&lt;tag&gt;foo&#61;&apos;&amp;bar&lt;/tag&gt;", "<tag>foo='&bar</tag>");
+}
+
+
+
 void TestTextUtils()
 {
     Runner runner("Ascii System");
@@ -1680,5 +1712,6 @@ void TestTextUtils()
     runner.Add(new SuiteUri());
     runner.Add(new SuiteSwap());
     runner.Add(new SuiteUnicode());
+    runner.Add(new SuiteXml());
     runner.Run();
 }
