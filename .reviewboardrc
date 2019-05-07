@@ -1,0 +1,3 @@
+REPOSITORY = 'ohNet'
+REVIEWBOARD_URL = 'http://core.linn.co.uk/reviewboard/'
+
