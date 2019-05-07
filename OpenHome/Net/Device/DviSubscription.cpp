@@ -17,6 +17,12 @@
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
+
+TBool SidComparison(const DviSubscription* aSubscription1, const DviSubscription* aSubscription2)
+{
+    return BufferCmp()(aSubscription1->Sid(), aSubscription2->Sid());
+}
+
 // AutoPropertiesLock
 
 class AutoPropertiesLock : INonCopyable
@@ -714,7 +720,7 @@ void DviSubscriptionManager::QueryInfo(const Brx& aQuery, IWriter& aWriter)
     aWriter.Write(Brn("\n\nPending updates:"));
     std::list<DviSubscription*>::iterator it2;
     iAllPendingUpdates = iPublishersQuick->GetUpdates();
-    iAllPendingUpdates.merge(iPublishersSlow->GetUpdates());
+    iAllPendingUpdates.merge(iPublishersSlow->GetUpdates(), SidComparison);
     for (it2=iAllPendingUpdates.begin(); it2!=iAllPendingUpdates.end(); ++it2) {
         aWriter.Write(Brn("\n\t"));
         it->second->Log(aWriter);
