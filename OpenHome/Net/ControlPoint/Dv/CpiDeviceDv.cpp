@@ -117,7 +117,9 @@ void CpiDeviceDv::Unsubscribe(CpiSubscription& aSubscription, const Brx& aSid)
         service->RemoveSubscription(aSid);
         service->RemoveRef();
     }
+    iLock.Wait();
     subscription->iCp = NULL;
+    iLock.Signal();
     subscription->iDv->RemoveRef();
     // can't safely access subscription now - RemoveRef() above may have resulted in it being deleted
 }
@@ -148,6 +150,7 @@ void CpiDeviceDv::Release()
 IPropertyWriter* CpiDeviceDv::ClaimWriter(const IDviSubscriptionUserData* /*aUserData*/,
                                           const Brx& aSid, TUint aSequenceNumber)
 {
+    AutoMutex _(iLock);
     Brn sid(aSid);
     SubscriptionMap::iterator it = iSubscriptions.find(sid);
     if (it == iSubscriptions.end()) {
