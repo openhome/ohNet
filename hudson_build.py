@@ -297,6 +297,8 @@ class JenkinsBuild():
             args.append('--full')
             if os_platform == 'linux' and arch == 'x86':
                 args.append('--valgrind')
+                os.environ['CFLAGS'] = '-m32'
+                os.environ['LDFLAGS'] = '-m32'
         if self.options.parallel:
             args.append('--parallel')
         self.build_args = args
@@ -443,7 +445,7 @@ def main():
     Build.set_platform_args()
     Build.get_build_args()
     Build.do_build()
-    Build.do_postAction()
+    #Build.do_postAction()
 
 
 if __name__ == "__main__":

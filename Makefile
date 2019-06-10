@@ -295,7 +295,7 @@ endif
 ifeq ($(vanilla_settings), yes)
 	# platform == Vanilla (i.e. Kirkwood, x86 or x64)
 	platform_cflags = $(version_specific_cflags) -fPIC
-	platform_linkflags = $(version_specific_linkflags) -pthread
+	platform_linkflags = $(version_specific_linkflags) $(LDFLAGS) -pthread
 	linkopts_ohNet = -Wl,-soname,libohNet.so
 	osbuilddir = Posix
 	osdir = Posix
@@ -337,7 +337,7 @@ native_only ?= no
 managed_only ?= no
 no_shared_objects ?= no
 endian ?= LITTLE
-cflags_base = -fexceptions -Wall $(version_specific_cflags_third_party) -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_$(endian)_ENDIAN -DDEFINE_TRACE $(debug_specific_cflags) -fvisibility=hidden $(platform_cflags)
+cflags_base = $(CFLAGS) -fexceptions -Wall $(version_specific_cflags_third_party) -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_$(endian)_ENDIAN -DDEFINE_TRACE $(debug_specific_cflags) -fvisibility=hidden $(platform_cflags)
 cflags_third_party = $(cflags_base) -Wno-int-to-pointer-cast
 ifeq ($(nocpp11), yes)
     cppflags = $(cflags_base) -Werror
@@ -395,7 +395,11 @@ else
             ifneq (,$(findstring arm,$(gcc_machine)))
                 libjvm_dir ?= $(JAVA_HOME)/jre/lib/arm/server
             else
-                libjvm_dir ?= $(JAVA_HOME)/jre/lib/i386/server
+                ifneq (,$(findstring x64,$(gcc_machine)))
+                    libjvm_dir ?= $(JAVA_HOME)/jre/lib/amd64/server
+                else
+                    libjvm_dir ?= $(JAVA_HOME)/jre/lib/i386/server
+                endif
             endif
         endif
 	link_jvm = $(libjvm_dir)/libjvm.so
@@ -403,7 +407,7 @@ else
 	jar = $(JAVA_HOME)/bin/jar
 endif
 
-java_cflags = -fexceptions -Wall $(platform_java_cflags) $(version_specific_java_cflags) -Werror -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_$(endian)_ENDIAN -DDEFINE_TRACE $(debug_specific_cflags) $(platform_cflags)
+java_cflags = $(CFLAGS) -fexceptions -Wall $(platform_java_cflags) $(version_specific_java_cflags) -Werror -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_$(endian)_ENDIAN -DDEFINE_TRACE $(debug_specific_cflags) $(platform_cflags)
 jarflags = cf
 dirsep = /
 prefix = /usr/local
