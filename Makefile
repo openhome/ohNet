@@ -33,6 +33,7 @@ MACHINE = $(shell uname -s)
 $(info CROSS_COMPILE: ${CROSS_COMPILE})
 $(info Machine reported by compiler is: ${gcc_machine})
 $(info Machine reported by uname is: ${MACHINE})
+$(info PLATFORM: ${PLATFORM})
 
 ifeq ($(MACHINE),Darwin)
   ifeq ($(iOs-armv7),1)
@@ -51,10 +52,10 @@ ifeq ($(MACHINE),Darwin)
     platform = iOS
     detected_openhome_system = iOs
     detected_openhome_architecture = x64
-	else ifeq ($(Linux-rpi),1)
+  else ifeq ($(Linux-rpi),1)
       platform = Linux
       detected_openhome_system = Linux
-	  detected_openhome_architecture = rpi
+      detected_openhome_architecture = rpi
   else
     platform = IntelMac
     detected_openhome_system = Mac
@@ -79,6 +80,14 @@ else ifeq ($(freebsd), 1)
     compiler = gcc -o $(objdir)
     link = ${CROSS_COMPILE}g++ $(platform_linkflags)
     ar = ${CROSS_COMPILE}ar rc $(objdir)
+else ifneq (,$(findstring Linux-x86,${PLATFORM}))
+    ifneq (,$(findstring x86_64,$(gcc_machine)))
+        platform = Vanilla
+        detected_openhome_system = Linux
+        detected_openhome_architecture = x86
+        CFLAGS = -m32
+        LDFLAGS = -m32
+    endif
 else
     # At present, platform == Vanilla is used for Kirkwood, x86 and x64 Posix builds.
     platform ?= Vanilla
