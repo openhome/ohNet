@@ -327,6 +327,7 @@ ifeq ($(vanilla_settings), yes)
 			enablepthreadnames = yes
 		endif
 	endif
+	platform_cflags += -DPLATFORM_QNAP
 	ifdef enablestacktrace
 		platform_cflags += -DPOSIX_STACK_TRACE
 	endif

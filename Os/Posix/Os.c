@@ -1157,7 +1157,7 @@ int32_t OsNetworkSocketSetMulticastIf(THandle aHandle,  TIpAddress aInterface)
 
 static int32_t isWireless(const char* ifname)
 {
-#ifndef PLATFORM_MACOSX_GNU
+#if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_QNAP)
     int sock = -1;
     int err;
     struct iwreq pwrq;
@@ -1173,7 +1173,7 @@ static int32_t isWireless(const char* ifname)
     return err == 0 ? 1 : 0;
 #else
     return 0;
-#endif /* !PLATFORM_MACOSX_GNU */
+#endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_QNAP */
 }
 
 static void append(OsNetworkAdapter* aAdapter, OsNetworkAdapter** aHead, OsNetworkAdapter** aTail)
