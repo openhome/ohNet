@@ -19,13 +19,12 @@
 #if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD)
 #include <linux/netlink.h>
 #include <linux/rtnetlink.h>
-#else
 #endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD */
-#if defined(PLATFORM_MACOS_GNU) || defined(PLATFORM_FREEBSD) || defined(PLATFORM_QNAP)
+#if defined(PLATFORM_MACOSX_GNU) || defined(PLATFORM_FREEBSD) || defined(PLATFORM_QNAP)
 #include <net/if.h>
 #else
 #include <linux/wireless.h>
-#endif /* PLATFORM_MACOS_GNU || PLATFORM_FREEBSD || PLATFORM_QNAP */
+#endif /* PLATFORM_MACOSX_GNU || PLATFORM_FREEBSD || PLATFORM_QNAP */
 #if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD) && !defined(__ANDROID__)
 #include <sys/inotify.h>
 #include <arpa/nameser.h>
