@@ -190,6 +190,7 @@ TBool Endpoint::Equals(const Endpoint& aEndpoint) const
 
 Socket::Socket()
     : iLock("SKLL")
+    , iInterrupted(false)
 {
     iHandle = kHandleNull;
     iLog = kLogNone;
@@ -201,6 +202,7 @@ void Socket::Interrupt(TBool aInterrupt)
     if (iHandle == kHandleNull) {
         return;
     }
+    iInterrupted = aInterrupt;
     LOG_TRACE(kNetwork, "Socket::Interrupt H = %d\n", iHandle);
     TInt err = OpenHome::Os::NetworkInterrupt(iHandle, aInterrupt);
     if(err != 0) {
@@ -231,6 +233,7 @@ void Socket::CloseThrows()
         iHandle = kHandleNull;
         err = OpenHome::Os::NetworkClose(handle);
     }
+    iInterrupted = false;
     iLock.Signal();
     if(err != 0) {
         LOG_ERROR(kNetwork, "Socket::Close H = %d, RETURN VALUE = %d\n", handle, err);
@@ -407,6 +410,12 @@ THandle Socket::Accept(Endpoint& aClientEndpoint)
         THROW(NetworkError);
     }
     return handle;
+}
+
+TBool Socket::IsInterrupted() const
+{
+    AutoMutex _(iLock);
+    return iInterrupted;
 }
 
 void Socket::Log(const char* aPrefix, const Brx& aBuffer) const
@@ -664,7 +673,15 @@ void SocketTcpSession::Start()
             Open(iServer->Accept(iClientEndpoint));            // accept a connection for this session
         } catch (NetworkError&) {                // server is being destroyed
             LOG_ERROR(kNetwork, "-SocketTcpSession::Start() Network Accept Exception\n");
-            break;
+            if (iServer->IsInterrupted()) {
+                // server is shutting down, exit this session
+                break;
+            }
+            Log::Print("SocketTcpSession (%.*s) transient failure from accept\n", PBUF(iThread->Name()));
+            // Assume that errors from accept when not interrupted are transient
+            // Wait a short time before retrying in case error conditions apply for a short
+            // block of time (tcp sessions often run in fairly high priority threads)
+            Thread::Sleep(500);
         }
         try {
             LOG_TRACE(kNetwork, "-SocketTcpSession::Start() Run session\n");

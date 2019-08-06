@@ -98,6 +98,7 @@ protected:
     void GetPort(TUint& aPort);
     void Listen(TUint aSlots);
     THandle Accept(Endpoint& aClientEndpoint);
+    TBool IsInterrupted() const;
 private:
     void Log(const char* aPrefix, const Brx& aBuffer) const;
 protected:
@@ -108,6 +109,7 @@ private:
     static const uint32_t kLogHex       = 2;
     uint32_t iLog;
     mutable Mutex iLock;
+    TBool iInterrupted;
 };
 
 /**
