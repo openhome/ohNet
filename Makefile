@@ -33,6 +33,7 @@ MACHINE = $(shell uname -s)
 $(info CROSS_COMPILE: ${CROSS_COMPILE})
 $(info Machine reported by compiler is: ${gcc_machine})
 $(info Machine reported by uname is: ${MACHINE})
+$(info PLATFORM: ${PLATFORM})
 
 ifeq ($(MACHINE),Darwin)
   ifeq ($(iOs-armv7),1)
@@ -51,10 +52,10 @@ ifeq ($(MACHINE),Darwin)
     platform = iOS
     detected_openhome_system = iOs
     detected_openhome_architecture = x64
-	else ifeq ($(Linux-rpi),1)
+  else ifeq ($(Linux-rpi),1)
       platform = Linux
       detected_openhome_system = Linux
-	  detected_openhome_architecture = rpi
+      detected_openhome_architecture = rpi
   else
     platform = IntelMac
     detected_openhome_system = Mac
@@ -79,6 +80,14 @@ else ifeq ($(freebsd), 1)
     compiler = gcc -o $(objdir)
     link = ${CROSS_COMPILE}g++ $(platform_linkflags)
     ar = ${CROSS_COMPILE}ar rc $(objdir)
+else ifneq (,$(findstring Linux-x86,${PLATFORM}))
+    ifneq (,$(findstring x86_64,$(gcc_machine)))
+        platform = Vanilla
+        detected_openhome_system = Linux
+        detected_openhome_architecture = x86
+        CFLAGS = -m32
+        LDFLAGS = -m32
+    endif
 else
     # At present, platform == Vanilla is used for Kirkwood, x86 and x64 Posix builds.
     platform ?= Vanilla
@@ -295,7 +304,7 @@ endif
 ifeq ($(vanilla_settings), yes)
 	# platform == Vanilla (i.e. Kirkwood, x86 or x64)
 	platform_cflags = $(version_specific_cflags) -fPIC
-	platform_linkflags = $(version_specific_linkflags) -pthread
+	platform_linkflags = $(version_specific_linkflags) $(LDFLAGS) -pthread
 	linkopts_ohNet = -Wl,-soname,libohNet.so
 	osbuilddir = Posix
 	osdir = Posix
@@ -318,6 +327,7 @@ ifeq ($(vanilla_settings), yes)
 			enablepthreadnames = yes
 		endif
 	endif
+	platform_cflags += -DPLATFORM_QNAP
 	ifdef enablestacktrace
 		platform_cflags += -DPOSIX_STACK_TRACE
 	endif
@@ -337,7 +347,7 @@ native_only ?= no
 managed_only ?= no
 no_shared_objects ?= no
 endian ?= LITTLE
-cflags_base = -fexceptions -Wall $(version_specific_cflags_third_party) -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_$(endian)_ENDIAN -DDEFINE_TRACE $(debug_specific_cflags) -fvisibility=hidden $(platform_cflags)
+cflags_base = $(CFLAGS) -fexceptions -Wall $(version_specific_cflags_third_party) -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_$(endian)_ENDIAN -DDEFINE_TRACE $(debug_specific_cflags) -fvisibility=hidden $(platform_cflags)
 cflags_third_party = $(cflags_base) -Wno-int-to-pointer-cast
 ifeq ($(nocpp11), yes)
     cppflags = $(cflags_base) -Werror
@@ -395,7 +405,11 @@ else
             ifneq (,$(findstring arm,$(gcc_machine)))
                 libjvm_dir ?= $(JAVA_HOME)/jre/lib/arm/server
             else
-                libjvm_dir ?= $(JAVA_HOME)/jre/lib/i386/server
+                ifneq (,$(findstring x64,$(gcc_machine)))
+                    libjvm_dir ?= $(JAVA_HOME)/jre/lib/amd64/server
+                else
+                    libjvm_dir ?= $(JAVA_HOME)/jre/lib/i386/server
+                endif
             endif
         endif
 	link_jvm = $(libjvm_dir)/libjvm.so
@@ -403,7 +417,7 @@ else
 	jar = $(JAVA_HOME)/bin/jar
 endif
 
-java_cflags = -fexceptions -Wall $(platform_java_cflags) $(version_specific_java_cflags) -Werror -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_$(endian)_ENDIAN -DDEFINE_TRACE $(debug_specific_cflags) $(platform_cflags)
+java_cflags = $(CFLAGS) -fexceptions -Wall $(platform_java_cflags) $(version_specific_java_cflags) -Werror -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_$(endian)_ENDIAN -DDEFINE_TRACE $(debug_specific_cflags) $(platform_cflags)
 jarflags = cf
 dirsep = /
 prefix = /usr/local

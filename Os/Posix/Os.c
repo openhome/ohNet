@@ -14,13 +14,17 @@
 #include <sys/select.h>
 #include <sys/socket.h>
 #include <sys/ioctl.h>
-#include <net/if.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD)
 #include <linux/netlink.h>
 #include <linux/rtnetlink.h>
 #endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD */
+#if defined(PLATFORM_MACOSX_GNU) || defined(PLATFORM_FREEBSD) || defined(PLATFORM_QNAP)
+#include <net/if.h>
+#else
+#include <linux/wireless.h>
+#endif /* PLATFORM_MACOSX_GNU || PLATFORM_FREEBSD || PLATFORM_QNAP */
 #if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD) && !defined(__ANDROID__)
 #include <sys/inotify.h>
 #include <arpa/nameser.h>
@@ -1153,6 +1157,38 @@ int32_t OsNetworkSocketSetMulticastIf(THandle aHandle,  TIpAddress aInterface)
 #endif
 }
 
+static int32_t isWireless(const char* ifname)
+{
+#if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_QNAP)
+    int sock = -1;
+    int err;
+    struct iwreq pwrq;
+    memset(&pwrq, 0, sizeof(pwrq));
+    strncpy(pwrq.ifr_name, ifname, IFNAMSIZ);
+
+    if ((sock = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+        return 0;
+    }
+
+    err = ioctl(sock, SIOCGIWNAME, &pwrq);
+    close(sock);
+    return err == 0 ? 1 : 0;
+#else
+    return 0;
+#endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_QNAP */
+}
+
+static void append(OsNetworkAdapter* aAdapter, OsNetworkAdapter** aHead, OsNetworkAdapter** aTail)
+{
+    if (*aHead == NULL) {
+        *aHead = aAdapter;
+    }
+    else {
+        (*aTail)->iNext = aAdapter;
+    }
+    *aTail = aAdapter;
+}
+
 int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters, uint32_t aUseLoopback)
 {
 #ifdef DEFINE_BIG_ENDIAN
@@ -1189,15 +1225,20 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
         }
     }
 
-    OsNetworkAdapter* head = NULL;          /* List of non-loopback adapters */
-    OsNetworkAdapter* tail = NULL;          /* List of non-loopback adapters */
+    OsNetworkAdapter* head = NULL;
+    OsNetworkAdapter* wiredHead = NULL;
+    OsNetworkAdapter* wiredTail = NULL;
+    OsNetworkAdapter* wirelessHead = NULL;
+    OsNetworkAdapter* wirelessTail = NULL;
     OsNetworkAdapter* loopHead = NULL;      /* List of loopback adapters */
+    OsNetworkAdapter* loopTail = NULL;
 
     for (iter = networkIf; iter != NULL; iter = iter->ifa_next) {
 
         if (iter->ifa_addr == NULL) {
             continue;
         }
+        const int ifaceIsWireless = isWireless(iter->ifa_name);
         const int ifaceIsLoopback = (((struct sockaddr_in*)iter->ifa_addr)->sin_addr.s_addr == loopbackAddr) ? 1 : 0;
 
         if (iter->ifa_addr->sa_family != AF_INET ||
@@ -1208,47 +1249,51 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
         }
 
         OsNetworkAdapter* iface = (OsNetworkAdapter*)calloc(1, sizeof(*iface));
-        if (iface == NULL) {
-            OsNetworkFreeInterfaces(head);
+        if (iface != NULL) {
+            iface->iName = (char*)malloc(strlen(iter->ifa_name) + 1);
+        }
+        if (iface == NULL || iface->iName == NULL) {
+            OsNetworkFreeInterfaces(wiredHead);
+            OsNetworkFreeInterfaces(wirelessHead);
             OsNetworkFreeInterfaces(loopHead);
             goto exit;
         }
 
-        if (! ifaceIsLoopback) {
-            if (tail != NULL) {
-                tail->iNext = iface;
-            }
-            else {
-                head = iface;
-            }
-            tail = iface;
+        if (ifaceIsLoopback) {
+            append(iface, &loopHead, &loopTail);
         }
-        else {
-            if (loopHead != NULL) {
-                iface->iNext = loopHead;
-            }
-            loopHead = iface;
+        else if (ifaceIsWireless) {
+            append(iface, &wirelessHead, &wirelessTail);
+        }
+        else { // wired, non-loopback
+            append(iface, &wiredHead, &wiredTail);
         }
 
-        iface->iName = (char*)malloc(strlen(iter->ifa_name) + 1);
-        if (iface->iName == NULL) {
-            OsNetworkFreeInterfaces(head);
-            OsNetworkFreeInterfaces(loopHead);
-            goto exit;
-        }
         (void)strcpy(iface->iName, iter->ifa_name);
         iface->iAddress = ((struct sockaddr_in*)iter->ifa_addr)->sin_addr.s_addr;
         iface->iNetMask = ((struct sockaddr_in*)iter->ifa_netmask)->sin_addr.s_addr;
+        iface->iReserved = ifaceIsWireless;
     }
 
-    // Attach any loopback interfaces to the end of the list
-    if (! head) {
-        // No non-loopback interfaces: Adopt loopHead.
-        head = loopHead;
+    // List wired before wireless, wireless before loopback
+    OsNetworkAdapter* tail = NULL;
+    head = wiredHead;
+    tail = wiredTail;
+    if (head == NULL) {
+        head = wirelessHead;
+        tail = wirelessTail;
     }
-    else {
+    else if (wirelessHead != NULL) {
+        tail->iNext = wirelessHead;
+        tail = wirelessTail;
+    }
+    if (head == NULL) {
+        head = loopHead;
+        tail = loopTail;
+    }
+    else if (loopHead != NULL) {
         tail->iNext = loopHead;
-        loopHead = NULL;
+        tail = loopTail;
     }
 
     // Check for multiple entries with same address and different netmasks and
@@ -1289,6 +1334,7 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
             ifaceIter = ifaceIter->iNext;
         }
     }
+
     ret = 0;
     *aAdapters = head;
 exit:

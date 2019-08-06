@@ -293,6 +293,8 @@ class JenkinsBuild():
             args.append('--Windows81')
         if os_platform == 'Windows10':
             args.append('--Windows10')
+        if os_platform == 'linux' and arch == 'x86':
+            args.append('--native-tests')
         if nightly == '1':
             args.append('--full')
             if os_platform == 'linux' and arch == 'x86':
