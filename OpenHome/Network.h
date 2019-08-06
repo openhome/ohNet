@@ -107,9 +107,10 @@ private:
     static const uint32_t kLogNone      = 0;
     static const uint32_t kLogPlainText = 1;
     static const uint32_t kLogHex       = 2;
-    uint32_t iLog;
+    static const uint32_t kLogMask      = 3;
+    static const uint32_t kInterrupted  = 1 << 30;
+    uint32_t iFlags;
     mutable Mutex iLock;
-    TBool iInterrupted;
 };
 
 /**

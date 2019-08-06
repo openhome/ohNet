@@ -190,10 +190,9 @@ TBool Endpoint::Equals(const Endpoint& aEndpoint) const
 
 Socket::Socket()
     : iLock("SKLL")
-    , iInterrupted(false)
 {
     iHandle = kHandleNull;
-    iLog = kLogNone;
+    iFlags = kLogNone;
 }
 
 void Socket::Interrupt(TBool aInterrupt)
@@ -202,7 +201,12 @@ void Socket::Interrupt(TBool aInterrupt)
     if (iHandle == kHandleNull) {
         return;
     }
-    iInterrupted = aInterrupt;
+    if (aInterrupt) {
+        iFlags |= kInterrupted;
+    }
+    else {
+        iFlags &= ~kInterrupted;
+    }
     LOG_TRACE(kNetwork, "Socket::Interrupt H = %d\n", iHandle);
     TInt err = OpenHome::Os::NetworkInterrupt(iHandle, aInterrupt);
     if(err != 0) {
@@ -233,7 +237,7 @@ void Socket::CloseThrows()
         iHandle = kHandleNull;
         err = OpenHome::Os::NetworkClose(handle);
     }
-    iInterrupted = false;
+    iFlags &= ~kInterrupted;
     iLock.Signal();
     if(err != 0) {
         LOG_ERROR(kNetwork, "Socket::Close H = %d, RETURN VALUE = %d\n", handle, err);
@@ -258,15 +262,15 @@ void Socket::SetRecvTimeout(TUint aMs)
 
 void Socket::LogVerbose(TBool aLog, TBool aHex)
 {
+    iFlags &= ~kLogMask;
     if (!aLog) {
-        iLog = kLogNone;
         ASSERT(!aHex);
     }
     else if (!aHex) {
-        iLog = kLogPlainText;
+        iFlags |= kLogPlainText;
     }
     else {
-        iLog = kLogHex;
+        iFlags |= kLogHex;
     }
 }
 
@@ -415,16 +419,16 @@ THandle Socket::Accept(Endpoint& aClientEndpoint)
 TBool Socket::IsInterrupted() const
 {
     AutoMutex _(iLock);
-    return iInterrupted;
+    return (iFlags & kInterrupted) != 0;
 }
 
 void Socket::Log(const char* aPrefix, const Brx& aBuffer) const
 {
-    if (iLog == kLogNone) {
+    if ((iFlags & kLogMask) == 0) {
         return;
     }
     AutoMutex a(iLock);
-    if (iLog == kLogPlainText) {
+    if ((iFlags & kLogPlainText) != 0) {
         Log::Print("%s", aPrefix);
         TUint bytes = aBuffer.Bytes();
         Brn buf(aBuffer);
@@ -438,7 +442,7 @@ void Socket::Log(const char* aPrefix, const Brx& aBuffer) const
         Log::Print("\n");
         return;
     }
-    ASSERT(iLog == kLogHex);
+    ASSERT((iFlags & kLogHex) != 0);
     Log::Print("%s", aPrefix);
     for (TUint i=0; i<aBuffer.Bytes(); i++) {
         Log::Print(" %02x", aBuffer[i]);
