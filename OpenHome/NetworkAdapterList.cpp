@@ -104,12 +104,13 @@ void NetworkAdapterList::SetCurrentSubnet(TIpAddress aSubnet)
 {
     iListLock.Wait();
     iSingleSubnetMode = true;
-    TIpAddress oldSubnet = (iCurrent==NULL? 0 : iCurrent->Subnet());
+    const TIpAddress oldAddress = (iCurrent==NULL ? 0 : iCurrent->Address());
     iDefaultSubnet = aSubnet;
     UpdateCurrentAdapter();
+    const TIpAddress newAddress = (iCurrent==NULL? 0 : iCurrent->Address());
     iListLock.Signal();
     const TBool started = (iEnv.CpiStack() != NULL || iEnv.DviStack() != NULL);
-    if (started && aSubnet != oldSubnet) {
+    if (started && newAddress != oldAddress) {
         iNotifierThread->QueueCurrentChanged();
     }
 }
