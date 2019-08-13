@@ -446,12 +446,13 @@ void NetworkAdapterList::HandleInterfaceListChanged()
 void NetworkAdapterList::RunCallbacks(const VectorListener& aCallbacks)
 {
     static const TUint kDelaysMs[] = { 100, 200, 400, 800, 1600, 3200, 5000, 10000, 20000, 20000, 30000 }; // roughly 90s worth of retries
+    // Back off and retry all callbacks if there is a NetworkError. It is up to any previously successful callbacks to determine if they must take any action.
     for (TUint i=0; i<sizeof(kDelaysMs)/sizeof(kDelaysMs[0]); i++) {
         try {
             DoRunCallbacks(aCallbacks);
             return;
         }
-        catch (NetworkError&) {
+        catch (const NetworkError&) {
             LOG_ERROR(kNetwork, "TempFailureRetry: error handling adapter change, try again in %ums\n", kDelaysMs[i]);
             Thread::Sleep(kDelaysMs[i]);
         }
@@ -462,12 +463,23 @@ void NetworkAdapterList::RunCallbacks(const VectorListener& aCallbacks)
 
 void NetworkAdapterList::DoRunCallbacks(const VectorListener& aCallbacks)
 {
+    TBool error = false;
     AutoMutex a(iListenerLock);
     VectorListener::const_iterator it = aCallbacks.begin();
     while (it != aCallbacks.end()) {
         LOG(kAdapterChange, "NetworkAdapterList::DoRunCallbacks - client is %s\n", it->second.iId);
-        it->second.iFunctor();
+        try {
+            it->second.iFunctor();
+        }
+        catch (const NetworkError&) {
+            // Consume NetworkError thrown by a misbehaving callback and run callbacks on remaining listeners so they do not end up in an inconsistent state.
+            // Set flag and throw exception at end to notify caller so they can retry callbacks if desired.
+            error = true;
+        }
         it++;
+    }
+    if (error) {
+        THROW(NetworkError);
     }
 }
 
