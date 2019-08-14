@@ -415,7 +415,7 @@ void NetworkAdapterList::HandleInterfaceListChanged()
     if (subnetsChanged) {
         iNotifierThread->QueueSubnetsChanged();
     }
-    else if (newAddress != oldAddress) {
+    if (newAddress != oldAddress) {
         iNotifierThread->QueueCurrentChanged();
     }
 
