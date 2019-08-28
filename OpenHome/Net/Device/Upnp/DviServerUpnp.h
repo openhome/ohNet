@@ -160,7 +160,6 @@ private:
     void RemoveRef();
 private:
     TUint iRefCount;
-    DvStack& iDvStack;
     Mutex iLock;
     TBool iEnabled;
     TIpAddress iAdapter;

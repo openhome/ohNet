@@ -445,7 +445,6 @@ void PropertyWriterUpnp::PropertyWriteEnd()
 
 PropertyWriterFactory::PropertyWriterFactory(DvStack& aDvStack, TIpAddress aAdapter, TUint aPort)
     : iRefCount(1)
-    , iDvStack(aDvStack)
     , iLock("DPWF")
     , iEnabled(true)
     , iAdapter(aAdapter)
