@@ -51,7 +51,8 @@ AutoPropertiesLock::~AutoPropertiesLock()
 DviSubscription::DviSubscription(DvStack& aDvStack, DviDevice& aDevice, IPropertyWriterFactory& aWriterFactory,
                                  IDviSubscriptionUserData* aUserData, Brh& aSid)
     : iDvStack(aDvStack)
-    , iLock("MDSB")
+    , iLock("DSb1")
+    , iRefLock("DSb2")
     , iRefCount(1)
     , iDevice(aDevice)
     , iWriterFactory(aWriterFactory)
@@ -109,32 +110,28 @@ void DviSubscription::Stop()
 
 void DviSubscription::AddRef()
 {
-    Mutex& lock = iDvStack.Env().Mutex();
-    lock.Wait();
+    AutoMutex _(iRefLock);
     iRefCount++;
-    lock.Signal();
 }
 
 TBool DviSubscription::TryAddRef()
 {
     TBool added = false;
-    Mutex& lock = iDvStack.Env().Mutex();
-    lock.Wait();
+    iRefLock.Wait();
     if (iRefCount != 0) {
         iRefCount++;
         added = true;
     }
-    lock.Signal();
+    iRefLock.Signal();
     return added;
 }
 
 void DviSubscription::RemoveRef()
 {
-    Mutex& lock = iDvStack.Env().Mutex();
-    lock.Wait();
+    iRefLock.Wait();
     iRefCount--;
     TBool dead = (iRefCount == 0);
-    lock.Signal();
+    iRefLock.Signal();
     if (dead) {
         delete this;
     }

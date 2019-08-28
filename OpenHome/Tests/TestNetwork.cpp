@@ -21,6 +21,7 @@ public:
         : iSemaphore("TSTS", 0)
         , iTestStarted("TSS2", 0)
         , iControllerSem(aControllerSem)
+        , iLock("TSS3")
     {
     }
 
@@ -52,9 +53,9 @@ public:
                 catch (ReaderError&) {}
                 break;
             }
-            gEnv->Mutex().Wait();
+            iLock.Wait();
             iTestDone = true;
-            gEnv->Mutex().Signal();
+            iLock.Signal();
             iControllerSem.Signal();
         }
         LOG(kNetwork, "<TestServerSession::Run\n");
@@ -79,9 +80,9 @@ public:
 
     TBool TestDone()
     {
-        gEnv->Mutex().Wait();
+        iLock.Wait();
         TBool done = iTestDone;
-        gEnv->Mutex().Signal();
+        iLock.Signal();
         return done;
     }
     const Brx& Buffer() { return iBuffer; }
@@ -90,6 +91,7 @@ private:
     Semaphore iSemaphore;
     Semaphore iTestStarted;
     Semaphore& iControllerSem;
+    Mutex iLock;
     TUint iBytes;
     Bws<64> iBuffer;
     TUint iTest;

@@ -152,6 +152,7 @@ private: // from IStackObject
 private:
     OpenHome::Mutex iLock;
     OpenHome::Mutex iSubscriberLock;
+    OpenHome::Mutex iLockInternal;
     mutable OpenHome::Mutex iSidLock;
     CpiDevice& iDevice;
     CpStack& iCpStack;

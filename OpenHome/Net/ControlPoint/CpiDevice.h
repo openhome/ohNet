@@ -281,6 +281,7 @@ protected:
 private:
     FunctorCpiDevice iAdded;
     FunctorCpiDevice iRemoved;
+    Mutex iRefLock;
     TUint iRefCount;
     Semaphore iShutdownSem;
 };

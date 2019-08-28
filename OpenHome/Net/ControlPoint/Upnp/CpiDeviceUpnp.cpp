@@ -232,7 +232,7 @@ void CpiDeviceUpnp::NotifyRemovedBeforeReady()
 
 TUint CpiDeviceUpnp::Version(const TChar* aDomain, const TChar* aName, TUint /*aProxyVersion*/) const
 {
-    ServiceType defaultServiceType(iDevice->GetCpStack().Env(), aDomain, aName, 0);
+    ServiceType defaultServiceType(aDomain, aName, 0);
     const Brx& targServiceType = defaultServiceType.FullName();
     // Must have backwards compatibility. Need to compare service type and version separately.
     Parser serviceParser = targServiceType;
@@ -602,12 +602,9 @@ void CpiDeviceListUpnp::Refresh()
     if (StartRefresh()) {
         return;
     }
-    Mutex& lock = iCpStack.Env().Mutex();
-    lock.Wait();
     /* Always attempt multiple refreshes.
         Poor quality wifi (particularly on iOS) means that we risk MSEARCHes not being sent otherwise. */
     iRefreshRepeatCount = kRefreshRetries;
-    lock.Signal();
     DoRefresh();
 }
 

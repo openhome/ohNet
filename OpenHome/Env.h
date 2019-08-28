@@ -82,10 +82,6 @@ public:
 
     void GetVersion(TUint& aMajor, TUint& aMinor);
     OpenHome::TimerManager& TimerManager();
-    /**
-     * Intended for /very/ short operations only
-     */
-    OpenHome::Mutex& Mutex();
 
     OsContext* OsCtx();
     Log& Logger();

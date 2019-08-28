@@ -41,7 +41,7 @@ FunctorDviInvocation DvAction::Functor() const
 // DviService
 
 DviService::DviService(DvStack& aDvStack, const TChar* aDomain, const TChar* aName, TUint aVersion)
-    : Service(aDvStack.Env(), aDomain, aName, aVersion)
+    : Service(aDomain, aName, aVersion)
     , iDvStack(aDvStack)
     , iLock("DVSM")
     , iRefCount(1)
@@ -89,19 +89,17 @@ void DviService::StopSubscriptions()
 
 void DviService::AddRef()
 {
-    Mutex& lock = iDvStack.Env().Mutex();
-    lock.Wait();
+    iLock.Wait();
     iRefCount++;
-    lock.Signal();
+    iLock.Signal();
 }
 
 void DviService::RemoveRef()
 {
-    Mutex& lock = iDvStack.Env().Mutex();
-    lock.Wait();
+    iLock.Wait();
     iRefCount--;
     TBool dead = (iRefCount == 0);
-    lock.Signal();
+    iLock.Signal();
     if (dead) {
         delete this;
     }

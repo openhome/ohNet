@@ -206,8 +206,11 @@ void XmlFetch::Read()
     writer.TransferTo(iXml);
 }
 
-void XmlFetch::Output(IAsyncOutput& aConsole)
+void XmlFetch::Output(IAsyncOutput& /*aConsole*/)
 {
+    // Its non-trivial to serialise output from different fetcher threads.
+    // Code is disabled for now as we haven't used this in years... 
+    /*
     Mutex& lock = iCpStack.Env().Mutex();
     lock.Wait();
     Bws<Ascii::kMaxUintStringBytes+1> buf;
@@ -221,6 +224,7 @@ void XmlFetch::Output(IAsyncOutput& aConsole)
         iError.Output(aConsole);
     }
     lock.Signal();
+    */
 }
 
 TUint XmlFetch::Type() const

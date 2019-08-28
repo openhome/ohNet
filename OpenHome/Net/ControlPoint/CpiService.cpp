@@ -18,7 +18,7 @@ using namespace OpenHome::Net;
 // CpiService
 
 CpiService::CpiService(const TChar* aDomain, const TChar* aName, TUint aVersion, CpiDevice& aDevice)
-    : Service(aDevice.GetCpStack().Env(), aDomain, aName, aDevice.Version(aDomain, aName, aVersion))
+    : Service(aDomain, aName, aDevice.Version(aDomain, aName, aVersion))
     , iDevice(aDevice)
     , iLock("SRVM")
     , iPendingInvocations(0)
@@ -486,12 +486,7 @@ CpiDevice& OpenHome::Net::Invocation::Device()
 
 void OpenHome::Net::Invocation::Output(IAsyncOutput& aConsole)
 {
-    AutoMutex a(iLock); /* using iLock doesn't prevent logging for multiple invocations overlapping
-                           Using iCpStack.Env().Mutex() causes problems though as the call to
-                           ServiceType().FullName() below also uses the Environment's mutex and we
-                           can't easily use a different mutex there.
-                           If we later want to prevent overlapped output, it'd be best to add a
-                           shared logging mutex to Environment */
+    AutoMutex a(iLock); // using iLock doesn't prevent logging for multiple invocations overlapping
     Bws<Ascii::kMaxUintStringBytes+1> buf;
     (void)Ascii::AppendDec(buf, iSequenceNumber);
     buf.PtrZ();

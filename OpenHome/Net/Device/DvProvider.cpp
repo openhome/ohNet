@@ -12,20 +12,18 @@ using namespace OpenHome::Net;
 void DvProvider::PropertiesLock()
 {
     iService->PropertiesLock();
-    Mutex& lock = iDvStack.Env().Mutex();
-    lock.Wait();
+    iLockInternal.Wait();
     iDelayPropertyUpdates = true;
-    lock.Signal();
+    iLockInternal.Signal();
 }
 
 void DvProvider::PropertiesUnlock()
 {
-    Mutex& lock = iDvStack.Env().Mutex();
-    lock.Wait();
+    iLockInternal.Wait();
     TBool report = iPropertyChanged;
     iPropertyChanged = false;
     iDelayPropertyUpdates = false;
-    lock.Signal();
+    iLockInternal.Signal();
     iService->PropertiesUnlock();
     if (report) {
         iService->PublishPropertyUpdates();
@@ -34,6 +32,7 @@ void DvProvider::PropertiesUnlock()
 
 DvProvider::DvProvider(DviDevice& aDevice, const TChar* aDomain, const TChar* aType, TUint aVersion)
     : iDvStack(aDevice.GetDvStack())
+    , iLockInternal("DvPr")
     , iDelayPropertyUpdates(false)
     , iPropertyChanged(false)
 {
@@ -94,13 +93,12 @@ bool DvProvider::SetPropertyBinary(PropertyBinary& aProperty, const Brx& aValue)
 
 void DvProvider::TryPublishUpdate()
 {
-    Mutex& lock = iDvStack.Env().Mutex();
-    lock.Wait();
+    iLockInternal.Wait();
     TBool publish = !iDelayPropertyUpdates;
     if (iDelayPropertyUpdates) {
         iPropertyChanged = true;
     }
-    lock.Signal();
+    iLockInternal.Signal();
     if (publish) {
         iService->PublishPropertyUpdates();
     }

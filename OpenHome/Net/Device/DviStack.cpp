@@ -16,6 +16,7 @@ using namespace OpenHome::Net;
 
 DvStack::DvStack(OpenHome::Environment& aEnv)
     : iEnv(aEnv)
+    , iLock("DStk")
     , iBootId(1)
     , iNextBootId(2)
     , iControlPoint(OpenHome::Brx::Empty())
@@ -52,29 +53,23 @@ DvStack::~DvStack()
 
 TUint DvStack::BootId()
 {
-    OpenHome::Mutex& lock = iEnv.Mutex();
-    lock.Wait();
+    AutoMutex _(iLock);
     TUint id = iBootId;
-    lock.Signal();
     return id;
 }
 
 TUint DvStack::NextBootId()
 {
-    OpenHome::Mutex& lock = iEnv.Mutex();
-    lock.Wait();
+    AutoMutex _(iLock);
     TUint id = iNextBootId;
-    lock.Signal();
     return id;
 }
 
 void DvStack::UpdateBootId()
 {
-    OpenHome::Mutex& lock = iEnv.Mutex();
-    lock.Wait();
+    AutoMutex _(iLock);
     iBootId = iNextBootId;
     iNextBootId++;
-    lock.Signal();
 }
 
 void DvStack::AddControlPointObserver(IControlPointObserver& aObserver)

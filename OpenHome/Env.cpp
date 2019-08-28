@@ -157,15 +157,12 @@ void Environment::Construct(FunctorMsg& aLogOutput, EThreadScheduling aScheduler
     TUint hostMin, hostMax;
     Os::ThreadGetPriorityRange(iOsContext, hostMin, hostMax);
     iThreadPriorityArbitrator = new ThreadPriorityArbitrator(hostMin, hostMax);
-    iPublicLock = new OpenHome::Mutex("GMUT");
     iPrivateLock = new OpenHome::Mutex("ENVP");
     iSuspendResumeObserverLock = new OpenHome::Mutex("ENVR");
 }
 
 Environment::~Environment()
 {
-    iPublicLock->Wait();
-    iPublicLock->Signal();
     if (iMdns != NULL) {
         delete iMdns;
     }
@@ -183,7 +180,6 @@ Environment::~Environment()
     }
     delete iTimerManager;
     delete iInitParams;
-    delete iPublicLock;
     delete iPrivateLock;
     ASSERT(iSuspendObservers.size() == 0);
     ASSERT(iResumeObservers.size() == 0);
@@ -214,11 +210,6 @@ void Environment::GetVersion(TUint& aMajor, TUint& aMinor)
 OpenHome::TimerManager& Environment::TimerManager()
 {
     return *iTimerManager;
-}
-
-OpenHome::Mutex& Environment::Mutex()
-{
-    return *iPublicLock;
 }
 
 OsContext* Environment::OsCtx()

@@ -41,20 +41,18 @@ TUint CpiSubscription::Id() const
 
 void CpiSubscription::AddRef()
 {
-    Mutex& lock = iEnv.Mutex();
-    lock.Wait();
+    AutoMutex _(iLockInternal);
     iRefCount++;
-    lock.Signal();
 }
 
 void CpiSubscription::RemoveRef()
 {
     TBool dead;
-    Mutex& lock = iEnv.Mutex();
-    lock.Wait();
-    ASSERT(iRefCount != 0);
-    dead = (--iRefCount == 0);
-    lock.Signal();
+    {
+        AutoMutex _(iLockInternal);
+        ASSERT(iRefCount != 0);
+        dead = (--iRefCount == 0);
+    }
     if (dead) {
         delete this;
     }
@@ -128,11 +126,10 @@ const OpenHome::Net::ServiceType& CpiSubscription::ServiceType() const
 void CpiSubscription::RunInSubscriber()
 {
     AutoMutex a(iSubscriberLock);
-    Mutex& lock = iEnv.Mutex();
-    lock.Wait();
+    iLockInternal.Wait();
     EOperation op = iPendingOperation;
     iPendingOperation = eNone;
-    lock.Signal();
+    iLockInternal.Signal();
     switch (op)
     {
     case eNone:
@@ -166,7 +163,8 @@ void CpiSubscription::RunInSubscriber()
 CpiSubscription::CpiSubscription(CpiDevice& aDevice, IEventProcessor& aEventProcessor, const OpenHome::Net::ServiceType& aServiceType, TUint aId)
     : iLock("SUBM")
     , iSubscriberLock("SBM2")
-    , iSidLock("SBM3")
+    , iLockInternal("SBM3")
+    , iSidLock("SBM4")
     , iDevice(aDevice)
     , iCpStack(aDevice.GetCpStack())
     , iEnv(iCpStack.Env())
@@ -203,10 +201,8 @@ void CpiSubscription::Schedule(EOperation aOperation, TBool aRejectFutureOperati
 
 TBool CpiSubscription::StartSchedule(EOperation aOperation, TBool aRejectFutureOperations)
 {
-    Mutex& lock = iEnv.Mutex();
-    lock.Wait();
+    AutoMutex _(iLockInternal);
     if (iRejectFutureOperations) {
-        lock.Signal();
         return false;
     }
     if (aRejectFutureOperations) {
@@ -214,7 +210,6 @@ TBool CpiSubscription::StartSchedule(EOperation aOperation, TBool aRejectFutureO
     }
     iRefCount++;
     iPendingOperation = aOperation;
-    lock.Signal();
     return true;
 }
 
@@ -320,9 +315,9 @@ void CpiSubscription::DoUnsubscribe()
         return;
     }
     Brh sid;
-    iEnv.Mutex().Wait();
+    iLockInternal.Wait();
     iSid.TransferTo(sid);
-    iEnv.Mutex().Signal();
+    iLockInternal.Signal();
     try {
         iDevice.Unsubscribe(*this, sid);
     }
@@ -369,12 +364,10 @@ void CpiSubscription::NotifySubnetChanged()
        unsubscribe attempt might block for InitParams::TcpConnectTimeoutMs() failing
        to (tcp) connect to its device.  To avoid this, refuse any further operations
        as soon as we know about a subnet change */
-    Mutex& lock = iEnv.Mutex();
-    lock.Wait();
+    AutoMutex _(iLockInternal);
     iRejectFutureOperations = true;
     Brh tmp;
     iSid.TransferTo(tmp);
-    lock.Signal();
 }
 
 void CpiSubscription::Suspend()
@@ -463,7 +456,6 @@ void Subscriber::Error(const TChar* aErr)
 void Subscriber::Error(const TChar* /*aErr*/)
 #endif
 {
-    gEnv->Mutex().Wait();
     LOG_ERROR(kEvent, "Error - %s - from (%p) SID ", aErr, iSubscription);
     if (iSubscription->Sid().Bytes() > 0) {
         LOG_ERROR(kEvent, iSubscription->Sid());
@@ -472,7 +464,6 @@ void Subscriber::Error(const TChar* /*aErr*/)
         LOG_ERROR(kEvent, "(null)");
     }
     LOG_ERROR(kEvent, "\n");
-    gEnv->Mutex().Signal();
     // don't try to resubscribe as we may get stuck in an endless cycle of errors
 }
 

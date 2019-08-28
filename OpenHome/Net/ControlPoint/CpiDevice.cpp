@@ -193,6 +193,7 @@ CpiDeviceList::CpiDeviceList(CpStack& aCpStack, FunctorCpiDevice aAdded, Functor
     , iRefreshLock("CDL2")
     , iAdded(aAdded)
     , iRemoved(aRemoved)
+    , iRefLock("CDL3")
     , iRefCount(0)
     , iShutdownSem("CDLS", 0)
 {
@@ -204,13 +205,12 @@ CpiDeviceList::CpiDeviceList(CpStack& aCpStack, FunctorCpiDevice aAdded, Functor
 CpiDeviceList::~CpiDeviceList()
 {
     TBool wait = false;
-    Mutex& lock = iCpStack.Env().Mutex();
-    lock.Wait();
+    iRefLock.Wait();
     if (iRefCount > 0) {
         wait = true;
         iShutdownSem.Clear();
     }
-    lock.Signal();
+    iRefLock.Signal();
     if (wait) {
         iShutdownSem.Wait();
     }
@@ -332,19 +332,18 @@ void CpiDeviceList::ClearMap(CpDeviceMap& aMap)
 
 void CpiDeviceList::AddRef()
 {
-    iCpStack.Env().Mutex().Wait();
+    iRefLock.Wait();
     ++iRefCount;
-    iCpStack.Env().Mutex().Signal();
+    iRefLock.Signal();
 }
 
 void CpiDeviceList::RemoveRef()
 {
-    Mutex& lock = iCpStack.Env().Mutex();
-    lock.Wait();
+    iRefLock.Wait();
     if (--iRefCount == 0) {
         iShutdownSem.Signal();
     }
-    lock.Signal();
+    iRefLock.Signal();
 }
 
 void CpiDeviceList::NotifyAdded(CpiDevice& aDevice)

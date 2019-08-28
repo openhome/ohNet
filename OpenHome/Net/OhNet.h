@@ -163,7 +163,8 @@ private:
 private: // from IStackObject
     void ListObjectDetails() const;
 private:
-    Environment* iEnv;
+    Environment& iEnv;
+    Mutex iLock;
     TUint iRefCount;
     TIpAddress iAddress;
     TIpAddress iNetMask;

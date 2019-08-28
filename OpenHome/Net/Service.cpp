@@ -687,8 +687,8 @@ const Brn OpenHome::Net::ServiceType::kUrn("urn:");
 const Brn OpenHome::Net::ServiceType::kService(":service:");
 const Brn OpenHome::Net::ServiceType::kServiceId(":serviceId:");
 
-OpenHome::Net::ServiceType::ServiceType(Environment& aEnv, const TChar* aDomain, const TChar* aName, TUint aVersion)
-    : iEnv(aEnv)
+OpenHome::Net::ServiceType::ServiceType(const TChar* aDomain, const TChar* aName, TUint aVersion)
+    : iLock("SerT")
     , iDomain(aDomain)
     , iName(aName)
     , iVersion(aVersion)
@@ -696,7 +696,7 @@ OpenHome::Net::ServiceType::ServiceType(Environment& aEnv, const TChar* aDomain,
 }
 
 OpenHome::Net::ServiceType::ServiceType(const ServiceType& aServiceType)
-    : iEnv(aServiceType.iEnv)
+    : iLock("SerT")
     , iVersion(aServiceType.iVersion)
     , iFullName(aServiceType.FullName())
 {
@@ -725,7 +725,7 @@ TUint OpenHome::Net::ServiceType::Version() const
 
 const Brx& OpenHome::Net::ServiceType::VersionBuf() const
 {
-    AutoMutex _(iEnv.Mutex());
+    AutoMutex _(iLock);
     if (iVersionBuf.Bytes() == 0) {
         (void)Ascii::AppendDec(iVersionBuf, iVersion);
         iVersionBuf.PtrZ();
@@ -735,7 +735,7 @@ const Brx& OpenHome::Net::ServiceType::VersionBuf() const
 
 const Brx& OpenHome::Net::ServiceType::FullName() const
 {
-    iEnv.Mutex().Wait();
+    AutoMutex _(iLock);
     if (iFullName.Bytes() == 0) {
         const TInt len = kUrn.Bytes() + iDomain.Bytes() + kService.Bytes() +
                              iName.Bytes() + 1 + Ascii::kMaxUintStringBytes + 1;
@@ -748,13 +748,12 @@ const Brx& OpenHome::Net::ServiceType::FullName() const
         Ascii::AppendDec(iFullName, iVersion);
         iFullName.PtrZ();
     }
-    iEnv.Mutex().Signal();
     return iFullName;
 }
 
 const Brx& OpenHome::Net::ServiceType::FullNameUpnp() const
 {
-    iEnv.Mutex().Wait();
+    AutoMutex _(iLock);
     if (iServiceType.Bytes() == 0) {
         Bwh upnpDomain(iDomain.Bytes() + 10);
         Ssdp::CanonicalDomainToUpnp(iDomain, upnpDomain);
@@ -769,13 +768,12 @@ const Brx& OpenHome::Net::ServiceType::FullNameUpnp() const
         Ascii::AppendDec(iServiceType, iVersion);
         iServiceType.PtrZ();
     }
-    iEnv.Mutex().Signal();
     return iServiceType;
 }
 
 const Brx& OpenHome::Net::ServiceType::PathUpnp() const
 {
-    iEnv.Mutex().Wait();
+    AutoMutex _(iLock);
     if (iPathUpnp.Bytes() == 0) {
         const TInt len = iDomain.Bytes() + 1 + iName.Bytes() + 1 + Ascii::kMaxUintStringBytes + 1;
         iPathUpnp.Grow(len);
@@ -786,13 +784,12 @@ const Brx& OpenHome::Net::ServiceType::PathUpnp() const
         Ascii::AppendDec(iPathUpnp, iVersion);
         iPathUpnp.PtrZ();
     }
-    iEnv.Mutex().Signal();
     return iPathUpnp;
 }
 
 const Brx& OpenHome::Net::ServiceType::ServiceId() const
 {
-    iEnv.Mutex().Wait();
+    AutoMutex _(iLock);
     if (iServiceId.Bytes() == 0) {
         Bwh domain(iDomain);
         for (TUint i=0; i<domain.Bytes(); i++) {
@@ -808,15 +805,14 @@ const Brx& OpenHome::Net::ServiceType::ServiceId() const
         iServiceId.Append(iName);
         iServiceId.PtrZ();
     }
-    iEnv.Mutex().Signal();
     return iServiceId;
 }
 
 
 // Service
 
-Service::Service(Environment& aEnv, const TChar* aDomain, const TChar* aName, TUint aVersion)
-    : iServiceType(aEnv, aDomain, aName, aVersion)
+Service::Service(const TChar* aDomain, const TChar* aName, TUint aVersion)
+    : iServiceType(aDomain, aName, aVersion)
 {
 }
 

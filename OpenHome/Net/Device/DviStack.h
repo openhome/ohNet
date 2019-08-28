@@ -9,6 +9,7 @@
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Env.h>
+#include <OpenHome/Private/Thread.h>
 #include <OpenHome/Net/Private/DviServerUpnp.h>
 #include <OpenHome/Net/Private/DviDevice.h>
 #include <OpenHome/Net/Private/DviSubscription.h>
@@ -55,6 +56,7 @@ private:
     ~DvStack();
 private:
     OpenHome::Environment& iEnv;
+    Mutex iLock;
     TUint iBootId;
     TUint iNextBootId;
     DviServerUpnp* iDviServerUpnp;

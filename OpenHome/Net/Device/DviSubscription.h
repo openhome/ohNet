@@ -77,6 +77,7 @@ private:
 private:
     DvStack& iDvStack;
     mutable Mutex iLock;
+    Mutex iRefLock;
     TUint iRefCount;
     DviDevice& iDevice;
     IPropertyWriterFactory& iWriterFactory;

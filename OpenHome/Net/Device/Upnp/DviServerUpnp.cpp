@@ -446,6 +446,7 @@ void PropertyWriterUpnp::PropertyWriteEnd()
 PropertyWriterFactory::PropertyWriterFactory(DvStack& aDvStack, TIpAddress aAdapter, TUint aPort)
     : iRefCount(1)
     , iDvStack(aDvStack)
+    , iLock("DPWF")
     , iEnabled(true)
     , iAdapter(aAdapter)
     , iPort(aPort)
@@ -475,10 +476,9 @@ void PropertyWriterFactory::SubscriptionAdded(DviSubscription& aSubscription)
 
 void PropertyWriterFactory::Disable()
 {
-    Mutex& lock = iDvStack.Env().Mutex();
-    lock.Wait();
+    iLock.Wait();
     iEnabled = false;
-    lock.Signal();
+    iLock.Signal();
     std::vector<DviSubscription*> subscriptions;
     {
         AutoMutex _(iSubscriptionMapLock);
@@ -501,10 +501,9 @@ void PropertyWriterFactory::Disable()
 
 IPropertyWriter* PropertyWriterFactory::ClaimWriter(const IDviSubscriptionUserData* aUserData, const Brx& aSid, TUint aSequenceNumber)
 {
-    Mutex& lock = iDvStack.Env().Mutex();
-    lock.Wait();
+    iLock.Wait();
     TBool enabled = iEnabled;
-    lock.Signal();
+    iLock.Signal();
     if (!enabled) {
         return NULL;
     }
@@ -561,19 +560,18 @@ PropertyWriterFactory::~PropertyWriterFactory()
 
 void PropertyWriterFactory::AddRef()
 {
-    Mutex& lock = iDvStack.Env().Mutex();
-    lock.Wait();
+    AutoMutex _(iLock);
     iRefCount++;
-    lock.Signal();
 }
 
 void PropertyWriterFactory::RemoveRef()
 {
-    Mutex& lock = iDvStack.Env().Mutex();
-    lock.Wait();
-    iRefCount--;
-    TBool dead = (iRefCount == 0);
-    lock.Signal();
+    TBool dead;
+    {
+        AutoMutex _(iLock);
+        iRefCount--;
+        dead = (iRefCount == 0);
+    }
     if (dead) {
         delete this;
     }
@@ -1409,6 +1407,7 @@ DviServerUpnp::DviServerUpnp(DvStack& aDvStack, TUint aPort)
     : DviServer(aDvStack)
     , iPort(aPort)
     , iPathMapper(NULL)
+    , iLockRedirect("DSUp")
 {
     Initialise();
 }
@@ -1429,11 +1428,9 @@ void DviServerUpnp::SetPathMapper(IPathMapperUpnp* aPathMapper)
 void DviServerUpnp::Redirect(const Brx& aUriRequested, const Brx& aUriRedirectedTo)
 {
     // could store a vector of redirections if required
-    Mutex& lock = iDvStack.Env().Mutex();
-    lock.Wait();
+    AutoMutex _(iLockRedirect);
     iRedirectUriRequested.Set(aUriRequested);
     iRedirectUriRedirectedTo.Set(aUriRedirectedTo);
-    lock.Signal();
 }
 
 SocketTcpServer* DviServerUpnp::CreateServer(const NetworkAdapter& aNif)
@@ -1472,6 +1469,7 @@ TBool DviServerUpnp::TryMapPath(const Brx& aReqPath, Bwx& aMappedPath)
 
 TBool DviServerUpnp::RedirectUri(const Brx& aUri, Brn& aRedirectTo)
 {
+    AutoMutex _(iLockRedirect);
     if (aUri == iRedirectUriRequested) {
         aRedirectTo.Set(iRedirectUriRedirectedTo);
         return true;

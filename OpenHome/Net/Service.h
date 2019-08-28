@@ -359,7 +359,7 @@ private:
 class ServiceType
 {
 public:
-    ServiceType(Environment& aStack, const TChar* aDomain, const TChar* aName, TUint aVersion);
+    ServiceType(const TChar* aDomain, const TChar* aName, TUint aVersion);
     ServiceType(const ServiceType& aServiceType);
     ~ServiceType();
     const Brx& Domain() const;
@@ -376,7 +376,7 @@ private:
     static const Brn kService;
     static const Brn kServiceId;
 private:
-    Environment& iEnv;
+    mutable Mutex iLock;
     Brh iDomain;
     Brh iName;
     TUint iVersion;
@@ -402,7 +402,7 @@ public:
      */
     const OpenHome::Net::ServiceType& ServiceType() const;
 protected:
-    Service(Environment& aStack, const TChar* aDomain, const TChar* aName, TUint aVersion);
+    Service(const TChar* aDomain, const TChar* aName, TUint aVersion);
     virtual ~Service() {}
 protected:
     OpenHome::Net::ServiceType iServiceType;

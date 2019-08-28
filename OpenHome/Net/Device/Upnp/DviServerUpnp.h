@@ -161,6 +161,7 @@ private:
 private:
     TUint iRefCount;
     DvStack& iDvStack;
+    Mutex iLock;
     TBool iEnabled;
     TIpAddress iAdapter;
     TUint iPort;
@@ -283,6 +284,7 @@ private:
     TUint iPort;
     std::vector<PropertyWriterFactory*> iPropertyWriterFactories;
     IPathMapperUpnp* iPathMapper;
+    Mutex iLockRedirect;
     Brh iRedirectUriRequested;
     Brh iRedirectUriRedirectedTo;
 };

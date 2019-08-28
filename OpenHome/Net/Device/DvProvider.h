@@ -110,6 +110,7 @@ protected:
     DviService* iService;
     DvStack& iDvStack;
 private:
+    Mutex iLockInternal;
     TBool iDelayPropertyUpdates;
     TBool iPropertyChanged;
 };

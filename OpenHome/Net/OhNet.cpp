@@ -50,7 +50,8 @@ const NetworkAdapter* AutoNetworkAdapterRef::Adapter() const
 NetworkAdapter::NetworkAdapter(Environment& aEnv, TIpAddress aAddress, TIpAddress aNetMask,
                                TIpAddress aDhcp, TIpAddress aGateway,
                                const char* aName, const char* aCookie)
-    : iEnv(&aEnv)
+    : iEnv(aEnv)
+    , iLock("NetA")
     , iRefCount(1)
     , iAddress(aAddress)
     , iNetMask(aNetMask)
@@ -58,37 +59,38 @@ NetworkAdapter::NetworkAdapter(Environment& aEnv, TIpAddress aAddress, TIpAddres
     , iGateway(aGateway)
     , iName(aName)
 {
-    iEnv->AddObject(this);
+    iEnv.AddObject(this);
     iCookies.push_back(aCookie);
 }
 
 NetworkAdapter::~NetworkAdapter()
 {
-    iEnv->RemoveObject(this);
+    iEnv.RemoveObject(this);
 }
 
 void NetworkAdapter::AddRef(const char* aCookie)
 {
-    iEnv->Mutex().Wait();
+    AutoMutex _(iLock);
     iRefCount++;
     iCookies.push_back(aCookie);
-    iEnv->Mutex().Signal();
 }
 
 void NetworkAdapter::RemoveRef(const char* aCookie)
 {
-    iEnv->Mutex().Wait();
-    TBool dead = (--iRefCount == 0);
-    TBool foundCookie = false;
-    for (TUint i=0; i<(TUint)iCookies.size(); i++) {
-        if (strcmp(iCookies[i], aCookie) == 0) {
-            iCookies.erase(iCookies.begin() + i);
-            foundCookie = true;
-            break;
+    TBool dead = false;
+    {
+        AutoMutex _(iLock);
+        dead = (--iRefCount == 0);
+        TBool foundCookie = false;
+        for (TUint i = 0; i < (TUint)iCookies.size(); i++) {
+            if (strcmp(iCookies[i], aCookie) == 0) {
+                iCookies.erase(iCookies.begin() + i);
+                foundCookie = true;
+                break;
+            }
         }
+        ASSERT(foundCookie);
     }
-    ASSERT(foundCookie);
-    iEnv->Mutex().Signal();
     if (dead) {
         delete this;
     }
