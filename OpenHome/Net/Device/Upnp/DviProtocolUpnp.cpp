@@ -38,7 +38,7 @@ DviProtocolUpnp::DviProtocolUpnp(DviDevice& aDevice)
     , iSuppressScheduledEvents(false)
 {
     SetAttribute(kAttributeKeyVersionMajor, "1");
-    SetAttribute(kAttributeKeyVersionMinor, "1");
+    SetAttribute(kAttributeKeyVersionMinor, "0");
     iLock.Wait();
     iServer = &(iDvStack.ServerUpnp());
     NetworkAdapterList& adapterList = iDvStack.Env().NetworkAdapterList();
@@ -147,8 +147,8 @@ DviProtocolUpnpAdapterSpecificData* DviProtocolUpnp::AddInterface(const NetworkA
 
 void DviProtocolUpnp::HandleInterfaceChange()
 {
-    TBool update = false;
     std::vector<DviProtocolUpnpAdapterSpecificData*> pendingDelete;
+    std::vector<DviProtocolUpnpAdapterSpecificData*> added;
     {
         const TIpAddress kLoopbackAddr = MakeIpAddress(127, 0, 0, 1);
         AutoMutex a(iLock);
@@ -180,13 +180,13 @@ void DviProtocolUpnp::HandleInterfaceChange()
                 && (!adapterList.SingleSubnetModeEnabled() ||
                    (current != NULL && subnet->Address() == current->Address()) ||
                     subnet->Address() == kLoopbackAddr)) {
-                AddInterface(*subnet);
-                update = iDevice.Enabled();
+                DviProtocolUpnpAdapterSpecificData* asd = AddInterface(*subnet);
+                added.push_back(asd);
             }
         }
         NetworkAdapterList::DestroyNetworkAdapterList(adapters);
         NetworkAdapterList::DestroySubnetList(subnetList);
-        if (update) {
+        if (iDevice.Enabled()) {
             // halt any ssdp broadcasts/responses that are currently in progress
             // (in case they're for a subnet that's no longer valid)
             // they'll be advertised again by the SendUpdateNotifications() call below
@@ -198,8 +198,14 @@ void DviProtocolUpnp::HandleInterfaceChange()
         pendingDelete[i]->RemoveRef();
     }
 
-    if (update) {
-        SendUpdateNotifications();
+    if (iDevice.Enabled()) {
+        SendAliveNotifications();
+        for (TUint i = 0; i<added.size(); i++) {
+            added[i]->SendByeByeThenAlive(*this);
+        }
+    }
+    for (TUint i = 0; i < added.size(); i++) {
+        iAdapters.push_back(added[i]);
     }
 }
 
