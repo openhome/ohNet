@@ -149,6 +149,7 @@ void DviProtocolUpnp::HandleInterfaceChange()
 {
     std::vector<DviProtocolUpnpAdapterSpecificData*> pendingDelete;
     std::vector<DviProtocolUpnpAdapterSpecificData*> added;
+    std::vector<DviProtocolUpnpAdapterSpecificData*> unchanged;
     {
         const TIpAddress kLoopbackAddr = MakeIpAddress(127, 0, 0, 1);
         AutoMutex a(iLock);
@@ -172,6 +173,7 @@ void DviProtocolUpnp::HandleInterfaceChange()
                 iAdapters.erase(iAdapters.begin() + i);
             }
         }
+        unchanged = iAdapters;
 
         // add listeners for new subnets
         for (i=0; i<subnetList->size(); i++) {
@@ -199,13 +201,10 @@ void DviProtocolUpnp::HandleInterfaceChange()
     }
 
     if (iDevice.Enabled()) {
-        SendAliveNotifications();
+        SendAliveNotifications(unchanged);
         for (TUint i = 0; i<added.size(); i++) {
             added[i]->SendByeByeThenAlive(*this);
         }
-    }
-    for (TUint i = 0; i < added.size(); i++) {
-        iAdapters.push_back(added[i]);
     }
 }
 
@@ -498,16 +497,21 @@ void DviProtocolUpnp::SubnetUpdated(TBool)
 
 void DviProtocolUpnp::SendAliveNotifications()
 {
+    SendAliveNotifications(iAdapters);
+}
+
+void DviProtocolUpnp::SendAliveNotifications(const std::vector<DviProtocolUpnpAdapterSpecificData*>& aAdapters)
+{
     if(!iDevice.Enabled()) {
         return;
     }
     LogMulticastNotification("alive");
     AutoMutex a(iLock);
-    for (TUint i=0; i<iAdapters.size(); i++) {
+    for (TUint i=0; i<aAdapters.size(); i++) {
         Bws<kMaxUriBytes> uri;
-        GetUriDeviceXml(uri, iAdapters[i]->UriBase());
+        GetUriDeviceXml(uri, aAdapters[i]->UriBase());
         try {
-            iDvStack.SsdpNotifierManager().AnnouncementAlive(*this, iAdapters[i]->Interface(), uri, iDevice.ConfigId());
+            iDvStack.SsdpNotifierManager().AnnouncementAlive(*this, aAdapters[i]->Interface(), uri, iDevice.ConfigId());
         }
         catch (NetworkError&) {}
     }
