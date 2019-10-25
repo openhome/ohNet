@@ -201,7 +201,7 @@ void DviProtocolUpnp::HandleInterfaceChange()
     }
 
     if (iDevice.Enabled()) {
-        SendAliveNotifications(unchanged);
+        DoSendAliveNotifications(unchanged);
         for (TUint i = 0; i<added.size(); i++) {
             added[i]->SendByeByeThenAlive(*this);
         }
@@ -497,10 +497,10 @@ void DviProtocolUpnp::SubnetUpdated(TBool)
 
 void DviProtocolUpnp::SendAliveNotifications()
 {
-    SendAliveNotifications(iAdapters);
+    DoSendAliveNotifications(iAdapters);
 }
 
-void DviProtocolUpnp::SendAliveNotifications(const std::vector<DviProtocolUpnpAdapterSpecificData*>& aAdapters)
+void DviProtocolUpnp::DoSendAliveNotifications(const std::vector<DviProtocolUpnpAdapterSpecificData*>& aAdapters)
 {
     if(!iDevice.Enabled()) {
         return;

@@ -79,7 +79,7 @@ private:
     void SubnetDisabled(TBool aCancelled);
     void SubnetUpdated(TBool aCancelled);
     void SendAliveNotifications();
-    void SendAliveNotifications(const std::vector<DviProtocolUpnpAdapterSpecificData*>& aAdapters);
+    void DoSendAliveNotifications(const std::vector<DviProtocolUpnpAdapterSpecificData*>& aAdapters);
     void QueueAliveTimer();
     void SendUpdateNotifications();
     void GetUriDeviceXml(Bwx& aUri, const Brx& aUriBase);
