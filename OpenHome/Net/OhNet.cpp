@@ -418,6 +418,16 @@ void InitialisationParams::SetDvLpecServerPort(uint32_t aPort)
     iDvLpecServerPort = aPort;
 }
 
+void InitialisationParams::SetDvAnnouncementIntervals(uint32_t aByeByeMs, uint32_t aAliveMs)
+{
+    ASSERT(aByeByeMs != 0);
+    ASSERT(aByeByeMs < 1000);
+    ASSERT(aAliveMs != 0);
+    ASSERT(aAliveMs < 1000);
+    iDvAnnouncementIntervalByeByeMs = aByeByeMs;
+    iDvAnnouncementIntervalAliveMs = aAliveMs;
+}
+
 void InitialisationParams::SetHostUdpIsLowQuality(TBool aLow)
 {
     iHostUdpLowQuality = aLow;
@@ -626,6 +636,12 @@ uint32_t InitialisationParams::DvLpecServerPort()
     return iDvLpecServerPort;
 }
 
+void InitialisationParams::GetDvAnnouncementIntervals(uint32_t& aByeByeMs, uint32_t& aAliveMs)
+{
+    aByeByeMs = iDvAnnouncementIntervalByeByeMs;
+    aAliveMs = iDvAnnouncementIntervalAliveMs;
+}
+
 bool InitialisationParams::IsHostUdpLowQuality()
 {
     return iHostUdpLowQuality;
@@ -690,6 +706,8 @@ InitialisationParams::InitialisationParams()
     , iRequiresMdnsCache(false)
     , iDvNumLpecThreads(0)
     , iDvLpecServerPort(0)
+    , iDvAnnouncementIntervalByeByeMs(10)
+    , iDvAnnouncementIntervalAliveMs(40)
     , iTimerManagerThreadPriority(kPriorityHigh)
     , iEnableShell(false)
     , iShellPort(0)

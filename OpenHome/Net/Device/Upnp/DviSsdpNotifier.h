@@ -79,11 +79,9 @@ private:
 
 class DeviceAnnouncement : public SsdpNotifierScheduler
 {
-    static const TUint kMsgIntervalMsAlive  = 40;
-    static const TUint kMsgIntervalMsByeBye = 10;
     static const TUint kMsgIntervalMsUpdate = 20;
 public:
-    DeviceAnnouncement(DvStack& aDvStack, ISsdpNotifyListener& aListener);
+    DeviceAnnouncement(DvStack& aDvStack, ISsdpNotifyListener& aListener, TUint aMsgIntervalAlive, TUint aMsgIntervalByeBye);
     void StartAlive(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId);
     void StartByeBye(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId, FunctorGeneric<TBool>& aCompleted);
     void StartUpdate(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId, FunctorGeneric<TBool>& aCompleted);
@@ -98,6 +96,8 @@ private:
     SsdpNotifierAlive iNotifierAlive;
     SsdpNotifierByeBye iNotifierByeBye;
     SsdpNotifierUpdate iNotifierUpdate;
+    TUint iMsgIntervalAlive;
+    TUint iMsgIntervalByeBye;
     IUpnpAnnouncementData* iAnnouncementData;
     Bws<kMaxUriBytes> iUri;
     ISsdpNotify* iCurrentNotifier;
@@ -165,6 +165,8 @@ private:
     std::list<Notifier*> iActiveResponders;
     std::list<Notifier*> iFreeAnnouncers;
     std::list<Notifier*> iActiveAnnouncers;
+    TUint iAnnounceIntervalAlive;
+    TUint iAnnounceIntervalByeBye;
 };
 
 } // namespace Net

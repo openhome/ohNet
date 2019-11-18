@@ -372,6 +372,10 @@ public:
      */
     void SetDvLpecServerPort(uint32_t aPort);
     /**
+     * Set the minimum gap (per device) between multicast announcement messages.
+     */
+    void SetDvAnnouncementIntervals(uint32_t aByeByeMs, uint32_t aAliveMs);
+    /**
      * Inform ohNet that UDP will be measurably unreliable on even a local network.
      * (e.g. for an Apple device using wifi)
      * Some control point behaviours will change in this case (e.g. device lists may
@@ -432,6 +436,7 @@ public:
     bool DvIsBonjourEnabled(const TChar*& aHostName, TBool& aRequiresMdnsCache) const;
     uint32_t DvNumLpecThreads();
     uint32_t DvLpecServerPort();
+    void GetDvAnnouncementIntervals(uint32_t& aByeByeMs, uint32_t& aAliveMs);
     bool IsHostUdpLowQuality();
     uint32_t TimerManagerPriority() const;
     const Brx& HttpUserAgent() const;
@@ -481,6 +486,8 @@ private:
     Brhz iDvBonjourHostName;
     uint32_t iDvNumLpecThreads;
     uint32_t iDvLpecServerPort;
+    uint32_t iDvAnnouncementIntervalByeByeMs;
+    uint32_t iDvAnnouncementIntervalAliveMs;
     uint32_t iTimerManagerThreadPriority;
     Brh iUserAgent;
     TBool iEnableShell;

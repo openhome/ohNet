@@ -222,28 +222,31 @@ TUint MsearchResponse::NextMsg()
 
 // DeviceAnnouncement
 
-DeviceAnnouncement::DeviceAnnouncement(DvStack& aDvStack, ISsdpNotifyListener& aListener)
+DeviceAnnouncement::DeviceAnnouncement(DvStack& aDvStack, ISsdpNotifyListener& aListener, TUint aMsgIntervalAlive, TUint aMsgIntervalByeBye)
     : SsdpNotifierScheduler(aDvStack, aListener, "DevAnounce")
     , iSsdpNotifier(aDvStack)
     , iNotifierAlive(iSsdpNotifier)
     , iNotifierByeBye(iSsdpNotifier)
     , iNotifierUpdate(iSsdpNotifier)
+    , iMsgIntervalAlive(aMsgIntervalAlive)
+    , iMsgIntervalByeBye(aMsgIntervalByeBye)
     , iCurrentNotifier(NULL)
 {
+    Log::Print("DeviceAnnouncement: iMsgIntervalAlive=%u, iMsgIntervalByeBye=%u\n", iMsgIntervalAlive, iMsgIntervalByeBye);
 }
 
 void DeviceAnnouncement::StartAlive(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId)
 {
     LogNotifierStart("StartAlive");
     iCompleted = FunctorGeneric<TBool>();
-    Start(iNotifierAlive, aAnnouncementData, aAdapter, aUri, aConfigId, kMsgIntervalMsAlive);
+    Start(iNotifierAlive, aAnnouncementData, aAdapter, aUri, aConfigId, iMsgIntervalAlive);
 }
 
 void DeviceAnnouncement::StartByeBye(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId, FunctorGeneric<TBool>& aCompleted)
 {
     LogNotifierStart("StartByeBye");
     iCompleted = aCompleted;
-    Start(iNotifierByeBye, aAnnouncementData, aAdapter, aUri, aConfigId, kMsgIntervalMsByeBye);
+    Start(iNotifierByeBye, aAnnouncementData, aAdapter, aUri, aConfigId, iMsgIntervalByeBye);
 }
 
 void DeviceAnnouncement::StartUpdate(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId, FunctorGeneric<TBool>& aCompleted)
@@ -305,6 +308,7 @@ DviSsdpNotifierManager::DviSsdpNotifierManager(DvStack& aDvStack)
     , iLock("DVDM")
     , iShutdownSem("DVDM", 1)
 {
+    iDvStack.Env().InitParams()->GetDvAnnouncementIntervals(iAnnounceIntervalByeBye, iAnnounceIntervalAlive);
 }
 
 DviSsdpNotifierManager::~DviSsdpNotifierManager()
@@ -482,7 +486,7 @@ DviSsdpNotifierManager::Announcer* DviSsdpNotifierManager::GetAnnouncer(IUpnpAnn
     DviSsdpNotifierManager::Announcer* announcer;
     if (iFreeAnnouncers.size() == 0) {
         try {
-            DeviceAnnouncement* da = new DeviceAnnouncement(iDvStack, *this);
+            DeviceAnnouncement* da = new DeviceAnnouncement(iDvStack, *this, iAnnounceIntervalAlive, iAnnounceIntervalByeBye);
             announcer = new Announcer(da);
             iActiveAnnouncers.push_back(announcer);
         }
