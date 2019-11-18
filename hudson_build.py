@@ -246,8 +246,8 @@ class JenkinsBuild():
         self.platform_make_args = []
 
         if (   arch in ['armel', 'armhf', 'armv7', 'arm64', 'armv5', 'armv6', 'mipsel', 'ppc32', 'rpi', 'arm64'])
-            or (os_platform in ['iOs', 'Android', 'Windows81', 'Windows10']
-            or self.options.release == '1'):
+            or (os_platform in ['iOs', 'Android', 'Windows81', 'Windows10'])
+            or self.options.release == '1':
             args.append('--buildonly')
         elif arch == 'x64':
             if os_platform  == 'macos':
