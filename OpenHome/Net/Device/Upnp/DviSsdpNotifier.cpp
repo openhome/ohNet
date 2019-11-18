@@ -232,7 +232,6 @@ DeviceAnnouncement::DeviceAnnouncement(DvStack& aDvStack, ISsdpNotifyListener& a
     , iMsgIntervalByeBye(aMsgIntervalByeBye)
     , iCurrentNotifier(NULL)
 {
-    Log::Print("DeviceAnnouncement: iMsgIntervalAlive=%u, iMsgIntervalByeBye=%u\n", iMsgIntervalAlive, iMsgIntervalByeBye);
 }
 
 void DeviceAnnouncement::StartAlive(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId)
