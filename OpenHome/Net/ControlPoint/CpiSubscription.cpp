@@ -217,7 +217,7 @@ void CpiSubscription::DoSubscribe()
 {
     Bws<Uri::kMaxUriBytes> uri;
     uri.Append(Http::kSchemeHttp);
-    NetworkAdapter* nif = iEnv.NetworkAdapterList().CurrentAdapter("CpiSubscription::DoSubscribe");
+    NetworkAdapter* nif = iEnv.NetworkAdapterList().CurrentAdapter("CpiSubscription::DoSubscribe").Ptr();
     TIpAddress nifAddr = 0;
     if (nif != NULL) {
         nifAddr = nif->Address();

@@ -567,7 +567,7 @@ void MdnsPlatform::TimerExpired()
 void MdnsPlatform::SubnetListChanged()
 {
     iInterfacesLock.Wait();
-    NetworkAdapter* current = iEnv.NetworkAdapterList().CurrentAdapter(kNifCookie);
+    NetworkAdapter* current = iEnv.NetworkAdapterList().CurrentAdapter(kNifCookie).Ptr();
     NetworkAdapterList& nifList = iEnv.NetworkAdapterList();
     std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
     for (TInt i=(TInt)iInterfaces.size()-1; i>=0; i--) {
@@ -606,7 +606,7 @@ void MdnsPlatform::SubnetListChanged()
 void MdnsPlatform::CurrentAdapterChanged()
 {
     iInterfacesLock.Wait();
-    NetworkAdapter* current = iEnv.NetworkAdapterList().CurrentAdapter(kNifCookie);
+    NetworkAdapter* current = iEnv.NetworkAdapterList().CurrentAdapter(kNifCookie).Ptr();
     NetworkAdapterList& nifList = iEnv.NetworkAdapterList();
     std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
 
@@ -957,7 +957,7 @@ MdnsPlatform::Status MdnsPlatform::Init()
     iCurrentAdapterChangeListenerId = nifList.AddCurrentChangeListener(functorAdapter, "MdnsPlatform-current");
 
     // Subnet list changed and current adapter changed callbacks do not happen on registration, so set up interface list here.
-    NetworkAdapter* current = iEnv.NetworkAdapterList().CurrentAdapter(kNifCookie);
+    NetworkAdapter* current = iEnv.NetworkAdapterList().CurrentAdapter(kNifCookie).Ptr();
     if (current == NULL) { // Listening on all adapters.
         std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
         for (TUint i=0; i<(TUint)subnetList->size() && status==mStatus_NoError; i++) {

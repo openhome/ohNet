@@ -250,7 +250,7 @@ void SuiteAlive::Test()
     Environment& env = iDvStack.Env();
     Blocker* blocker = new Blocker(env);
     CpListenerBasic* listener = new CpListenerBasic;
-    NetworkAdapter* nif = env.NetworkAdapterList().CurrentAdapter(kAdapterCookie);
+    NetworkAdapter* nif = env.NetworkAdapterList().CurrentAdapter(kAdapterCookie).Ptr();
     SsdpListenerMulticast* listenerMulticast = new SsdpListenerMulticast(env, nif->Address());
     nif->RemoveRef(kAdapterCookie);
     TInt listenerId = listenerMulticast->AddNotifyHandler(listener);
@@ -368,7 +368,7 @@ TBool CpListenerMsearch::LogUdn(const Brx& aUuid, const Brx& aLocation)
         return false;
     }
     Endpoint endpt(0, uri.Host());
-    NetworkAdapter* nif = iEnv.NetworkAdapterList().CurrentAdapter(kAdapterCookie);
+    NetworkAdapter* nif = iEnv.NetworkAdapterList().CurrentAdapter(kAdapterCookie).Ptr();
     TBool correctSubnet = nif->ContainsAddress(endpt.Address());
     nif->RemoveRef(kAdapterCookie);
     if (!correctSubnet) {
@@ -506,7 +506,7 @@ SuiteMsearch::SuiteMsearch(DvStack& aDvStack)
     Environment& env = iDvStack.Env();
     iBlocker = new Blocker(env);
     iListener = new CpListenerMsearch(env);
-    NetworkAdapter* nif = env.NetworkAdapterList().CurrentAdapter(kAdapterCookie);
+    NetworkAdapter* nif = env.NetworkAdapterList().CurrentAdapter(kAdapterCookie).Ptr();
     iListenerUnicast = new SsdpListenerUnicast(env, *iListener, nif->Address());
     nif->RemoveRef(kAdapterCookie);
     iListenerUnicast->Start();

@@ -18,7 +18,7 @@ using namespace OpenHome::Net;
 AutoNetworkAdapterRef::AutoNetworkAdapterRef(Environment& aEnv, const char* aCookie)
     : iCookie(aCookie)
 {
-    iAdapter = aEnv.NetworkAdapterList().CurrentAdapter(aCookie);
+    iAdapter = aEnv.NetworkAdapterList().CurrentAdapter(aCookie).Ptr();
 }
 
 AutoNetworkAdapterRef::AutoNetworkAdapterRef(NetworkAdapter* aAdapter, const char* aCookie)
@@ -785,7 +785,7 @@ void Library::SetCurrentSubnet(TIpAddress aSubnet)
 
 NetworkAdapter* Library::CurrentSubnetAdapter(const char* aCookie)
 {
-    return iEnv->NetworkAdapterList().CurrentAdapter(aCookie);
+    return iEnv->NetworkAdapterList().CurrentAdapter(aCookie).Ptr();
 }
 
 void Library::RefreshNetworkAdapterList()
@@ -853,7 +853,7 @@ void UpnpLibrary::SetCurrentSubnet(TIpAddress aSubnet)
 
 NetworkAdapter* UpnpLibrary::CurrentSubnetAdapter(const char* aCookie)
 {
-    return gEnv->NetworkAdapterList().CurrentAdapter(aCookie);
+    return gEnv->NetworkAdapterList().CurrentAdapter(aCookie).Ptr();
 }
 
 void UpnpLibrary::RefreshNetworkAdapterList()

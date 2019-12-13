@@ -216,6 +216,7 @@ copy_build_includes:
 	move $(inc_build)\OpenHome\Private\Functor*.h $(inc_build)\OpenHome > nul
 	move $(inc_build)\OpenHome\Private\MimeTypes.h $(inc_build)\OpenHome > nul
 	move $(inc_build)\OpenHome\Private\OhNetDefines.h $(inc_build)\OpenHome > nul
+	move $(inc_build)\OpenHome\Private\Optional.h $(inc_build)\OpenHome > nul
 	move $(inc_build)\OpenHome\Private\Defines.h $(inc_build)\OpenHome > nul
 	move $(inc_build)\OpenHome\Private\OsTypes.h $(inc_build)\OpenHome > nul
 	move $(inc_build)\OpenHome\Private\OhNetTypes.h $(inc_build)\OpenHome > nul

@@ -507,6 +507,7 @@ copy_build_includes:
 	$(cp) OpenHome/MimeTypes.h $(inc_build)/OpenHome
 	$(cp) OpenHome/OhNetDefines.h $(inc_build)/OpenHome
 	$(cp) OpenHome/Defines.h $(inc_build)/OpenHome
+	$(cp) OpenHome/Optional.h $(inc_build)/OpenHome
 	$(cp) OpenHome/OsTypes.h $(inc_build)/OpenHome
 	$(cp) OpenHome/OhNetTypes.h $(inc_build)/OpenHome
 	$(cp) OpenHome/Types.h $(inc_build)/OpenHome

@@ -52,7 +52,7 @@ TBool NetworkAdapterList::SingleSubnetModeEnabled() const
     return iSingleSubnetMode;
 }
 
-NetworkAdapter* NetworkAdapterList::CurrentAdapter(const char* aCookie) const
+Optional<NetworkAdapter> NetworkAdapterList::CurrentAdapter(const char* aCookie) const
 {
     AutoMutex a(iListLock);
     if (iCurrent == NULL) {

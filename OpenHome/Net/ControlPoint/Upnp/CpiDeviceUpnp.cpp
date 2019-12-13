@@ -9,6 +9,7 @@
 #include <OpenHome/Private/Http.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Parser.h>
+#include <OpenHome/Optional.h>
 #include <OpenHome/Net/Private/XmlFetcher.h>
 #include <OpenHome/Net/Private/ProtocolUpnp.h>
 #include <OpenHome/Net/Private/XmlParser.h>
@@ -652,12 +653,13 @@ TBool CpiDeviceListUpnp::IsLocationReachable(const Brx& aLocation) const
     try {
         AutoMutex _(iLock);
         Endpoint endpt(0, uri.Host());
-        NetworkAdapter* nif = iCpStack.Env().NetworkAdapterList().CurrentAdapter("CpiDeviceListUpnp::IsLocationReachable");
-        if (nif != NULL) {
-            if (nif->Address() == iInterface && nif->ContainsAddress(endpt.Address())) {
+        Optional<NetworkAdapter> onif = iCpStack.Env().NetworkAdapterList().CurrentAdapter("CpiDeviceListUpnp::IsLocationReachable");
+        if (onif.Ok()) {
+            NetworkAdapter& nif = onif.Unwrap();
+            if (nif.Address() == iInterface && nif.ContainsAddress(endpt.Address())) {
                 reachable = true;
             }
-            nif->RemoveRef("CpiDeviceListUpnp::IsLocationReachable");
+            nif.RemoveRef("CpiDeviceListUpnp::IsLocationReachable");
         }
     }
     catch (NetworkError&) {}
@@ -693,7 +695,7 @@ void CpiDeviceListUpnp::SubnetListChanged()
 
 void CpiDeviceListUpnp::HandleInterfaceChange()
 {
-    NetworkAdapter* current = iCpStack.Env().NetworkAdapterList().CurrentAdapter("CpiDeviceListUpnp::HandleInterfaceChange");
+    NetworkAdapter* current = iCpStack.Env().NetworkAdapterList().CurrentAdapter("CpiDeviceListUpnp::HandleInterfaceChange").Ptr();
     if (current != NULL && current->Address() == iInterface) {
         // list of subnets has changed but our interface is still available so there's nothing for us to do here
         current->RemoveRef("CpiDeviceListUpnp::HandleInterfaceChange");

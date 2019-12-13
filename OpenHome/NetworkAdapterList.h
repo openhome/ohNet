@@ -5,6 +5,7 @@
 #include <OpenHome/Net/Core/OhNet.h>
 #include <OpenHome/Functor.h>
 #include <OpenHome/FunctorNetworkAdapter.h>
+#include <OpenHome/Optional.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Net/Core/OhNet.h>
 #include <OpenHome/Private/Env.h>
@@ -35,7 +36,7 @@ public:
     NetworkAdapterList(Environment& aEnv, Environment::ELoopback aLoopbackPolicy, TIpAddress aDefaultSubnet=0);
     virtual ~NetworkAdapterList();
     TBool SingleSubnetModeEnabled() const;
-    NetworkAdapter* CurrentAdapter(const char* aCookie) const;
+    Optional<NetworkAdapter> CurrentAdapter(const char* aCookie) const;
     std::vector<NetworkAdapter*>* CreateSubnetList() const;
     static void DestroySubnetList(std::vector<NetworkAdapter*>* aList);
     std::vector<NetworkAdapter*>* CreateNetworkAdapterList() const;
