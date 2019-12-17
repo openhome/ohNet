@@ -173,10 +173,12 @@ CpiSubscription::CpiSubscription(CpiDevice& aDevice, IEventProcessor& aEventProc
     , iId(aId)
     , iPendingOperation(eNone)
     , iRefCount(1)
+    , iSubscribeErrorCount(0)
     , iInterruptHandler(NULL)
     , iSuspended(false)
 {
     iTimer = new Timer(iEnv, MakeFunctor(*this, &CpiSubscription::Renew), "CpiSubscription");
+    iTimerSubscribeRetry = new Timer(iEnv, MakeFunctor(*this, &CpiSubscription::SubscribeRetry), "CpiSubscription2");
     iDevice.AddRef();
     iRejectFutureOperations = false;
     iEnv.AddObject(this);
@@ -185,9 +187,11 @@ CpiSubscription::CpiSubscription(CpiDevice& aDevice, IEventProcessor& aEventProc
 CpiSubscription::~CpiSubscription()
 {
     iTimer->Cancel();
+    iTimerSubscribeRetry->Cancel();
     ASSERT(iSid.Bytes() == 0);
     iCpStack.SubscriptionManager().Remove(*this); // in case we never subscribed, so never need to unsubscribe
     iDevice.RemoveRef();
+    delete iTimerSubscribeRetry;
     delete iTimer;
     iEnv.RemoveObject(this);
 }
@@ -242,6 +246,20 @@ void CpiSubscription::DoSubscribe()
     try {
         renewSecs = iDevice.Subscribe(*this, subscriber);
     }
+    // retry subscription request
+    catch (NetworkTimeout& ex) {
+        ScheduleSubscribeRetry(ex.Message());
+        throw;
+    }
+    catch (NetworkError& ex) {
+        ScheduleSubscribeRetry(ex.Message());
+        throw;
+    }
+    catch (WriterError& ex) {
+        ScheduleSubscribeRetry(ex.Message());
+        throw;
+    }
+    // subscription may have succeeded, try renewing it later
     catch (XmlError&) {
         // we don't expect to ever get here.  Its worth capturing some debug info if we do.
         Brh deviceXml;
@@ -251,12 +269,19 @@ void CpiSubscription::DoSubscribe()
         const Brx& udn = iDevice.Udn();
         Log::Print("XmlError attempting to subscribe to %.*s service on device %.*s, with xml\n\n%.*s\n\n",
                    PBUF(serviceFullName), PBUF(udn), PBUF(deviceXml));
+
+        SetRenewTimerDefault();
+        throw;
+    }
+    catch (Exception&) {
+        SetRenewTimerDefault();
         throw;
     }
 
     LOG(kEvent, "Subscription (%p) for %.*s, %.*s completed\n    Sid is %.*s\n    Renew in %u secs\n",
                 this, PBUF(iDevice.Udn()), PBUF(serviceFullName), PBUF(iSid), renewSecs);
 
+    iSubscribeErrorCount = 0;
     SetRenewTimer(renewSecs);
 }
 
@@ -335,6 +360,28 @@ void CpiSubscription::DoUnsubscribe()
     LOG(kEvent, "Unsubscribed (%p) sid %.*s in %ums\n", this, PBUF(sid), diffTime);
 }
 
+void CpiSubscription::ScheduleSubscribeRetry(const TChar* aMsg)
+{
+    static const TUint kMaxSubscribeRetrys = 10;
+    static const TUint kRetryDelayGranularity = 250;
+
+    ++iSubscribeErrorCount;
+    const Brx& serviceFullName = iServiceType.FullName();
+    LOG(kEvent, "Subscription (%p) for %.*s, %.*s failed (%s) - failure count is %u\n",
+        this, PBUF(iDevice.Udn()), PBUF(serviceFullName), aMsg, iSubscribeErrorCount);
+    if (iSubscribeErrorCount > kMaxSubscribeRetrys) {
+        // if we can't subscribe after the first 20 attempts, we're unlikely to ever succeed
+        return;
+    }
+    const TUint retryMs = iSubscribeErrorCount * kRetryDelayGranularity;
+    iTimerSubscribeRetry->FireIn(retryMs);
+}
+
+void CpiSubscription::SubscribeRetry()
+{
+    Schedule(eSubscribe);
+}
+
 void CpiSubscription::SetRenewTimer(TUint aMaxSeconds)
 {
     if (aMaxSeconds == 0) {
@@ -346,6 +393,12 @@ void CpiSubscription::SetRenewTimer(TUint aMaxSeconds)
     const TUint randMax = (TUint)((maxSeconds*1000)/2);
     TUint renewMs = iEnv.Random(randMin, randMax);
     iTimer->FireIn(renewMs);
+}
+
+void CpiSubscription::SetRenewTimerDefault()
+{
+    const TUint defaultDurationSecs = iEnv.InitParams()->SubscriptionDurationSecs();
+    SetRenewTimer(defaultDurationSecs);
 }
 
 void CpiSubscription::Resubscribe()

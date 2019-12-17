@@ -136,7 +136,10 @@ private:
     void Renew();
     void DoRenew();
     void DoUnsubscribe();
+    void ScheduleSubscribeRetry(const TChar* aMsg);
+    void SubscribeRetry();
     void SetRenewTimer(TUint aMaxSeconds);
+    void SetRenewTimerDefault();
     void Resubscribe();
     void NotifySubnetChanged();
     void Suspend();
@@ -165,6 +168,8 @@ private:
     TUint iNextSequenceNumber;
     EOperation iPendingOperation;
     TUint iRefCount;
+    TUint iSubscribeErrorCount;
+    Timer* iTimerSubscribeRetry;
     IInterruptHandler* iInterruptHandler;
     TBool iRejectFutureOperations;
     TBool iSuspended;
