@@ -19,6 +19,7 @@ public:
     TBool Ok() const { return iReturnPtr != NULL; }
     T& Unwrap() const { ASSERT(Ok()); return *iReturnPtr; }
     T* Ptr() const { return iReturnPtr; }
+    operator TBool() { return Ok(); }
 private:
     T* iReturnPtr;
 };
