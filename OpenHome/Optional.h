@@ -3,6 +3,8 @@
 
 #include <OpenHome/Types.h>
 
+#include <stddef.h>
+
 namespace OpenHome {
 
 template<typename T>
