@@ -500,22 +500,13 @@ void Publisher::Run()
         try {
             iSubscription->WriteChanges();
         }
-        catch (HttpError&) {
-            Error("Http");
-        }
-        catch (NetworkError&) {
-            Error("Network");
-        }
-        catch (NetworkTimeout&) {
-            Error("Timeout");
+        catch (NetworkTimeout& ex) {
+            Error(ex.Message());
             iObserver.NotifyPublishError(*iSubscription);
             timeout = true;
         }
-        catch (WriterError&) {
-            Error("Writer");
-        }
-        catch (ReaderError&) {
-            Error("Reader");
+        catch (Exception& ex) {
+            Error(ex.Message());
         }
 
         if (!timeout) {
