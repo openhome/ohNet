@@ -45,7 +45,7 @@ private:
     Mutex iLock;
     Brn iTestHostName;
     ThreadFunctor* iThread;
-    std::vector<std::pair<TUint, Functor>> iObservers;
+    std::vector<std::pair<TUint, Functor> > iObservers;
     TUint iNextId;
 };
 

@@ -143,7 +143,9 @@ OsContext* OsCreate(OsThreadSchedulePolicy aSchedulerPolicy)
 void OsDestroy(OsContext* aContext)
 {
     if (aContext != NULL) {
+#if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD) && !defined(__ANDROID__)
         DnsRefreshDestroy(aContext);
+#endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD && !defined(__ANDROID__) */
         DestroyInterfaceChangedObserver(aContext);
         pthread_key_delete(aContext->iThreadArgKey);
         OsMutexDestroy(aContext->iMutex);
