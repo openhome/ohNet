@@ -1698,8 +1698,7 @@ static void DnsRefreshDestroy(OsContext* aContext)
         OsThreadDestroy(aContext->iDnsRefresh->iThread);
     }
     OsNetworkClose(aContext->iDnsRefresh->iHandle);
-    aContext->iDnsRefresh->iHandle = NULL;
-    aContext->iDnsRefresh->iThread = NULL;
+    free(aContext->iDnsRefresh);
 }
 
 #endif /* !PLATFORM_MACOSX_GNU  && !PLATFORM_FREEBSD && !defined(__ANDROID__) */
