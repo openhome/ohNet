@@ -46,7 +46,7 @@ TUint DnsChangeNotifier::Register(Functor aCallback)
 void DnsChangeNotifier::Deregister(TUint aId)
 {
     AutoMutex _(iLock);
-    const TUint count = iObservers.size();
+    const TUint count = (TUint)iObservers.size();
     for (TUint i=0; i<count; i++) {
         if (iObservers[i].first == aId) {
             iObservers.erase(iObservers.begin() + i);
@@ -67,7 +67,7 @@ void DnsChangeNotifier::NotifThread()
         (void)WaitForDnsAvailable();
         {
             AutoMutex _(iLock);
-            const TUint count = iObservers.size();
+            const TUint count = (TUint)iObservers.size();
             for (TUint i = 0; i < count; i++) {
                 try {
                     iObservers[i].second();
