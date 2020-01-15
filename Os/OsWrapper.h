@@ -74,6 +74,7 @@ public:
     static void NetworkSocketSetMulticastIf(THandle aHandle, TIpAddress aInterface);
     static std::vector<NetworkAdapter*>* NetworkListAdapters(Environment& aEnv, Environment::ELoopback aUseLoopback, const TChar* aCookie);
     inline static void NetworkSetInterfaceChangedObserver(OsContext* aContext, InterfaceListChanged aCallback, void* aArg);
+    inline static void NetworkSetDnsChangedObserver(OsContext* aContext, DnsChanged aCallback, void* aArg);
 };
 
 #include <OpenHome/OsWrapper.inl>

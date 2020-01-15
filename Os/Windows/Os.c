@@ -1353,3 +1353,10 @@ void OsNetworkSetTestInterfaceIndex(OsContext* aContext, int32_t aIndex)
         (void)WSASetEvent(aContext->iInterfaceChangeObserver->iEvent);
     }
 }
+
+void OsNetworkSetDnsChangedObserver(OsContext* aContext, DnsChanged aCallback, void* aArg)
+{
+    UNUSED(aContext);
+    UNUSED(aCallback);
+    UNUSED(aArg);
+}

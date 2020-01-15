@@ -743,6 +743,24 @@ typedef void(*InterfaceListChanged)(void*);
  */
 void OsNetworkSetInterfaceChangedObserver(OsContext* aContext, InterfaceListChanged aCallback, void* aArg);
 
+/**
+ * Pointer to a function which will be called if available DNS servers change
+ *
+ * @param[in] aArg         Argument passed to OsNetworkSetDnsChangedObserver()
+ */
+typedef void(*DnsChanged)(void*);
+
+/**
+ * Register a callback to be run if the list of available DNS servers change
+ *
+ * Use of this is optional.  Only a single observer can be set.
+ *
+ * @param[in] aContext     Returned from OsCreate().
+ * @param[in] aCallback    Callback to run if DSN changes
+ * @param[in] aArg         Argument to pass to the callback
+ */
+void OsNetworkSetDnsChangedObserver(OsContext* aContext, DnsChanged aCallback, void* aArg);
+
 #ifdef __cplusplus
 } // extern "C"
 #endif

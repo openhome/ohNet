@@ -83,6 +83,14 @@ typedef struct OsNetworkHandle
     OsContext* iCtx;
 } OsNetworkHandle;
 
+typedef struct DnsRefresher
+{
+    OsNetworkHandle* iHandle;
+    THandle iThread;
+    DnsChanged iCallback;
+    void* iCallbackArg;
+} DnsRefresher;
+
 struct OsContext {
     struct timeval iStartTime; /* Time OsCreate was called */
     struct timeval iPrevTime; /* Last time OsTimeInUs() was called */
@@ -94,23 +102,20 @@ struct OsContext {
     struct InterfaceChangedObserver* iInterfaceChangedObserver;
     int32_t iThreadPriorityMin;
 
-#if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD) && !defined(__ANDROID__)
-    OsNetworkHandle* iDnsRefreshHandle;
-    THandle iDnsRefreshThread;
-#endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD && !defined(__ANDROID__) */
+    DnsRefresher* iDnsRefresh; // linux only
 };
 
 
 static void DestroyInterfaceChangedObserver(OsContext* aContext);
 #if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD) && !defined(__ANDROID__)
-static void InitDnsRefreshThread(OsContext* aContext);
-static void DestroyDnsRefreshThread(OsContext* aContext);
+static void DnsRefreshCreate(OsContext* aContext);
+static void DnsRefreshDestroy(OsContext* aContext);
 #endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD && !defined(__ANDROID__) */
 
 
 OsContext* OsCreate(OsThreadSchedulePolicy aSchedulerPolicy)
 {
-    OsContext* ctx = malloc(sizeof(*ctx));
+    OsContext* ctx = calloc(1, sizeof(*ctx));
     gettimeofday(&ctx->iStartTime, NULL);
     ctx->iPrevTime = ctx->iStartTime;
     memset(&ctx->iTimeAdjustment, 0, sizeof(ctx->iTimeAdjustment));
@@ -129,9 +134,7 @@ OsContext* OsCreate(OsThreadSchedulePolicy aSchedulerPolicy)
     ctx->iThreadPriorityMin = 0;
 
 #if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD) && !defined(__ANDROID__)
-    ctx->iDnsRefreshHandle = NULL;
-    ctx->iDnsRefreshThread = NULL;
-    InitDnsRefreshThread(ctx);
+    DnsRefreshCreate(ctx);
 #endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD && !defined(__ANDROID__) */
 
     return ctx;
@@ -140,11 +143,7 @@ OsContext* OsCreate(OsThreadSchedulePolicy aSchedulerPolicy)
 void OsDestroy(OsContext* aContext)
 {
     if (aContext != NULL) {
-
-#if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD) && !defined(__ANDROID__)
-        DestroyDnsRefreshThread(aContext);
-#endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD && !defined(__ANDROID__) */
-
+        DnsRefreshDestroy(aContext);
         DestroyInterfaceChangedObserver(aContext);
         pthread_key_delete(aContext->iThreadArgKey);
         OsMutexDestroy(aContext->iMutex);
@@ -1614,7 +1613,9 @@ void DnsRefreshThread(void* aPtr)
      * To work around the above issue, manually watch for changes in
      * resolv.conf and trigger res_init() to force glibc to reload resolv.conf.
      */
-    OsNetworkHandle* handle = (OsNetworkHandle*) aPtr;
+    OsContext* ctx = (OsContext*)aPtr;
+    DnsRefresher* dnsRefresh = ctx->iDnsRefresh;
+    OsNetworkHandle* handle = (OsNetworkHandle*)dnsRefresh->iHandle;
     const int watchDesc = inotify_add_watch(handle->iSocket, "/etc/resolv.conf", IN_CLOSE_WRITE);
 
     if (watchDesc != -1) {
@@ -1644,33 +1645,38 @@ void DnsRefreshThread(void* aPtr)
                 if (len > 0) {
                     // Only one watcher. If len > 0, assume message is from that single watcher.
                     res_init();
+                    OsMutexLock(ctx->iMutex);
+                    if (dnsRefresh->iCallback != NULL) {
+                        dnsRefresh->iCallback(dnsRefresh->iCallbackArg);
+                    }
+                    OsMutexUnlock(ctx->iMutex);
                 }
             }
         }
     }
 }
 
-static void InitDnsRefreshThread(OsContext* aContext)
+static void DnsRefreshCreate(OsContext* aContext)
 {
     assert(aContext != NULL);
     uint32_t minPrio, maxPrio;
     OsThreadGetPriorityRange(aContext, &minPrio, &maxPrio);
 
-    assert(aContext->iDnsRefreshHandle == NULL);
-    assert(aContext->iDnsRefreshThread == NULL);
+    assert(aContext->iDnsRefresh == NULL);
+    aContext->iDnsRefresh = calloc(1, sizeof *aContext->iDnsRefresh);
 
     const int32_t fd = inotify_init();
     if (fd != -1) {
-        OsNetworkHandle* handle = aContext->iDnsRefreshHandle = CreateHandle(aContext, fd);
+        OsNetworkHandle* handle = CreateHandle(aContext, fd);
         if (handle != NULL) {
-            aContext->iDnsRefreshHandle = handle;
-            aContext->iDnsRefreshThread = DoThreadCreate(aContext,
-                                                         "DnsRefreshThread",
-                                                         (maxPrio - minPrio) / 2,   // Same as adapterChangeObserverThread
-                                                         16 * 1024,                 // Same as adapterChangeObserverThread
-                                                         1,                         // Joinable
-                                                         DnsRefreshThread,
-                                                         handle);
+            aContext->iDnsRefresh->iHandle = handle;
+            aContext->iDnsRefresh->iThread = DoThreadCreate(aContext,
+                                                            "DnsRefreshThread",
+                                                            (maxPrio - minPrio) / 2,   // Same as adapterChangeObserverThread
+                                                            16 * 1024,                 // Same as adapterChangeObserverThread
+                                                            1,                         // Joinable
+                                                            DnsRefreshThread,
+                                                            aContext);
         }
         else {
             close(fd);
@@ -1678,17 +1684,20 @@ static void InitDnsRefreshThread(OsContext* aContext)
     }
 }
 
-static void DestroyDnsRefreshThread(OsContext* aContext)
+static void DnsRefreshDestroy(OsContext* aContext)
 {
     assert(aContext != NULL);
-    if (aContext->iDnsRefreshThread != NULL) {
-        OsNetworkInterrupt(aContext->iDnsRefreshHandle, 1);
-        ThreadJoin(aContext->iDnsRefreshThread);
-        OsThreadDestroy(aContext->iDnsRefreshThread);
+    if (aContext->iDnsRefresh == NULL) {
+        return;
     }
-    OsNetworkClose(aContext->iDnsRefreshHandle);
-    aContext->iDnsRefreshHandle = NULL;
-    aContext->iDnsRefreshThread = NULL;
+    if (aContext->iDnsRefresh->iThread != NULL) {
+        OsNetworkInterrupt(aContext->iDnsRefresh->iHandle, 1);
+        ThreadJoin(aContext->iDnsRefresh->iThread);
+        OsThreadDestroy(aContext->iDnsRefresh->iThread);
+    }
+    OsNetworkClose(aContext->iDnsRefresh->iHandle);
+    aContext->iDnsRefresh->iHandle = NULL;
+    aContext->iDnsRefresh->iThread = NULL;
 }
 
 #endif /* !PLATFORM_MACOSX_GNU  && !PLATFORM_FREEBSD && !defined(__ANDROID__) */
@@ -1716,4 +1725,16 @@ void OsNetworkSetInterfaceChangedObserver(OsContext* aContext, InterfaceListChan
 #else /* !PLATFORM_MACOSX_GNU */
     SetInterfaceChangedObserver_Linux(aContext, aCallback, aArg);
 #endif /* PLATFORM_MACOSX_GNU */
+}
+
+void OsNetworkSetDnsChangedObserver(OsContext* aContext, DnsChanged aCallback, void* aArg)
+{
+    assert(aContext != NULL);
+    if (aContext->iDnsRefresh == NULL) {
+        return;
+    }
+    OsMutexLock(aContext->iMutex);
+    aContext->iDnsRefresh->iCallback = aCallback;
+    aContext->iDnsRefresh->iCallbackArg = aArg;
+    OsMutexUnlock(aContext->iMutex);
 }

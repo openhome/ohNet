@@ -88,5 +88,7 @@ inline TInt Os::NetworkListen(THandle aHandle, TUint aSlots)
 { return OsNetworkListen(aHandle, aSlots); }
 void Os::NetworkSetInterfaceChangedObserver(OsContext* aContext, InterfaceListChanged aCallback, void* aArg)
 { OsNetworkSetInterfaceChangedObserver(aContext, aCallback, aArg); }
+inline void Os::NetworkSetDnsChangedObserver(OsContext* aContext, DnsChanged aCallback, void* aArg)
+{ OsNetworkSetDnsChangedObserver(aContext, aCallback, aArg); }
 
 #endif // HEADER_OSWRAPPER_INL

@@ -89,6 +89,7 @@ objects_core = \
 	$(objdir)MdnsProvider.$(objext) \
 	$(objdir)Md5.$(objext) \
 	$(objdir)NetworkAdapterList.$(objext) \
+	$(objdir)DnsChangeNotifier.$(objext) \
 	$(objdir)Network.$(objext) \
 	$(objdir)Parser.$(objext) \
 	$(objdir)Printer.$(objext) \
@@ -151,6 +152,7 @@ headers = \
 	$(inc_build)/OpenHome/Private/md5.h \
 	$(inc_build)/OpenHome/Private/Network.h \
 	$(inc_build)/OpenHome/Private/NetworkAdapterList.h \
+	$(inc_build)/OpenHome/Private/DnsChangeNotifier.h \
 	$(inc_build)/OpenHome/Private/Parser.h \
 	$(inc_build)/OpenHome/Private/Printer.h \
 	$(inc_build)/OpenHome/Private/Queue.h \
@@ -374,6 +376,8 @@ $(objdir)Md5.$(objext) : OpenHome/md5.c $(headers)
 	$(compiler)Md5.$(objext) -c $(cflags_third_party) $(includes) OpenHome/md5.c
 $(objdir)NetworkAdapterList.$(objext) : OpenHome/NetworkAdapterList.cpp $(headers)
 	$(compiler)NetworkAdapterList.$(objext) -c $(cppflags) $(includes) OpenHome/NetworkAdapterList.cpp
+$(objdir)DnsChangeNotifier.$(objext) : OpenHome/DnsChangeNotifier.cpp $(headers)
+	$(compiler)DnsChangeNotifier.$(objext) -c $(cppflags) $(includes) OpenHome/DnsChangeNotifier.cpp
 $(objdir)Network.$(objext) : OpenHome/Network.cpp $(headers)
 	$(compiler)Network.$(objext) -c $(cppflags) $(includes) OpenHome/Network.cpp
 $(objdir)Parser.$(objext) : OpenHome/Parser.cpp $(headers)
