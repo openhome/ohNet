@@ -18,6 +18,7 @@ LOCAL_SRC_FILES := $(ohroot)OpenHome/Ascii.cpp \
                    $(ohroot)thirdparty/libb64/cdecode.c \
                    $(ohroot)OpenHome/Net/Discovery.cpp \
                    $(ohroot)OpenHome/Debug.cpp \
+                   $(ohroot)OpenHome/DnsChangeNotifier.cpp \
                    $(ohroot)OpenHome/Net/ControlPoint/CpDeviceCore.cpp \
                    $(ohroot)OpenHome/Net/Bindings/C/ControlPoint/CpDeviceC.cpp \
                    $(ohroot)OpenHome/Net/Bindings/Cpp/ControlPoint/CpDeviceStd.cpp \
