@@ -29,6 +29,12 @@ DnsChangeNotifier::~DnsChangeNotifier()
     delete iThread;
 }
 
+void DnsChangeNotifier::SetTestHostName(const TChar* aHostName)
+{
+    AutoMutex _(iLock);
+    iTestHostName.Set(aHostName);
+}
+
 TUint DnsChangeNotifier::Register(Functor aCallback)
 {
     AutoMutex _(iLock);
@@ -80,7 +86,10 @@ TBool DnsChangeNotifier::WaitForDnsAvailable()
     for (TUint i=0; i<numElems; i++) {
         Thread::Sleep(retryMs[i]);
         try {
-            Endpoint ep(80, iTestHostName);
+            iLock.Wait();
+            const Brn hostName(iTestHostName);
+            iLock.Signal();
+            Endpoint ep(80, hostName);
             return true;
         }
         catch (NetworkError&) {}

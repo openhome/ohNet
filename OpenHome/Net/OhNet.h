@@ -400,6 +400,11 @@ public:
      * ESchedulePriority is preferable for *nix
      */
     void SetSchedulingPolicy(Environment::EThreadScheduling aPolicy);
+    /**
+     * Set a hostname to be used to check whether an asynchronous change
+     * to DNS settings has completed
+     */
+    void SetDnsChangeTestHostName(const TChar* aHostName);
 
     FunctorMsg& LogOutput();
     FunctorMsg& FatalErrorHandler();
@@ -442,6 +447,7 @@ public:
     const Brx& HttpUserAgent() const;
     TBool IsShellEnabled(TUint& aPort, TUint& aSessionPriority) const;
     Environment::EThreadScheduling SchedulingPolicy() const;
+    const TChar* DnsChangeTestHostName() const;
 private:
     InitialisationParams();
     void FatalErrorHandlerDefault(const char* aMsg);
@@ -494,6 +500,7 @@ private:
     TUint iShellPort;
     TUint iShellSessionPriority;
     Environment::EThreadScheduling iSchedulingPolicy;
+    const TChar* iDnsChangeTestHostName;
 };
 
 class CpStack;

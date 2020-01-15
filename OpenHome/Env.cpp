@@ -9,6 +9,7 @@
 #include <OpenHome/Private/Timer.h>
 #include <OpenHome/Net/Private/Globals.h>
 #include <OpenHome/Private/Debug.h>
+#include <OpenHome/Private/DnsChangeNotifier.h>
 #include <OpenHome/Private/Shell.h>
 #include <OpenHome/Private/InfoProvider.h>
 #include <OpenHome/Private/ShellCommandDebug.h>
@@ -121,6 +122,7 @@ Environment::Environment(InitialisationParams* aInitParams)
     , iCpStack(NULL)
     , iDvStack(NULL)
     , iMdns(NULL)
+    , iDnsChangeNotifier(NULL)
 {
     ASSERT(aInitParams != NULL);
     Construct(aInitParams->LogOutput(), aInitParams->SchedulingPolicy());
@@ -466,6 +468,11 @@ IMdnsProvider* Environment::MdnsProvider()
     return iMdns;
 }
 
+IDnsChangeNotifier* Environment::DnsChangeNotifier()
+{
+    return iDnsChangeNotifier;
+}
+
 void Environment::SetInitParams(InitialisationParams* aInitParams)
 {
     delete iInitParams;
@@ -495,6 +502,25 @@ void Environment::DoSetInitParams(InitialisationParams* aInitParams)
     CreateShell();
     CreateMdnsProvider();
     iHttpUserAgent.Replace(iInitParams->HttpUserAgent());
+    const TChar* dnsChangeTestHostName = iInitParams->DnsChangeTestHostName();
+    if (iDnsChangeNotifier == nullptr) {
+        iDnsChangeNotifier = new OpenHome::DnsChangeNotifier(dnsChangeTestHostName);
+        Os::NetworkSetDnsChangedObserver(iOsContext, DnsChanged, this);
+    }
+    else {
+        iDnsChangeNotifier->SetTestHostName(dnsChangeTestHostName);
+    }
+}
+
+void Environment::DnsChanged(void* aSelf)
+{ // static
+    Environment* self = reinterpret_cast<Environment*>(aSelf);
+    try {
+        static_cast<IDnsChangeObserver*>(self->iDnsChangeNotifier)->DnsChanged();
+    }
+    catch (Exception& ex) {
+        Log::Print("Exception %s from %s:%d handling DNS change\n", ex.Message(), ex.File(), ex.Line());
+    }
 }
 
 

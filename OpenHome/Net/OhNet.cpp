@@ -455,6 +455,11 @@ void InitialisationParams::SetSchedulingPolicy(Environment::EThreadScheduling aP
     iSchedulingPolicy = aPolicy;
 }
 
+void InitialisationParams::SetDnsChangeTestHostName(const TChar* aHostName)
+{
+    iDnsChangeTestHostName = aHostName;
+}
+
 FunctorMsg& InitialisationParams::LogOutput()
 {
     return iLogOutput;
@@ -669,6 +674,11 @@ Environment::EThreadScheduling InitialisationParams::SchedulingPolicy() const
     return iSchedulingPolicy;
 }
 
+const TChar* InitialisationParams::DnsChangeTestHostName() const
+{
+    return iDnsChangeTestHostName;
+}
+
 #if defined(PLATFORM_MACOSX_GNU) || defined (PLATFORM_IOS)
 /* Assume that all Apple products have poor quality networking.
    This won't be the case for a wired Mac desktop but we'd need a way of signalling which
@@ -713,6 +723,7 @@ InitialisationParams::InitialisationParams()
     , iShellPort(0)
     , iShellSessionPriority(kPriorityNormal)
     , iSchedulingPolicy(Environment::EScheduleDefault)
+    , iDnsChangeTestHostName("wiki.openhome.org")
 {
     iDefaultLogger = new DefaultLogger;
     FunctorMsg functor = MakeFunctorMsg(*iDefaultLogger, &OpenHome::Net::DefaultLogger::Log);

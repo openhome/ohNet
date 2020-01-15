@@ -31,6 +31,7 @@ class DnsChangeNotifier : public IDnsChangeNotifier, public IDnsChangeObserver
 public:
     DnsChangeNotifier(const TChar* aTestHostName);
     ~DnsChangeNotifier();
+    void SetTestHostName(const TChar* aHostName);
 private: // from IDnsChangeNotifier
     TUint Register(Functor aCallback);
     void Deregister(TUint aId);

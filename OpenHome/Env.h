@@ -26,6 +26,8 @@ class Shell;
 class IInfoAggregator;
 class ShellCommandDebug;
 class IWriter;
+class DnsChangeNotifier;
+class IDnsChangeNotifier;
 
 class IStack
 {
@@ -113,6 +115,7 @@ public:
     IStack* DviStack();
     void CreateMdnsProvider();
     Net::IMdnsProvider* MdnsProvider();
+    IDnsChangeNotifier* DnsChangeNotifier();
     void SetInitParams(Net::InitialisationParams* aInitParams);
 private:
     Environment(FunctorMsg& aLogOutput);
@@ -126,6 +129,7 @@ private:
     void CreateShell();
     void SetCpStack(IStack* aStack);
     void SetDvStack(IStack* aStack);
+    static void DnsChanged(void* aSelf);
 private:
     OsContext* iOsContext;
     Log* iLogger;
@@ -149,6 +153,7 @@ private:
     OpenHome::Mutex* iPrivateLock;
     Bws<128> iHttpUserAgent;
     Net::IMdnsProvider* iMdns;
+    OpenHome::DnsChangeNotifier* iDnsChangeNotifier;
 };
 
 } // namespace OpenHome
