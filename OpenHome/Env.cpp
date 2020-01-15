@@ -73,6 +73,7 @@ Environment::Environment(FunctorMsg& aLogOutput)
     , iCpStack(NULL)
     , iDvStack(NULL)
     , iMdns(NULL)
+    , iDnsChangeNotifier(NULL)
 {
     Construct(aLogOutput, EScheduleDefault);
 }
@@ -105,6 +106,7 @@ Environment::Environment(FunctorMsg& aLogOutput,
     , iCpStack(NULL)
     , iDvStack(NULL)
     , iMdns(NULL)
+    , iDnsChangeNotifier(NULL)
 {
     Construct(aLogOutput, aSchedulerPolicy);
     iTimerManager = new OpenHome::TimerManager(*this, aTimerManagerPriority);
@@ -173,6 +175,7 @@ Environment::~Environment()
     delete iShellCommandDebug;
     delete iInfoAggregator;
     delete iShell;
+    delete iDnsChangeNotifier;
     delete iNetworkAdapterList;
     if (iObjectMap.size() != 0) {
         Log::Print("ERROR: destroying stack before some owned objects\n");
