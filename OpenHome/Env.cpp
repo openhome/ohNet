@@ -503,7 +503,7 @@ void Environment::DoSetInitParams(InitialisationParams* aInitParams)
     CreateMdnsProvider();
     iHttpUserAgent.Replace(iInitParams->HttpUserAgent());
     const TChar* dnsChangeTestHostName = iInitParams->DnsChangeTestHostName();
-    if (iDnsChangeNotifier == nullptr) {
+    if (iDnsChangeNotifier == NULL) {
         iDnsChangeNotifier = new OpenHome::DnsChangeNotifier(dnsChangeTestHostName);
         Os::NetworkSetDnsChangedObserver(iOsContext, DnsChanged, this);
     }
