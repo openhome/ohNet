@@ -37,6 +37,7 @@ public:
     CpiDeviceUpnp(CpStack& aCpStack, const Brx& aUdn, const Brx& aLocation, TUint aMaxAgeSecs, IDeviceRemover& aDeviceList, CpiDeviceListUpnp& aList);
     const Brx& Udn() const;
     const Brx& Location() const;
+    TUint MaxAgeSeconds() const;
     CpiDevice& Device();
 
     /**
@@ -87,6 +88,7 @@ private:
     DeviceXml* iDeviceXml;
     Timer* iTimer;
     TUint iExpiryTime;
+    TUint iMaxAgeSeconds;
     IDeviceRemover& iDeviceList;
     CpiDeviceListUpnp* iList;
     Invocable* iInvocable;
@@ -114,6 +116,7 @@ protected:
 
     void StopListeners();
 
+    void Add(CpiDeviceUpnp* aDevice);
     /**
      * Checks to see if a device is already in the list and updates its maxage
      * timeout if it is.
@@ -145,6 +148,7 @@ private: // IResumeObserver
 private:
     void RefreshTimerComplete();
     void ResumedTimerComplete();
+    void RepeatMsearchTimerComplete();
     void CurrentNetworkAdapterChanged();
     void SubnetListChanged();
     void HandleInterfaceChange();
@@ -166,7 +170,9 @@ private:
     TBool iNoRemovalsFromRefresh;
     Timer* iRefreshTimer;
     Timer* iResumedTimer;
+    Timer* iRepeatMsearchTimer;
     TUint iRefreshRepeatCount;
+    TUint iRepeatMsearchMs;
 };
 
 /**

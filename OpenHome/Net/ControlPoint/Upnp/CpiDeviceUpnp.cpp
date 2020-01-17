@@ -36,6 +36,7 @@ CpiDeviceUpnp::CpiDeviceUpnp(CpStack& aCpStack, const Brx& aUdn, const Brx& aLoc
     , iDeviceXmlDocument(NULL)
     , iDeviceXml(NULL)
     , iExpiryTime(0)
+    , iMaxAgeSeconds(aMaxAgeSecs)
     , iDeviceList(aDeviceList)
     , iList(&aList)
     , iSemReady("CDUS", 0)
@@ -61,6 +62,11 @@ const Brx& CpiDeviceUpnp::Location() const
     return iLocation;
 }
 
+TUint CpiDeviceUpnp::MaxAgeSeconds() const
+{
+    return iMaxAgeSeconds;
+}
+
 CpiDevice& CpiDeviceUpnp::Device()
 {
     return *iDevice;
@@ -68,6 +74,7 @@ CpiDevice& CpiDeviceUpnp::Device()
 
 void CpiDeviceUpnp::UpdateMaxAge(TUint aSeconds)
 {
+    iMaxAgeSeconds = aSeconds;
     TUint delayMs = aSeconds * 1000;
     delayMs += 100; /* allow slightly longer than maxAge to cope with devices which
                        send out Alive messages at the last possible moment */
@@ -483,12 +490,14 @@ CpiDeviceListUpnp::CpiDeviceListUpnp(CpStack& aCpStack, FunctorCpiDevice aAdded,
     , iEnv(aCpStack.Env())
     , iStarted(false)
     , iNoRemovalsFromRefresh(false)
+    , iRepeatMsearchMs(30 * 1000)
 {
     NetworkAdapterList& ifList = aCpStack.Env().NetworkAdapterList();
     AutoNetworkAdapterRef ref(iEnv, "CpiDeviceListUpnp ctor");
     const NetworkAdapter* current = ref.Adapter();
     iRefreshTimer = new Timer(iEnv, MakeFunctor(*this, &CpiDeviceListUpnp::RefreshTimerComplete), "DeviceListRefresh");
     iResumedTimer = new Timer(iEnv, MakeFunctor(*this, &CpiDeviceListUpnp::ResumedTimerComplete), "DeviceListResume");
+    iRepeatMsearchTimer = new Timer(iEnv, MakeFunctor(*this, &CpiDeviceListUpnp::RepeatMsearchTimerComplete), "DeviceListRepeat");
     iRefreshRepeatCount = 0;
     iInterfaceChangeListenerId = ifList.AddCurrentChangeListener(MakeFunctor(*this, &CpiDeviceListUpnp::CurrentNetworkAdapterChanged), "CpiDeviceListUpnp-current");
     iSubnetListChangeListenerId = ifList.AddSubnetListChangeListener(MakeFunctor(*this, &CpiDeviceListUpnp::SubnetListChanged), "CpiDeviceListUpnp-subnet");
@@ -512,6 +521,7 @@ CpiDeviceListUpnp::CpiDeviceListUpnp(CpStack& aCpStack, FunctorCpiDevice aAdded,
 CpiDeviceListUpnp::~CpiDeviceListUpnp()
 {
     iCpStack.Env().RemoveResumeObserver(*this);
+    iRepeatMsearchTimer->Cancel();
     iResumedTimer->Cancel();
     iLock.Wait();
     iActive = false;
@@ -528,6 +538,7 @@ CpiDeviceListUpnp::~CpiDeviceListUpnp()
         reinterpret_cast<CpiDeviceUpnp*>(iPendingRemove[i]->OwnerData())->InterruptXmlFetch();
     }
     iLock.Signal();
+    delete iRepeatMsearchTimer;
     delete iRefreshTimer;
     delete iResumedTimer;
 }
@@ -546,6 +557,23 @@ void CpiDeviceListUpnp::StopListeners()
             iCpStack.Env().MulticastListenerRelease(iInterface);
             iMulticastListener = NULL;
         }
+    }
+}
+
+
+void CpiDeviceListUpnp::Add(CpiDeviceUpnp* aDevice)
+{
+    CpiDeviceList::Add(&aDevice->Device());
+
+    const TUint maxAgeMs = aDevice->MaxAgeSeconds() * 1000;
+    const TUint repeatMsearchMs = (3 * maxAgeMs) / 4;
+    if (repeatMsearchMs > iRepeatMsearchMs) {
+        iRepeatMsearchMs = repeatMsearchMs;
+        iRepeatMsearchTimer->FireIn(iRepeatMsearchMs); /* Don't worry that the timer might have been due
+                                                          in less time - this would only be relevant when
+                                                          we can receive unsolicited announcements and we
+                                                          don't need to keep repeating MSEARCHes on these
+                                                          networks. */
     }
 }
 
@@ -683,6 +711,12 @@ void CpiDeviceListUpnp::ResumedTimerComplete()
     Refresh();
 }
 
+void CpiDeviceListUpnp::RepeatMsearchTimerComplete()
+{
+    Start();
+    iRepeatMsearchTimer->FireIn(iRepeatMsearchMs);
+}
+
 void CpiDeviceListUpnp::CurrentNetworkAdapterChanged()
 {
     HandleInterfaceChange();
@@ -766,7 +800,7 @@ void CpiDeviceListUpnp::XmlFetchCompleted(CpiDeviceUpnp& aDevice, TBool aError)
 void CpiDeviceListUpnp::DeviceLocationChanged(CpiDeviceUpnp* aOriginal, CpiDeviceUpnp* aNew)
 {
     Remove(aOriginal->Udn());
-    Add(&aNew->Device());
+    Add(aNew);
 }
 
 void CpiDeviceListUpnp::SsdpNotifyRootAlive(const Brx& aUuid, const Brx& aLocation, TUint aMaxAge)
@@ -877,7 +911,7 @@ void CpiDeviceListUpnpAll::SsdpNotification(const Brx& aUuid, const Brx& aLocati
     }
     if (IsLocationReachable(aLocation)) {
         CpiDeviceUpnp* device = new CpiDeviceUpnp(iCpStack, aUuid, aLocation, aMaxAge, *this, *this);
-        Add(&device->Device());
+        Add(device);
     }
 }
 
@@ -918,7 +952,7 @@ void CpiDeviceListUpnpRoot::SsdpNotifyRootAlive(const Brx& aUuid, const Brx& aLo
     }
     if (IsLocationReachable(aLocation)) {
         CpiDeviceUpnp* device = new CpiDeviceUpnp(iCpStack, aUuid, aLocation, aMaxAge, *this, *this);
-        Add(&device->Device());
+        Add(device);
     }
 }
 
@@ -963,7 +997,7 @@ void CpiDeviceListUpnpUuid::SsdpNotifyUuidAlive(const Brx& aUuid, const Brx& aLo
     }
     if (IsLocationReachable(aLocation)) {
         CpiDeviceUpnp* device = new CpiDeviceUpnp(iCpStack, aUuid, aLocation, aMaxAge, *this, *this);
-        Add(&device->Device());
+        Add(device);
     }
 }
 
@@ -1012,7 +1046,7 @@ void CpiDeviceListUpnpDeviceType::SsdpNotifyDeviceTypeAlive(const Brx& aUuid, co
     }
     if (IsLocationReachable(aLocation)) {
         CpiDeviceUpnp* device = new CpiDeviceUpnp(iCpStack, aUuid, aLocation, aMaxAge, *this, *this);
-        Add(&device->Device());
+        Add(device);
     }
 }
 
@@ -1061,6 +1095,6 @@ void CpiDeviceListUpnpServiceType::SsdpNotifyServiceTypeAlive(const Brx& aUuid, 
     }
     if (IsLocationReachable(aLocation)) {
         CpiDeviceUpnp* device = new CpiDeviceUpnp(iCpStack, aUuid, aLocation, aMaxAge, *this, *this);
-        Add(&device->Device());
+        Add(device);
     }
 }
