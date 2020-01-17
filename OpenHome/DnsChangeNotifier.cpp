@@ -4,6 +4,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Functor.h>
 #include <OpenHome/Private/Network.h>
+#include <OpenHome/Private/Printer.h>
 #include <OpenHome/Private/Thread.h>
 
 #include <utility>
@@ -22,6 +23,7 @@ DnsChangeNotifier::DnsChangeNotifier(const TChar* aTestHostName)
     , iNextId(kIdInvalid + 1)
 {
     iThread = new ThreadFunctor("DnsChangeNotifier", MakeFunctor(*this, &DnsChangeNotifier::NotifThread), kPriorityHigh);
+    iThread->Start();
 }
 
 DnsChangeNotifier::~DnsChangeNotifier()
