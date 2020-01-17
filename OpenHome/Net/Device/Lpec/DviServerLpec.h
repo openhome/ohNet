@@ -116,10 +116,12 @@ class DviSessionLpec : public SocketTcpSession, private IDviInvocation
 public:
     DviSessionLpec(DvStack& aDvStack, TIpAddress aAdapter, TUint aPort);
     ~DviSessionLpec();
+    void SendAnnouncement();
     void NotifyDeviceDisabled(const Brx& aName, const Brx& aUdn);
 private: // from SocketTcpSession
     void Run();
 private:
+    void Announce();
     void Action();
     void Subscribe();
     void Unsubscribe();
@@ -224,6 +226,7 @@ class DviServerLpec : public DviServer
 public:
     DviServerLpec(DvStack& aDvStack, TUint aPort = 0);
     ~DviServerLpec();
+    void SendAnnouncement();
     void NotifyDeviceDisabled(const Brx& aName, const Brx& aUdn);
     TUint Port() const;
 private: // from DviServerUpnp

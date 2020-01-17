@@ -135,6 +135,13 @@ void DviDevice::SetDisabled(Functor aCompleted)
     SetDisabled(aCompleted, false);
 }
 
+void DviDevice::SendAnnouncements()
+{
+    for (TUint i = 0; i < (TUint)iProtocols.size(); i++) {
+        iProtocols[i]->SendAnnouncements();
+    }
+}
+
 void DviDevice::GetAttribute(const TChar* aKey, const TChar** aValue) const
 {
     Brn key(aKey);

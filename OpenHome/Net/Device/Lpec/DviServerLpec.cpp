@@ -346,6 +346,14 @@ DviSessionLpec::~DviSessionLpec()
     delete iWriteBuffer;
 }
 
+void DviSessionLpec::SendAnnouncement()
+{
+    if (!iActive) {
+        return;
+    }
+    Announce();
+}
+
 void DviSessionLpec::NotifyDeviceDisabled(const Brx& aName, const Brx& aUdn)
 {
     AutoMutex a(iByeByeLock);
@@ -384,28 +392,10 @@ void DviSessionLpec::Run()
         iDeviceLock.Wait();
         iDeviceMap = iDvStack.DeviceMap().CopyMap();
         iDeviceLock.Signal();
-        for (std::map<Brn,DviDevice*,BufferCmp>::iterator it = iDeviceMap.begin() ; it != iDeviceMap.end() ; ++it) {
-            if (!it->second->Enabled()) {
-                continue;
-            }
-            iWriteBuffer->Write(Lpec::kMethodAlive);
-            iWriteBuffer->Write(' ');
-            const TChar* name = NULL;
-            it->second->GetAttribute("Lpec.Name", &name);
-            if (name == NULL) {
-                Log::Print("ERROR: device ");
-                Log::Print(it->second->Udn());
-                Log::Print(" has no Lpec.Name attribute so isn't usable over LPEC\n");
-            }
-            else {
-                iWriteBuffer->Write(Brn(name));
-            }
-            iWriteBuffer->Write(' ');
-            iWriteBuffer->Write(it->second->Udn());
-            iWriteBuffer->Write(Lpec::kMsgTerminator);
-            iWriteBuffer->WriteFlush();
-        }
+
+        Announce();
         iDvStack.NotifyControlPointUsed(Brn("Lpec/none"));
+
         for (;;) {
             Brn req = Ascii::Trim(iReaderUntil->ReadUntil(Ascii::kLf));
             iRequestBuf.Set(req);
@@ -468,6 +458,33 @@ void DviSessionLpec::Run()
     iActive = false;
     iByeByeLock.Signal();
     iShutdownSem.Signal();
+}
+
+void DviSessionLpec::Announce()
+{
+    AutoMutex _(iDeviceLock);
+    AutoMutex __(iWriteLock);
+    for (std::map<Brn, DviDevice*, BufferCmp>::iterator it = iDeviceMap.begin(); it != iDeviceMap.end(); ++it) {
+        if (!it->second->Enabled()) {
+            continue;
+        }
+        iWriteBuffer->Write(Lpec::kMethodAlive);
+        iWriteBuffer->Write(' ');
+        const TChar* name = NULL;
+        it->second->GetAttribute("Lpec.Name", &name);
+        if (name == NULL) {
+            Log::Print("ERROR: device ");
+            Log::Print(it->second->Udn());
+            Log::Print(" has no Lpec.Name attribute so isn't usable over LPEC\n");
+        }
+        else {
+            iWriteBuffer->Write(Brn(name));
+        }
+        iWriteBuffer->Write(' ');
+        iWriteBuffer->Write(it->second->Udn());
+        iWriteBuffer->Write(Lpec::kMsgTerminator);
+        iWriteBuffer->WriteFlush();
+    }
 }
 
 void DviSessionLpec::Action()
@@ -919,6 +936,16 @@ DviServerLpec::DviServerLpec(DvStack& aDvStack, TUint aPort)
     , iPort(aPort)
 {
     Initialise();
+}
+
+void DviServerLpec::SendAnnouncement()
+{
+    for (TUint i = 0; i < iAdapterData.size(); i++) {
+        AdapterData* ad = iAdapterData[i];
+        for (TUint j = 0; j < ad->iSessions.size(); j++) {
+            ad->iSessions[j]->SendAnnouncement();
+        }
+    }
 }
 
 void DviServerLpec::NotifyDeviceDisabled(const Brx& aName, const Brx& aUdn)

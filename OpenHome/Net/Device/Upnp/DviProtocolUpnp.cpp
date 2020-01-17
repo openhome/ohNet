@@ -395,6 +395,16 @@ void DviProtocolUpnp::Disable(Functor& aComplete)
     }
 }
 
+void DviProtocolUpnp::SendAnnouncements()
+{
+    {
+        AutoMutex _(iLock);
+        for (TUint i = 0; i < iAdapters.size(); i++) {
+            SendAlivesLocked(iAdapters[i]->Interface(), iAdapters[i]->UriBase());
+        }
+    }
+}
+
 void DviProtocolUpnp::GetAttribute(const TChar* aKey, const TChar** aValue) const
 {
     *aValue = iAttributeMap.Get(aKey);
@@ -559,6 +569,11 @@ void DviProtocolUpnp::SendByeByes(TIpAddress aAdapter, const Brx& aUriBase, Func
 void DviProtocolUpnp::SendAlives(TIpAddress aAdapter, const Brx& aUriBase)
 {
     AutoMutex a(iLock);
+    SendAlivesLocked(aAdapter, aUriBase);
+}
+
+void DviProtocolUpnp::SendAlivesLocked(TIpAddress aAdapter, const Brx& aUriBase)
+{
     Bws<kMaxUriBytes> uri;
     GetUriDeviceXml(uri, aUriBase);
     try {

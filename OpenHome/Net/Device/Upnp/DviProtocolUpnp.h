@@ -71,6 +71,7 @@ public: // from IUpnpAnnouncementData
     void SendByeByes(TIpAddress aAdapter, const Brx& aUriBase, FunctorGeneric<TBool> aCompleted);
     void SendAlives(TIpAddress aAdapter, const Brx& aUriBase);
 private:
+    void SendAlivesLocked(TIpAddress aAdapter, const Brx& aUriBase);
     DviProtocolUpnpAdapterSpecificData* AddInterface(const NetworkAdapter& aAdapter);
     void HandleInterfaceChange();
     TInt FindAdapter(TIpAddress aAdapter, const std::vector<NetworkAdapter*>& aAdapterList);
@@ -91,6 +92,7 @@ public: // from IDvProtocol
     const Brx& ProtocolName() const;
     void Enable();
     void Disable(Functor& aComplete);
+    void SendAnnouncements();
     void GetAttribute(const TChar* aKey, const TChar** aValue) const;
     void SetAttribute(const TChar* aKey, const TChar* aValue);
     void SetCustomData(const TChar* aTag, void* aData);

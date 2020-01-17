@@ -34,6 +34,7 @@ private: // from IDvProtocol
     const Brx& ProtocolName() const;
     void Enable();
     void Disable(Functor& aComplete);
+    void SendAnnouncements();
     void GetAttribute(const TChar* aKey, const TChar** aValue) const;
     void SetAttribute(const TChar* aKey, const TChar* aValue);
     void SetCustomData(const TChar* aTag, void* aData);

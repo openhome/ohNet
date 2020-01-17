@@ -59,6 +59,11 @@ void DviProtocolLpec::Disable(Functor& aComplete)
     aComplete();
 }
 
+void DviProtocolLpec::SendAnnouncements()
+{
+    iServer.SendAnnouncement();
+}
+
 void DviProtocolLpec::GetAttribute(const TChar* aKey, const TChar** aValue) const
 {
     *aValue = iAttributeMap.Get(aKey);

@@ -31,6 +31,7 @@ public:
     virtual const Brx& ProtocolName() const = 0;
     virtual void Enable() = 0;
     virtual void Disable(Functor& aComplete) = 0;
+    virtual void SendAnnouncements() = 0;
     virtual void GetAttribute(const TChar* aKey, const TChar** aValue) const = 0;
     virtual void SetAttribute(const TChar* aKey, const TChar* aValue) = 0;
     virtual void SetCustomData(const TChar* aTag, void* aData) = 0;
@@ -54,6 +55,7 @@ public:
     TBool Enabled() const;
     void SetEnabled();
     void SetDisabled(Functor aCompleted);
+    void SendAnnouncements();
     void GetAttribute(const TChar* aKey, const TChar** aValue) const;
     void SetAttribute(const TChar* aKey, const TChar* aValue);
     TUint ServiceCount() const;
