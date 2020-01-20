@@ -71,9 +71,9 @@ public:
     DllExport Mutex(const TChar* aName);
     DllExport virtual ~Mutex();
 
-    DllExport void Wait() override;
-    DllExport void Signal() override;
-    DllExport const TChar* Name() const override;
+    DllExport void Wait();
+    DllExport void Signal();
+    DllExport const TChar* Name() const;
 private:
     THandle iHandle;
     TChar iName[5];
