@@ -9,6 +9,7 @@ using namespace OpenHome;
 using namespace OpenHome::TestFramework;
 
 const TUint32 kSleepMs = 500; // short sleep used as a lazy way of avoiding too many dependencies on thread priorities
+const TUint32 kInstrumentTriggerUs = 400000; //400ms
 
 class TestStack
 {
@@ -500,10 +501,10 @@ public:
 class MutexThread : public Thread
 {
 public:
-    MutexThread(Mutex& aMutex, TInt& aCount) : Thread("MUTT"), iMutex(aMutex), iCount(aCount) {}
+    MutexThread(IMutex& aMutex, TInt& aCount) : Thread("MUTT"), iMutex(aMutex), iCount(aCount) {}
     void Run();
 private:
-    Mutex& iMutex;
+    IMutex& iMutex;
     TInt& iCount;
 };
 
@@ -516,23 +517,44 @@ void MutexThread::Run()
 
 void SuiteMutex::Test()
 {
-    Mutex mutex("MUT1");
-    mutex.Wait();
-    mutex.Signal();
+    {
+        Mutex mutex("MUT1");
+        mutex.Wait();
+        mutex.Signal();
 
-    // check that another thread will block waiting on this mutex
-    TInt count = 0;
-    mutex.Wait();
-    MutexThread* mutexTh = new MutexThread(mutex, count);
-    mutexTh->Start();
-    Thread::Sleep(kSleepMs);
-    TEST(count == 0);
-    mutex.Signal();
-    Thread::Sleep(kSleepMs);
-    mutex.Wait();
-    TEST(count == 1);
-    mutex.Signal();
-    delete mutexTh;
+        // check that another thread will block waiting on this mutex
+        TInt count = 0;
+        mutex.Wait();
+        MutexThread* mutexTh = new MutexThread(mutex, count);
+        mutexTh->Start();
+        Thread::Sleep(kSleepMs);
+        TEST(count == 0);
+        mutex.Signal();
+        Thread::Sleep(kSleepMs);
+        mutex.Wait();
+        TEST(count == 1);
+        mutex.Signal();
+        delete mutexTh;
+    }
+    {
+        std::unique_ptr<IMutex> mutex(MutexFactory::Create("MUT1", true, 400));
+        mutex->Wait();
+        mutex->Signal();
+
+        // check that another thread will block waiting on this mutex
+        TInt count = 0;
+        mutex->Wait();
+        MutexThread* mutexTh = new MutexThread(*mutex, count);
+        mutexTh->Start();
+        Thread::Sleep(kSleepMs);
+        TEST(count == 0);
+        mutex->Signal();
+        Thread::Sleep(kSleepMs);
+        mutex->Wait();
+        TEST(count == 1);
+        mutex->Signal();
+        delete mutexTh;
+    }
 }
 
 class SuitePerformance : public Suite

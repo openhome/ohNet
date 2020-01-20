@@ -91,11 +91,58 @@ void Mutex::Wait()
     }
 }
 
+TChar* Mutex::GetName()
+{
+    return iName;
+}
+
 void Mutex::Signal()
 {
     OpenHome::Os::MutexUnlock(iHandle);
 }
 
+
+// MutexInstrumented
+
+MutexInstrumented::MutexInstrumented(const TChar* aName, TUint32 aWaitTriggerUs)
+    : Mutex(aName)
+    , iWaitTriggerUs(aWaitTriggerUs)
+{
+}
+
+void MutexInstrumented::Wait()
+{
+    Bws<Thread::kMaxNameBytes+1> thName(Thread::CurrentThreadName());
+    thName.PtrZ();
+    TUint timeStart = Os::TimeInUs(OpenHome::gEnv->OsCtx());
+    Mutex::Wait();
+    TUint timeEnd = Os::TimeInUs(OpenHome::gEnv->OsCtx());
+    ASSERT(timeEnd >= timeStart);
+    if ((timeEnd - timeStart) > iWaitTriggerUs) {
+        Log::Print("Mutex %s in thread %s waited for %u Us.  Mutex was released by thread %s\n",
+                GetName(), thName.Ptr(), (timeEnd - timeStart), iLastUseThreadName.Ptr());
+    }
+}
+
+void MutexInstrumented::Signal()
+{
+    iLastUseThreadName.SetBytes(0);
+    iLastUseThreadName.Append(Thread::CurrentThreadName());
+    iLastUseThreadName.PtrZ();
+    Mutex::Signal();
+}
+
+
+IMutex* MutexFactory::Create(const TChar* aName, TBool aInstrumented, TUint32 aInstrumentedTriggerUs)
+{
+    if (aInstrumented == false) {
+        return new Mutex(aName);
+    }
+    else
+    {
+        return new MutexInstrumented(aName, aInstrumentedTriggerUs);
+    }
+}
 
 // Thread
 
@@ -393,8 +440,14 @@ TUint ThreadPriorityArbitrator::DoCalculatePriority(TUint aRequested, TUint aOpe
 
 // AutoMutex
 
-AutoMutex::AutoMutex(Mutex& aMutex)
+AutoMutex::AutoMutex(IMutex& aMutex)
     : iMutex(aMutex)
+{
+    iMutex.Wait();
+}
+
+AutoMutex::AutoMutex(std::unique_ptr<IMutex>& aMutex)
+    : iMutex(*aMutex)
 {
     iMutex.Wait();
 }

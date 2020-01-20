@@ -8,6 +8,7 @@
 #include <OpenHome/OsTypes.h>
 
 #include <vector>
+#include <memory>
 
 EXCEPTION(ThreadKill)
 EXCEPTION(Timeout)
@@ -54,17 +55,35 @@ private:
     THandle iHandle;
 };
 
-class DllExportClass Mutex : public INonCopyable
+class DllExportClass IMutex
+{
+public:
+    DllExport virtual ~IMutex() {};
+
+    DllExport virtual void Wait() = 0;
+    DllExport virtual void Signal() = 0;
+    DllExport virtual TChar* GetName() = 0;
+};
+
+class DllExportClass Mutex : public IMutex, public INonCopyable
 {
 public:
     DllExport Mutex(const TChar* aName);
     DllExport virtual ~Mutex();
 
-    DllExport void Wait();
-    DllExport void Signal();
+    DllExport void Wait() override;
+    DllExport void Signal() override;
+    DllExport TChar* GetName() override;
 private:
     THandle iHandle;
     TChar iName[5];
+};
+
+class DllExportClass MutexFactory
+{
+public:
+    MutexFactory() = delete;
+    DllExport static IMutex* Create(const TChar* aName, TBool aInstrumented = false, TUint32 aInstrumentedTriggerUs = 0);
 };
 
 /**
@@ -207,6 +226,20 @@ private:
     mutable Mutex iKillMutex;
 };
 
+class DllExportClass MutexInstrumented : public Mutex
+{
+public:
+    DllExport MutexInstrumented(const TChar* aName, TUint32 aWaitTriggerUs);
+    DllExport virtual ~MutexInstrumented() {};
+
+    DllExport void Wait();
+    DllExport void Signal();
+private:
+    TUint32 iWaitTriggerUs;
+    Bws<Thread::kMaxNameBytes+1> iLastUseThreadName;
+};
+
+
 /**
  * Create a custom thread without needing to create a custom subclass
  */
@@ -264,10 +297,11 @@ private:
 class DllExportClass AutoMutex : public INonCopyable
 {
 public:
-    DllExport AutoMutex(Mutex& aMutex);
+    DllExport AutoMutex(IMutex& aMutex);
+    DllExport AutoMutex(std::unique_ptr<IMutex>& aMutex);
     DllExport ~AutoMutex();
 private:
-    Mutex& iMutex;
+    IMutex& iMutex;
 };
 
 /**
