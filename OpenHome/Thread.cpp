@@ -112,23 +112,19 @@ MutexInstrumented::MutexInstrumented(const TChar* aName, TUint32 aWaitTriggerUs)
 
 void MutexInstrumented::Wait()
 {
-    Bws<Thread::kMaxNameBytes+1> thName(Thread::CurrentThreadName());
-    thName.PtrZ();
     TUint timeStart = Os::TimeInUs(OpenHome::gEnv->OsCtx());
     Mutex::Wait();
     TUint timeEnd = Os::TimeInUs(OpenHome::gEnv->OsCtx());
     ASSERT(timeEnd >= timeStart);
     if ((timeEnd - timeStart) > iWaitTriggerUs) {
-        Log::Print("Mutex %s in thread %s waited for %u Us.  Mutex was released by thread %s\n",
-                GetName(), thName.Ptr(), (timeEnd - timeStart), iLastUseThreadName.Ptr());
+        Log::Print("Mutex %s in thread %.*s waited for %u Us.  Mutex was released by thread %s\n",
+                GetName(), PBUF(Thread::CurrentThreadName()), (timeEnd - timeStart), iLastUseThreadName.PtrZ());
     }
 }
 
 void MutexInstrumented::Signal()
 {
-    iLastUseThreadName.SetBytes(0);
-    iLastUseThreadName.Append(Thread::CurrentThreadName());
-    iLastUseThreadName.PtrZ();
+    iLastUseThreadName.Replace(Thread::CurrentThreadName());
     Mutex::Signal();
 }
 
