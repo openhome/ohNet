@@ -298,7 +298,7 @@ class DllExportClass AutoMutex : public INonCopyable
 {
 public:
     DllExport AutoMutex(IMutex& aMutex);
-    DllExport AutoMutex(std::unique_ptr<IMutex>& aMutex);
+    DllExport AutoMutex(IMutex*& aMutex);
     DllExport ~AutoMutex();
 private:
     IMutex& iMutex;

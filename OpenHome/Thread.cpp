@@ -442,7 +442,7 @@ AutoMutex::AutoMutex(IMutex& aMutex)
     iMutex.Wait();
 }
 
-AutoMutex::AutoMutex(std::unique_ptr<IMutex>& aMutex)
+AutoMutex::AutoMutex(IMutex*& aMutex)
     : iMutex(*aMutex)
 {
     iMutex.Wait();
