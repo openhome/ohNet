@@ -62,7 +62,7 @@ public:
 
     DllExport virtual void Wait() = 0;
     DllExport virtual void Signal() = 0;
-    DllExport virtual TChar* GetName() = 0;
+    DllExport virtual const TChar* Name() const = 0;
 };
 
 class DllExportClass Mutex : public IMutex, public INonCopyable
@@ -73,7 +73,7 @@ public:
 
     DllExport void Wait() override;
     DllExport void Signal() override;
-    DllExport TChar* GetName() override;
+    DllExport const TChar* Name() const override;
 private:
     THandle iHandle;
     TChar iName[5];
@@ -229,13 +229,13 @@ private:
 class DllExportClass MutexInstrumented : public Mutex
 {
 public:
-    DllExport MutexInstrumented(const TChar* aName, TUint32 aWaitTriggerUs);
+    DllExport MutexInstrumented(const TChar* aName, TUint64 aWaitTriggerUs);
     DllExport virtual ~MutexInstrumented() {};
 
     DllExport void Wait();
     DllExport void Signal();
 private:
-    TUint32 iWaitTriggerUs;
+    TUint64 iWaitTriggerUs;
     Bws<Thread::kMaxNameBytes+1> iLastUseThreadName;
 };
 
@@ -298,7 +298,6 @@ class DllExportClass AutoMutex : public INonCopyable
 {
 public:
     DllExport AutoMutex(IMutex& aMutex);
-    DllExport AutoMutex(IMutex*& aMutex);
     DllExport ~AutoMutex();
 private:
     IMutex& iMutex;
