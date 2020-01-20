@@ -112,11 +112,11 @@ MutexInstrumented::MutexInstrumented(const TChar* aName, TUint64 aWaitTriggerUs)
 
 void MutexInstrumented::Wait()
 {
-    TUint timeStart = Os::TimeInUs(OpenHome::gEnv->OsCtx());
+    TUint64 timeStart = Os::TimeInUs(OpenHome::gEnv->OsCtx());
     Mutex::Wait();
-    TUint timeEnd = Os::TimeInUs(OpenHome::gEnv->OsCtx());
+    TUint64 timeEnd = Os::TimeInUs(OpenHome::gEnv->OsCtx());
     if ((timeEnd - timeStart) > iWaitTriggerUs) {
-        Log::Print("Mutex %s in thread %.*s waited for %u Us.  Start time(Us): %u, End time(Us): %u. Mutex was released by thread %s\n",
+        Log::Print("Mutex %s in thread %.*s waited for %llu Us.  Start time(Us): %llu, End time(Us): %llu. Mutex was released by thread %s\n",
                 Name(), PBUF(Thread::CurrentThreadName()), (timeEnd - timeStart), timeStart, timeEnd, iLastUseThreadName.PtrZ());
     }
 }

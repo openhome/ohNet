@@ -9,7 +9,7 @@ using namespace OpenHome;
 using namespace OpenHome::TestFramework;
 
 const TUint32 kSleepMs = 500; // short sleep used as a lazy way of avoiding too many dependencies on thread priorities
-const TUint32 kInstrumentTriggerUs = 400000; //400ms
+const TUint64 kInstrumentTriggerUs = 400000; //400ms
 
 class TestStack
 {
@@ -537,7 +537,7 @@ void SuiteMutex::Test()
         delete mutexTh;
     }
     {
-        std::unique_ptr<IMutex> mutex(MutexFactory::Create("MUT1", true, 400));
+        std::unique_ptr<IMutex> mutex(MutexFactory::Create("MUT1", true, kInstrumentTriggerUs));
         mutex->Wait();
         mutex->Signal();
 
