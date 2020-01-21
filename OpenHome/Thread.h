@@ -82,7 +82,7 @@ private:
 class DllExportClass MutexFactory
 {
 public:
-    DllExport static IMutex* Create(const TChar* aName, TBool aInstrumented = false, TUint32 aInstrumentedTriggerUs = 0);
+    DllExport static IMutex* Create(const TChar* aName, TBool aInstrumented = false, TUint64 aInstrumentedTriggerUs = 0);
 
 private:
     MutexFactory() {};

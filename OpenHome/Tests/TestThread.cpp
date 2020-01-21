@@ -537,7 +537,7 @@ void SuiteMutex::Test()
         delete mutexTh;
     }
     {
-        std::unique_ptr<IMutex> mutex(MutexFactory::Create("MUT1", true, kInstrumentTriggerUs));
+        IMutex* mutex = MutexFactory::Create("MUT1", true, kInstrumentTriggerUs);
         mutex->Wait();
         mutex->Signal();
 
@@ -554,6 +554,7 @@ void SuiteMutex::Test()
         TEST(count == 1);
         mutex->Signal();
         delete mutexTh;
+        delete mutex;
     }
 }
 
