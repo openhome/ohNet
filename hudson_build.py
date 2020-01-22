@@ -232,6 +232,15 @@ class JenkinsBuild():
         if os_platform == 'Qnap' and arch == 'x19':
             os.environ['CROSS_COMPILE'] = '/home/bldslv/qnap-gcc/cross-project/arm/marvell/bin/arm-none-linux-gnueabi-'
 
+        # If building on a 64-bit machine it is possible that both 32-bit and 64-bit JDKs/JREs are installed, and JAVA_HOME may point to the wrong one for the target architecture.
+        # Python provides no generic way to check if build machine OS is 32-bit or 64-bit.
+        # Just check if the arch of the target platform is 32-bit or 64-bit, and see if the respective JAVA_HOME_XX environment variable is set.
+        # If JAVA_HOME_XX is not set, assume that only one JDK/JRE is installed and use JAVA_HOME as set on build machine.
+        if arch == 'x64' and 'JAVA_HOME_64' in os.environ:
+            os.environ['JAVA_HOME'] = os.environ['JAVA_HOME_64']
+        elif arch == 'x86' and 'JAVA_HOME_32' in os.environ:
+            os.environ['JAVA_HOME'] = os.environ['JAVA_HOME_32']
+
         self.platform_args = args
 
     def get_build_args(self):
