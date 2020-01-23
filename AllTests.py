@@ -121,14 +121,8 @@ def runTests():
         for test in testsToRun:
             print '\nTest: ' + test.name
             cmdLine = []
-            # if os.name == 'nt':
-            #     cmdLine.append(os.path.join(os.environ['JAVA_HOME'], 'bin', 'java'))
-            # else:
-            #     cmdLine.append('java')
-
-            print "AllTests.py ", os.environ['JAVA_HOME']
+            print "AllTests.py JAVA_HOME: ", os.environ['JAVA_HOME']
             cmdLine.append(os.path.join(os.environ['JAVA_HOME'], 'bin', 'java'))
-
             cmdLine.append('-Djava.library.path=' + objPath())
             cmdLine.append('-classpath')
             cmdLine.append(objPath())
