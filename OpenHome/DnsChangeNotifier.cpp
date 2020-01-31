@@ -15,7 +15,7 @@ using namespace OpenHome;
 
 // DnsChangeNotifier
 
-const TUint DnsChangeNotifier::kIdInvalid = 0;
+const TUint IDnsChangeNotifier::kIdInvalid = 0;
 
 DnsChangeNotifier::DnsChangeNotifier(const TChar* aTestHostName)
     : iLock("DNSC")
@@ -59,6 +59,7 @@ void DnsChangeNotifier::Deregister(TUint aId)
 
 void DnsChangeNotifier::DnsChanged()
 {
+    Log::Print("DnsChangeNotifier::DnsChanged\n");
     iThread->Signal();
 }
 

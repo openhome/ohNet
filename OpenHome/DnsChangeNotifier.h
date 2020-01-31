@@ -13,6 +13,8 @@ namespace OpenHome {
 class IDnsChangeNotifier
 {
 public:
+    static const TUint kIdInvalid;
+public:
     virtual TUint Register(Functor aCallback) = 0;
     virtual void Deregister(TUint aId) = 0;
     virtual ~IDnsChangeNotifier() {}
@@ -27,7 +29,6 @@ public:
 
 class DnsChangeNotifier : public IDnsChangeNotifier, public IDnsChangeObserver
 {
-    static const TUint kIdInvalid;
 public:
     DnsChangeNotifier(const TChar* aTestHostName);
     ~DnsChangeNotifier();
