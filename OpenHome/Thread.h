@@ -65,7 +65,7 @@ public:
     DllExport virtual const TChar* Name() const = 0;
 };
 
-class DllExportClass Mutex : public IMutex, public INonCopyable
+class DllExportClass Mutex : public INonCopyable
 {
 public:
     DllExport Mutex(const TChar* aName);
@@ -73,8 +73,7 @@ public:
 
     DllExport void Wait();
     DllExport void Signal();
-    DllExport const TChar* Name() const;
-private:
+protected:
     THandle iHandle;
     TChar iName[5];
 };
@@ -299,10 +298,10 @@ private:
 class DllExportClass AutoMutex : public INonCopyable
 {
 public:
-    DllExport AutoMutex(IMutex& aMutex);
+    DllExport AutoMutex(Mutex& aMutex);
     DllExport ~AutoMutex();
 private:
-    IMutex& iMutex;
+    Mutex& iMutex;
 };
 
 /**

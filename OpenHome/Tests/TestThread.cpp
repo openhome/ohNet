@@ -517,6 +517,7 @@ void MutexThread::Run()
 
 void SuiteMutex::Test()
 {
+#if 0
     {
         Mutex mutex("MUT1");
         mutex.Wait();
@@ -556,6 +557,7 @@ void SuiteMutex::Test()
         delete mutexTh;
         delete mutex;
     }
+#endif
 }
 
 class SuitePerformance : public Suite
