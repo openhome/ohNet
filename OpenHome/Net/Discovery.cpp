@@ -3,6 +3,7 @@
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Net/Core/OhNet.h>
+#include <OpenHome/Private/DnsChangeNotifier.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -63,6 +64,7 @@ SsdpListenerMulticast::SsdpListenerMulticast(Environment& aEnv, TIpAddress aInte
     , iBuffer(iSocket)
     , iReaderUntil(iBuffer)
     , iReaderRequest(aEnv, iReaderUntil)
+    , iDnsChangeListenerId(DnsChangeNotifier::kIdInvalid)
     , iExiting(false)
     , iRecreateSocket(false)
 {
@@ -73,6 +75,7 @@ SsdpListenerMulticast::SsdpListenerMulticast(Environment& aEnv, TIpAddress aInte
     catch (NetworkError&) {
     }
     aEnv.AddResumeObserver(*this);
+    iDnsChangeListenerId = iEnv.DnsChangeNotifier()->Register(MakeFunctor(*this, &SsdpListenerMulticast::DnsChanged));
 
     iReaderRequest.AddHeader(iHeaderHost);
     iReaderRequest.AddHeader(iHeaderCacheControl);
@@ -337,6 +340,7 @@ void SsdpListenerMulticast::Notify(ISsdpNotifyHandler& aNotifyHandler)
 SsdpListenerMulticast::~SsdpListenerMulticast()
 {
     LOG(kSsdpMulticast, "SSDP Multicast      Destructor\n");
+    iEnv.DnsChangeNotifier()->Deregister(iDnsChangeListenerId);
     iEnv.RemoveResumeObserver(*this);
     iExiting = true;
     iReaderRequest.Interrupt();
@@ -442,6 +446,12 @@ void SsdpListenerMulticast::EraseDisabled(VectorMsearchHandler& aVector)
             it++;
         }
     }
+}
+
+void SsdpListenerMulticast::DnsChanged()
+{
+    iRecreateSocket = true;
+    iSocket.Interrupt(true);
 }
 
 void SsdpListenerMulticast::NotifyResumed()

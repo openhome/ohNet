@@ -128,6 +128,7 @@ private:
     void Msearch(ISsdpMsearchHandler& aMsearchHandler);
     void EraseDisabled(VectorNotifyHandler& aVector);
     void EraseDisabled(VectorMsearchHandler& aVector);
+    void DnsChanged();
 private: // from IResumeObserver
     void NotifyResumed();
 private:
@@ -146,6 +147,7 @@ private:
     SsdpHeaderMx iHeaderMx;
     SsdpHeaderNt iHeaderNt;
     SsdpHeaderNts iHeaderNts;
+    TUint iDnsChangeListenerId;
     TBool iExiting;
     TBool iRecreateSocket;
 };
