@@ -123,7 +123,7 @@ void MutexInstrumented::Signal()
 }
 
 
-IMutex* MutexFactory::Create(const TChar* aName, TBool aInstrumented, TUint64 aInstrumentedTriggerUs)
+IMutex* MutexFactory::Create(const TChar* /*aName*/, TBool aInstrumented, TUint64 /*aInstrumentedTriggerUs*/)
 {
     if (aInstrumented == false) {
         ASSERTS();
