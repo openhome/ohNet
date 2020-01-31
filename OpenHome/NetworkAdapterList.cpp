@@ -453,8 +453,11 @@ void NetworkAdapterList::RunCallbacks(const VectorListener& aCallbacks)
             DoRunCallbacks(aCallbacks);
             return;
         }
-        catch (const NetworkError&) {
-            LOG_ERROR(kNetwork, "TempFailureRetry: error handling adapter change, try again in %ums\n", kDelaysMs[i]);
+        catch (AssertionFailed&) {
+            throw;
+        }
+        catch (Exception& ex) {
+            LOG_ERROR(kAdapterChange, "TempFailureRetry: error (%s) handling adapter change, try again in %ums\n", ex.Message(), kDelaysMs[i]);
             Thread::Sleep(kDelaysMs[i]);
         }
     }
