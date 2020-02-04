@@ -80,9 +80,13 @@ objects_core = \
 	$(objdir)FileStream.$(objext) \
 	$(objdir)Globals.$(objext) \
 	$(objdir)Http.$(objext) \
+	$(objdir)anonymous.$(objext) \
+	$(objdir)CryptoAlg.$(objext) \
 	$(objdir)DNSCommon.$(objext) \
 	$(objdir)DNSDigest.$(objext) \
 	$(objdir)mDNS.$(objext) \
+	$(objdir)nsec.$(objext) \
+	$(objdir)nsec3.$(objext) \
 	$(objdir)uDNS.$(objext) \
 	$(objdir)dnssd_clientshim.$(objext) \
 	$(objdir)MdnsPlatform.$(objext) \
@@ -358,12 +362,20 @@ $(objdir)Globals.$(objext) : OpenHome/Net/Globals.cpp $(headers)
 	$(compiler)Globals.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Globals.cpp
 $(objdir)Http.$(objext) : OpenHome/Http.cpp $(headers)
 	$(compiler)Http.$(objext) -c $(cppflags) $(includes) OpenHome/Http.cpp
+$(objdir)anonymous.$(objext) : OpenHome/Net/Device/Bonjour/mDNSCore/anonymous.c $(headers)
+	$(compiler)anonymous.$(objext) -c $(cflags_third_party) $(includes) OpenHome/Net/Device/Bonjour/mDNSCore/anonymous.c
+$(objdir)CryptoAlg.$(objext) : OpenHome/Net/Device/Bonjour/mDNSCore/CryptoAlg.c $(headers)
+	$(compiler)CryptoAlg.$(objext) -c $(cflags_third_party) $(includes) OpenHome/Net/Device/Bonjour/mDNSCore/CryptoAlg.c
 $(objdir)DNSCommon.$(objext) : OpenHome/Net/Device/Bonjour/mDNSCore/DNSCommon.c $(headers)
 	$(compiler)DNSCommon.$(objext) -c $(cflags_third_party) $(includes) OpenHome/Net/Device/Bonjour/mDNSCore/DNSCommon.c
 $(objdir)DNSDigest.$(objext) : OpenHome/Net/Device/Bonjour/mDNSCore/DNSDigest.c $(headers)
 	$(compiler)DNSDigest.$(objext) -c $(cflags_third_party) $(includes) OpenHome/Net/Device/Bonjour/mDNSCore/DNSDigest.c
 $(objdir)mDNS.$(objext) : OpenHome/Net/Device/Bonjour/mDNSCore/mDNS.c $(headers)
 	$(compiler)mDNS.$(objext) -c $(cflags_third_party) $(includes) OpenHome/Net/Device/Bonjour/mDNSCore/mDNS.c
+$(objdir)nsec.$(objext) : OpenHome/Net/Device/Bonjour/mDNSCore/nsec.c $(headers)
+	$(compiler)nsec.$(objext) -c $(cflags_third_party) $(includes) OpenHome/Net/Device/Bonjour/mDNSCore/nsec.c
+$(objdir)nsec3.$(objext) : OpenHome/Net/Device/Bonjour/mDNSCore/nsec3.c $(headers)
+	$(compiler)nsec3.$(objext) -c $(cflags_third_party) $(includes) OpenHome/Net/Device/Bonjour/mDNSCore/nsec3.c
 $(objdir)uDNS.$(objext) : OpenHome/Net/Device/Bonjour/mDNSCore/uDNS.c $(headers)
 	$(compiler)uDNS.$(objext) -c $(cflags_third_party) $(includes) OpenHome/Net/Device/Bonjour/mDNSCore/uDNS.c
 $(objdir)dnssd_clientshim.$(objext) : OpenHome/Net/Device/Bonjour/mDNSShared/dnssd_clientshim.c $(headers)
