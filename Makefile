@@ -349,7 +349,7 @@ managed_only ?= no
 no_shared_objects ?= no
 endian ?= LITTLE
 cflags_base = $(CFLAGS) -fexceptions -Wall $(version_specific_cflags_third_party) -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_$(endian)_ENDIAN -DDEFINE_TRACE $(debug_specific_cflags) -fvisibility=hidden $(platform_cflags)
-cflags_third_party = $(cflags_base) -Wno-int-to-pointer-cast -Wno-array-bounds
+cflags_third_party = $(cflags_base) -Wno-int-to-pointer-cast
 ifeq ($(nocpp11), yes)
     cppflags = $(cflags_base) -Werror
 else ifeq ($(platform),IntelMac)
