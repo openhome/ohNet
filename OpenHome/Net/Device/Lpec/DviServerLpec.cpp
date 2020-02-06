@@ -468,18 +468,17 @@ void DviSessionLpec::Announce()
         if (!it->second->Enabled()) {
             continue;
         }
-        iWriteBuffer->Write(Lpec::kMethodAlive);
-        iWriteBuffer->Write(' ');
         const TChar* name = NULL;
         it->second->GetAttribute("Lpec.Name", &name);
         if (name == NULL) {
-            Log::Print("ERROR: device ");
+            Log::Print("WARNING: device ");
             Log::Print(it->second->Udn());
             Log::Print(" has no Lpec.Name attribute so isn't usable over LPEC\n");
+            continue;
         }
-        else {
-            iWriteBuffer->Write(Brn(name));
-        }
+        iWriteBuffer->Write(Lpec::kMethodAlive);
+        iWriteBuffer->Write(' ');
+        iWriteBuffer->Write(Brn(name));
         iWriteBuffer->Write(' ');
         iWriteBuffer->Write(it->second->Udn());
         iWriteBuffer->Write(Lpec::kMsgTerminator);
