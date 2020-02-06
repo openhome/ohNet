@@ -1,0 +1,163 @@
+31a32,33
+> #ifndef DEFINE_WINDOWS_UNIVERSAL // cannot build as c++ on winrt arm so def it out...
+> 
+2282c2284
+<     return(sum != 0xFFFF ? sum : 0);
+---
+>     return (mDNSu16)(sum != 0xFFFF ? sum : 0);
+2291,2293c2293,2295
+<     ph.len.b[1] = length >> 16;
+<     ph.len.b[2] = length >> 8;
+<     ph.len.b[3] = length;
+---
+>     ph.len.b[1] = (mDNSu8)(length >> 16);
+>     ph.len.b[2] = (mDNSu8)(length >> 8);
+>     ph.len.b[3] = (mDNSu8)length;
+2310c2312
+<     const mDNSv6Addr mc = { { 0xFF,0x02,0x00,0x00, 0,0,0,0, 0,0,0,1, 0xFF,tpa->b[0xD],tpa->b[0xE],tpa->b[0xF] } };
+---
+>     mDNSv6Addr mc;
+2312a2315,2331
+>     mc.b[0] = 0xFF;
+>     mc.b[1] = 0x02;
+>     mc.b[2] = 0x00;
+>     mc.b[3] = 0x00;
+>     mc.b[4] = 0;
+>     mc.b[5] = 0;
+>     mc.b[6] = 0;
+>     mc.b[7] = 0;
+>     mc.b[8] = 0;
+>     mc.b[9] = 0;
+>     mc.b[10] = 0;
+>     mc.b[11] = 1;
+>     mc.b[12] = 0xFF;
+>     mc.b[13] = tpa->b[0xD];
+>     mc.b[14] = tpa->b[0xE];
+>     mc.b[15] = tpa->b[0xF];
+> 
+2381c2400
+<     m->omsg.data[0x13] = ptr - &m->omsg.data[0x36];     // Compute actual length
+---
+>     m->omsg.data[0x13] = (mDNSu8)(ptr - &m->omsg.data[0x36]);   // Compute actual length
+5304c5323
+<         if (m->rrcache_size && m->timenow - m->NextCacheCheck >= 0)
+---
+>         if (m->timenow - m->NextCacheCheck >= 0)
+5308c5327
+<             for (slot = 0; slot < CACHE_HASH_SLOTS; slot++)
+---
+>             if (m->rrcache_size)
+5310c5329
+<                 if (m->timenow - m->rrcache_nextcheck[slot] >= 0)
+---
+>                 for (slot = 0; slot < CACHE_HASH_SLOTS; slot++)
+5312,5314c5331
+<                     CacheGroup **cp = &m->rrcache_hash[slot];
+<                     m->rrcache_nextcheck[slot] = m->timenow + 0x3FFFFFFF;
+<                     while (*cp)
+---
+>                     if (m->timenow - m->rrcache_nextcheck[slot] >= 0)
+5316,5320c5333,5344
+<                         debugf("m->NextCacheCheck %4d Slot %3d %##s", numchecked, slot, *cp ? (*cp)->name : (domainname*)"\x04NULL");
+<                         numchecked++;
+<                         CheckCacheExpiration(m, slot, *cp);
+<                         if ((*cp)->members) cp=&(*cp)->next;
+<                         else ReleaseCacheGroup(m, cp);
+---
+>                         CacheGroup **cp = &m->rrcache_hash[slot];
+>                         m->rrcache_nextcheck[slot] = m->timenow + 0x3FFFFFFF;
+>                         while (*cp)
+>                         {
+>                             debugf("m->NextCacheCheck %4d Slot %3d %##s", numchecked, slot, *cp ? (*cp)->name : (domainname *)"\x04NULL");
+>                             numchecked++;
+>                             CheckCacheExpiration(m, slot, *cp);
+>                             if ((*cp)->members)
+>                                 cp = &(*cp)->next;
+>                             else
+>                                 ReleaseCacheGroup(m, cp);
+>                         }
+5321a5346,5349
+>                     // Even if we didn't need to actually check this slot yet, still need to
+>                     // factor its nextcheck time into our overall NextCacheCheck value
+>                     if (m->NextCacheCheck - m->rrcache_nextcheck[slot] > 0)
+>                         m->NextCacheCheck = m->rrcache_nextcheck[slot];
+5323,5326c5351
+<                 // Even if we didn't need to actually check this slot yet, still need to
+<                 // factor its nextcheck time into our overall NextCacheCheck value
+<                 if (m->NextCacheCheck - m->rrcache_nextcheck[slot] > 0)
+<                     m->NextCacheCheck = m->rrcache_nextcheck[slot];
+---
+>                 debugf("m->NextCacheCheck %4d checked, next in %d", numchecked, m->NextCacheCheck - m->timenow);
+5328d5352
+<             debugf("m->NextCacheCheck %4d checked, next in %d", numchecked, m->NextCacheCheck - m->timenow);
+13749c13773
+<     mDNSOpaque16 id;
+---
+>     mDNSOpaque16 id = mDNSOpaque16fromIntVal(0);
+15258a15283,15348
+> 
+> #else // DEFINE_WINDOWS_UNIVERSAL
+> 
+> mDNSexport mStatus mDNS_Init(mDNS *const /*m*/, mDNS_PlatformSupport *const /*p*/,
+>                              CacheEntity * /*rrcachestorage*/, mDNSu32 /*rrcachesize*/,
+>                              mDNSBool /*AdvertiseLocalAddresses*/, mDNSCallback * /*Callback*/, void * /*Context*/)
+> {
+>     return mStatus_NoError;
+> }
+> 
+> mDNSexport void mDNS_StartExit(mDNS *const /*m*/)
+> {
+> }
+> 
+> mDNSexport void mDNS_FinalExit(mDNS *const /*m*/)
+> {
+> }
+> 
+> mDNSexport mDNSs32 mDNS_Execute(mDNS *const /*m*/)
+> {
+>     return mStatus_NoError;
+> }
+> 
+> mDNSexport mStatus mDNS_RegisterService(mDNS *const /*m*/, ServiceRecordSet * /*sr*/,
+>                                         const domainlabel *const /*name*/, const domainname *const /*type*/, const domainname *const /*domain*/,
+>                                         const domainname *const /*host*/, mDNSIPPort /*port*/, const mDNSu8 /*txtinfo*/[], mDNSu16 /*txtlen*/,
+>                                         AuthRecord * /*SubTypes*/, mDNSu32 /*NumSubTypes*/,
+>                                         mDNSInterfaceID /*InterfaceID*/, mDNSServiceCallback /*Callback*/, void * /*Context*/, mDNSu32 /*flags*/)
+> {
+>     return mStatus_NoError;
+> }
+> 
+> mDNSexport mStatus mDNS_RenameAndReregisterService(mDNS *const /*m*/, ServiceRecordSet *const /*sr*/, const domainlabel * /*newname*/)
+> {
+>     return mStatus_NoError;
+> }
+> 
+> mDNSexport mStatus mDNS_DeregisterService_drt(mDNS *const /*m*/, ServiceRecordSet * /*sr*/, mDNS_Dereg_type /*drt*/)
+> {
+>     return mStatus_NoError;
+> }
+> 
+> mDNSexport void mDNS_SetFQDN(mDNS *const /*m*/)
+> {
+> }
+> 
+> mDNSexport mStatus mDNS_RegisterInterface(mDNS *const /*m*/, NetworkInterfaceInfo * /*set*/, mDNSBool /*flapping*/)
+> {
+>     return mStatus_NoError;
+> }
+> 
+> mDNSexport void mDNS_DeregisterInterface(mDNS *const /*m*/, NetworkInterfaceInfo * /*set*/, mDNSBool /*flapping*/)
+> {
+> }
+> 
+> mDNSexport void mDNSCoreInitComplete(mDNS *const /*m*/, mStatus /*result*/)
+> {
+> }
+> 
+> mDNSexport void mDNSCoreReceive(mDNS *const /*m*/, void *const /*pkt*/, const mDNSu8 *const /*end*/,
+>                                 const mDNSAddr *const /*srcaddr*/, const mDNSIPPort /*srcport*/, const mDNSAddr * /*dstaddr*/, const mDNSIPPort /*dstport*/,
+>                                 const mDNSInterfaceID /*InterfaceID*/)
+> {
+> }
+> 
+> #endif //DEFINE_WINDOWS_UNIVERSAL

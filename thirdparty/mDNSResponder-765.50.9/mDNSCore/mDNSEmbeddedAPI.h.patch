@@ -1,0 +1,46 @@
+70a71,73
+> 
+> #include <OpenHome/Net/Private/MultilineMacro.h>
+> 
+2045c2048
+<     ZoneService ZoneService;            // Which service we're seeking for this zone (update, query, or LLQ)
+---
+>     ZoneService Service;                // Which service we're seeking for this zone (update, query, or LLQ)
+2053c2056
+<     ZoneDataCallback *ZoneDataCallback; // Caller-specified function to be called upon completion
+---
+>     ZoneDataCallback *DataCallback;     // Caller-specified function to be called upon completion
+2698c2701
+< #define mDNS_Close(m) do { mDNS_StartExit(m); mDNS_FinalExit(m); } while(0)
+---
+> #define mDNS_Close(m) MULTI_LINE_MACRO_BEGIN mDNS_StartExit(m); mDNS_FinalExit(m); MULTI_LINE_MACRO_END
+2845,2846c2848,2849
+< #define AssignDomainName(DST, SRC) do { mDNSu16 len__ = DomainNameLength((SRC)); \
+<     if (len__ <= MAX_DOMAIN_NAME) mDNSPlatformMemCopy((DST)->c, (SRC)->c, len__); else (DST)->c[0] = 0; } while(0)
+---
+> #define AssignDomainName(DST, SRC) MULTI_LINE_MACRO_BEGIN mDNSu16 len__ = DomainNameLength((SRC)); \
+>     if (len__ <= MAX_DOMAIN_NAME) mDNSPlatformMemCopy((DST)->c, (SRC)->c, len__); else (DST)->c[0] = 0; MULTI_LINE_MACRO_END
+2931c2934
+< extern char *DNSTypeName(mDNSu16 rrtype);
+---
+> extern const char *DNSTypeName(mDNSu16 rrtype);
+3050c3053
+<     do { domainname d__; if (((X) != (void*)0) && MakeDomainNameFromDNSNameString(&d__, (X)) && d__.c[0]) mDNS_AddSearchDomain(&d__, I);} while(0)
+---
+>     MULTI_LINE_MACRO_BEGIN domainname d__; if (((X) != (void*)0) && MakeDomainNameFromDNSNameString(&d__, (X)) && d__.c[0]) mDNS_AddSearchDomain(&d__, I); MULTI_LINE_MACRO_END
+3063c3066
+< #define SwapDNSHeaderBytes(M) do { \
+---
+> #define SwapDNSHeaderBytes(M) MULTI_LINE_MACRO_BEGIN \
+3068c3071
+< } while (0)
+---
+> MULTI_LINE_MACRO_END
+3071c3074
+<     do { SwapDNSHeaderBytes(M); DNSDigest_SignMessage((M), (E), (INFO), 0); SwapDNSHeaderBytes(M); } while (0)
+---
+>     MULTI_LINE_MACRO_BEGIN SwapDNSHeaderBytes(M); DNSDigest_SignMessage((M), (E), (INFO), 0); SwapDNSHeaderBytes(M); MULTI_LINE_MACRO_END
+3522c3525
+<     do { mDNS_Lock(m); mDNSCoreBeSleepProxyServer_internal((M),(S),(P),(MP),(TP),(F)); mDNS_Unlock(m); } while(0)
+---
+>     MULTI_LINE_MACRO_BEGIN mDNS_Lock(m); mDNSCoreBeSleepProxyServer_internal((M),(S),(P),(MP),(TP)); mDNS_Unlock(m); MULTI_LINE_MACRO_END

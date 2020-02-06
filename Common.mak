@@ -237,7 +237,7 @@ headers = \
 	$(inc_build)/OpenHome/Net/Core/FunctorCpDevice.h
 
 
-ohNetCore : make_obj_dir copy_build_includes $(objects_core) $(objdir)$(libprefix)ohNetCore.$(libext)
+ohNetCore : make_obj_dir copy_build_includes patch_thirdparty_sources $(objects_core) $(objdir)$(libprefix)ohNetCore.$(libext) remove_temp_dir
 $(objdir)$(libprefix)ohNetCore.$(libext) : $(objects_core)
 	$(ar)$(libprefix)ohNetCore.$(libext) $(objects_core)
 $(objdir)Ascii.$(objext) : OpenHome/Ascii.cpp $(headers)
@@ -362,24 +362,26 @@ $(objdir)Globals.$(objext) : OpenHome/Net/Globals.cpp $(headers)
 	$(compiler)Globals.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Globals.cpp
 $(objdir)Http.$(objext) : OpenHome/Http.cpp $(headers)
 	$(compiler)Http.$(objext) -c $(cppflags) $(includes) OpenHome/Http.cpp
-$(objdir)anonymous.$(objext) : OpenHome/Net/Device/Bonjour/mDNSCore/anonymous.c $(headers)
-	$(compiler)anonymous.$(objext) -c $(cflags_third_party) $(includes) OpenHome/Net/Device/Bonjour/mDNSCore/anonymous.c
-$(objdir)CryptoAlg.$(objext) : OpenHome/Net/Device/Bonjour/mDNSCore/CryptoAlg.c $(headers)
-	$(compiler)CryptoAlg.$(objext) -c $(cflags_third_party) $(includes) OpenHome/Net/Device/Bonjour/mDNSCore/CryptoAlg.c
-$(objdir)DNSCommon.$(objext) : OpenHome/Net/Device/Bonjour/mDNSCore/DNSCommon.c $(headers)
-	$(compiler)DNSCommon.$(objext) -c $(cflags_third_party) $(includes) OpenHome/Net/Device/Bonjour/mDNSCore/DNSCommon.c
-$(objdir)DNSDigest.$(objext) : OpenHome/Net/Device/Bonjour/mDNSCore/DNSDigest.c $(headers)
-	$(compiler)DNSDigest.$(objext) -c $(cflags_third_party) $(includes) OpenHome/Net/Device/Bonjour/mDNSCore/DNSDigest.c
-$(objdir)mDNS.$(objext) : OpenHome/Net/Device/Bonjour/mDNSCore/mDNS.c $(headers)
-	$(compiler)mDNS.$(objext) -c $(cflags_third_party) $(includes) OpenHome/Net/Device/Bonjour/mDNSCore/mDNS.c
-$(objdir)nsec.$(objext) : OpenHome/Net/Device/Bonjour/mDNSCore/nsec.c $(headers)
-	$(compiler)nsec.$(objext) -c $(cflags_third_party) $(includes) OpenHome/Net/Device/Bonjour/mDNSCore/nsec.c
-$(objdir)nsec3.$(objext) : OpenHome/Net/Device/Bonjour/mDNSCore/nsec3.c $(headers)
-	$(compiler)nsec3.$(objext) -c $(cflags_third_party) $(includes) OpenHome/Net/Device/Bonjour/mDNSCore/nsec3.c
-$(objdir)uDNS.$(objext) : OpenHome/Net/Device/Bonjour/mDNSCore/uDNS.c $(headers)
-	$(compiler)uDNS.$(objext) -c $(cflags_third_party) $(includes) OpenHome/Net/Device/Bonjour/mDNSCore/uDNS.c
-$(objdir)dnssd_clientshim.$(objext) : OpenHome/Net/Device/Bonjour/mDNSShared/dnssd_clientshim.c $(headers)
-	$(compiler)dnssd_clientshim.$(objext) -c $(cflags_third_party) $(includes) OpenHome/Net/Device/Bonjour/mDNSShared/dnssd_clientshim.c
+
+$(objdir)anonymous.$(objext) : $(objdir)mDNS/anonymous.c $(headers)
+	$(compiler)anonymous.$(objext) -c $(cflags_third_party) $(includes) $(objdir)mDNS/anonymous.c
+$(objdir)CryptoAlg.$(objext) : $(objdir)mDNS/CryptoAlg.c $(headers)
+	$(compiler)CryptoAlg.$(objext) -c $(cflags_third_party) $(includes) $(objdir)mDNS/CryptoAlg.c
+$(objdir)DNSCommon.$(objext) : $(objdir)mDNS/DNSCommon.c $(headers)
+	$(compiler)DNSCommon.$(objext) -c $(cflags_third_party) $(includes) $(objdir)mDNS/DNSCommon.c
+$(objdir)DNSDigest.$(objext) : $(objdir)mDNS/DNSDigest.c $(headers)
+	$(compiler)DNSDigest.$(objext) -c $(cflags_third_party) $(includes) $(objdir)mDNS/DNSDigest.c
+$(objdir)mDNS.$(objext) : $(objdir)mDNS/mDNS.c $(headers)
+	$(compiler)mDNS.$(objext) -c $(cflags_third_party) $(includes) $(objdir)mDNS/mDNS.c
+$(objdir)nsec.$(objext) : $(objdir)mDNS/nsec.c $(headers)
+	$(compiler)nsec.$(objext) -c $(cflags_third_party) $(includes) $(objdir)mDNS/nsec.c
+$(objdir)nsec3.$(objext) : $(objdir)mDNS/nsec3.c $(headers)
+	$(compiler)nsec3.$(objext) -c $(cflags_third_party) $(includes) $(objdir)mDNS/nsec3.c
+$(objdir)uDNS.$(objext) : $(objdir)mDNS/uDNS.c $(headers)
+	$(compiler)uDNS.$(objext) -c $(cflags_third_party) $(includes) $(objdir)mDNS/uDNS.c
+$(objdir)dnssd_clientshim.$(objext) : $(objdir)mDNS/dnssd_clientshim.c $(headers)
+	$(compiler)dnssd_clientshim.$(objext) -c $(cflags_third_party) $(includes) $(objdir)mDNS/dnssd_clientshim.c
+
 $(objdir)MdnsPlatform.$(objext) : OpenHome/Net/Device/Bonjour/MdnsPlatform.cpp $(headers)
 	$(compiler)MdnsPlatform.$(objext) -c $(cflags_third_party) $(includes) OpenHome/Net/Device/Bonjour/MdnsPlatform.cpp
 $(objdir)MdnsProvider.$(objext) : OpenHome/Net/Device/Bonjour/MdnsProvider.cpp $(headers)

@@ -1,0 +1,20 @@
+139d138
+< extern void VerifySignature(mDNS *const m, DNSSECVerifier *dv, DNSQuestion *q);
+151d149
+< extern void BumpDNSSECStats(mDNS *const m, DNSSECStatsAction action, DNSSECStatsType type, mDNSu32 value);
+154,156c152,162
+< // DNSSECProbe belongs in DNSSECSupport.h but then we don't want to expose yet another plaform specific dnssec file
+< // to other platforms where dnssec is not supported.
+< extern void DNSSECProbe(mDNS *const m);
+---
+> #ifdef __cplusplus
+> extern "C" {
+> #endif
+> 
+> void VerifySignature(mDNS *const m, DNSSECVerifier *dv, DNSQuestion *q);
+> void BumpDNSSECStats(mDNS *const m, DNSSECStatsAction action, DNSSECStatsType type, mDNSu32 value);
+> void DNSSECProbe(mDNS *const m);
+> 
+> #ifdef __cplusplus
+> }
+> #endif

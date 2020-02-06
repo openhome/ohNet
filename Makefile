@@ -361,6 +361,7 @@ cflags = $(cflags_base) -Werror
 inc_build = Build/Include
 includes = -IBuild/Include/ $(version_specific_includes)
 bundle_build = Build/Bundles
+temp_build = Build/temp
 osdir ?= Posix
 objext = o
 libprefix = lib
@@ -554,8 +555,6 @@ copy_build_includes:
 	$(cp) OpenHome/Net/Device/FunctorDviInvocation.h $(inc_build)/OpenHome/Net/Private
 	$(cp) OpenHome/Net/Device/DviProviderSubscriptionLongPoll.h $(inc_build)/OpenHome/Net/Private
 	$(cp) OpenHome/Net/Device/Bonjour/*.h $(inc_build)/OpenHome/Net/Private
-	$(cp) OpenHome/Net/Device/Bonjour/mDNSCore/*.h $(inc_build)/OpenHome/Net/Private
-	$(cp) OpenHome/Net/Device/Bonjour/mDNSShared/*.h $(inc_build)/OpenHome/Net/Private
 	$(cp) OpenHome/Net/Device/Providers/*.h $(inc_build)/OpenHome/Net/Core
 	$(cp) OpenHome/Net/Device/Upnp/*.h $(inc_build)/OpenHome/Net/Private
 	$(cp) OpenHome/Net/Device/Lpec/*.h $(inc_build)/OpenHome/Net/Private
@@ -574,6 +573,23 @@ copy_build_includes:
 	$(cp) OpenHome/Net/Bindings/Js/ControlPoint/Proxies/CpOpenhomeOrgSubscriptionLongPoll1.js $(inc_build)/OpenHome/Net/Private/Js/Tests/proxies
 	$(cp) Os/*.h $(inc_build)/OpenHome
 	$(cp) Os/*.inl $(inc_build)/OpenHome
+
+patch_thirdparty_sources:
+	$(mkdir) $(objdir)mDNS
+	$(cp) thirdparty/mDNSResponder-765.50.9/mDNSCore/*.c $(objdir)mDNS
+	$(cp) thirdparty/mDNSResponder-765.50.9/mDNSCore/*.h $(objdir)mDNS
+	$(cp) thirdparty/mDNSResponder-765.50.9/mDNSCore/*.patch $(objdir)mDNS
+	$(cp) thirdparty/mDNSResponder-765.50.9/mDNSShared/*.c $(objdir)mDNS
+	$(cp) thirdparty/mDNSResponder-765.50.9/mDNSShared/*.h $(objdir)mDNS
+	$(cp) thirdparty/mDNSResponder-765.50.9/mDNSShared/*.patch $(objdir)mDNS
+
+	for i in $(objdir)mDNS/*.patch; do patch -p1 $${i%.patch} < $$i; done
+
+	$(cp) $(objdir)mDNS/*.h $(inc_build)/OpenHome/Net/Private
+
+remove_temp_dir:
+	$(rmdir)  $(objdir)mDNS
+
 
 install : install-pkgconf install-libs install-includes
 

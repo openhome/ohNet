@@ -1,0 +1,18 @@
+21a22
+> #include <OpenHome/Net/Private/MultilineMacro.h>
+306c307
+< #define mDNS_DropLockBeforeCallback() do { m->mDNS_reentrancy++; \
+---
+> #define mDNS_DropLockBeforeCallback() MULTI_LINE_MACRO_BEGIN m->mDNS_reentrancy++; \
+308c309
+<     } while (0)
+---
+>     MULTI_LINE_MACRO_END
+310c311
+< #define mDNS_ReclaimLockAfterCallback() do { \
+---
+> #define mDNS_ReclaimLockAfterCallback() MULTI_LINE_MACRO_BEGIN \
+312c313
+<     m->mDNS_reentrancy--; } while (0)
+---
+>     m->mDNS_reentrancy--; MULTI_LINE_MACRO_END

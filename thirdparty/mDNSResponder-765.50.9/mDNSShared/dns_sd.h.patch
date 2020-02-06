@@ -1,0 +1,18 @@
+1562,1565c1562,1565
+<     DNSServiceRef sdRef,
+<     DNSServiceFlags flags,
+<     uint32_t interfaceIndex,
+<     DNSServiceErrorType errorCode,
+---
+>     DNSServiceRef                       sdRef,
+>     DNSServiceFlags                     flags,
+>     uint32_t                            interfaceIndex,
+>     DNSServiceErrorType                 errorCode,
+1568,1569c1568,1571
+<     uint16_t port,                                   /* In network byte order */
+<     uint16_t txtLen,
+---
+>     uint16_t                            port,        /* In network byte order */
+>     const unsigned char                 *ipAddr,
+>     const char                          *regtype,
+>     uint16_t                            txtLen,

@@ -1,0 +1,32 @@
+121a122,123
+> #ifndef DEFINE_WINDOWS_UNIVERSAL // cannot build as c++ on winrt arm so def it out...
+> 
+176c178
+< mDNSexport char *DNSTypeName(mDNSu16 rrtype)
+---
+> mDNSexport const char *DNSTypeName(mDNSu16 rrtype)
+3148c3150
+<         while (ptr < end && (mDNSu8 *)(opt+1) < &dataend[MaximumRDSize])
+---
+>         while (ptr < end && (mDNSu8 *)(opt+1) < &dataend[StandardAuthRDSize])
+4338a4341,4360
+> 
+> 
+> #else // DEFINE_WINDOWS_UNIVERSAL
+> 
+> mDNSexport mDNSBool MakeDomainLabelFromLiteralString(domainlabel *const /*label*/, const char * /*cstr*/)
+> {
+> 	return (mDNSBool)1;
+> }
+> 
+>  mDNSexport mDNSu8 *MakeDomainNameFromDNSNameString(domainname *const /*name*/, const char * /*cstr*/)
+> {
+> 	return (mDNSu8)0;
+> }
+> 
+> mDNSexport mDNSu32 mDNS_vsnprintf(char * /*sbuffer*/, mDNSu32 /*buflen*/, const char * /*fmt*/, va_list /*arg*/)  	
+> {
+> 	return (mDNSu32)0;
+> }
+> 
+> #endif //DEFINE_WINDOWS_UNIVERSAL

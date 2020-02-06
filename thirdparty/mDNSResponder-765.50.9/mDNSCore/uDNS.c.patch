@@ -1,0 +1,55 @@
+27a28,29
+> #ifndef DEFINE_WINDOWS_UNIVERSAL // cannot build as c++ on winrt arm so def it out...
+> 
+1762,1765c1764,1767
+<         (X)->ZoneService == ZoneServiceUpdate  ? ((X)->ZonePrivate ? PRIVATE_UPDATE_SERVICE_TYPE : PUBLIC_UPDATE_SERVICE_TYPE) : \
+<         (X)->ZoneService == ZoneServiceQuery   ? ((X)->ZonePrivate ? PRIVATE_QUERY_SERVICE_TYPE  : (const domainname*)""     ) : \
+<         (X)->ZoneService == ZoneServiceLLQ     ? ((X)->ZonePrivate ? PRIVATE_LLQ_SERVICE_TYPE    : PUBLIC_LLQ_SERVICE_TYPE   ) : \
+<         (X)->ZoneService == ZoneServiceDNSPush ? DNS_PUSH_NOTIFICATION_SERVICE_TYPE : (const domainname*)"")
+---
+>         (X)->Service == ZoneServiceUpdate  ? ((X)->ZonePrivate ? PRIVATE_UPDATE_SERVICE_TYPE : PUBLIC_UPDATE_SERVICE_TYPE) : \
+>         (X)->Service == ZoneServiceQuery   ? ((X)->ZonePrivate ? PRIVATE_QUERY_SERVICE_TYPE  : (const domainname*)""     ) : \
+>         (X)->Service == ZoneServiceLLQ     ? ((X)->ZonePrivate ? PRIVATE_LLQ_SERVICE_TYPE    : PUBLIC_LLQ_SERVICE_TYPE   ) : \
+>         (X)->Service == ZoneServiceDNSPush ? DNS_PUSH_NOTIFICATION_SERVICE_TYPE : (const domainname*)"")
+1803c1805
+<                 zd->ZoneDataCallback(m, mStatus_NoSuchNameErr, zd);
+---
+>                 zd->DataCallback(m, mStatus_NoSuchNameErr, zd);
+1815c1817
+<             zd->ZoneDataCallback(m, mStatus_NoSuchNameErr, zd);
+---
+>             zd->DataCallback(m, mStatus_NoSuchNameErr, zd);
+1849c1851
+<                 zd->ZoneDataCallback(m, mStatus_NoError, zd);
+---
+>                 zd->DataCallback(m, mStatus_NoError, zd);
+1872c1874
+<         zd->ZoneDataCallback(m, mStatus_NoError, zd);
+---
+>         zd->DataCallback(m, mStatus_NoError, zd);
+1930c1932
+<     zd->ZoneService      = target;
+---
+>     zd->Service      = target;
+1938c1940
+<     zd->ZoneDataCallback = callback;
+---
+>     zd->DataCallback     = callback;
+3247c3249
+<     mDNSOpaque16 msgid;
+---
+>     mDNSOpaque16 msgid = mDNSOpaque16fromIntVal(0);
+5712a5715,5716
+>         const DNS_TypeValues dnsTypeA = kDNSType_A;
+>         const DNS_TypeValues dnsTypeAAAA = kDNSType_AAAA;
+5717,5718c5721,5722
+<         if (RRTypeAnswersQuestionType(&cr->resrec, kDNSType_A) ||
+<             RRTypeAnswersQuestionType(&cr->resrec, kDNSType_AAAA))
+---
+>         if (RRTypeAnswersQuestionType(&cr->resrec, dnsTypeA) ||
+>             RRTypeAnswersQuestionType(&cr->resrec, dnsTypeAAAA))
+5772a5777,5780
+> 
+> #else // DEFINE_WINDOWS_UNIVERSAL
+> 
+> #endif // DEFINE_WINDOWS_UNIVERSAL
