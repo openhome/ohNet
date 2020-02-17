@@ -1636,7 +1636,6 @@ void mDNSPlatformSendWakeupPacket(mDNS* const /*m*/, mDNSInterfaceID /*Interface
 mDNSBool mDNSPlatformValidRecordForInterface(const AuthRecord* /*rr*/, mDNSInterfaceID /*InterfaceID*/)
 {
     LOG(kBonjour, "Bonjour             mDNSPlatformValidRecordForInterface\n");
-    ASSERTS();
     return false;
 }
 
