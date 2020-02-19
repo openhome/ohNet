@@ -1,37 +1,31 @@
-24a25,28
-> #include <OpenHome/Net/Private/MultilineMacro.h>
-> 
+24a25
 > #ifndef DEFINE_WINDOWS_UNIVERSAL // cannot build as c++ on winrt arm so def it out...
-> 
-191a196,206
+191a193,200
 > #define MD5_Init OpenHome_MD5_Init
 > #define MD5_Update OpenHome_MD5_Update
 > #define MD5_Final OpenHome_MD5_Final
 > #define MD5_Transform OpenHome_MD5_Transform
-> 
 > int OpenHome_MD5_Init(MD5_CTX *c);
 > int OpenHome_MD5_Update(MD5_CTX *c, const void *data, unsigned long len);
 > int OpenHome_MD5_Final(unsigned char *md, MD5_CTX *c);
 > void OpenHome_MD5_Transform(MD5_CTX *c, const unsigned char *b);
-> 
-> 
-202c217
+202c211
 < #  define md5_block_host_order md5_block_asm_host_order
 ---
 > #  define OpenHome_md5_block_host_order OpenHome_md5_block_asm_host_order
-204,205c219,220
+204,205c213,214
 < void md5_block_asm_data_order_aligned (MD5_CTX *c, const mDNSu32 *p,int num);
 < #  define HASH_BLOCK_DATA_ORDER_ALIGNED md5_block_asm_data_order_aligned
 ---
 >    void OpenHome_md5_block_asm_data_order_aligned (MD5_CTX *c, const mDNSu32 *p,int num);
 > #  define HASH_BLOCK_DATA_ORDER_ALIGNED OpenHome_md5_block_asm_data_order_aligned
-209,210c224,225
+209,210c218,219
 < void md5_block_host_order (MD5_CTX *c, const void *p,int num);
 < void md5_block_data_order (MD5_CTX *c, const void *p,int num);
 ---
 > void OpenHome_md5_block_host_order (MD5_CTX *c, const void *p,int num);
 > void OpenHome_md5_block_data_order (MD5_CTX *c, const void *p,int num);
-256,258c271,273
+256,258c265,267
 < #define HASH_BLOCK_HOST_ORDER   md5_block_host_order
 < #if !defined(L_ENDIAN) || defined(md5_block_data_order)
 < #define HASH_BLOCK_DATA_ORDER   md5_block_data_order
@@ -39,36 +33,35 @@
 > #define HASH_BLOCK_HOST_ORDER   OpenHome_md5_block_host_order
 > #if !defined(L_ENDIAN) || defined(OpenHome_md5_block_data_order)
 > #define HASH_BLOCK_DATA_ORDER   OpenHome_md5_block_data_order
-344,345c359,360
+344,345c353,354
 <  *	#define HASH_BLOCK_HOST_ORDER	md5_block_host_order
 <  *	#define HASH_BLOCK_DATA_ORDER	md5_block_data_order
 ---
 >  *	#define HASH_BLOCK_HOST_ORDER	OpenHome_md5_block_host_order
 >  *	#define HASH_BLOCK_DATA_ORDER	OpenHome_md5_block_data_order
-918c933
+918c927
 < int MD5_Init(MD5_CTX *c)
 ---
 > int OpenHome_MD5_Init(MD5_CTX *c)
-930,931c945,946
+930,931c939,940
 < #ifndef md5_block_host_order
 < void md5_block_host_order (MD5_CTX *c, const void *data, int num)
 ---
 > #ifndef OpenHome_md5_block_host_order
 > void OpenHome_md5_block_host_order (MD5_CTX *c, const void *data, int num)
-1020c1035
+1020c1029
 < #ifndef md5_block_data_order
 ---
 > #ifndef OpenHome_md5_block_data_order
-1024c1039
+1024c1033
 < void md5_block_data_order (MD5_CTX *c, const void *data_, int num)
 ---
 > void OpenHome_md5_block_data_order (MD5_CTX *c, const void *data_, int num)
-1278,1279c1293
+1278,1279c1287
 < #define HMAC_MD5_AlgName (*(const domainname*) "\010" "hmac-md5" "\007" "sig-alg" "\003" "reg" "\003" "int")
 < 
 ---
 > const domainname HMAC_MD5_AlgName = {"\010" "hmac-md5" "\007" "sig-alg" "\003" "reg" "\003" "int"};
-1562a1577,1579
+1562a1571,1572
 > #else // DEFINE_WINDOWS_UNIVERSAL
-> 
 > #endif //DEFINE_WINDOWS_UNIVERSAL

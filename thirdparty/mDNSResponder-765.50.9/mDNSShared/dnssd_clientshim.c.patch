@@ -1,40 +1,35 @@
-27a28,30
-> 
+27a28
 > #include <netinet/in.h>
-> 
-33a37,40
+33a35,37
 > #ifndef NULL
 > # define NULL ((void*)0)
 > #endif
-> 
-72a80,87
+72a77,83
 >     mDNS_DirectOP_Dispose        *disposefn;
 >     DNSServiceRef                aQuery;
 >     DNSServiceGetAddrInfoReply   callback;
 >     void                         *context;
 > } mDNS_DirectOP_GetAddrInfo;
-> 
 > typedef struct
 > {
-75a91
+75a87
 >     const ResourceRecord   *Av4;
-77a94
+77a90
 >     DNSQuestion qAv4;
-79a97,98
+79a93,94
 >     domainlabel Device;
 >     domainname ServiceType;
-89a109,110
+89a105
 > #ifndef DEFINE_WINDOWS_UNIVERSAL // cannot build as c++ on winrt arm so def it out...
-> 
-264c285
+264c280
 <                                txtRecord, txtLen, // TXT data, length
 ---
 >                                (const mDNSu8*)txtRecord, txtLen, // TXT data, length
-434a456
+434a451
 >     if (x->qAv4.ThisQInterval >= 0) mDNS_StopQuery(&mDNSStorage, &x->qAv4);
-445a468
+445a463
 >         if (answer->rrtype == kDNSType_A && x->Av4 == answer) x->Av4 = mDNSNULL;
-451c474,486
+451c469,481
 <         if (answer->rrtype == kDNSType_SRV) x->SRV = answer;
 ---
 >         if (answer->rrtype == kDNSType_A) x->Av4 = answer;
@@ -50,23 +45,22 @@
 >                 return;
 >             }
 >         }
-453c488
+453c483
 <         if (x->SRV && x->TXT && x->callback)
 ---
 >         if (x->Av4 && x->SRV && x->TXT && x->callback)
-455,456c490,492
+455,456c485,487
 <             char fullname[MAX_ESCAPED_DOMAIN_NAME], targethost[MAX_ESCAPED_DOMAIN_NAME];
 <             ConvertDomainNameToCString(answer->name, fullname);
 ---
 >             char fullname[MAX_ESCAPED_DOMAIN_LABEL], targethost[MAX_ESCAPED_DOMAIN_NAME], type[MAX_ESCAPED_DOMAIN_LABEL];
 >             ConvertDomainLabelToCString_unescaped(&x->Device, fullname);
 >             ConvertDomainNameToCString(&x->ServiceType, type);
-458,459c494,507
+458,459c489,501
 <             x->callback((DNSServiceRef)x, 0, 0, kDNSServiceErr_NoError, fullname, targethost,
 <                         x->SRV->rdata->u.srv.port.NotAnInteger, x->TXT->rdlength, (unsigned char*)x->TXT->rdata->u.txt.c, x->context);
 ---
 >             uint16_t port = (x->SRV->rdata->u.srv.port.b[0] << 8) + x->SRV->rdata->u.srv.port.b[1];
-> 
 >             x->callback((DNSServiceRef)x,
 >                          0,
 >                          0,
@@ -79,7 +73,7 @@
 >                          x->TXT->rdlength,
 >                          x->TXT->rdata->u.txt.c,
 >                          x->context);
-496,500c544,571
+496,500c538,564
 <     x->disposefn = DNSServiceResolveDispose;
 <     x->callback  = callback;
 <     x->context   = context;
@@ -94,30 +88,30 @@
 >     x->TXT          = mDNSNULL;
 >     x->Device       = n;
 >     x->ServiceType  = t;
-> 
 >     x->qAv4.ThisQInterval           = -1;       // So that mDNS_StopResolveService() knows whether to cancel this question
->         x->qAv4.InterfaceID         = mDNSInterface_Any;
->         x->qAv4.Target              = zeroAddr;
->         AssignDomainName(&x->qAv4.qname, &srv);
->         x->qAv4.qtype               = kDNSType_A;
->         x->qAv4.qclass              = kDNSClass_IN;
->         x->qAv4.LongLived           = mDNSfalse;
->         x->qAv4.ExpectUnique        = mDNStrue;
->         x->qAv4.ForceMCast          = mDNSfalse;
->         x->qAv4.ReturnIntermed      = mDNSfalse;
->         x->qAv4.SuppressUnusable    = mDNSfalse;
->         x->qAv4.SearchListIndex     = 0;
->         x->qAv4.AppendSearchDomains = 0;
->         x->qAv4.RetryWithSearchDomains = mDNSfalse;
->         x->qAv4.TimeoutQuestion     = 0;
->         x->qAv4.WakeOnResolve       = 0;
->         x->qAv4.qnameOrig           = mDNSNULL;
->         x->qAv4.QuestionCallback    = FoundServiceInfo;
->         x->qAv4.QuestionContext     = x;
-677c748
+>     x->qAv4.InterfaceID         = mDNSInterface_Any;
+>     x->qAv4.Target              = zeroAddr;
+>     AssignDomainName(&x->qAv4.qname, &srv);
+>     x->qAv4.qtype               = kDNSType_A;
+>     x->qAv4.qclass              = kDNSClass_IN;
+>     x->qAv4.LongLived           = mDNSfalse;
+>     x->qAv4.ExpectUnique        = mDNStrue;
+>     x->qAv4.ForceMCast          = mDNSfalse;
+>     x->qAv4.ReturnIntermed      = mDNSfalse;
+>     x->qAv4.SuppressUnusable    = mDNSfalse;
+>     x->qAv4.SearchListIndex     = 0;
+>     x->qAv4.AppendSearchDomains = 0;
+>     x->qAv4.RetryWithSearchDomains = mDNSfalse;
+>     x->qAv4.TimeoutQuestion     = 0;
+>     x->qAv4.WakeOnResolve       = 0;
+>     x->qAv4.qnameOrig           = mDNSNULL;
+>     x->qAv4.QuestionCallback    = FoundServiceInfo;
+>     x->qAv4.QuestionContext     = x;
+677c741
 <     x->q.SuppressUnsable     = (flags & kDNSServiceFlagsSuppressUnusable) != 0;
 ---
 >     x->q.SuppressUnusable    = (flags & kDNSServiceFlagsSuppressUnusable) != 0;
-811a883,884
+811a876,877
 > 
 > #endif // DEFINE_WINDOWS_UNIVERSAL
+\ No newline at end of file
