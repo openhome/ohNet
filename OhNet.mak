@@ -282,6 +282,22 @@ copy_build_includes:
 	copy Os\*.h $(inc_build)\OpenHome > nul
 	copy Os\*.inl $(inc_build)\OpenHome > nul
 
+patch_thirdparty_source:
+	mkdir $(objdirbare)mDNS
+	copy thirdparty\mDNSResponder-765.50.9\mDNSCore\*.c $(objdirbare)mDNS
+	copy thirdparty\mDNSResponder-765.50.9\mDNSCore\*.h $(objdirbare)mDNS
+	copy thirdparty\mDNSResponder-765.50.9\mDNSCore\*.patch $(objdirbare)mDNS
+	copy thirdparty\mDNSResponder-765.50.9\mDNSShared\*.c $(objdirbare)mDNS
+	copy thirdparty\mDNSResponder-765.50.9\mDNSShared\*.h $(objdirbare)mDNS
+	copy thirdparty\mDNSResponder-765.50.9\mDNSShared\*.patch $(objdirbare)mDNS
+
+	for %%i in $(objdirbare)mDNS\*.patch do (patch.exe -p1 %%i:.patch=%% < %%i)
+
+	copy $(objdirbare)mDNS\*.h $(inc_build)\OpenHome\Net\Private
+
+remove_temp_dir:
+	rmdir $(objdirbare)mDNS
+
 install :
 	if not exist "$(installdir)" mkdir "$(installdir)"
 	if not exist "$(installlibdir)" mkdir "$(installlibdir)"
