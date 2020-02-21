@@ -362,6 +362,7 @@ inc_build = Build/Include
 includes = -IBuild/Include/ $(version_specific_includes)
 bundle_build = Build/Bundles
 temp_build = Build/temp
+mDNSdir = Build/mDNS
 osdir ?= Posix
 objext = o
 libprefix = lib
@@ -575,21 +576,20 @@ copy_build_includes:
 	$(cp) Os/*.inl $(inc_build)/OpenHome
 
 patch_thirdparty_sources:
-	$(mkdir) $(objdir)mDNS
-	$(cp) thirdparty/mDNSResponder-765.50.9/mDNSCore/*.c $(objdir)mDNS
-	$(cp) thirdparty/mDNSResponder-765.50.9/mDNSCore/*.h $(objdir)mDNS
-	$(cp) thirdparty/mDNSResponder-765.50.9/mDNSCore/*.patch $(objdir)mDNS
-	$(cp) thirdparty/mDNSResponder-765.50.9/mDNSShared/*.c $(objdir)mDNS
-	$(cp) thirdparty/mDNSResponder-765.50.9/mDNSShared/*.h $(objdir)mDNS
-	$(cp) thirdparty/mDNSResponder-765.50.9/mDNSShared/*.patch $(objdir)mDNS
+	$(mkdir) $(mDNSdir)
+	$(cp) thirdparty/mDNSResponder-765.50.9/mDNSCore/*.c $(mDNSdir)
+	$(cp) thirdparty/mDNSResponder-765.50.9/mDNSCore/*.h $(mDNSdir)
+	$(cp) thirdparty/mDNSResponder-765.50.9/mDNSCore/*.patch $(mDNSdir)
+	$(cp) thirdparty/mDNSResponder-765.50.9/mDNSShared/*.c $(mDNSdir)
+	$(cp) thirdparty/mDNSResponder-765.50.9/mDNSShared/*.h $(mDNSdir)
+	$(cp) thirdparty/mDNSResponder-765.50.9/mDNSShared/*.patch $(mDNSdir)
 
-	for i in $(objdir)mDNS/*.patch; do patch -p1 $${i%.patch} < $$i; done
+	for i in $(mDNSdir)/*.patch; do python thirdparty/python_patch/patch.py $$i; done
 
-	$(cp) $(objdir)mDNS/*.h $(inc_build)/OpenHome/Net/Private
+	$(cp) $(mDNSdir)/*.h $(inc_build)/OpenHome/Net/Private
 
 remove_temp_dir:
-	$(rmdir)  $(objdir)mDNS
-
+	$(rmdir) $(mDNSdir)
 
 install : install-pkgconf install-libs install-includes
 

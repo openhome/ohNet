@@ -1,18 +1,27 @@
-1562,1565c1562,1565
-<     DNSServiceRef sdRef,
-<     DNSServiceFlags flags,
-<     uint32_t interfaceIndex,
-<     DNSServiceErrorType errorCode,
----
->     DNSServiceRef                       sdRef,
->     DNSServiceFlags                     flags,
->     uint32_t                            interfaceIndex,
->     DNSServiceErrorType                 errorCode,
-1568,1569c1568,1571
-<     uint16_t port,                                   /* In network byte order */
-<     uint16_t txtLen,
----
->     uint16_t                            port,        /* In network byte order */
->     const unsigned char                 *ipAddr,
->     const char                          *regtype,
->     uint16_t                            txtLen,
+diff --git a/thirdparty/mDNSResponder-765.50.9/mDNSShared/dns_sd.h b/thirdparty/mDNSResponder-765.50.9/mDNSShared/dns_sd.h
+index 660b3707..686686a4 100644
+--- a/Build/mDNS/dns_sd.h
++++ b/Build/mDNS/dns_sd.h
+@@ -1559,14 +1559,16 @@ DNSServiceErrorType DNSSD_API DNSServiceBrowse
+ 
+ typedef void (DNSSD_API *DNSServiceResolveReply)
+ (
+-    DNSServiceRef sdRef,
+-    DNSServiceFlags flags,
+-    uint32_t interfaceIndex,
+-    DNSServiceErrorType errorCode,
++    DNSServiceRef                       sdRef,
++    DNSServiceFlags                     flags,
++    uint32_t                            interfaceIndex,
++    DNSServiceErrorType                 errorCode,
+     const char                          *fullname,
+     const char                          *hosttarget,
+-    uint16_t port,                                   /* In network byte order */
+-    uint16_t txtLen,
++    uint16_t                            port,        /* In network byte order */
++    const unsigned char                 *ipAddr,
++    const char                          *regtype,
++    uint16_t                            txtLen,
+     const unsigned char                 *txtRecord,
+     void                                *context
+ );

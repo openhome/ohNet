@@ -1,20 +1,35 @@
-139d138
-< extern void VerifySignature(mDNS *const m, DNSSECVerifier *dv, DNSQuestion *q);
-151d149
-< extern void BumpDNSSECStats(mDNS *const m, DNSSECStatsAction action, DNSSECStatsType type, mDNSu32 value);
-154,156c152,162
-< // DNSSECProbe belongs in DNSSECSupport.h but then we don't want to expose yet another plaform specific dnssec file
-< // to other platforms where dnssec is not supported.
-< extern void DNSSECProbe(mDNS *const m);
----
-> #ifdef __cplusplus
-> extern "C" {
-> #endif
-> 
-> void VerifySignature(mDNS *const m, DNSSECVerifier *dv, DNSQuestion *q);
-> void BumpDNSSECStats(mDNS *const m, DNSSECStatsAction action, DNSSECStatsType type, mDNSu32 value);
-> void DNSSECProbe(mDNS *const m);
-> 
-> #ifdef __cplusplus
-> }
-> #endif
+diff --git a/thirdparty/mDNSResponder-765.50.9/mDNSCore/dnssec.h b/thirdparty/mDNSResponder-765.50.9/mDNSCore/dnssec.h
+index b770af8d..e894f2f2 100644
+--- a/Build/mDNS/dnssec.h
++++ b/Build/mDNS/dnssec.h
+@@ -136,7 +136,6 @@ struct InsecureContext_struct
+ extern void StartDNSSECVerification(mDNS *const m, void *context);
+ extern RRVerifier* AllocateRRVerifier(const ResourceRecord *const rr, mStatus *status);
+ extern mStatus AddRRSetToVerifier(DNSSECVerifier *dv, const ResourceRecord *const rr, RRVerifier *rv, RRVerifierSet set);
+-extern void VerifySignature(mDNS *const m, DNSSECVerifier *dv, DNSQuestion *q);
+ extern void FreeDNSSECVerifier(mDNS *const m, DNSSECVerifier *dv);
+ extern DNSSECVerifier *AllocateDNSSECVerifier(mDNS *const m, const domainname *name, mDNSu16 rrtype, mDNSInterfaceID InterfaceID,
+                                               mDNSu8 ValidationRequired, DNSSECVerifierCallback dvcallback, mDNSQuestionCallback qcallback);
+@@ -148,11 +147,18 @@ extern mStatus DNSNameToLowerCase(domainname *d, domainname *result);
+ extern int DNSMemCmp(const mDNSu8 *const m1, const mDNSu8 *const m2, int len);
+ extern int DNSSECCanonicalOrder(const domainname *const d1, const domainname *const d2, int *subdomain);
+ extern void ProveInsecure(mDNS *const m, DNSSECVerifier *dv, InsecureContext *ic, domainname *trigger);
+-extern void BumpDNSSECStats(mDNS *const m, DNSSECStatsAction action, DNSSECStatsType type, mDNSu32 value);
+ extern char *DNSSECStatusName(DNSSECStatus status);
+ 
+-// DNSSECProbe belongs in DNSSECSupport.h but then we don't want to expose yet another plaform specific dnssec file
+-// to other platforms where dnssec is not supported.
+-extern void DNSSECProbe(mDNS *const m);
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++void VerifySignature(mDNS *const m, DNSSECVerifier *dv, DNSQuestion *q);
++void BumpDNSSECStats(mDNS *const m, DNSSECStatsAction action, DNSSECStatsType type, mDNSu32 value);
++void DNSSECProbe(mDNS *const m);
++
++#ifdef __cplusplus
++}
++#endif
+ 
+ #endif // __DNSSEC_H

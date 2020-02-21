@@ -1,32 +1,55 @@
-121a122,123
-> #ifndef DEFINE_WINDOWS_UNIVERSAL // cannot build as c++ on winrt arm so def it out...
-> 
-176c178
-< mDNSexport char *DNSTypeName(mDNSu16 rrtype)
----
-> mDNSexport const char *DNSTypeName(mDNSu16 rrtype)
-3148c3150
-<         while (ptr < end && (mDNSu8 *)(opt+1) < &dataend[MaximumRDSize])
----
->         while (ptr < end && (mDNSu8 *)(opt+1) < &dataend[StandardAuthRDSize])
-4338a4341,4360
-> 
-> 
-> #else // DEFINE_WINDOWS_UNIVERSAL
-> 
-> mDNSexport mDNSBool MakeDomainLabelFromLiteralString(domainlabel *const /*label*/, const char * /*cstr*/)
-> {
-> 	return (mDNSBool)1;
-> }
-> 
->  mDNSexport mDNSu8 *MakeDomainNameFromDNSNameString(domainname *const /*name*/, const char * /*cstr*/)
-> {
-> 	return (mDNSu8)0;
-> }
-> 
-> mDNSexport mDNSu32 mDNS_vsnprintf(char * /*sbuffer*/, mDNSu32 /*buflen*/, const char * /*fmt*/, va_list /*arg*/)  	
-> {
-> 	return (mDNSu32)0;
-> }
-> 
-> #endif //DEFINE_WINDOWS_UNIVERSAL
+diff --git a/thirdparty/mDNSResponder-765.50.9/mDNSCore/DNSCommon.c b/thirdparty/mDNSResponder-765.50.9/mDNSCore/DNSCommon.c
+index 3ea9a307..73752c28 100644
+--- a/Build/mDNS/DNSCommon.c
++++ b/Build/mDNS/DNSCommon.c
+@@ -119,6 +119,8 @@ mDNSexport const mDNSOpaque64 zeroOpaque64    = { { 0 } };
+ #pragma mark - General Utility Functions
+ #endif
+ 
++#ifndef DEFINE_WINDOWS_UNIVERSAL // cannot build as c++ on winrt arm so def it out...
++
+ // return true for RFC1918 private addresses
+ mDNSexport mDNSBool mDNSv4AddrIsRFC1918(const mDNSv4Addr * const addr)
+ {
+@@ -173,7 +175,7 @@ mDNSexport mDNSu32 NumCacheRecordsForInterfaceID(const mDNS *const m, mDNSInterf
+     return(used);
+ }
+ 
+-mDNSexport char *DNSTypeName(mDNSu16 rrtype)
++mDNSexport const char *DNSTypeName(mDNSu16 rrtype)
+ {
+     switch (rrtype)
+     {
+@@ -3145,7 +3147,7 @@ mDNSexport mDNSBool SetRData(const DNSMessage *const msg, const mDNSu8 *ptr, con
+         mDNSu8 *dataend     = rr->resrec.rdata->u.data;
+         rdataOPT *opt = rr->resrec.rdata->u.opt;
+         rr->resrec.rdlength = 0;
+-        while (ptr < end && (mDNSu8 *)(opt+1) < &dataend[MaximumRDSize])
++        while (ptr < end && (mDNSu8 *)(opt+1) < &dataend[StandardAuthRDSize])
+         {
+             const rdataOPT *const currentopt = opt;
+             if (ptr + 4 > end) { LogInfo("SetRData: OPT RDATA ptr + 4 > end"); goto fail; }
+@@ -4336,3 +4338,23 @@ mDNSexport mDNSu32 mDNS_snprintf(char *sbuffer, mDNSu32 buflen, const char *fmt,
+ 
+     return(length);
+ }
++
++
++#else // DEFINE_WINDOWS_UNIVERSAL
++
++mDNSexport mDNSBool MakeDomainLabelFromLiteralString(domainlabel *const /*label*/, const char * /*cstr*/)
++{
++	return (mDNSBool)1;
++}
++
++ mDNSexport mDNSu8 *MakeDomainNameFromDNSNameString(domainname *const /*name*/, const char * /*cstr*/)
++{
++	return (mDNSu8)0;
++}
++
++mDNSexport mDNSu32 mDNS_vsnprintf(char * /*sbuffer*/, mDNSu32 /*buflen*/, const char * /*fmt*/, va_list /*arg*/)  	
++{
++	return (mDNSu32)0;
++}
++
++#endif //DEFINE_WINDOWS_UNIVERSAL

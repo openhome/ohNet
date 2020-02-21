@@ -362,26 +362,24 @@ $(objdir)Globals.$(objext) : OpenHome/Net/Globals.cpp $(headers)
 	$(compiler)Globals.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Globals.cpp
 $(objdir)Http.$(objext) : OpenHome/Http.cpp $(headers)
 	$(compiler)Http.$(objext) -c $(cppflags) $(includes) OpenHome/Http.cpp
-
-$(objdir)anonymous.$(objext) : $(objdir)mDNS/anonymous.c $(headers)
-	$(compiler)anonymous.$(objext) -c $(cflags_third_party) $(includes) $(objdir)mDNS/anonymous.c
-$(objdir)CryptoAlg.$(objext) : $(objdir)mDNS/CryptoAlg.c $(headers)
-	$(compiler)CryptoAlg.$(objext) -c $(cflags_third_party) $(includes) $(objdir)mDNS/CryptoAlg.c
-$(objdir)DNSCommon.$(objext) : $(objdir)mDNS/DNSCommon.c $(headers)
-	$(compiler)DNSCommon.$(objext) -c $(cflags_third_party) $(includes) $(objdir)mDNS/DNSCommon.c
-$(objdir)DNSDigest.$(objext) : $(objdir)mDNS/DNSDigest.c $(headers)
-	$(compiler)DNSDigest.$(objext) -c $(cflags_third_party) $(includes) $(objdir)mDNS/DNSDigest.c
-$(objdir)mDNS.$(objext) : $(objdir)mDNS/mDNS.c $(headers)
-	$(compiler)mDNS.$(objext) -c $(cflags_third_party) $(includes) $(objdir)mDNS/mDNS.c
-$(objdir)nsec.$(objext) : $(objdir)mDNS/nsec.c $(headers)
-	$(compiler)nsec.$(objext) -c $(cflags_third_party) $(includes) $(objdir)mDNS/nsec.c
-$(objdir)nsec3.$(objext) : $(objdir)mDNS/nsec3.c $(headers)
-	$(compiler)nsec3.$(objext) -c $(cflags_third_party) $(includes) $(objdir)mDNS/nsec3.c
-$(objdir)uDNS.$(objext) : $(objdir)mDNS/uDNS.c $(headers)
-	$(compiler)uDNS.$(objext) -c $(cflags_third_party) $(includes) $(objdir)mDNS/uDNS.c
-$(objdir)dnssd_clientshim.$(objext) : $(objdir)mDNS/dnssd_clientshim.c $(headers)
-	$(compiler)dnssd_clientshim.$(objext) -c $(cflags_third_party) $(includes) $(objdir)mDNS/dnssd_clientshim.c
-
+$(objdir)anonymous.$(objext) : $(mDNSdir)/anonymous.c $(headers)
+	$(compiler)anonymous.$(objext) -c $(cflags_third_party) $(includes) $(mDNSdir)/anonymous.c
+$(objdir)CryptoAlg.$(objext) : $(mDNSdir)/CryptoAlg.c $(headers)
+	$(compiler)CryptoAlg.$(objext) -c $(cflags_third_party) $(includes) $(mDNSdir)/CryptoAlg.c
+$(objdir)DNSCommon.$(objext) : $(mDNSdir)/DNSCommon.c $(headers)
+	$(compiler)DNSCommon.$(objext) -c $(cflags_third_party) $(includes) $(mDNSdir)/DNSCommon.c
+$(objdir)DNSDigest.$(objext) : $(mDNSdir)/DNSDigest.c $(headers)
+	$(compiler)DNSDigest.$(objext) -c $(cflags_third_party) $(includes) $(mDNSdir)/DNSDigest.c
+$(objdir)mDNS.$(objext) : $(mDNSdir)/mDNS.c $(headers)
+	$(compiler)mDNS.$(objext) -c $(cflags_third_party) $(includes) $(mDNSdir)/mDNS.c
+$(objdir)nsec.$(objext) : $(mDNSdir)/nsec.c $(headers)
+	$(compiler)nsec.$(objext) -c $(cflags_third_party) $(includes) $(mDNSdir)/nsec.c
+$(objdir)nsec3.$(objext) : $(mDNSdir)/nsec3.c $(headers)
+	$(compiler)nsec3.$(objext) -c $(cflags_third_party) $(includes) $(mDNSdir)/nsec3.c
+$(objdir)uDNS.$(objext) : $(mDNSdir)/uDNS.c $(headers)
+	$(compiler)uDNS.$(objext) -c $(cflags_third_party) $(includes) $(mDNSdir)/uDNS.c
+$(objdir)dnssd_clientshim.$(objext) : $(mDNSdir)/dnssd_clientshim.c $(headers)
+	$(compiler)dnssd_clientshim.$(objext) -c $(cflags_third_party) $(includes) $(mDNSdir)/dnssd_clientshim.c
 $(objdir)MdnsPlatform.$(objext) : OpenHome/Net/Device/Bonjour/MdnsPlatform.cpp $(headers)
 	$(compiler)MdnsPlatform.$(objext) -c $(cflags_third_party) $(includes) OpenHome/Net/Device/Bonjour/MdnsPlatform.cpp
 $(objdir)MdnsProvider.$(objext) : OpenHome/Net/Device/Bonjour/MdnsProvider.cpp $(headers)

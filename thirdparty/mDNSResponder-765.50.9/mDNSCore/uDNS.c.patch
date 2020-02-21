@@ -1,55 +1,119 @@
-27a28,29
-> #ifndef DEFINE_WINDOWS_UNIVERSAL // cannot build as c++ on winrt arm so def it out...
-> 
-1762,1765c1764,1767
-<         (X)->ZoneService == ZoneServiceUpdate  ? ((X)->ZonePrivate ? PRIVATE_UPDATE_SERVICE_TYPE : PUBLIC_UPDATE_SERVICE_TYPE) : \
-<         (X)->ZoneService == ZoneServiceQuery   ? ((X)->ZonePrivate ? PRIVATE_QUERY_SERVICE_TYPE  : (const domainname*)""     ) : \
-<         (X)->ZoneService == ZoneServiceLLQ     ? ((X)->ZonePrivate ? PRIVATE_LLQ_SERVICE_TYPE    : PUBLIC_LLQ_SERVICE_TYPE   ) : \
-<         (X)->ZoneService == ZoneServiceDNSPush ? DNS_PUSH_NOTIFICATION_SERVICE_TYPE : (const domainname*)"")
----
->         (X)->Service == ZoneServiceUpdate  ? ((X)->ZonePrivate ? PRIVATE_UPDATE_SERVICE_TYPE : PUBLIC_UPDATE_SERVICE_TYPE) : \
->         (X)->Service == ZoneServiceQuery   ? ((X)->ZonePrivate ? PRIVATE_QUERY_SERVICE_TYPE  : (const domainname*)""     ) : \
->         (X)->Service == ZoneServiceLLQ     ? ((X)->ZonePrivate ? PRIVATE_LLQ_SERVICE_TYPE    : PUBLIC_LLQ_SERVICE_TYPE   ) : \
->         (X)->Service == ZoneServiceDNSPush ? DNS_PUSH_NOTIFICATION_SERVICE_TYPE : (const domainname*)"")
-1803c1805
-<                 zd->ZoneDataCallback(m, mStatus_NoSuchNameErr, zd);
----
->                 zd->DataCallback(m, mStatus_NoSuchNameErr, zd);
-1815c1817
-<             zd->ZoneDataCallback(m, mStatus_NoSuchNameErr, zd);
----
->             zd->DataCallback(m, mStatus_NoSuchNameErr, zd);
-1849c1851
-<                 zd->ZoneDataCallback(m, mStatus_NoError, zd);
----
->                 zd->DataCallback(m, mStatus_NoError, zd);
-1872c1874
-<         zd->ZoneDataCallback(m, mStatus_NoError, zd);
----
->         zd->DataCallback(m, mStatus_NoError, zd);
-1930c1932
-<     zd->ZoneService      = target;
----
->     zd->Service      = target;
-1938c1940
-<     zd->ZoneDataCallback = callback;
----
->     zd->DataCallback     = callback;
-3247c3249
-<     mDNSOpaque16 msgid;
----
->     mDNSOpaque16 msgid = mDNSOpaque16fromIntVal(0);
-5712a5715,5716
->         const DNS_TypeValues dnsTypeA = kDNSType_A;
->         const DNS_TypeValues dnsTypeAAAA = kDNSType_AAAA;
-5717,5718c5721,5722
-<         if (RRTypeAnswersQuestionType(&cr->resrec, kDNSType_A) ||
-<             RRTypeAnswersQuestionType(&cr->resrec, kDNSType_AAAA))
----
->         if (RRTypeAnswersQuestionType(&cr->resrec, dnsTypeA) ||
->             RRTypeAnswersQuestionType(&cr->resrec, dnsTypeAAAA))
-5772a5777,5780
-> 
-> #else // DEFINE_WINDOWS_UNIVERSAL
-> 
-> #endif // DEFINE_WINDOWS_UNIVERSAL
+diff --git a/thirdparty/mDNSResponder-765.50.9/mDNSCore/uDNS.c b/thirdparty/mDNSResponder-765.50.9/mDNSCore/uDNS.c
+index 3677b9f7..7ae23b15 100755
+--- a/Build/mDNS/uDNS.c
++++ b/Build/mDNS/uDNS.c
+@@ -25,6 +25,8 @@
+ #endif
+ #include "uDNS.h"
+ 
++#ifndef DEFINE_WINDOWS_UNIVERSAL // cannot build as c++ on winrt arm so def it out...
++
+ #if (defined(_MSC_VER))
+ // Disable "assignment within conditional expression".
+ // Other compilers understand the convention that if you place the assignment expression within an extra pair
+@@ -1759,10 +1761,10 @@ mDNSlocal const domainname *PRIVATE_LLQ_SERVICE_TYPE    = (const domainname*)"\x
+ mDNSlocal const domainname *DNS_PUSH_NOTIFICATION_SERVICE_TYPE = (const domainname*)"\x0C_dns-push-tls"    "\x04_tcp";
+ 
+ #define ZoneDataSRV(X) ( \
+-        (X)->ZoneService == ZoneServiceUpdate  ? ((X)->ZonePrivate ? PRIVATE_UPDATE_SERVICE_TYPE : PUBLIC_UPDATE_SERVICE_TYPE) : \
+-        (X)->ZoneService == ZoneServiceQuery   ? ((X)->ZonePrivate ? PRIVATE_QUERY_SERVICE_TYPE  : (const domainname*)""     ) : \
+-        (X)->ZoneService == ZoneServiceLLQ     ? ((X)->ZonePrivate ? PRIVATE_LLQ_SERVICE_TYPE    : PUBLIC_LLQ_SERVICE_TYPE   ) : \
+-        (X)->ZoneService == ZoneServiceDNSPush ? DNS_PUSH_NOTIFICATION_SERVICE_TYPE : (const domainname*)"")
++        (X)->Service == ZoneServiceUpdate  ? ((X)->ZonePrivate ? PRIVATE_UPDATE_SERVICE_TYPE : PUBLIC_UPDATE_SERVICE_TYPE) : \
++        (X)->Service == ZoneServiceQuery   ? ((X)->ZonePrivate ? PRIVATE_QUERY_SERVICE_TYPE  : (const domainname*)""     ) : \
++        (X)->Service == ZoneServiceLLQ     ? ((X)->ZonePrivate ? PRIVATE_LLQ_SERVICE_TYPE    : PUBLIC_LLQ_SERVICE_TYPE   ) : \
++        (X)->Service == ZoneServiceDNSPush ? DNS_PUSH_NOTIFICATION_SERVICE_TYPE : (const domainname*)"")
+ 
+ // Forward reference: GetZoneData_StartQuery references GetZoneData_QuestionCallback, and
+ // GetZoneData_QuestionCallback calls GetZoneData_StartQuery
+@@ -1800,7 +1802,7 @@ mDNSlocal void GetZoneData_QuestionCallback(mDNS *const m, DNSQuestion *question
+                 // To keep the load on the server down, we don't chop down on
+                 // SOA lookups for AutoTunnels
+                 LogInfo("GetZoneData_QuestionCallback: not chopping labels for %##s", zd->CurrentSOA->c);
+-                zd->ZoneDataCallback(m, mStatus_NoSuchNameErr, zd);
++                zd->DataCallback(m, mStatus_NoSuchNameErr, zd);
+             }
+             else
+             {
+@@ -1812,7 +1814,7 @@ mDNSlocal void GetZoneData_QuestionCallback(mDNS *const m, DNSQuestion *question
+         else
+         {
+             LogInfo("GetZoneData recursed to root label of %##s without finding SOA", zd->ChildName.c);
+-            zd->ZoneDataCallback(m, mStatus_NoSuchNameErr, zd);
++            zd->DataCallback(m, mStatus_NoSuchNameErr, zd);
+         }
+     }
+     else if (answer->rrtype == kDNSType_SRV)
+@@ -1846,7 +1848,7 @@ mDNSlocal void GetZoneData_QuestionCallback(mDNS *const m, DNSQuestion *question
+                 zd->Host.c[0] = 0;
+                 zd->Port = zeroIPPort;
+                 zd->Addr = zeroAddr;
+-                zd->ZoneDataCallback(m, mStatus_NoError, zd);
++                zd->DataCallback(m, mStatus_NoError, zd);
+             }
+         }
+     }
+@@ -1869,7 +1871,7 @@ mDNSlocal void GetZoneData_QuestionCallback(mDNS *const m, DNSQuestion *question
+         zd->Addr.ip.v4.b[3] = 1;
+ #endif
+         // The caller needs to free the memory when done with zone data
+-        zd->ZoneDataCallback(m, mStatus_NoError, zd);
++        zd->DataCallback(m, mStatus_NoError, zd);
+     }
+ }
+ 
+@@ -1927,7 +1929,7 @@ mDNSexport ZoneData *StartGetZoneData(mDNS *const m, const domainname *const nam
+     if (!zd) { LogMsg("ERROR: StartGetZoneData - mDNSPlatformMemAllocate failed"); return mDNSNULL; }
+     mDNSPlatformMemZero(zd, sizeof(ZoneData));
+     AssignDomainName(&zd->ChildName, name);
+-    zd->ZoneService      = target;
++    zd->Service      = target;
+     zd->CurrentSOA       = (domainname *)(&zd->ChildName.c[initialskip]);
+     zd->ZoneName.c[0]    = 0;
+     zd->ZoneClass        = 0;
+@@ -1935,7 +1937,7 @@ mDNSexport ZoneData *StartGetZoneData(mDNS *const m, const domainname *const nam
+     zd->Port             = zeroIPPort;
+     zd->Addr             = zeroAddr;
+     zd->ZonePrivate      = AuthInfo && AuthInfo->AutoTunnel ? mDNStrue : mDNSfalse;
+-    zd->ZoneDataCallback = callback;
++    zd->DataCallback     = callback;
+     zd->ZoneDataContext  = ZoneDataContext;
+ 
+     zd->question.QuestionContext = zd;
+@@ -3244,7 +3246,7 @@ mDNSlocal AuthRecord *MarkRRForSending(mDNS *const m)
+ 
+ mDNSlocal mDNSBool SendGroupUpdates(mDNS *const m)
+ {
+-    mDNSOpaque16 msgid;
++    mDNSOpaque16 msgid = mDNSOpaque16fromIntVal(0);
+     mDNSs32 spaceleft = 0;
+     mDNSs32 zoneSize, rrSize;
+     mDNSu8 *oldnext; // for debugging
+@@ -5710,12 +5712,14 @@ mDNSlocal void FlushAddressCacheRecords(mDNS *const m)
+     CacheRecord *cr;
+     FORALL_CACHERECORDS(slot, cg, cr)
+     {
++        const DNS_TypeValues dnsTypeA = kDNSType_A;
++        const DNS_TypeValues dnsTypeAAAA = kDNSType_AAAA;
+         if (cr->resrec.InterfaceID) continue;
+ 
+         // If a resource record can answer A or AAAA, they need to be flushed so that we will
+         // deliver an ADD or RMV
+-        if (RRTypeAnswersQuestionType(&cr->resrec, kDNSType_A) ||
+-            RRTypeAnswersQuestionType(&cr->resrec, kDNSType_AAAA))
++        if (RRTypeAnswersQuestionType(&cr->resrec, dnsTypeA) ||
++            RRTypeAnswersQuestionType(&cr->resrec, dnsTypeAAAA))
+         {
+             LogInfo("FlushAddressCacheRecords: Purging Resourcerecord %s", CRDisplayString(m, cr));
+             mDNS_PurgeCacheResourceRecord(m, cr);
+@@ -5771,6 +5775,10 @@ struct CompileTimeAssertionChecks_uDNS
+     char sizecheck_SearchListElem[(sizeof(SearchListElem) <=  5000) ? 1 : -1];
+ };
+ 
++#else // DEFINE_WINDOWS_UNIVERSAL
++
++#endif // DEFINE_WINDOWS_UNIVERSAL
++
+ #if COMPILER_LIKES_PRAGMA_MARK
+ #pragma mark - DNS Push Notification functions
+ #endif

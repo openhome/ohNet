@@ -118,6 +118,7 @@ objdir = $(objdirbare)^\
 inc_build = Build\Include
 includes = -IBuild\Include
 bundle_build = Build\Bundles
+mDNSdir = Build\mDNS
 osdir = Windows
 objext = obj
 libprefix =
@@ -261,8 +262,6 @@ copy_build_includes:
 	copy OpenHome\Net\Device\DviProviderSubscriptionLongPoll.h $(inc_build)\OpenHome\Net\Private > nul
 	copy OpenHome\Net\Device\FunctorDviInvocation.h $(inc_build)\OpenHome\Net\Private > nul
 	copy OpenHome\Net\Device\Bonjour\*.h $(inc_build)\OpenHome\Net\Private > nul
-	copy OpenHome\Net\Device\Bonjour\mDNSCore\*.h $(inc_build)\OpenHome\Net\Private > nul
-	copy OpenHome\Net\Device\Bonjour\mDNSShared\*.h $(inc_build)\OpenHome\Net\Private > nul
 	copy OpenHome\Net\Device\Providers\*.h $(inc_build)\OpenHome\Net\Core > nul
 	copy OpenHome\Net\Device\Upnp\*.h $(inc_build)\OpenHome\Net\Private > nul
 	copy OpenHome\Net\Device\Lpec\*.h $(inc_build)\OpenHome\Net\Private > nul
@@ -282,21 +281,21 @@ copy_build_includes:
 	copy Os\*.h $(inc_build)\OpenHome > nul
 	copy Os\*.inl $(inc_build)\OpenHome > nul
 
-patch_thirdparty_source:
-	mkdir $(objdirbare)mDNS
-	copy thirdparty\mDNSResponder-765.50.9\mDNSCore\*.c $(objdirbare)mDNS
-	copy thirdparty\mDNSResponder-765.50.9\mDNSCore\*.h $(objdirbare)mDNS
-	copy thirdparty\mDNSResponder-765.50.9\mDNSCore\*.patch $(objdirbare)mDNS
-	copy thirdparty\mDNSResponder-765.50.9\mDNSShared\*.c $(objdirbare)mDNS
-	copy thirdparty\mDNSResponder-765.50.9\mDNSShared\*.h $(objdirbare)mDNS
-	copy thirdparty\mDNSResponder-765.50.9\mDNSShared\*.patch $(objdirbare)mDNS
+patch_thirdparty_sources:
+	mkdir $(mDNSdir)
+	copy thirdparty\mDNSResponder-765.50.9\mDNSCore\*.c $(mDNSdir) > nul
+	copy thirdparty\mDNSResponder-765.50.9\mDNSCore\*.h $(mDNSdir) > nul
+	copy thirdparty\mDNSResponder-765.50.9\mDNSCore\*.patch $(mDNSdir) > nul
+	copy thirdparty\mDNSResponder-765.50.9\mDNSShared\*.c $(mDNSdir) > nul
+	copy thirdparty\mDNSResponder-765.50.9\mDNSShared\*.h $(mDNSdir) > nul
+	copy thirdparty\mDNSResponder-765.50.9\mDNSShared\*.patch $(mDNSdir) > nul
 
-	for %%i in $(objdirbare)mDNS\*.patch do (patch.exe -p1 %%i:.patch=%% < %%i)
+	for %%i in ($(mDNSdir)\*.patch) do (python patch.py %%i)
 
-	copy $(objdirbare)mDNS\*.h $(inc_build)\OpenHome\Net\Private
+	copy $(mDNSdir)\*.h $(inc_build)\OpenHome\Net\Private > nul
 
 remove_temp_dir:
-	rmdir $(objdirbare)mDNS
+	rmdir $(mDNSdir)
 
 install :
 	if not exist "$(installdir)" mkdir "$(installdir)"
