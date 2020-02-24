@@ -86,11 +86,9 @@ void DviSubscription::Start(DviService& aService)
         // store all seq nums as 0 initially to ensure all are published by the first call to WriteChanges()
         iPropertySequenceNumbers.push_back(0);
         if (properties[i]->SequenceNumber() == 0) {
-            Log::Print("ERROR: uninitialised property.  Provider: ");
-            Log::Print(iService->ServiceType().Name());
-            Log::Print(", property: ");
-            Log::Print(properties[i]->Parameter().Name());
-            Log::Print("\n");
+            const Brx& service = iService->ServiceType().Name();
+            const Brx& propName = properties[i]->Parameter().Name();
+            Log::Print("ERROR: uninitialised property.  Provider: %.*s, property: %.*s\n", PBUF(service), PBUF(propName));
             ASSERTS();
         }
     }
