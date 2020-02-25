@@ -1,5 +1,5 @@
 diff --git a/thirdparty/mDNSResponder-765.50.9/mDNSCore/mDNS.c b/thirdparty/mDNSResponder-765.50.9/mDNSCore/mDNS.c
-index a58a6c1a..7916d6e2 100755
+index a58a6c1a..11681c81 100755
 --- a/Build/mDNS/mDNS.c
 +++ b/Build/mDNS/mDNS.c
 @@ -29,6 +29,7 @@
@@ -199,4 +199,3 @@ index a58a6c1a..7916d6e2 100755
 +{
 +}
 +#endif //DEFINE_WINDOWS_UNIVERSAL
-\ No newline at end of file

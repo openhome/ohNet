@@ -237,7 +237,7 @@ headers = \
 	$(inc_build)/OpenHome/Net/Core/FunctorCpDevice.h
 
 
-ohNetCore : make_obj_dir copy_build_includes patch_thirdparty_sources $(objects_core) $(objdir)$(libprefix)ohNetCore.$(libext) remove_temp_dir
+ohNetCore : make_obj_dir copy_build_includes patch_thirdparty_sources $(objects_core) $(objdir)$(libprefix)ohNetCore.$(libext)
 $(objdir)$(libprefix)ohNetCore.$(libext) : $(objects_core)
 	$(ar)$(libprefix)ohNetCore.$(libext) $(objects_core)
 $(objdir)Ascii.$(objext) : OpenHome/Ascii.cpp $(headers)
@@ -1376,7 +1376,7 @@ $(objdir)ohnet-src.jar :
 	$(jar) $(jarflags) $(objdir)ohnet-src.jar -C $(publicjavadir) .
 
 
-ohNetAndroidNative : make_obj_dir copy_build_includes ohNetJava
+ohNetAndroidNative : make_obj_dir copy_build_includes patch_thirdparty_sources ohNetJava
 	$(ANDROID_NDK_ROOT)/ndk-build NDK_DEBUG=$(android_ndk_debug) -C OpenHome/Net/Bindings/Android/jni
 	$(mkdir) $(objdir)
 	$(mkdir) $(objdir)arm64-v8a

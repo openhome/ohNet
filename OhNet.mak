@@ -102,7 +102,7 @@ android_ndk_debug = 0
 
 # Macros used by Common.mak
 ar = lib /nologo /out:$(objdir)
-cflags_tp = $(debug_specific_cflags) /c /W4 $(error_handling) /FR$(objdir) -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE $(defines_universal)
+cflags_tp = $(debug_specific_cflags) /c /w $(error_handling) /FR$(objdir) -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE $(defines_universal)
 cflags = $(cflags_tp) $(additional_includes) /WX
 cppflags = $(cflags) $(universal_cppflags) $(force_cpp) 
 
@@ -282,7 +282,7 @@ copy_build_includes:
 	copy Os\*.inl $(inc_build)\OpenHome > nul
 
 patch_thirdparty_sources:
-	mkdir $(mDNSdir)
+	if not exist $(mDNSdir) mkdir $(mDNSdir)
 	copy thirdparty\mDNSResponder-765.50.9\mDNSCore\*.c $(mDNSdir) > nul
 	copy thirdparty\mDNSResponder-765.50.9\mDNSCore\*.h $(mDNSdir) > nul
 	copy thirdparty\mDNSResponder-765.50.9\mDNSCore\*.patch $(mDNSdir) > nul
@@ -290,12 +290,9 @@ patch_thirdparty_sources:
 	copy thirdparty\mDNSResponder-765.50.9\mDNSShared\*.h $(mDNSdir) > nul
 	copy thirdparty\mDNSResponder-765.50.9\mDNSShared\*.patch $(mDNSdir) > nul
 
-	for %%i in ($(mDNSdir)\*.patch) do (python patch.py %%i)
+	for %%i in ($(mDNSdir)\*.patch) do (python thirdparty\python_patch\patch.py %%i)
 
 	copy $(mDNSdir)\*.h $(inc_build)\OpenHome\Net\Private > nul
-
-remove_temp_dir:
-	rmdir $(mDNSdir)
 
 install :
 	if not exist "$(installdir)" mkdir "$(installdir)"

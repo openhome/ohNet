@@ -1382,17 +1382,63 @@ void mDNSPlatformQsort(void *base, int nel, int width, int (*compar)(const void 
 // DNSSEC stub functions
 void VerifySignature(mDNS *const /*m*/, DNSSECVerifier* /*dv*/, DNSQuestion* /*q*/)
 {
-
-}
-
-mDNSBool AddNSECSForCacheRecord(mDNS *const /*m*/, CacheRecord* /*crlist*/, CacheRecord* /*negcr*/, mDNSu8 /*rcode*/)
-{
-    return mDNSfalse;
 }
 
 void BumpDNSSECStats(mDNS *const /*m*/, DNSSECStatsAction /*action*/, DNSSECStatsType /*type*/, mDNSu32 /*value*/)
 {
+}
 
+void StartDNSSECVerification(mDNS *const /*m*/, void* /*context*/)
+{
+}
+
+RRVerifier* AllocateRRVerifier(const ResourceRecord *const rr, mStatus *status)
+{
+    return NULL;
+}
+
+mStatus AddRRSetToVerifier(DNSSECVerifier *dv, const ResourceRecord *const rr, RRVerifier *rv, RRVerifierSet set)
+{
+    return mStatus_NoError;
+}
+
+void FreeDNSSECVerifier(mDNS *const /*m*/, DNSSECVerifier* /*dv*/)
+{
+}
+
+DNSSECVerifier *AllocateDNSSECVerifier(mDNS *const m, const domainname *name, mDNSu16 rrtype, mDNSInterfaceID InterfaceID, mDNSu8 ValidationRequired, DNSSECVerifierCallback dvcallback, mDNSQuestionCallback qcallback)
+{
+    return NULL;
+}
+
+void InitializeQuestion(mDNS *const /*m*/, DNSQuestion* /*question*/, mDNSInterfaceID /*InterfaceID*/, const domainname* /*qname*/, mDNSu16 /*qtype*/, mDNSQuestionCallback* /*callback*/, void* /*context*/)
+{
+}
+
+void ValidateRRSIG(DNSSECVerifier* /*dv*/, RRVerifierSet /*type*/, const ResourceRecord *const /*rr*/)
+{
+}
+
+void AuthChainLink(DNSSECVerifier* /*dv*/, AuthChain* /*ae*/)
+{
+}
+
+int DNSSECCanonicalOrder(const domainname *const /*d1*/, const domainname *const /*d2*/, int* /*subdomain*/)
+{
+    return 0;
+}
+
+int DNSMemCmp(const mDNSu8 *const m1, const mDNSu8 *const m2, int len)
+{
+    int res = 0;
+	if (memcmp( m1, m2, len ) != 0) {
+        return (res < 0 ? -1 : 1);
+    }
+    return res;
+}
+
+void ProveInsecure(mDNS *const /*m*/, DNSSECVerifier* /*dv*/, InsecureContext* /*ic*/, domainname* /*trigger*/)
+{
 }
 
 void DNSSECProbe(mDNS *const /*m*/)
@@ -1404,7 +1450,7 @@ void DNSSECProbe(mDNS *const /*m*/)
 // Proxy stub functions
 mDNSu8 *DNSProxySetAttributes(DNSQuestion* /*q*/, DNSMessageHeader* /*h*/, DNSMessage* /*msg*/, mDNSu8* /*ptr*/, mDNSu8* /*limit*/)
 {
-    return nullptr;
+    return NULL;
 }
 
 // Logging/debugging

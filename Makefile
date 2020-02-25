@@ -349,7 +349,7 @@ managed_only ?= no
 no_shared_objects ?= no
 endian ?= LITTLE
 cflags_base = $(CFLAGS) -fexceptions -Wall $(version_specific_cflags_third_party) -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_$(endian)_ENDIAN -DDEFINE_TRACE $(debug_specific_cflags) -fvisibility=hidden $(platform_cflags)
-cflags_third_party = $(cflags_base) -Wno-int-to-pointer-cast
+cflags_third_party = $(cflags_base) -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast
 ifeq ($(nocpp11), yes)
     cppflags = $(cflags_base) -Werror
 else ifeq ($(platform),IntelMac)
@@ -361,7 +361,6 @@ cflags = $(cflags_base) -Werror
 inc_build = Build/Include
 includes = -IBuild/Include/ $(version_specific_includes)
 bundle_build = Build/Bundles
-temp_build = Build/temp
 mDNSdir = Build/mDNS
 osdir ?= Posix
 objext = o
@@ -587,9 +586,6 @@ patch_thirdparty_sources:
 	for i in $(mDNSdir)/*.patch; do python thirdparty/python_patch/patch.py $$i; done
 
 	$(cp) $(mDNSdir)/*.h $(inc_build)/OpenHome/Net/Private
-
-remove_temp_dir:
-	$(rmdir) $(mDNSdir)
 
 install : install-pkgconf install-libs install-includes
 
