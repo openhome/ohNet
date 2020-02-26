@@ -1,0 +1,49 @@
+diff --git a/thirdparty/mDNSResponder-765.50.9/mDNSCore/anonymous.c b/thirdparty/mDNSResponder-765.50.9/mDNSCore/anonymous.c
+index d2b80e7a..16cc63e8 100644
+--- a/Build/mDNS/anonymous.c
++++ b/Build/mDNS/anonymous.c
+@@ -42,7 +42,7 @@ mDNSlocal mDNSBool InitializeNSEC3Record(ResourceRecord *rr, const mDNSu8 *AnonD
+     mDNSu8 *tmp, *nxt;
+     unsigned short iter = ANON_NSEC3_ITERATIONS;
+     int hlen;
+-    const mDNSu8 hashName[NSEC3_MAX_HASH_LEN];
++    const mDNSu8 hashName[NSEC3_MAX_HASH_LEN] = {0};
+ 
+     // Construct the RDATA first and construct the owner name based on that.
+     ptr = (const mDNSu8 *)&salt;
+@@ -100,7 +100,7 @@ mDNSlocal ResourceRecord *ConstructNSEC3Record(const domainname *service, const
+     dlen = DomainNameLength(service);
+  
+     // Allocate space for the name and RData. 
+-    rr = mDNSPlatformMemAllocate(sizeof(ResourceRecord) + dlen + sizeof(RData));
++    rr = (ResourceRecord *)mDNSPlatformMemAllocate(sizeof(ResourceRecord) + dlen + sizeof(RData));
+     if (!rr)
+         return mDNSNULL;
+     name = (domainname *)((mDNSu8 *)rr + sizeof(ResourceRecord));
+@@ -184,7 +184,7 @@ mDNSexport  AnonymousInfo *AllocateAnonInfo(const domainname *service, const mDN
+         return ai;
+     }
+     ai->salt = mDNSRandom(0xFFFFFFFF);
+-    ai->AnonData = mDNSPlatformMemAllocate(len);
++    ai->AnonData = (mDNSu8 *)mDNSPlatformMemAllocate(len);
+     if (!ai->AnonData)
+     {
+         mDNSPlatformMemFree(ai);
+@@ -242,7 +242,7 @@ mDNSexport void SetAnonData(DNSQuestion *q, ResourceRecord *rr, mDNSBool ForQues
+     {
+         if (!q->AnonInfo->AnonData)
+         {
+-            q->AnonInfo->AnonData = mDNSPlatformMemAllocate(rr->AnonInfo->AnonDataLen);
++            q->AnonInfo->AnonData = (mDNSu8 *)mDNSPlatformMemAllocate(rr->AnonInfo->AnonDataLen);
+             if (!q->AnonInfo->AnonData)
+                 return;
+         }
+@@ -253,7 +253,7 @@ mDNSexport void SetAnonData(DNSQuestion *q, ResourceRecord *rr, mDNSBool ForQues
+     {
+         if (!rr->AnonInfo->AnonData)
+         {
+-            rr->AnonInfo->AnonData = mDNSPlatformMemAllocate(q->AnonInfo->AnonDataLen);
++            rr->AnonInfo->AnonData = (mDNSu8 *)mDNSPlatformMemAllocate(q->AnonInfo->AnonDataLen);
+             if (!rr->AnonInfo->AnonData)
+                 return;
+         }

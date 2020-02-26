@@ -1,0 +1,13 @@
+diff --git a/thirdparty/mDNSResponder-765.50.9/mDNSCore/CryptoAlg.c b/thirdparty/mDNSResponder-765.50.9/mDNSCore/CryptoAlg.c
+index 0008405d..87685e0c 100644
+--- a/Build/mDNS/CryptoAlg.c
++++ b/Build/mDNS/CryptoAlg.c
+@@ -119,7 +119,7 @@ mDNSexport AlgContext *AlgCreate(AlgType type, mDNSu8 alg)
+     if (func->Create)
+     {
+         mStatus err;
+-        ctx = mDNSPlatformMemAllocate(sizeof(AlgContext));
++        ctx = (AlgContext*)mDNSPlatformMemAllocate(sizeof(AlgContext));
+         if (!ctx) return mDNSNULL;
+         // Create expects ctx->alg to be initialized
+         ctx->alg = alg;
