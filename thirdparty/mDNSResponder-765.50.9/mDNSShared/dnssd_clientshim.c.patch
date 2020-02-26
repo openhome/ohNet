@@ -1,27 +1,22 @@
 diff --git a/thirdparty/mDNSResponder-765.50.9/mDNSShared/dnssd_clientshim.c b/thirdparty/mDNSResponder-765.50.9/mDNSShared/dnssd_clientshim.c
-index c0a309d5..3eec68f4 100644
+index c0a309d5..8972dfa2 100644
 --- a/Build/mDNS/dnssd_clientshim.c
 +++ b/Build/mDNS/dnssd_clientshim.c
-@@ -25,12 +25,18 @@
- 
- #include "dns_sd.h"             // Defines the interface to the client layer above
- #include "mDNSEmbeddedAPI.h"        // The interface we're building on top of
-+#ifndef _WIN32
-+#include <netinet/in.h>
-+#endif
- extern mDNS mDNSStorage;        // We need to pass the address of this storage to the lower-layer functions
- 
- #if MDNS_BUILDINGSHAREDLIBRARY || MDNS_BUILDINGSTUBLIBRARY
+@@ -31,6 +31,13 @@ extern mDNS mDNSStorage;        // We need to pass the address of this storage t
  #pragma export on
  #endif
  
++#if defined(unix) || defined(__unix__) || defined(__unix)
++#include <netinet/in.h>
++#endif
++
 +#ifndef NULL
 +# define NULL ((void*)0)
 +#endif
  //*************************************************************************************************************
  // General Utility Functions
  
-@@ -68,15 +74,27 @@ typedef struct
+@@ -68,15 +75,27 @@ typedef struct
      DNSQuestion q;
  } mDNS_DirectOP_Browse;
  
@@ -49,7 +44,7 @@ index c0a309d5..3eec68f4 100644
  } mDNS_DirectOP_Resolve;
  
  typedef struct
-@@ -87,19 +105,21 @@ typedef struct
+@@ -87,19 +106,21 @@ typedef struct
      DNSQuestion q;
  } mDNS_DirectOP_QueryRecord;
  
@@ -74,7 +69,7 @@ index c0a309d5..3eec68f4 100644
  {
      mDNS_DirectOP *op = (mDNS_DirectOP *)sdRef;
      //LogMsg("DNSServiceRefDeallocate");
-@@ -114,7 +134,7 @@ void DNSServiceRefDeallocate(DNSServiceRef sdRef)
+@@ -114,7 +135,7 @@ void DNSServiceRefDeallocate(DNSServiceRef sdRef)
  // is run against this Extension, it will get a reasonable error code instead of just
  // failing to launch (Strong Link) or calling an unresolved symbol and crashing (Weak Link)
  #if !MDNS_BUILDINGSTUBLIBRARY
@@ -83,7 +78,7 @@ index c0a309d5..3eec68f4 100644
  (
      DNSServiceRef                       *sdRef,
      DNSServiceFlags flags,
-@@ -204,7 +224,7 @@ mDNSlocal void RegCallback(mDNS *const m, ServiceRecordSet *const sr, mStatus re
+@@ -204,7 +225,7 @@ mDNSlocal void RegCallback(mDNS *const m, ServiceRecordSet *const sr, mStatus re
      }
  }
  
@@ -92,7 +87,7 @@ index c0a309d5..3eec68f4 100644
  (
      DNSServiceRef                       *sdRef,
      DNSServiceFlags flags,
-@@ -261,7 +281,7 @@ DNSServiceErrorType DNSServiceRegister
+@@ -261,7 +282,7 @@ DNSServiceErrorType DNSServiceRegister
      err = mDNS_RegisterService(&mDNSStorage, &x->s,
                                 &x->name, &t, &d, // Name, type, domain
                                 &x->host, port, // Host and port
@@ -101,7 +96,7 @@ index c0a309d5..3eec68f4 100644
                                 SubTypes, NumSubTypes, // Subtypes
                                 mDNSInterface_Any, // Interface ID
                                 RegCallback, x, 0); // Callback, context, flags
-@@ -286,7 +306,7 @@ fail:
+@@ -286,7 +307,7 @@ fail:
  // is run against this Extension, it will get a reasonable error code instead of just
  // failing to launch (Strong Link) or calling an unresolved symbol and crashing (Weak Link)
  #if !MDNS_BUILDINGSTUBLIBRARY
@@ -110,7 +105,7 @@ index c0a309d5..3eec68f4 100644
  (
      DNSServiceRef sdRef,
      DNSRecordRef                        *RecordRef,
-@@ -307,7 +327,7 @@ DNSServiceErrorType DNSServiceAddRecord
+@@ -307,7 +328,7 @@ DNSServiceErrorType DNSServiceAddRecord
      return(kDNSServiceErr_Unsupported);
  }
  
@@ -119,7 +114,7 @@ index c0a309d5..3eec68f4 100644
  (
      DNSServiceRef sdRef,
      DNSRecordRef RecordRef,                            /* may be NULL */
-@@ -326,7 +346,7 @@ DNSServiceErrorType DNSServiceUpdateRecord
+@@ -326,7 +347,7 @@ DNSServiceErrorType DNSServiceUpdateRecord
      return(kDNSServiceErr_Unsupported);
  }
  
@@ -128,7 +123,7 @@ index c0a309d5..3eec68f4 100644
  (
      DNSServiceRef sdRef,
      DNSRecordRef RecordRef,
-@@ -379,7 +399,7 @@ mDNSlocal void FoundInstance(mDNS *const m, DNSQuestion *question, const Resourc
+@@ -379,7 +400,7 @@ mDNSlocal void FoundInstance(mDNS *const m, DNSQuestion *question, const Resourc
          x->callback((DNSServiceRef)x, flags, 0, 0, cname, ctype, cdom, x->context);
  }
  
@@ -137,7 +132,7 @@ index c0a309d5..3eec68f4 100644
  (
      DNSServiceRef                       *sdRef,
      DNSServiceFlags flags,
-@@ -432,6 +452,7 @@ fail:
+@@ -432,6 +453,7 @@ fail:
  static void DNSServiceResolveDispose(mDNS_DirectOP *op)
  {
      mDNS_DirectOP_Resolve *x = (mDNS_DirectOP_Resolve*)op;
@@ -145,7 +140,7 @@ index c0a309d5..3eec68f4 100644
      if (x->qSRV.ThisQInterval >= 0) mDNS_StopQuery(&mDNSStorage, &x->qSRV);
      if (x->qTXT.ThisQInterval >= 0) mDNS_StopQuery(&mDNSStorage, &x->qTXT);
      mDNSPlatformMemFree(x);
-@@ -443,25 +464,50 @@ mDNSlocal void FoundServiceInfo(mDNS *const m, DNSQuestion *question, const Reso
+@@ -443,25 +465,50 @@ mDNSlocal void FoundServiceInfo(mDNS *const m, DNSQuestion *question, const Reso
      (void)m;    // Unused
      if (!AddRecord)
      {
@@ -203,7 +198,7 @@ index c0a309d5..3eec68f4 100644
  (
      DNSServiceRef                       *sdRef,
      DNSServiceFlags flags,
-@@ -493,11 +539,33 @@ DNSServiceErrorType DNSServiceResolve
+@@ -493,11 +540,33 @@ DNSServiceErrorType DNSServiceResolve
      if (!x) { err = mStatus_NoMemoryErr; errormsg = "No memory"; goto fail; }
  
      // Set up object
@@ -242,7 +237,7 @@ index c0a309d5..3eec68f4 100644
  
      x->qSRV.ThisQInterval       = -1;       // So that DNSServiceResolveDispose() knows whether to cancel this question
      x->qSRV.InterfaceID         = mDNSInterface_Any;
-@@ -577,13 +645,13 @@ fail:
+@@ -577,13 +646,13 @@ fail:
  // is run against this Extension, it will get a reasonable error code instead of just
  // failing to launch (Strong Link) or calling an unresolved symbol and crashing (Weak Link)
  #if !MDNS_BUILDINGSTUBLIBRARY
@@ -258,7 +253,7 @@ index c0a309d5..3eec68f4 100644
  (
      DNSServiceRef sdRef,
      DNSRecordRef                        *RecordRef,
-@@ -635,7 +703,7 @@ mDNSlocal void DNSServiceQueryRecordResponse(mDNS *const m, DNSQuestion *questio
+@@ -635,7 +704,7 @@ mDNSlocal void DNSServiceQueryRecordResponse(mDNS *const m, DNSQuestion *questio
                  fullname, answer->rrtype, answer->rrclass, answer->rdlength, answer->rdata->u.data, answer->rroriginalttl, x->context);
  }
  
@@ -267,7 +262,7 @@ index c0a309d5..3eec68f4 100644
  (
      DNSServiceRef                       *sdRef,
      DNSServiceFlags flags,
-@@ -674,7 +742,7 @@ DNSServiceErrorType DNSServiceQueryRecord
+@@ -674,7 +743,7 @@ DNSServiceErrorType DNSServiceQueryRecord
      x->q.ExpectUnique        = mDNSfalse;
      x->q.ForceMCast          = (flags & kDNSServiceFlagsForceMulticast) != 0;
      x->q.ReturnIntermed      = (flags & kDNSServiceFlagsReturnIntermediates) != 0;
@@ -276,7 +271,7 @@ index c0a309d5..3eec68f4 100644
      x->q.SearchListIndex     = 0;
      x->q.AppendSearchDomains = 0;
      x->q.RetryWithSearchDomains = mDNSfalse;
-@@ -809,3 +877,5 @@ DNSServiceErrorType DNSSD_API DNSServiceReconfirmRecord
+@@ -809,3 +878,5 @@ DNSServiceErrorType DNSSD_API DNSServiceReconfirmRecord
  
  
  #endif  // !MDNS_BUILDINGSTUBLIBRARY

@@ -1,8 +1,19 @@
 diff --git a/thirdparty/mDNSResponder-765.50.9/mDNSShared/dns_sd.h b/thirdparty/mDNSResponder-765.50.9/mDNSShared/dns_sd.h
-index 660b3707..686686a4 100644
+index 660b3707..318692d5 100644
 --- a/Build/mDNS/dns_sd.h
 +++ b/Build/mDNS/dns_sd.h
-@@ -1559,14 +1559,16 @@ DNSServiceErrorType DNSSD_API DNSServiceBrowse
+@@ -95,6 +95,10 @@ typedef SOCKET dnssd_sock_t;
+ typedef int dnssd_sock_t;
+ #endif
+ 
++#ifdef interface
++#undef interface
++#endif
++
+ /* stdint.h does not exist on FreeBSD 4.x; its types are defined in sys/types.h instead */
+ #if defined(__FreeBSD__) && (__FreeBSD__ < 5)
+ #include <sys/types.h>
+@@ -1559,14 +1563,16 @@ DNSServiceErrorType DNSSD_API DNSServiceBrowse
  
  typedef void (DNSSD_API *DNSServiceResolveReply)
  (
