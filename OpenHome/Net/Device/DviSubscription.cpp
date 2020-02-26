@@ -88,7 +88,8 @@ void DviSubscription::Start(DviService& aService)
         if (properties[i]->SequenceNumber() == 0) {
             const Brx& service = iService->ServiceType().Name();
             const Brx& propName = properties[i]->Parameter().Name();
-            Log::Print("ERROR: uninitialised property.  Provider: %.*s, property: %.*s\n", PBUF(service), PBUF(propName));
+            const Brx& udn = iDevice.Udn();
+            Log::Print("ERROR: uninitialised property.  Provider: %.*s, property: %.*s, device: %.*s\n", PBUF(service), PBUF(propName), PBUF(udn));
             ASSERTS();
         }
     }
