@@ -1,0 +1,13 @@
+diff --git a/thirdparty/mDNSResponder-765.50.9/mDNSCore/nsec.c b/thirdparty/mDNSResponder-765.50.9/mDNSCore/nsec.c
+index 09d27356..8958d355 100644
+--- a/Build/mDNS/nsec.c
++++ b/Build/mDNS/nsec.c
+@@ -28,6 +28,8 @@
+ // Define DNSSEC_DISABLED to remove all the DNSSEC functionality
+ // and use the stub functions implemented later in this file.
+ 
++#define DNSSEC_DISABLED
++
+ #ifndef DNSSEC_DISABLED
+ 
+ // Implementation Notes

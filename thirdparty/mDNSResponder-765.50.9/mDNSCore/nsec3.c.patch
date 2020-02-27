@@ -1,36 +1,13 @@
 diff --git a/thirdparty/mDNSResponder-765.50.9/mDNSCore/nsec3.c b/thirdparty/mDNSResponder-765.50.9/mDNSCore/nsec3.c
-index 4e9e8c82..cb68275c 100644
+index 4e9e8c82..1d15c605 100644
 --- a/Build/mDNS/nsec3.c
 +++ b/Build/mDNS/nsec3.c
-@@ -92,7 +92,7 @@ mDNSlocal mDNSBool NSEC3CoversName(mDNS *const m, CacheRecord *ncr, const mDNSu8
-     mDNSu8 *nxtName;
-     int nxtLength;
-     int ret, ret1, ret2;
--    const mDNSu8 b32nxtname[NSEC3_MAX_B32_LEN+1];
-+    const mDNSu8 b32nxtname[NSEC3_MAX_B32_LEN+1] = {0};
-     int b32nxtlen;
+@@ -29,6 +29,8 @@
+ // Define DNSSEC_DISABLED to remove all the DNSSEC functionality
+ // and use the stub functions implemented later in this file.
  
-     NSEC3Parse(&ncr->resrec, mDNSNULL, &nxtLength, &nxtName, mDNSNULL, mDNSNULL);
-@@ -230,9 +230,9 @@ mDNSlocal mDNSBool NSEC3Find(mDNS *const m, NSEC3FindValues val, CacheRecord *nc
-     for (i = 0; i < labelCount + 1; i++)
-     { 
-         int hlen;
--        const mDNSu8 hashName[NSEC3_MAX_HASH_LEN];
-+        const mDNSu8 hashName[NSEC3_MAX_HASH_LEN] = {0};
-         const domainname *name;
--        const mDNSu8 b32Name[NSEC3_MAX_B32_LEN+1];
-+        const mDNSu8 b32Name[NSEC3_MAX_B32_LEN+1] = {0};
-         int b32len;
++#define DNSSEC_DISABLED
++
+ #ifndef DNSSEC_DISABLED
  
-         name = SkipLeadingLabels(origName, i);
-@@ -696,8 +696,8 @@ mDNSexport CacheRecord *NSEC3RecordIsDelegation(mDNS *const m, domainname *name,
-         for (cr = ncr->nsec; cr; cr = cr->next)
-         {
-             int hlen, b32len;
--            const mDNSu8 hashName[NSEC3_MAX_HASH_LEN];
--            const mDNSu8 b32Name[NSEC3_MAX_B32_LEN+1];
-+            const mDNSu8 hashName[NSEC3_MAX_HASH_LEN] = {0};
-+            const mDNSu8 b32Name[NSEC3_MAX_B32_LEN+1] = {0};
-             const RDataBody2 *const rdb = (RDataBody2 *)cr->resrec.rdata->u.data;
-             rdataNSEC3 *nsec3;
- 
+ typedef enum 
