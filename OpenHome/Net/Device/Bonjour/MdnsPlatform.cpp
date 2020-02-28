@@ -741,7 +741,8 @@ void MdnsPlatform::ReceiveMulticastPacket(const Brx& aMsg, const Endpoint aSrc, 
     if (interfaceId != (mDNSInterfaceID)0) {
 #ifndef DEFINE_WINDOWS_UNIVERSAL
         AutoMutex amx(iMulticastReceiveLock);
-        mDNSCoreReceive(iMdns, ptr, ptr + bytes, &src, srcport, &dst, dstport, interfaceId);
+        DNSMessage* msg = reinterpret_cast<DNSMessage*>(ptr);
+        mDNSCoreReceive(iMdns, msg, ptr + bytes, &src, srcport, &dst, dstport, interfaceId);
 #endif // DEFINE_WINDOWS_UNIVERSAL
     }
 }
