@@ -1,13 +1,15 @@
 diff --git a/thirdparty/mDNSResponder-765.50.9/mDNSCore/nsec3.c b/thirdparty/mDNSResponder-765.50.9/mDNSCore/nsec3.c
-index 4e9e8c82..1d15c605 100644
+index 4e9e8c82..e6713485 100644
 --- a/Build/mDNS/nsec3.c
 +++ b/Build/mDNS/nsec3.c
-@@ -29,6 +29,8 @@
+@@ -28,8 +28,9 @@
+ 
  // Define DNSSEC_DISABLED to remove all the DNSSEC functionality
  // and use the stub functions implemented later in this file.
++// Remove DNSSEC functionality for Windows builds
  
-+#define DNSSEC_DISABLED
-+
- #ifndef DNSSEC_DISABLED
+-#ifndef DNSSEC_DISABLED
++#ifndef DEFINE_WINDOWS_UNIVERSAL
  
  typedef enum 
+ {
