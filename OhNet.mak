@@ -286,9 +286,11 @@ patch_thirdparty_sources:
 	copy thirdparty\mDNSResponder-765.50.9\mDNSCore\*.c $(mDNSdir) > nul
 	copy thirdparty\mDNSResponder-765.50.9\mDNSCore\*.h $(mDNSdir) > nul
 	copy thirdparty\mDNSResponder-765.50.9\mDNSCore\*.patch $(mDNSdir) > nul
-	copy thirdparty\mDNSResponder-765.50.9\mDNSShared\*.c $(mDNSdir) > nul
-	copy thirdparty\mDNSResponder-765.50.9\mDNSShared\*.h $(mDNSdir) > nul
 	copy thirdparty\mDNSResponder-765.50.9\mDNSShared\*.patch $(mDNSdir) > nul
+
+	copy thirdparty\mDNSResponder-765.50.9\mDNSShared\dnssd_clientshim.c $(mDNSdir) > nul
+	copy thirdparty\mDNSResponder-765.50.9\mDNSShared\dnssd_clientlib.c $(mDNSdir) > nul
+	copy thirdparty\mDNSResponder-765.50.9\mDNSShared\dns_sd.h $(mDNSdir) > nul
 
 	for %%i in ($(mDNSdir)\*.patch) do (python thirdparty\python_patch\patch.py %%i)
 

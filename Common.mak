@@ -89,6 +89,7 @@ objects_core = \
 	$(objdir)nsec3.$(objext) \
 	$(objdir)uDNS.$(objext) \
 	$(objdir)dnssd_clientshim.$(objext) \
+	$(objdir)dnssd_clientlib.$(objext) \
 	$(objdir)MdnsPlatform.$(objext) \
 	$(objdir)MdnsProvider.$(objext) \
 	$(objdir)Md5.$(objext) \
@@ -380,6 +381,8 @@ $(objdir)uDNS.$(objext) : $(mDNSdir)/uDNS.c $(headers)
 	$(compiler)uDNS.$(objext) -c $(cflags_third_party) $(includes) $(mDNSdir)/uDNS.c
 $(objdir)dnssd_clientshim.$(objext) : $(mDNSdir)/dnssd_clientshim.c $(headers)
 	$(compiler)dnssd_clientshim.$(objext) -c $(cflags_third_party) $(includes) $(mDNSdir)/dnssd_clientshim.c
+$(objdir)dnssd_clientlib.$(objext) : $(mDNSdir)/dnssd_clientlib.c $(headers)
+	$(compiler)dnssd_clientlib.$(objext) -c $(cflags_third_party) $(includes) $(mDNSdir)/dnssd_clientlib.c
 $(objdir)MdnsPlatform.$(objext) : OpenHome/Net/Device/Bonjour/MdnsPlatform.cpp $(headers)
 	$(compiler)MdnsPlatform.$(objext) -c $(cflags_third_party) $(includes) OpenHome/Net/Device/Bonjour/MdnsPlatform.cpp
 $(objdir)MdnsProvider.$(objext) : OpenHome/Net/Device/Bonjour/MdnsProvider.cpp $(headers)

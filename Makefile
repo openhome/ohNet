@@ -579,9 +579,11 @@ patch_thirdparty_sources:
 	$(cp) thirdparty/mDNSResponder-765.50.9/mDNSCore/*.c $(mDNSdir)
 	$(cp) thirdparty/mDNSResponder-765.50.9/mDNSCore/*.h $(mDNSdir)
 	$(cp) thirdparty/mDNSResponder-765.50.9/mDNSCore/*.patch $(mDNSdir)
-	$(cp) thirdparty/mDNSResponder-765.50.9/mDNSShared/*.c $(mDNSdir)
-	$(cp) thirdparty/mDNSResponder-765.50.9/mDNSShared/*.h $(mDNSdir)
 	$(cp) thirdparty/mDNSResponder-765.50.9/mDNSShared/*.patch $(mDNSdir)
+
+	$(cp) thirdparty/mDNSResponder-765.50.9/mDNSShared/dnssd_clientshim.c $(mDNSdir)
+	$(cp) thirdparty/mDNSResponder-765.50.9/mDNSShared/dnssd_clientlib.c $(mDNSdir)
+	$(cp) thirdparty/mDNSResponder-765.50.9/mDNSShared/dns_sd.h $(mDNSdir)
 
 	for i in $(mDNSdir)/*.patch; do python thirdparty/python_patch/patch.py $$i; done
 
