@@ -65,11 +65,9 @@ TUint CpiDeviceDv::Subscribe(CpiSubscription& aSubscription, const OpenHome::Uri
     Brn tmp(sid);
     Brh transfer(tmp);
     aSubscription.SetSid(transfer);
-    TUint durationSecs = iDeviceCp->GetCpStack().Env().InitParams()->SubscriptionDurationSecs();
     DviSubscription* subscriptionDv = new DviSubscription(iDeviceDv.GetDvStack(), iDeviceDv, *this, NULL, sid);
     subscriptionDv->AddRef(); // guard against subscription expiring before client tries to renew or unsubscribe
     iDeviceDv.GetDvStack().SubscriptionManager().AddSubscription(*subscriptionDv);
-    subscriptionDv->SetDuration(durationSecs);
 
     iLock.Wait();
     if (iSubscriptions.size() == 0) {
@@ -86,18 +84,13 @@ TUint CpiDeviceDv::Subscribe(CpiSubscription& aSubscription, const OpenHome::Uri
     service->AddSubscription(subscriptionDv);
     service->RemoveRef();
 
+    const TUint durationSecs = iDeviceCp->GetCpStack().Env().InitParams()->SubscriptionDurationSecs();
     return durationSecs;
 }
 
-TUint CpiDeviceDv::Renew(CpiSubscription& aSubscription)
+TUint CpiDeviceDv::Renew(CpiSubscription& /*aSubscription*/)
 {
-    Brn sid(aSubscription.Sid());
-    TUint durationSecs = iDeviceCp->GetCpStack().Env().InitParams()->SubscriptionDurationSecs();
-    AutoMutex _(iLock);
-    SubscriptionMap::iterator it = iSubscriptions.find(sid);
-    if (it != iSubscriptions.end()) {
-        it->second->iDv->Renew(durationSecs);
-    }
+    const TUint durationSecs = iDeviceCp->GetCpStack().Env().InitParams()->SubscriptionDurationSecs();
     return durationSecs;
 }
 
