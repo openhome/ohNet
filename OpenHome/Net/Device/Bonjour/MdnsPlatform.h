@@ -272,7 +272,7 @@ private:
     TBool iTimerDisabled;
     std::vector<DNSServiceRef*> iSdRefs;
     std::vector<IMdnsDeviceListener*> iDeviceListeners;
-    CacheEntity iMdnsCache[kRRCacheSize];
+    CacheEntity* iMdnsCache;
     std::vector<void*> iDynamicCache;
     Mutex iDiscoveryLock;
     TInt iPrevTimerRequest;
