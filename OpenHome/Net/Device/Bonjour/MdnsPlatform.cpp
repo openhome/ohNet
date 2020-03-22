@@ -765,15 +765,20 @@ void MdnsPlatform::ServiceThread()
      */
     while (!iStop) {
         try {
+            Log::Print("MdnsPlatform::ServiceThread - read fifo\n");
             MdnsService* service = iFifoPending.Read();
+            Log::Print("MdnsPlatform::ServiceThread - perform action (%p)\n", service);
             TUint status = service->PerformAction();
+            Log::Print("MdnsPlatform::ServiceThread - performed action\n");
             iFifoFree.Write(service);
             if (status == mStatus_NoError) {
+                Log::Print("MdnsPlatform::ServiceThread - waiting\n");
                 iSem.Wait();
             }
         }
-        catch (FifoReadError&)
-        {}
+        catch (FifoReadError&) {
+            Log::Print("MdnsPlatform::ServiceThread - caught (ignored) FifoReadError\n");
+        }
     }
 }
 
