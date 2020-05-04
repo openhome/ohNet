@@ -204,7 +204,7 @@ ifeq ($(platform),IntelMac)
 		openhome_architecture = x64
 	else
 		platform_cflags = -DPLATFORM_MACOSX_GNU -m32 -mmacosx-version-min=10.7
-		platform_linkflags = -m32 -framework CoreFoundation -framework SystemConfiguration
+		platform_linkflags = -m32 -framework CoreFoundation -framework SystemConfiguration  -framework IOKit
 		osbuilddir = Mac-x86
 		openhome_architecture = x86
 	endif
