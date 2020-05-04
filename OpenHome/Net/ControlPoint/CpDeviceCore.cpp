@@ -59,6 +59,19 @@ CpDevice::~CpDevice()
 }
 
 
+// AutoRefCpDevice
+
+AutoRefCpDevice::AutoRefCpDevice(CpDevice& aDevice)
+    : iDevice(aDevice)
+{
+}
+
+AutoRefCpDevice::~AutoRefCpDevice()
+{
+    iDevice.RemoveRef();
+}
+
+
 // CpDeviceList
 
 CpDeviceList::~CpDeviceList()

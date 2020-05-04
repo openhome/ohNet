@@ -71,6 +71,15 @@ private:
     TUint iRefCount;
 };
 
+class AutoRefCpDevice
+{
+public:
+    AutoRefCpDevice(CpDevice& aDevice);
+    ~AutoRefCpDevice();
+private:
+    CpDevice& iDevice;
+};
+
 class CpiDeviceList;
 class FunctorCpiDevice;
 /**
