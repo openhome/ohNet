@@ -199,7 +199,7 @@ ifeq ($(platform),IntelMac)
 	linkopts_ohNet = -Wl,-install_name,@loader_path/libohNet.dylib
 	ifeq ($(mac-64),1)
 		platform_cflags = -DPLATFORM_MACOSX_GNU -arch x86_64 -mmacosx-version-min=10.7
-		platform_linkflags = -arch x86_64 -framework CoreFoundation -framework SystemConfiguration
+		platform_linkflags = -arch x86_64 -framework CoreFoundation -framework SystemConfiguration -framework IOKit
 		osbuilddir = Mac-x64
 		openhome_architecture = x64
 	else
