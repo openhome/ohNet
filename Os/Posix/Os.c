@@ -40,6 +40,12 @@
 #ifdef PLATFORM_MACOSX_GNU
 #include <SystemConfiguration/SystemConfiguration.h>
 #include <execinfo.h>
+#include <IOKit/IOMessage.h>
+#include <IOKit/pwr_mgt/IOPMLib.h>
+#include <mach/mach_init.h>
+#include <mach/mach_interface.h>
+#include <mach/mach_port.h>
+#include <stdarg.h>
 #endif
 
 #ifdef POSIX_STACK_TRACE
@@ -75,6 +81,21 @@
 # define MAX_FILE_DESCRIPTOR __FD_SETSIZE
 #endif
 
+#ifdef PLATFORM_MACOSX_GNU
+static void WriteTimeStamp(void)
+{
+    struct timeval now;
+    gettimeofday(&now, NULL);
+    int32_t millis = now.tv_usec / 1000;
+    int32_t dsec = (int)(now.tv_sec - 1587250800);
+    int32_t seconds = dsec % 60;
+    int32_t dmin = dsec / 60;
+    int32_t minutes = dmin % 60;
+    int32_t hours = (dmin / 60) % 24;
+    fprintf(stderr, "%02d:%02d:%02d.%03d ", hours, minutes, seconds, millis);
+}
+#endif
+
 typedef struct OsNetworkHandle
 {
     int32_t    iSocket;
@@ -91,6 +112,30 @@ typedef struct DnsRefresher
     void* iCallbackArg;
 } DnsRefresher;
 
+typedef struct SemaphoreData
+{
+    pthread_cond_t  iCond;
+    pthread_mutex_t iLock;
+    int32_t         iValue;
+#ifdef PLATFORM_MACOSX_GNU
+    int32_t         iSignalled;
+    struct SemaphoreData* iNext;
+    OsContext*      iCtx;
+#endif
+} SemaphoreData;
+
+#ifdef PLATFORM_MACOSX_GNU
+typedef struct SleepWake
+{
+    SemaphoreData* iTimedWaits;
+    io_connect_t iRootPort; /* reference to the Root Power Domain IOService */
+    IONotificationPortRef iNotifyPortRef; /* allocated by IORegisterForSystemPower */
+    io_object_t iNotifierObject; /* notifier object, used to deregister later */
+    THandle iThread;
+    CFRunLoopRef iRunLoop;
+} SleepWake;
+#endif
+
 struct OsContext {
     struct timeval iStartTime; /* Time OsCreate was called */
     struct timeval iPrevTime; /* Last time OsTimeInUs() was called */
@@ -101,6 +146,9 @@ struct OsContext {
     pthread_key_t iThreadArgKey;
     struct InterfaceChangedObserver* iInterfaceChangedObserver;
     int32_t iThreadPriorityMin;
+#ifdef PLATFORM_MACOSX_GNU
+    SleepWake* iSleepWake;
+#endif
 
     DnsRefresher* iDnsRefresh; // linux only
 };
@@ -111,6 +159,10 @@ static void DestroyInterfaceChangedObserver(OsContext* aContext);
 static void DnsRefreshCreate(OsContext* aContext);
 static void DnsRefreshDestroy(OsContext* aContext);
 #endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD && !defined(__ANDROID__) */
+#ifdef PLATFORM_MACOSX_GNU
+static void SleepWakeCreate(OsContext* aContext);
+static void SleepWakeDestroy(OsContext* aContext);
+#endif
 
 
 OsContext* OsCreate(OsThreadSchedulePolicy aSchedulerPolicy)
@@ -136,6 +188,9 @@ OsContext* OsCreate(OsThreadSchedulePolicy aSchedulerPolicy)
 #if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD) && !defined(__ANDROID__)
     DnsRefreshCreate(ctx);
 #endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD && !defined(__ANDROID__) */
+#ifdef PLATFORM_MACOSX_GNU
+    SleepWakeCreate(ctx);
+#endif
 
     return ctx;
 }
@@ -143,6 +198,9 @@ OsContext* OsCreate(OsThreadSchedulePolicy aSchedulerPolicy)
 void OsDestroy(OsContext* aContext)
 {
     if (aContext != NULL) {
+#ifdef PLATFORM_MACOSX_GNU
+        SleepWakeDestroy(aContext);
+#endif
 #if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD) && !defined(__ANDROID__)
         DnsRefreshDestroy(aContext);
 #endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD && !defined(__ANDROID__) */
@@ -345,13 +403,6 @@ static void getAbsTimespec(struct timespec* aTime, uint32_t aMsecs)
     }
 }
 
-typedef struct
-{
-    pthread_cond_t  iCond;
-    pthread_mutex_t iLock;
-    int32_t         iValue;
-} SemaphoreData;
-
 THandle OsSemaphoreCreate(OsContext* aContext, const char* aName, uint32_t aCount)
 {
     SemaphoreData* data = (SemaphoreData*)calloc(1, sizeof(*data));
@@ -369,8 +420,47 @@ THandle OsSemaphoreCreate(OsContext* aContext, const char* aName, uint32_t aCoun
         return kHandleNull;
     }
     data->iValue = aCount;
+#ifdef PLATFORM_MACOSX_GNU
+    data->iCtx = aContext;
+#endif
     return (THandle)data;
 }
+
+#ifdef PLATFORM_MACOSX_GNU
+static void Debug(char* message, ...)
+{
+    va_list args;
+    int enableDebug = 0; // 1 enables, 0 disables debug output
+    if (enableDebug) {
+        WriteTimeStamp();
+        va_start(args, message);
+        vfprintf(stderr, message, args);
+        va_end(args);
+        fflush(stderr);
+    }
+}
+
+void removeTimedWait(SemaphoreData* data, char* function)
+{
+    // remove this semaphore from the timed waiting list, if present
+    SleepWake *sleepWake = data->iCtx->iSleepWake;
+    OsMutexLock(data->iCtx->iMutex);
+    if (sleepWake->iTimedWaits == data) {
+        Debug("%s: removing semaphore %p from timed wait list\n", function, data);
+        sleepWake->iTimedWaits = data->iNext;
+    }
+    else {
+        for (SemaphoreData* sem = sleepWake->iTimedWaits; sem != NULL; sem = sem->iNext) {
+            if (sem->iNext == data) {
+                Debug("%s: removing semaphore %p from timed wait list\n", function, data);
+                sem->iNext = data->iNext;
+                break;
+            }
+        }
+    }
+    OsMutexUnlock(data->iCtx->iMutex);
+}
+#endif
 
 void OsSemaphoreDestroy(THandle aSem)
 {
@@ -378,6 +468,9 @@ void OsSemaphoreDestroy(THandle aSem)
     if (data == kHandleNull) {
         return;
     }
+#ifdef PLATFORM_MACOSX_GNU
+    removeTimedWait(data, "OsSemaphoreDestroy");
+#endif
     (void)pthread_mutex_destroy(&data->iLock);
     (void)TEMP_FAILURE_RETRY(pthread_cond_destroy(&data->iCond));
     free(data);
@@ -421,7 +514,47 @@ int32_t OsSemaphoreTimedWait(THandle aSem, uint32_t aTimeoutMs)
         goto exit;
     }
     while (data->iValue == 0 && timeout == 0 && status == 0) {
-        status = TEMP_FAILURE_RETRY(pthread_cond_timedwait(&data->iCond, &data->iLock, &timeToWait));
+#ifdef PLATFORM_MACOSX_GNU
+        // add this semaphore to the timed waiting list
+        Debug("OsSemaphoreTimedWait: adding semaphore %p to timed wait list\n", data);
+        OsContext* ctx = data->iCtx;
+        SleepWake* sleepWake = ctx->iSleepWake;
+        OsMutexLock(ctx->iMutex);
+        data->iNext = sleepWake->iTimedWaits;
+        sleepWake->iTimedWaits = data;
+        data->iSignalled = 0;
+        OsMutexUnlock(ctx->iMutex);
+        int32_t millis = timeToWait.tv_nsec / 1000000;
+        int32_t dsec = (int)(timeToWait.tv_sec - 1587250800);
+        int32_t seconds = dsec % 60;
+        int32_t dmin = dsec / 60;
+        int32_t minutes = dmin % 60;
+        int32_t hours = (dmin / 60) % 24;
+        while (true) {
+            Debug("OsSemaphoreTimedWait: handle=%p timeout=%d timeToWait=%02d:%02d:%02d.%03d\n",
+                  aSem, aTimeoutMs, hours, minutes, seconds, millis);
+#endif
+            status = TEMP_FAILURE_RETRY(pthread_cond_timedwait(&data->iCond, &data->iLock, &timeToWait));
+#ifdef PLATFORM_MACOSX_GNU
+            if (status == 0 && !data->iSignalled) {
+                // signalled by SleepWakeCallback
+                struct timeval now;
+                gettimeofday(&now, NULL);
+                if (now.tv_sec < timeToWait.tv_sec ||
+                    (now.tv_sec == timeToWait.tv_sec && now.tv_usec * 1000 < timeToWait.tv_nsec)) {
+                    // original wait deadline has not yet passed
+                    continue;
+                } else {
+                    status = ETIMEDOUT;
+                }
+            }
+            break;
+        }
+        Debug("OsSemaphoreTimedWait: handle=%p timeout=%d timeToWait=%02d:%02d:%02d.%03d status=%d\n",
+              aSem, aTimeoutMs, hours, minutes, seconds, millis, status);
+        data->iSignalled = 0;
+        removeTimedWait(data, "OsSemaphoreTimedWait");
+#endif
         if (status==ETIMEDOUT) {
             timeout = 1;
             status = 0;
@@ -452,6 +585,9 @@ int32_t OsSemaphoreSignal(THandle aSem)
     SemaphoreData* data = (SemaphoreData*)aSem;
     pthread_mutex_lock(&data->iLock);
     data->iValue += 1;
+#ifdef PLATFORM_MACOSX_GNU
+    data->iSignalled = 1;
+#endif
     status = pthread_cond_signal(&data->iCond);
     pthread_mutex_unlock(&data->iLock);
     return (status==0? 0 : -1);
@@ -1100,11 +1236,11 @@ int32_t OsNetworkSocketSetReuseAddress(THandle aHandle)
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
     int32_t reuseaddr = 1;
     int32_t err = setsockopt(handle->iSocket, SOL_SOCKET, SO_REUSEADDR, &reuseaddr, sizeof(reuseaddr));
-#if !defined(PLATFORM_FREEBSD) && !defined(PLATFORM_QNAP) && !defined(__ANDROID__)
+#ifdef PLATFORM_MACOSX_GNU
     if (err == 0) {
         err = setsockopt(handle->iSocket, SOL_SOCKET, SO_REUSEPORT, &reuseaddr, sizeof(reuseaddr));
     }
-#endif /* !PLATFORM_FREEBSD !PLATFORM_QNAP && !__ANDROID__ */
+#endif /* PLATFOTM_MACOSX_GNU */
     return err;
 }
 
@@ -1481,6 +1617,17 @@ static void DestroyInterfaceChangedObserver_MacDesktop(OsContext* aContext)
 
 #endif /* PLATFOTM_MACOSX_GNU && ! PLATFORM_IOS */
 
+#if !defined(PLATFORM_FREEBSD)
+
+static int32_t ThreadJoin(THandle aThread)
+{
+    ThreadData* data = (ThreadData*) aThread;
+    int status = pthread_join(data->iThread, NULL);
+    return (status==0 ? 0 : -1);
+}
+
+#endif /* !PLATFORM_FREEBSD */
+
 #if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD)
 
 void adapterChangeObserverThread(void* aPtr)
@@ -1526,13 +1673,6 @@ void adapterChangeObserverThread(void* aPtr)
             }
         }
     }
-}
-
-static int32_t ThreadJoin(THandle aThread)
-{
-    ThreadData* data = (ThreadData*) aThread;
-    int status = pthread_join(data->iThread, NULL);
-    return (status==0 ? 0 : -1);
 }
 
 static void DestroyInterfaceChangedObserver_Linux(OsContext* aContext)
@@ -1702,6 +1842,171 @@ static void DnsRefreshDestroy(OsContext* aContext)
 }
 
 #endif /* !PLATFORM_MACOSX_GNU  && !PLATFORM_FREEBSD && !defined(__ANDROID__) */
+
+#ifdef PLATFORM_MACOSX_GNU
+
+// macOS doesn't handle timed waits correctly after sleep/wake.
+// Work around this problem by registering for wake notifications and signalling
+// all semaphores that are currently in a timed wait.
+
+void SleepWakeCallback(void* aPtr, io_service_t service, natural_t messageType, void* messageArgument)
+{
+    OsContext* ctx = (OsContext*)aPtr;
+    SleepWake* sleepWake = ctx->iSleepWake;
+
+    switch (messageType) {
+
+        case kIOMessageCanSystemSleep:
+            Debug("SleepWakeCallback: received kIOMessageCanSystemSleep\n");
+
+            /* Idle sleep is about to kick in. This message will not be sent for forced sleep.
+                Applications have a chance to prevent sleep by calling IOCancelPowerChange.
+                Most applications should not prevent idle sleep.
+
+                Power Management waits up to 30 seconds for you to either allow or deny idle
+                sleep. If you don't acknowledge this power change by calling either
+                IOAllowPowerChange or IOCancelPowerChange, the system will wait 30
+                seconds then go to sleep.
+            */
+
+            //Uncomment to cancel idle sleep
+            //IOCancelPowerChange(sleepWake->iRootPort, (long)messageArgument);
+
+            // we will allow idle sleep
+            IOAllowPowerChange(sleepWake->iRootPort, (long)messageArgument);
+            break;
+
+        case kIOMessageSystemWillSleep:
+            Debug("SleepWakeCallback: received kIOMessageSystemWillSleep\n");
+
+            /* The system WILL go to sleep. If you do not call IOAllowPowerChange or
+                IOCancelPowerChange to acknowledge this message, sleep will be
+                delayed by 30 seconds.
+
+                NOTE: If you call IOCancelPowerChange to deny sleep it returns
+                kIOReturnSuccess, however the system WILL still go to sleep.
+            */
+
+            IOAllowPowerChange(sleepWake->iRootPort, (long)messageArgument);
+            break;
+
+        case kIOMessageSystemWillPowerOn:
+            // System has started the wake up process...
+            Debug("SleepWakeCallback: received kIOMessageSystemWillPowerOn\n");
+            break;
+
+        case kIOMessageSystemHasPoweredOn:
+            // System has finished waking up...
+            Debug("SleepWakeCallback: received kIOMessageSystemHasPoweredOn\n");
+
+            // signal all semaphores on the timed wait list
+            // OsSemaphoreTimedWait will start a new wait if the deadline has not yet passed 
+            OsMutexLock(ctx->iMutex);
+            for (SemaphoreData* data = sleepWake->iTimedWaits; data != NULL; data = data->iNext) {
+                Debug("SleepWakeCallback: signalling semaphore %p on timed wait list\n", data);
+                pthread_mutex_lock(&data->iLock);
+                pthread_cond_signal(&data->iCond);
+                pthread_mutex_unlock(&data->iLock);
+            }
+            OsMutexUnlock(ctx->iMutex);
+            break;
+
+        default:
+            Debug("SleepWakeCallback: messageType %08lx, arg %08lx\n",
+                  (long unsigned int)messageType,
+                  (long unsigned int)messageArgument);
+            break;
+    }
+}
+
+static void SleepWakeThread(void* aPtr)
+{
+    Debug("SleepWakeThread: starting\n");
+    OsContext* ctx = (OsContext*)aPtr;
+    SleepWake* sleepWake = ctx->iSleepWake;
+    sleepWake->iRunLoop = CFRunLoopGetCurrent();
+
+    // register to receive system sleep notifications
+    sleepWake->iRootPort = IORegisterForSystemPower(aPtr, &sleepWake->iNotifyPortRef, SleepWakeCallback, &sleepWake->iNotifierObject);
+    if (sleepWake->iRootPort == MACH_PORT_NULL) {
+        Debug("SleepWakeThread: IORegisterForSystemPower error\n");
+        return;
+    }
+
+    // add the notification port to the application RunLoop
+    CFRunLoopAddSource(sleepWake->iRunLoop, IONotificationPortGetRunLoopSource(sleepWake->iNotifyPortRef), kCFRunLoopCommonModes);
+
+    // start the RunLoop to receive sleep notifications
+    CFRunLoopRun();
+
+    // CFRunLoopRun doesn't return until CFRunLoopStop is called
+}
+
+static void SleepWakeCreate(OsContext* aContext)
+{
+    Debug("SleepWakeCreate: starting\n");
+    assert(aContext != NULL);
+    uint32_t minPrio, maxPrio;
+    OsThreadGetPriorityRange(aContext, &minPrio, &maxPrio);
+
+    assert(aContext->iSleepWake == NULL);
+    aContext->iSleepWake = calloc(1, sizeof *aContext->iSleepWake);
+
+    aContext->iSleepWake->iThread = DoThreadCreate(aContext,
+                                                    "SleepWakeThread",
+                                                    (maxPrio - minPrio) / 2,   // Same as adapterChangeObserverThread
+                                                    16 * 1024,                 // Same as adapterChangeObserverThread
+                                                    1,                         // Joinable
+                                                    SleepWakeThread,
+                                                    aContext);
+}
+
+static void SleepWakeDestroy(OsContext* aContext)
+{
+    Debug("SleepWakeDestroy: starting\n");
+    assert(aContext != NULL);
+    if (aContext->iSleepWake == NULL) {
+        return;
+    }
+    SleepWake* sleepWake = aContext->iSleepWake;
+
+    // remove the sleep notification port from the application runloop
+    Debug("SleepWakeDestroy: calling CFRunLoopRemoveSource\n");
+    CFRunLoopRemoveSource(sleepWake->iRunLoop,
+                          IONotificationPortGetRunLoopSource(sleepWake->iNotifyPortRef),
+                          kCFRunLoopCommonModes);
+
+    // deregister for system sleep notifications
+    Debug("SleepWakeDestroy: calling IODeregisterForSystemPower\n");
+    IOReturn ioStatus = IODeregisterForSystemPower(&sleepWake->iNotifierObject);
+    if (ioStatus != kIOReturnSuccess) {
+        Debug("SleepWakeDestroy: IODeregisterForSystemPower error return %d\n", ioStatus);
+    }
+
+    // IORegisterForSystemPower implicitly opens the Root Power Domain IOService
+    // so we close it here
+    Debug("SleepWakeDestroy: calling IOServiceClose\n");
+    kern_return_t kernStatus = IOServiceClose(sleepWake->iRootPort);
+    if (ioStatus != KERN_SUCCESS) {
+        Debug("SleepWakeDestroy: IOServiceClose error return %d\n", kernStatus);
+    }
+
+    // destroy the notification port allocated by IORegisterForSystemPower
+    Debug("SleepWakeDestroy: calling IONotificationPortDestroy\n");
+    IONotificationPortDestroy(sleepWake->iNotifyPortRef);
+
+    if (sleepWake->iThread != NULL) {
+        Debug("SleepWakeDestroy: calling CFRunLoopStop\n");
+        CFRunLoopStop(sleepWake->iRunLoop);
+        Debug("SleepWakeDestroy: calling ThreadJoin\n");
+        ThreadJoin(sleepWake->iThread);
+        Debug("SleepWakeDestroy: calling OsThreadDestroy\n");
+        OsThreadDestroy(sleepWake->iThread);
+    }
+    free(aContext->iSleepWake);
+}
+
+#endif /* PLATFORM_MACOSX_GNU */
 
 static void DestroyInterfaceChangedObserver(OsContext* aContext)
 {
