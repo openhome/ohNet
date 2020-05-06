@@ -1236,11 +1236,11 @@ int32_t OsNetworkSocketSetReuseAddress(THandle aHandle)
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
     int32_t reuseaddr = 1;
     int32_t err = setsockopt(handle->iSocket, SOL_SOCKET, SO_REUSEADDR, &reuseaddr, sizeof(reuseaddr));
-#ifdef PLATFORM_MACOSX_GNU
+#if !defined(PLATFORM_FREEBSD) && !defined(PLATFORM_QNAP) && !defined(__ANDROID__)
     if (err == 0) {
         err = setsockopt(handle->iSocket, SOL_SOCKET, SO_REUSEPORT, &reuseaddr, sizeof(reuseaddr));
     }
-#endif /* PLATFOTM_MACOSX_GNU */
+#endif /* !PLATFORM_FREEBSD !PLATFORM_QNAP && !__ANDROID__ */
     return err;
 }
 
