@@ -1233,14 +1233,16 @@ int32_t OsNetworkTcpSetNoDelay(THandle aHandle)
 
 int32_t OsNetworkSocketSetReuseAddress(THandle aHandle)
 {
+#ifndef SO_REUSEPORT
+# define SO_REUSEPORT 15
+#endif
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
     int32_t reuseaddr = 1;
     int32_t err = setsockopt(handle->iSocket, SOL_SOCKET, SO_REUSEADDR, &reuseaddr, sizeof(reuseaddr));
-#if !defined(PLATFORM_FREEBSD) && !defined(PLATFORM_QNAP) && !defined(__ANDROID__)
     if (err == 0) {
-        err = setsockopt(handle->iSocket, SOL_SOCKET, SO_REUSEPORT, &reuseaddr, sizeof(reuseaddr));
+        /* ignore errors from SO_REUSEPORT - some platforms don't support it */
+        (void)setsockopt(handle->iSocket, SOL_SOCKET, SO_REUSEPORT, &reuseaddr, sizeof(reuseaddr));
     }
-#endif /* !PLATFORM_FREEBSD !PLATFORM_QNAP && !__ANDROID__ */
     return err;
 }
 
