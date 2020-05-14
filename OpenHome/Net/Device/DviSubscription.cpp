@@ -536,7 +536,7 @@ PublisherPool::PublisherPool(const TChar* aName, TUint aPriority, IPublisherObse
 
     for (TUint i=0; i<iNumPublishers; i++) {
         Bws<Thread::kMaxNameBytes+1> thName;
-        thName.AppendPrintf("Publisher_%d_%d\n", aPoolNumber, i);
+        thName.AppendPrintf("Publisher_%d_%d", aPoolNumber, i);
         thName.PtrZ();
         iPublishers[i] = new Publisher((const TChar*)thName.Ptr(), aPriority, aObserver, iFree, aModerationMs);
         iFree.Write(iPublishers[i]);
