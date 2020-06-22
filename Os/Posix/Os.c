@@ -953,20 +953,23 @@ int32_t OsNetworkConnect(THandle aHandle, TIpAddress aAddress, uint16_t aPort, u
     (void)connect(handle->iSocket, (struct sockaddr*)&addr, sizeof(addr));
 
     fd_set read;
-    FD_ZERO(&read);
-    FD_SET(handle->iPipe[0], &read);
     fd_set write;
-    FD_ZERO(&write);
-    FD_SET(handle->iSocket, &write);
     fd_set error;
-    FD_ZERO(&error);
-    FD_SET(handle->iSocket, &error);
+    int32_t selectErr;
 
     struct timeval tv;
     tv.tv_sec = aTimeoutMs / 1000;
     tv.tv_usec = (aTimeoutMs % 1000) * 1000;
 
-    int32_t selectErr = TEMP_FAILURE_RETRY_2(select(nfds(handle), &read, &write, &error, &tv), handle);
+    do {
+        FD_ZERO(&read);
+        FD_SET(handle->iPipe[0], &read);
+        FD_ZERO(&write);
+        FD_SET(handle->iSocket, &write);
+        FD_ZERO(&error);
+        FD_SET(handle->iSocket, &error);
+        selectErr = (long int) select(nfds(handle), &read, &write, &error, &tv);
+    } while(selectErr == -1L && errno == EINTR && !SocketInterrupted(handle));
     if (selectErr > 0 && FD_ISSET(handle->iSocket, &write)) {
         // Need to check socket status using getsockopt. See man page for connect, EINPROGRESS
         int sock_error;
@@ -1024,17 +1027,20 @@ int32_t OsNetworkReceive(THandle aHandle, uint8_t* aBuffer, uint32_t aBytes)
     }
     SetFdNonBlocking(handle->iSocket);
 
-    fd_set read;
-    FD_ZERO(&read);
-    FD_SET(handle->iPipe[0], &read);
-    FD_SET(handle->iSocket, &read);
-    fd_set error;
-    FD_ZERO(&error);
-    FD_SET(handle->iSocket, &error);
-
     int32_t received = TEMP_FAILURE_RETRY_2(recv(handle->iSocket, aBuffer, aBytes, MSG_NOSIGNAL), handle);
     if (received==-1 && errno==EWOULDBLOCK) {
-        int32_t selectErr = TEMP_FAILURE_RETRY_2(select(nfds(handle), &read, NULL, &error, NULL), handle);
+        fd_set read;
+        fd_set error;
+        int32_t selectErr;
+        do {
+            FD_ZERO(&read);
+            FD_SET(handle->iPipe[0], &read);
+            FD_SET(handle->iSocket, &read);
+            FD_ZERO(&error);
+            FD_SET(handle->iSocket, &error);
+            selectErr = (long int) select(nfds(handle), &read, NULL, &error, NULL);
+        } while(selectErr == -1L && errno == EINTR && !SocketInterrupted(handle));
+
         if (selectErr > 0 && FD_ISSET(handle->iSocket, &read)) {
             received = TEMP_FAILURE_RETRY_2(recv(handle->iSocket, aBuffer, aBytes, MSG_NOSIGNAL), handle);
         }
@@ -1056,17 +1062,20 @@ int32_t OsNetworkReceiveFrom(THandle aHandle, uint8_t* aBuffer, uint32_t aBytes,
 
     SetFdNonBlocking(handle->iSocket);
 
-    fd_set read;
-    FD_ZERO(&read);
-    FD_SET(handle->iPipe[0], &read);
-    FD_SET(handle->iSocket, &read);
-    fd_set error;
-    FD_ZERO(&error);
-    FD_SET(handle->iSocket, &error);
-
     int32_t received = TEMP_FAILURE_RETRY_2(recvfrom(handle->iSocket, aBuffer, aBytes, MSG_NOSIGNAL, (struct sockaddr*)&addr, &addrLen), handle);
     if (received==-1 && errno==EWOULDBLOCK) {
-        int32_t selectErr = TEMP_FAILURE_RETRY_2(select(nfds(handle), &read, NULL, &error, NULL), handle);
+        fd_set read;
+        fd_set error;
+        int32_t selectErr;
+        do {
+            FD_ZERO(&read);
+            FD_SET(handle->iPipe[0], &read);
+            FD_SET(handle->iSocket, &read);
+            FD_ZERO(&error);
+            FD_SET(handle->iSocket, &error);
+            selectErr = (long int) select(nfds(handle), &read, NULL, &error, NULL);
+        } while(selectErr == -1L && errno == EINTR && !SocketInterrupted(handle));
+
         if (selectErr > 0 && FD_ISSET(handle->iSocket, &read)) {
             received = TEMP_FAILURE_RETRY_2(recvfrom(handle->iSocket, aBuffer, aBytes, MSG_NOSIGNAL, (struct sockaddr*)&addr, &addrLen), handle);
         }
@@ -1136,17 +1145,19 @@ THandle OsNetworkAccept(THandle aHandle, TIpAddress* aClientAddress, uint32_t* a
 
     SetFdNonBlocking(handle->iSocket);
 
-    fd_set read;
-    FD_ZERO(&read);
-    FD_SET(handle->iPipe[0], &read);
-    FD_SET(handle->iSocket, &read);
-    fd_set error;
-    FD_ZERO(&error);
-    FD_SET(handle->iSocket, &error);
-
     int32_t h = TEMP_FAILURE_RETRY_2(accept(handle->iSocket, (struct sockaddr*)&addr, &len), handle);
     if (h==-1 && errno==EWOULDBLOCK) {
-        int32_t selectErr = TEMP_FAILURE_RETRY_2(select(nfds(handle), &read, NULL, &error, NULL), handle);
+        fd_set read;
+        fd_set error;
+        int32_t selectErr;
+        do {
+            FD_ZERO(&read);
+            FD_SET(handle->iPipe[0], &read);
+            FD_SET(handle->iSocket, &read);
+            FD_ZERO(&error);
+            FD_SET(handle->iSocket, &error);
+            selectErr = (long int) select(nfds(handle), &read, NULL, &error, NULL);
+        } while(selectErr == -1L && errno == EINTR && !SocketInterrupted(handle));
         if (selectErr > 0 && FD_ISSET(handle->iSocket, &read)) {
             h = TEMP_FAILURE_RETRY_2(accept(handle->iSocket, (struct sockaddr*)&addr, &len), handle);
         }
@@ -1646,14 +1657,15 @@ void adapterChangeObserverThread(void* aPtr)
             return;
         }
 
-        FD_ZERO(&rfds);
-        FD_SET(handle->iPipe[0], &rfds);
-        FD_SET(handle->iSocket, &rfds);
+        do {
+            FD_ZERO(&rfds);
+            FD_SET(handle->iPipe[0], &rfds);
+            FD_SET(handle->iSocket, &rfds);
+            FD_ZERO(&errfds);
+            FD_SET(handle->iSocket, &errfds);
+            ret = (long int) select(nfds(handle), &rfds, NULL, &errfds, NULL);
+        } while(ret == -1L && errno == EINTR && !SocketInterrupted(handle));
 
-        FD_ZERO(&errfds);
-        FD_SET(handle->iSocket, &errfds);
-
-        ret = TEMP_FAILURE_RETRY_2(select(nfds(handle), &rfds, NULL, &errfds, NULL), handle);
         if ((ret > 0) && FD_ISSET(handle->iSocket, &rfds)) {
             nlh = (struct nlmsghdr *) buffer;
             if ((len = recv(handle->iSocket, nlh, 4096, 0)) > 0) {
@@ -1775,14 +1787,15 @@ void DnsRefreshThread(void* aPtr)
                 return;
             }
 
-            FD_ZERO(&rfds);
-            FD_SET(handle->iPipe[0], &rfds);
-            FD_SET(handle->iSocket, &rfds);
+            do {
+                FD_ZERO(&rfds);
+                FD_SET(handle->iPipe[0], &rfds);
+                FD_SET(handle->iSocket, &rfds);
+                FD_ZERO(&errfds);
+                FD_SET(handle->iSocket, &errfds);
+                ret = (long int) select(nfds(handle), &rfds, NULL, &errfds, NULL);
+            } while(ret == -1L && errno == EINTR && !SocketInterrupted(handle));
 
-            FD_ZERO(&errfds);
-            FD_SET(handle->iSocket, &errfds);
-
-            ret = TEMP_FAILURE_RETRY_2(select(nfds(handle), &rfds, NULL, &errfds, NULL), handle);
             if ((ret > 0) && FD_ISSET(handle->iSocket, &rfds)) {
                 char* buffer[bytesToRead];
                 int32_t len = read(handle->iSocket, buffer, bytesToRead);
