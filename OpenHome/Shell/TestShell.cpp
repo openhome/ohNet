@@ -7,6 +7,7 @@
 #include <OpenHome/Private/ShellCommandWatchDog.h>
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Net/Private/CpiStack.h>
+#include <OpenHome/Net/Private/DviStack.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -96,6 +97,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     CpStack* cpStack = NULL;
     DvStack* dvStack = NULL;
     lib->StartCombined(subnet, cpStack, dvStack);
+    dvStack->Start();
 
     Shell* shell = lib->Env().Shell();
     Semaphore* blocker = new Semaphore("BLCK", 0);
