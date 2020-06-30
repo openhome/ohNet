@@ -6,6 +6,7 @@
 #include <OpenHome/Net/Core/CpOpenhomeOrgTestBasic1.h>
 #include <OpenHome/Net/Private/DviProviderSubscriptionLongPoll.h>
 #include <OpenHome/Private/File.h>
+#include <OpenHome/Net/Private/DviStack.h>
 
 #include <vector>
 
@@ -137,6 +138,7 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
     Debug::SetSeverity(Debug::kSeverityError);
     
     DvStack* dvStack = lib->StartDv();
+    dvStack->Start();
 
     Print("TestDvTestBasic - starting ('q' to quit)\n");
     DeviceTestBasic* device = new DeviceTestBasic(*dvStack, config.Value());
