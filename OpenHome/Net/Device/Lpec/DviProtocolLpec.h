@@ -17,6 +17,8 @@ class DviProtocolFactoryLpec : public IDvProtocolFactory
 public:
     DviProtocolFactoryLpec(DvStack& aDvStack, TUint aServerPort);
     ~DviProtocolFactoryLpec();
+public: // from IDvProtocolFactory
+    void Start();
 private: // from IDvProtocolFactory
     IDvProtocol* CreateProtocol(DviDevice& aDevice);
 private:

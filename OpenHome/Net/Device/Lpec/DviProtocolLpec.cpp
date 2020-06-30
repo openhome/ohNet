@@ -19,6 +19,11 @@ DviProtocolFactoryLpec::~DviProtocolFactoryLpec()
     delete iServer;
 }
 
+void DviProtocolFactoryLpec::Start()
+{
+    iServer->Start();
+}
+
 IDvProtocol* DviProtocolFactoryLpec::CreateProtocol(DviDevice& aDevice)
 {
     return new DviProtocolLpec(aDevice, *iServer);

@@ -53,22 +53,12 @@ DviServer::DviServer(DvStack& aDvStack)
 
 void DviServer::Initialise()
 {
-    const TIpAddress kLoopbackAddr = MakeIpAddress(127, 0, 0, 1);
     AutoMutex a(iLock); // ensure initialisation completes before change listeners are run
     Functor functor = MakeFunctor(*this, &DviServer::SubnetListChanged);
     NetworkAdapterList& nifList = iDvStack.Env().NetworkAdapterList();
     iCurrentAdapterChangeListenerId = nifList.AddCurrentChangeListener(functor, "DviServer-current");
     iSubnetListChangeListenerId = nifList.AddSubnetListChangeListener(functor, "DviServer-subnet");
-    AutoNetworkAdapterRef ref(iDvStack.Env(), "DviServer::Initialise");
-    NetworkAdapter* current = ref.Adapter();
-    std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
-    for (TUint i=0; i<subnetList->size(); i++) {
-        NetworkAdapter* subnet = (*subnetList)[i];
-        if (current == NULL || subnet->Address() == current->Address() || subnet->Address() == kLoopbackAddr) {
-            AddServer(*subnet);
-        }
-    }
-    NetworkAdapterList::DestroySubnetList(subnetList);
+    SubnetListChangedLocked();
 }
 
 void DviServer::NotifyServerDeleted(TIpAddress /*aInterface*/)
@@ -89,6 +79,12 @@ void DviServer::AddServer(NetworkAdapter& aNif)
 
 void DviServer::SubnetListChanged()
 {
+    AutoMutex a(iLock);
+    SubnetListChangedLocked();
+}
+
+void DviServer::SubnetListChangedLocked()
+{
     /* DviProtocolUpnp relies on servers being available on all appropriate interfaces.
        We assume this happens through DviServer being created before any devices
        so registering for subnet change notification earlier.  Assuming NetworkAdapterList
@@ -96,7 +92,6 @@ void DviServer::SubnetListChanged()
        any device listeners are run. */
 
     const TIpAddress kLoopbackAddr = MakeIpAddress(127, 0, 0, 1);
-    AutoMutex a(iLock);
     NetworkAdapterList& adapterList = iDvStack.Env().NetworkAdapterList();
     AutoNetworkAdapterRef ref(iDvStack.Env(), "DviServer::SubnetListChanged");
     NetworkAdapter* current = ref.Adapter();

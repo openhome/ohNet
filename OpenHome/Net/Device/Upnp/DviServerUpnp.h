@@ -272,6 +272,8 @@ public:
     ~DviServerUpnp();
     void SetPathMapper(IPathMapperUpnp* aPathMapper);
     void Redirect(const Brx& aUriRequested, const Brx& aUriRedirectedTo);
+public: // from DviServer
+    void Start();
 protected: // from DviServer
     SocketTcpServer* CreateServer(const NetworkAdapter& aNif);
     void NotifyServerDeleted(TIpAddress aInterface);

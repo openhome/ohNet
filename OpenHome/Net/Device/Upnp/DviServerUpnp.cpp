@@ -1408,6 +1408,10 @@ DviServerUpnp::DviServerUpnp(DvStack& aDvStack, TUint aPort)
     , iPathMapper(NULL)
     , iLockRedirect("DSUp")
 {
+}
+
+void DviServerUpnp::Start()
+{
     Initialise();
 }
 

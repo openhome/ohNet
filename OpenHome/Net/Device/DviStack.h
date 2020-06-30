@@ -39,6 +39,7 @@ class DvStack : private IStack, private INonCopyable
 public:
     DvStack(Environment& aEnv);
     Environment& Env() { return iEnv; }
+    void Start();
     TUint BootId();
     TUint NextBootId();
     void UpdateBootId();

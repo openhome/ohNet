@@ -2,6 +2,7 @@
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Private/OptionParser.h>
 #include <OpenHome/Net/Core/OhNet.h>
+#include <OpenHome/Net/Private/DviStack.h>
 
 #include <vector>
 
@@ -29,6 +30,7 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::Init
     CpStack* cpStack = NULL;
     DvStack* dvStack = NULL;
     lib->StartCombined(subnet, cpStack, dvStack);
+    dvStack->Start();
 
     TestDvInvocation(*cpStack, *dvStack);
 

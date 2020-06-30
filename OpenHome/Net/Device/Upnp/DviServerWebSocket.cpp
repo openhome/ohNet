@@ -1005,6 +1005,10 @@ DviSessionWebSocket::SubscriptionWrapper::~SubscriptionWrapper()
 DviServerWebSocket::DviServerWebSocket(DvStack& aDvStack)
     : DviServer(aDvStack)
 {
+}
+
+void DviServerWebSocket::Start()
+{
     if (iDvStack.Env().InitParams()->DvNumWebSocketThreads() > 0) {
         Initialise();
     }

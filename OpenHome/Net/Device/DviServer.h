@@ -18,6 +18,7 @@ class DviServer
 public:
     virtual ~DviServer();
     TUint Port(TIpAddress aInterface);
+    virtual void Start() = 0;
 protected:
     DviServer(DvStack& aDvStack);
     void Initialise();
@@ -28,6 +29,7 @@ protected:
 private:
     void AddServer(NetworkAdapter& aNif);
     void SubnetListChanged();
+    void SubnetListChangedLocked();
     TInt FindInterface(TIpAddress aInterface, const std::vector<NetworkAdapter*>& aNifList);
     TInt FindServer(TIpAddress aSubnet);
 private:

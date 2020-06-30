@@ -934,6 +934,10 @@ DviServerLpec::DviServerLpec(DvStack& aDvStack, TUint aPort)
     : DviServer(aDvStack)
     , iPort(aPort)
 {
+}
+
+void DviServerLpec::Start()
+{
     Initialise();
 }
 

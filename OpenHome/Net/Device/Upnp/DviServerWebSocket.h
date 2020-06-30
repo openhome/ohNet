@@ -301,6 +301,8 @@ class DviServerWebSocket : public DviServer
 {
 public:
     DviServerWebSocket(DvStack& aDvStack);
+public: // from DviServer
+    void Start();
 protected:
     virtual SocketTcpServer* CreateServer(const NetworkAdapter& aNif);
 };

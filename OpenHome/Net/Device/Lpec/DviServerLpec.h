@@ -229,6 +229,8 @@ public:
     void SendAnnouncement();
     void NotifyDeviceDisabled(const Brx& aName, const Brx& aUdn);
     TUint Port() const;
+public: // from DviServer
+    void Start();
 private: // from DviServerUpnp
     SocketTcpServer* CreateServer(const NetworkAdapter& aNif);
     void NotifyServerDeleted(TIpAddress aInterface);

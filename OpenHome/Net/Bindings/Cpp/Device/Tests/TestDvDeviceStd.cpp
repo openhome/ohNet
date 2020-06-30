@@ -8,6 +8,7 @@
 #include "../../ControlPoint/Tests/TestBasicCp.h"
 #include <OpenHome/Net/Cpp/DvDevice.h>
 #include <OpenHome/Net/Private/Globals.h>
+#include <OpenHome/Net/Private/DviStack.h>
 
 #include <string>
 #include <vector>
@@ -120,6 +121,7 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
     TIpAddress subnet = (*subnetList)[0]->Subnet();
     UpnpLibrary::DestroySubnetList(subnetList);
     UpnpLibrary::StartCombined(subnet);
+    gDvStack->Start();
     //Debug::SetLevel(Debug::kEvent | Debug::kDvEvent);
 
     Print("TestDvDeviceStd - starting\n");

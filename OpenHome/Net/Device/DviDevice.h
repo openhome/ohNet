@@ -22,6 +22,7 @@ class IDvProtocolFactory
 {
 public:
     virtual IDvProtocol* CreateProtocol(DviDevice& aDevice) = 0;
+    virtual void Start() = 0;
     virtual ~IDvProtocolFactory() {}
 };
 

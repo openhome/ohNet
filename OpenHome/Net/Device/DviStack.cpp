@@ -51,6 +51,15 @@ DvStack::~DvStack()
     ASSERT(iControlPointObservers.size() == 0);
 }
 
+void DvStack::Start()
+{
+    iDviServerUpnp->Start();
+    iDviServerWebSocket->Start();
+    for (TUint i=0; i<iProtocolFactories.size(); i++) {
+        iProtocolFactories[i]->Start();
+    }
+}
+
 TUint DvStack::BootId()
 {
     AutoMutex _(iLock);
