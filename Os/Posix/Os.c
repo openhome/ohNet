@@ -40,7 +40,7 @@
 #ifdef PLATFORM_MACOSX_GNU
 #include <SystemConfiguration/SystemConfiguration.h>
 #include <execinfo.h>
-#include <IOKit/IOMessage.h>
+#include <IOKit/IOTypes.h>
 #include <IOKit/pwr_mgt/IOPMLib.h>
 #include <mach/mach_init.h>
 #include <mach/mach_interface.h>
