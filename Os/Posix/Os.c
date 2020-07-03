@@ -129,6 +129,7 @@ typedef struct SemaphoreData
 } SemaphoreData;
 
 #ifdef PLATFORM_MACOSX_GNU
+#ifndef PLATFORM_IOS
 typedef struct SleepWake
 {
     SemaphoreData* iTimedWaits;
@@ -138,6 +139,7 @@ typedef struct SleepWake
     THandle iThread;
     CFRunLoopRef iRunLoop;
 } SleepWake;
+#endif /* !PLATFORM_IOS */
 #endif
 
 struct OsContext {
