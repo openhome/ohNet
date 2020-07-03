@@ -152,7 +152,7 @@ struct OsContext {
     pthread_key_t iThreadArgKey;
     struct InterfaceChangedObserver* iInterfaceChangedObserver;
     int32_t iThreadPriorityMin;
-#ifdef PLATFORM_MACOSX_GNU
+#if defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_IOS)
     SleepWake* iSleepWake;
 #endif
 
@@ -433,6 +433,7 @@ THandle OsSemaphoreCreate(OsContext* aContext, const char* aName, uint32_t aCoun
 }
 
 #ifdef PLATFORM_MACOSX_GNU
+#ifndef PLATFORM_IOS
 static void Debug(char* message, ...)
 {
     va_list args;
@@ -466,7 +467,8 @@ void removeTimedWait(SemaphoreData* data, char* function)
     }
     OsMutexUnlock(data->iCtx->iMutex);
 }
-#endif
+#endif /* !PLATFORM_IOS */
+#endif /* PLATFORM_MACOSX_GNU */
 
 void OsSemaphoreDestroy(THandle aSem)
 {
@@ -474,7 +476,7 @@ void OsSemaphoreDestroy(THandle aSem)
     if (data == kHandleNull) {
         return;
     }
-#ifdef PLATFORM_MACOSX_GNU
+#if defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_IOS)
     removeTimedWait(data, "OsSemaphoreDestroy");
 #endif
     (void)pthread_mutex_destroy(&data->iLock);
@@ -520,7 +522,7 @@ int32_t OsSemaphoreTimedWait(THandle aSem, uint32_t aTimeoutMs)
         goto exit;
     }
     while (data->iValue == 0 && timeout == 0 && status == 0) {
-#ifdef PLATFORM_MACOSX_GNU
+#if defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_IOS)
         // add this semaphore to the timed waiting list
         Debug("OsSemaphoreTimedWait: adding semaphore %p to timed wait list\n", data);
         OsContext* ctx = data->iCtx;
@@ -539,9 +541,9 @@ int32_t OsSemaphoreTimedWait(THandle aSem, uint32_t aTimeoutMs)
         while (true) {
             Debug("OsSemaphoreTimedWait: handle=%p timeout=%d timeToWait=%02d:%02d:%02d.%03d\n",
                   aSem, aTimeoutMs, hours, minutes, seconds, millis);
-#endif
+#endif /* PLATFORM_MACOSX_GNU && !PLATFORM_IOS */
             status = TEMP_FAILURE_RETRY(pthread_cond_timedwait(&data->iCond, &data->iLock, &timeToWait));
-#ifdef PLATFORM_MACOSX_GNU
+#if defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_IOS)
             if (status == 0 && !data->iSignalled) {
                 // signalled by SleepWakeCallback
                 struct timeval now;
