@@ -40,8 +40,12 @@
 #ifdef PLATFORM_MACOSX_GNU
 #include <SystemConfiguration/SystemConfiguration.h>
 #include <execinfo.h>
+
+#ifndef PLATFORM_IOS
 #include <IOKit/IOMessage.h>
 #include <IOKit/pwr_mgt/IOPMLib.h>
+#endif /* !PLATFORM_IOS */
+
 #include <mach/mach_init.h>
 #include <mach/mach_interface.h>
 #include <mach/mach_port.h>
@@ -1859,6 +1863,7 @@ static void DnsRefreshDestroy(OsContext* aContext)
 #endif /* !PLATFORM_MACOSX_GNU  && !PLATFORM_FREEBSD && !defined(__ANDROID__) */
 
 #ifdef PLATFORM_MACOSX_GNU
+#ifndef PLATFORM_IOS
 
 // macOS doesn't handle timed waits correctly after sleep/wake.
 // Work around this problem by registering for wake notifications and signalling
@@ -2021,6 +2026,7 @@ static void SleepWakeDestroy(OsContext* aContext)
     free(aContext->iSleepWake);
 }
 
+#endif /* !PLATFORM_IOS */
 #endif /* PLATFORM_MACOSX_GNU */
 
 static void DestroyInterfaceChangedObserver(OsContext* aContext)

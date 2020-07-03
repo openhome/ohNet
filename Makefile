@@ -182,7 +182,7 @@ ifeq ($(platform),iOS)
 	# TODO: Support armv6 for old devices
 	osbuilddir = $(platform)-$(detected_openhome_architecture)
 	objdir = Build/Obj/$(osbuilddir)/$(build_dir)/
-	platform_linkflags = -L$(sdkroot)/usr/lib/ -arch $(platform_arch) -framework CoreFoundation -framework IOKit
+	platform_linkflags = -L$(sdkroot)/usr/lib/ -arch $(platform_arch) -framework IOKit
 	compiler = $(toolroot)/clang -stdlib=libc++ -arch $(platform_arch) -isysroot $(sdkroot) -o $(objdir)
 	# No support for linking Shared Objects for ARM MAC
 	# link = $(devroot)/usr/bin/llvm-gcc-4.2  -pthread -Wl $(platform_linkflags)
