@@ -1408,11 +1408,13 @@ DviServerUpnp::DviServerUpnp(DvStack& aDvStack, TUint aPort)
     , iPathMapper(NULL)
     , iLockRedirect("DSUp")
 {
+    // DviServerUpnp must be initialised before Start to keep DviProtocolUpnp happy
+    Initialise();
 }
 
 void DviServerUpnp::Start()
 {
-    Initialise();
+    //Initialise(); -- this is too late for DviServerUpnp
 }
 
 DviServerUpnp::~DviServerUpnp()
