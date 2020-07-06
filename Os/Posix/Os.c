@@ -40,8 +40,12 @@
 #ifdef PLATFORM_MACOSX_GNU
 #include <SystemConfiguration/SystemConfiguration.h>
 #include <execinfo.h>
+
+#ifndef PLATFORM_IOS
 #include <IOKit/IOMessage.h>
 #include <IOKit/pwr_mgt/IOPMLib.h>
+#endif /* !PLATFORM_IOS */
+
 #include <mach/mach_init.h>
 #include <mach/mach_interface.h>
 #include <mach/mach_port.h>
@@ -125,6 +129,7 @@ typedef struct SemaphoreData
 } SemaphoreData;
 
 #ifdef PLATFORM_MACOSX_GNU
+#ifndef PLATFORM_IOS
 typedef struct SleepWake
 {
     SemaphoreData* iTimedWaits;
@@ -134,6 +139,7 @@ typedef struct SleepWake
     THandle iThread;
     CFRunLoopRef iRunLoop;
 } SleepWake;
+#endif /* !PLATFORM_IOS */
 #endif
 
 struct OsContext {
@@ -146,7 +152,7 @@ struct OsContext {
     pthread_key_t iThreadArgKey;
     struct InterfaceChangedObserver* iInterfaceChangedObserver;
     int32_t iThreadPriorityMin;
-#ifdef PLATFORM_MACOSX_GNU
+#if defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_IOS)
     SleepWake* iSleepWake;
 #endif
 
@@ -427,6 +433,7 @@ THandle OsSemaphoreCreate(OsContext* aContext, const char* aName, uint32_t aCoun
 }
 
 #ifdef PLATFORM_MACOSX_GNU
+#ifndef PLATFORM_IOS
 static void Debug(char* message, ...)
 {
     va_list args;
@@ -460,7 +467,8 @@ void removeTimedWait(SemaphoreData* data, char* function)
     }
     OsMutexUnlock(data->iCtx->iMutex);
 }
-#endif
+#endif /* !PLATFORM_IOS */
+#endif /* PLATFORM_MACOSX_GNU */
 
 void OsSemaphoreDestroy(THandle aSem)
 {
@@ -468,7 +476,7 @@ void OsSemaphoreDestroy(THandle aSem)
     if (data == kHandleNull) {
         return;
     }
-#ifdef PLATFORM_MACOSX_GNU
+#if defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_IOS)
     removeTimedWait(data, "OsSemaphoreDestroy");
 #endif
     (void)pthread_mutex_destroy(&data->iLock);
@@ -514,7 +522,7 @@ int32_t OsSemaphoreTimedWait(THandle aSem, uint32_t aTimeoutMs)
         goto exit;
     }
     while (data->iValue == 0 && timeout == 0 && status == 0) {
-#ifdef PLATFORM_MACOSX_GNU
+#if defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_IOS)
         // add this semaphore to the timed waiting list
         Debug("OsSemaphoreTimedWait: adding semaphore %p to timed wait list\n", data);
         OsContext* ctx = data->iCtx;
@@ -533,9 +541,9 @@ int32_t OsSemaphoreTimedWait(THandle aSem, uint32_t aTimeoutMs)
         while (true) {
             Debug("OsSemaphoreTimedWait: handle=%p timeout=%d timeToWait=%02d:%02d:%02d.%03d\n",
                   aSem, aTimeoutMs, hours, minutes, seconds, millis);
-#endif
+#endif /* PLATFORM_MACOSX_GNU && !PLATFORM_IOS */
             status = TEMP_FAILURE_RETRY(pthread_cond_timedwait(&data->iCond, &data->iLock, &timeToWait));
-#ifdef PLATFORM_MACOSX_GNU
+#if defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_IOS)
             if (status == 0 && !data->iSignalled) {
                 // signalled by SleepWakeCallback
                 struct timeval now;
@@ -1859,6 +1867,7 @@ static void DnsRefreshDestroy(OsContext* aContext)
 #endif /* !PLATFORM_MACOSX_GNU  && !PLATFORM_FREEBSD && !defined(__ANDROID__) */
 
 #ifdef PLATFORM_MACOSX_GNU
+#ifndef PLATFORM_IOS
 
 // macOS doesn't handle timed waits correctly after sleep/wake.
 // Work around this problem by registering for wake notifications and signalling
@@ -2021,6 +2030,7 @@ static void SleepWakeDestroy(OsContext* aContext)
     free(aContext->iSleepWake);
 }
 
+#endif /* !PLATFORM_IOS */
 #endif /* PLATFORM_MACOSX_GNU */
 
 static void DestroyInterfaceChangedObserver(OsContext* aContext)
