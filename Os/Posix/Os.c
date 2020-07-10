@@ -1994,11 +1994,41 @@ static void SleepWakeDestroy(OsContext* aContext)
     }
     SleepWake* sleepWake = aContext->iSleepWake;
 
-    // remove the sleep notification port from the application runloop
-    Debug("SleepWakeDestroy: calling CFRunLoopRemoveSource\n");
-    CFRunLoopRemoveSource(sleepWake->iRunLoop,
-                          IONotificationPortGetRunLoopSource(sleepWake->iNotifyPortRef),
-                          kCFRunLoopCommonModes);
+    /* When testing, the startup and teardown of this context
+     * can happen very quickly and the CFRunLoop doesn't have
+     * a suitable amount of time to get started and populate
+     * our 'iNotifyPortRef' value.
+     *
+     * Under normal operation this should never spin, but in 
+     * order to allow tests to run correctly we'll spinwait 
+     * a short while to let things get going in the runloop.
+     *
+     * If by the of the spinwait we still don't have a notify
+     * port ref we'll just cleanup as much as possible and
+     * assume the OS will tidyup the rest once the program
+     * exists! */
+    for(int i = 0; i < 50; ++i)
+    {
+        if (sleepWake->iNotifyPortRef != NULL)
+            break;
+
+        sleep(0.75);
+    }
+
+    Debug("SleepWakeDestory [WARN]: iNotifyPortRef is still NULL after spinwait. Certain teardown operations wont be run.\n");
+
+    if (sleepWake->iNotifyPortRef != NULL)
+    {
+        // remove the sleep notification port from the application runloop
+        Debug("SleepWakeDestroy: calling CFRunLoopRemoveSource\n");
+        CFRunLoopRemoveSource(sleepWake->iRunLoop,
+                              IONotificationPortGetRunLoopSource(sleepWake->iNotifyPortRef),
+                              kCFRunLoopCommonModes);
+    }
+    else
+    {
+        Debug("SleepWakeDestroy: [WARN] Skipping CFRunLoopRemoveSource\n");
+    }
 
     // deregister for system sleep notifications
     Debug("SleepWakeDestroy: calling IODeregisterForSystemPower\n");
@@ -2015,9 +2045,17 @@ static void SleepWakeDestroy(OsContext* aContext)
         Debug("SleepWakeDestroy: IOServiceClose error return %d\n", kernStatus);
     }
 
-    // destroy the notification port allocated by IORegisterForSystemPower
-    Debug("SleepWakeDestroy: calling IONotificationPortDestroy\n");
-    IONotificationPortDestroy(sleepWake->iNotifyPortRef);
+    if (sleepWake->iNotifyPortRef != NULL)
+    {
+        // destroy the notification port allocated by IORegisterForSystemPower
+        Debug("SleepWakeDestroy: calling IONotificationPortDestroy\n");
+        IONotificationPortDestroy(sleepWake->iNotifyPortRef);
+    }
+    else
+    {
+        Debug("SleepWakeDestroy: [WARN] Skipping IONotificationPortDestroy\n");
+    }
+
 
     if (sleepWake->iThread != NULL) {
         Debug("SleepWakeDestroy: calling CFRunLoopStop\n");
