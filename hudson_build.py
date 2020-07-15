@@ -162,7 +162,6 @@ class JenkinsBuild():
             'Windows10-arm': { 'os': 'Windows10', 'arch': 'arm', 'publish': True, 'system': 'Windows10'},
             'Macos-x64': { 'os': 'macos', 'arch': 'x86', 'publish': False, 'system': 'Mac'},  # Old Jenkins label
             'Mac-x64': { 'os': 'macos', 'arch': 'x64', 'publish': True, 'system': 'Mac'},     # New Jenkins label, matches downstream builds
-            'Mac-x86': { 'os': 'macos', 'arch': 'x86', 'publish': True, 'system': 'Mac'},     # New Jenkins label, matches downstream builds
             'Linux-ARM': { 'os': 'linux', 'arch': 'armel', 'publish': True, 'system': 'Linux'},
             'Linux-armhf': { 'os': 'linux', 'arch': 'armhf', 'publish': True, 'system': 'Linux'},
             'Linux-rpi': { 'os': 'linux', 'arch': 'rpi', 'publish': True, 'system': 'Linux'},
@@ -278,9 +277,8 @@ class JenkinsBuild():
         if os_platform == 'linux' and arch == 'x86':
             args.append('--java')
         if os_platform == 'macos':
-            if arch == 'x64':
-                args.append('--mac-64')
-                self.platform_make_args.append('mac-64=1')
+            args.append('--mac-64')
+            self.platform_make_args.append('mac-64=1')
         if os_platform == 'iOs':
             if arch == 'x86':
                 args.append('--iOs-x86')

@@ -59,11 +59,7 @@ ifeq ($(MACHINE),Darwin)
   else
     platform = IntelMac
     detected_openhome_system = Mac
-    ifeq ($(mac-64),1)
-      detected_openhome_architecture = x64
-    else
-      detected_openhome_architecture = x86
-    endif
+    detected_openhome_architecture = x64
   endif
 else ifneq (, $(findstring powerpc, $(gcc_machine)))
     platform = Linux-ppc32
@@ -197,17 +193,10 @@ ifeq ($(platform),IntelMac)
 	# Darwin, not ARM -> Intel Mac
 	platform ?= IntelMac
 	linkopts_ohNet = -Wl,-install_name,@loader_path/libohNet.dylib
-	ifeq ($(mac-64),1)
-		platform_cflags = -DPLATFORM_MACOSX_GNU -arch x86_64 -mmacosx-version-min=10.7
-		platform_linkflags = -arch x86_64 -framework CoreFoundation -framework SystemConfiguration -framework IOKit
-		osbuilddir = Mac-x64
-		openhome_architecture = x64
-	else
-		platform_cflags = -DPLATFORM_MACOSX_GNU -m32 -mmacosx-version-min=10.7
-		platform_linkflags = -m32 -framework CoreFoundation -framework SystemConfiguration  -framework IOKit
-		osbuilddir = Mac-x86
-		openhome_architecture = x86
-	endif
+	platform_cflags = -DPLATFORM_MACOSX_GNU -arch x86_64 -mmacosx-version-min=10.7
+	platform_linkflags = -arch x86_64 -framework CoreFoundation -framework SystemConfiguration -framework IOKit
+	osbuilddir = Mac-x64
+	openhome_architecture = x64
 
 	objdir = Build/Obj/$(osbuilddir)/$(build_dir)/
 	compiler = clang -fPIC -stdlib=libc++ -o $(objdir)
