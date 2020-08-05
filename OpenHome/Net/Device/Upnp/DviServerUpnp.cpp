@@ -579,17 +579,20 @@ void PropertyWriterFactory::RemoveRef()
 
 // DviSessionUpnp
 
-DviSessionUpnp::DviSessionUpnp(DvStack& aDvStack, TIpAddress aInterface, TUint aPort,
+DviSessionUpnp::DviSessionUpnp(DvStack& aDvStack, const NetworkAdapter& aNif, TUint aPort,
                                PropertyWriterFactory& aPropertyWriterFactory,
                                IPathMapperUpnp& aPathMapper, IRedirector& aRedirector)
     : iDvStack(aDvStack)
-    , iInterface(aInterface)
+    , iNif(const_cast<NetworkAdapter&>(aNif))
+    , iInterface(aNif.Address())
     , iPort(aPort)
     , iPropertyWriterFactory(aPropertyWriterFactory)
     , iPathMapper(aPathMapper)
     , iRedirector(aRedirector)
     , iShutdownSem("DSUS", 1)
 {
+    iNif.AddRef("DviSessionUpnp");
+
     iReadBuffer = new Srs<1024>(*this);
     iReaderUntil = new ReaderUntilS<4096>(*iReadBuffer);
     iReaderRequest = new ReaderHttpRequest(aDvStack.Env(), *iReaderUntil);
@@ -629,6 +632,7 @@ DviSessionUpnp::~DviSessionUpnp()
     delete iReaderRequest;
     delete iReaderUntil;
     delete iReadBuffer;
+    iNif.RemoveRef("DviSessionUpnp");
 }
 
 void DviSessionUpnp::Run()
@@ -799,15 +803,6 @@ void DviSessionUpnp::Post()
 
 void DviSessionUpnp::Subscribe()
 {
-    {
-        Endpoint::EndpointBuf ep;
-        iHeaderCallback.Endpoint().AppendEndpoint(ep);
-        const Brx& callback = iHeaderCallback.Uri();
-        LOG(kDvEvent, "Subscription request from %s%.*s for %.*s\n",
-                      reinterpret_cast<const TChar*>(ep.Ptr()),
-                      PBUF(callback),
-                      PBUF(iReaderRequest->Uri()));
-    }
     if (iHeaderSid.Received()) {
         try {
             Renew();
@@ -822,6 +817,27 @@ void DviSessionUpnp::Subscribe()
     if (!iHeaderCallback.Received() || !iHeaderNt.Received()) {
         Error(HttpStatus::kPreconditionFailed);
     }
+    {
+        Endpoint::EndpointBuf ep;
+        iHeaderCallback.Endpoint().AppendEndpoint(ep);
+        const Brx& callback = iHeaderCallback.Uri();
+        LOG(kDvEvent, "Subscription request from %s%.*s for %.*s\n",
+            reinterpret_cast<const TChar*>(ep.Ptr()),
+            PBUF(callback),
+            PBUF(iReaderRequest->Uri()));
+    }
+
+    // CallStranger mitigation - avoid a local client requesting evented updates be sent to a different subnet
+    if (!iNif.ContainsAddress(iHeaderCallback.Endpoint().Address())) {
+        Endpoint::EndpointBuf us;
+        Endpoint nif(iPort, iNif.Address());
+        nif.AppendEndpoint(us);
+        Endpoint::EndpointBuf them;
+        iHeaderCallback.Endpoint().AppendEndpoint(them);
+        Log::Print("WARNING - rejecting SUBSCRIBE - possible CallStranger exploit - running on %s, subscriber at %s\n", us.Ptr(), them.Ptr());
+        Error(HttpStatus::kPreconditionFailed);
+    }
+
     DviDevice* device;
     DviService* service;
     ParseRequestUri(DviProtocolUpnp::kEventUrlTail, &device, &service);
@@ -1448,7 +1464,7 @@ SocketTcpServer* DviServerUpnp::CreateServer(const NetworkAdapter& aNif)
         Bws<Thread::kMaxNameBytes+1> thName;
         thName.AppendPrintf("UpnpSession %d", i);
         thName.PtrZ();
-        server->Add((const TChar*)thName.Ptr(), new DviSessionUpnp(iDvStack, aNif.Address(), server->Port(), *pwf, *this, *this));
+        server->Add((const TChar*)thName.Ptr(), new DviSessionUpnp(iDvStack, aNif, server->Port(), *pwf, *this, *this));
     }
     return server;
 }

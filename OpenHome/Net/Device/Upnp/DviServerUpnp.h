@@ -174,7 +174,7 @@ private:
 class DviSessionUpnp : public SocketTcpSession, private IResourceWriter, private IDviInvocation
 {
 public:
-    DviSessionUpnp(DvStack& aDvStack, TIpAddress aInterface, TUint aPort,
+    DviSessionUpnp(DvStack& aDvStack, const NetworkAdapter& aNif, TUint aPort,
                    PropertyWriterFactory& aPropertyWriterFactory,
                    IPathMapperUpnp& aPathMapper, IRedirector& aRedirector);
     ~DviSessionUpnp();
@@ -228,6 +228,7 @@ private:
     static const TUint kMaxRequestPathBytes = 256;
 private:
     DvStack& iDvStack;
+    NetworkAdapter& iNif;
     TIpAddress iInterface;
     TUint iPort;
     PropertyWriterFactory& iPropertyWriterFactory;
