@@ -927,14 +927,19 @@ THandle OsNetworkAccept(THandle aHandle, TIpAddress* aClientAddress, uint32_t* a
 
 int32_t OsNetworkGetHostByName(const char* aAddress, TIpAddress* aHost)
 {
-    int32_t ret = 0;
+    int32_t ret = -1;
     struct addrinfo *results = NULL;
-    ret = getaddrinfo(aAddress, "", NULL, &results);
-    if (results == NULL) {
-        ret = -1;
-    }
-    else {
-        *aHost = ((struct sockaddr_in*)results[0].ai_addr)->sin_addr.s_addr;
+    (void)getaddrinfo(aAddress, "", NULL, &results);
+    if (results != NULL) {
+        struct addrinfo *res = results;
+        while (res != NULL) {
+            if (res->ai_family == AF_INET) {
+                *aHost = ((struct sockaddr_in*)res->ai_addr)->sin_addr.s_addr;
+                ret = 0;
+                break;
+            }
+            res = res->ai_next;
+        }
         freeaddrinfo(results);
     }
     return ret;
