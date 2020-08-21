@@ -165,10 +165,13 @@ static void DestroyInterfaceChangedObserver(OsContext* aContext);
 static void DnsRefreshCreate(OsContext* aContext);
 static void DnsRefreshDestroy(OsContext* aContext);
 #endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD && !defined(__ANDROID__) */
+
 #ifdef PLATFORM_MACOSX_GNU
+#ifndef PLATFORM_IOS
 static void SleepWakeCreate(OsContext* aContext);
 static void SleepWakeDestroy(OsContext* aContext);
-#endif
+#endif /* !PLATFORM_IOS */
+#endif /* PLATFORM_MACOSX */
 
 
 OsContext* OsCreate(OsThreadSchedulePolicy aSchedulerPolicy)
@@ -194,9 +197,12 @@ OsContext* OsCreate(OsThreadSchedulePolicy aSchedulerPolicy)
 #if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD) && !defined(__ANDROID__)
     DnsRefreshCreate(ctx);
 #endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD && !defined(__ANDROID__) */
+
 #ifdef PLATFORM_MACOSX_GNU
+#ifndef PLATFORM_IOS
     SleepWakeCreate(ctx);
-#endif
+#endif /* !PLATFORM_IOS */
+#endif /* PLATFORM_MACOSX */
 
     return ctx;
 }
@@ -204,9 +210,13 @@ OsContext* OsCreate(OsThreadSchedulePolicy aSchedulerPolicy)
 void OsDestroy(OsContext* aContext)
 {
     if (aContext != NULL) {
+
 #ifdef PLATFORM_MACOSX_GNU
+#ifndef PLATFORM_IOS
         SleepWakeDestroy(aContext);
-#endif
+#endif /* !PLATFORM_IOS */
+#endif /* PLATFORM_MACOSX */ 
+
 #if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD) && !defined(__ANDROID__)
         DnsRefreshDestroy(aContext);
 #endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD && !defined(__ANDROID__) */
