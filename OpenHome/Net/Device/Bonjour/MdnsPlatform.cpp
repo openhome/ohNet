@@ -1374,7 +1374,7 @@ void mDNSPlatformStrCopy(void *dst, const void *src)
 mDNSu32 mDNSPlatformStrLen(const void *src)
 {
     LOG(kBonjour, "Bonjour             mDNSPlatformStrLen\n");
-    return (mDNSu32)strlen((char*)src);
+    return (mDNSu32)strlen((const char*)src);
 }
 
 // mDNS core calls this routine to copy memory.
