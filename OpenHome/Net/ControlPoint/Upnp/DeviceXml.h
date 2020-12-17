@@ -15,6 +15,7 @@ class DeviceXml
 {
 public:
     DeviceXml(const Brx& aXml);
+    const Brx& Udn() const;
     Brn Find(const Brx& aUdn);
     void GetFriendlyName(Brh& aValue) const;
     void GetPresentationUrl(Brh& aValue) const;

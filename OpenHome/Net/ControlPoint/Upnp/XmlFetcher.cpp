@@ -14,27 +14,26 @@ using namespace OpenHome::Net;
 
 // XmlFetch
 
-void XmlFetch::Set(OpenHome::Uri* aUri, FunctorAsync& aFunctor)
+void XmlFetch::Set(const Brx& aAbsoluteUri, FunctorAsync& aFunctor)
 {
-    iUri = aUri;
+    iUri.Replace(aAbsoluteUri);
     iFunctor = aFunctor;
     iSequenceNumber = iCpStack.Env().SequenceNumber();
 }
 
-void XmlFetch::CheckContactable(OpenHome::Uri* aUri, FunctorAsync& aFunctor)
+void XmlFetch::CheckContactable(const Brx& aAbsoluteUri, FunctorAsync& aFunctor)
 {
-    Set(aUri, aFunctor);
+    Set(aAbsoluteUri, aFunctor);
     iCheckContactable = true;
 }
 
 XmlFetch::~XmlFetch()
 {
-    delete iUri;
 }
 
 const OpenHome::Uri& XmlFetch::Uri() const
 {
-    return *iUri;
+    return iUri;
 }
 
 void XmlFetch::SignalCompleted()
@@ -71,7 +70,7 @@ void XmlFetch::SetError(Error::ELevel aLevel, TUint aCode, const Brx& aDescripti
 
 void XmlFetch::Fetch()
 {
-    const Brx& absUri = iUri->AbsoluteUri();
+    const Brx& absUri = iUri.AbsoluteUri();
     LOG(kXmlFetch, "> XmlFetch::Fetch for %.*s\n", PBUF(absUri));
 
     iLock.Wait();
@@ -87,12 +86,29 @@ void XmlFetch::Fetch()
     }
     iLock.Signal();
     try {
-        const TUint port = (iUri->Port()==Uri::kPortNotSpecified? 80 : iUri->Port());
-        Endpoint endpoint(port, iUri->Host());
+        const TUint port = (iUri.Port()==Uri::kPortNotSpecified? 80 : iUri.Port());
+        Endpoint endpoint(port, iUri.Host());
         TUint timeout = iCpStack.Env().InitParams()->TcpConnectTimeoutMs();
         iSocket.Connect(endpoint, timeout);
-        WriteRequest();
-        Read();
+        WriteRequest(iCheckContactable ? Http::kMethodHead : Http::kMethodGet);
+        try {
+            Read();
+        }
+        catch (HttpError&) {
+            if (!iCheckContactable) {
+                throw;
+            }
+
+            // possible the device doesn't support HTTP HEAD method, try again with GET
+            // close then re-open socket - some devices don't like keep-alive and additional requests
+            iSocket.Close();
+            iSocket.Open(iCpStack.Env());
+            iSocket.Connect(endpoint, timeout);
+
+            iError.Clear();
+            WriteRequest(Http::kMethodGet);
+            Read();
+        }
     }
     catch (NetworkTimeout&) {
         SetError(Error::eSocket, Error::eCodeTimeout, Error::kDescriptionSocketTimeout);
@@ -152,7 +168,6 @@ TBool XmlFetch::WasContactable(IAsync& aAsync)
 
 XmlFetch::XmlFetch(CpStack& aCpStack)
     : iCpStack(aCpStack)
-    , iUri(NULL)
     , iSequenceNumber(0)
     , iLock("XMLM")
     , iInterrupted(false)
@@ -165,14 +180,14 @@ XmlFetch::XmlFetch(CpStack& aCpStack)
 {
 }
 
-void XmlFetch::WriteRequest()
+void XmlFetch::WriteRequest(const Brx& aMethod)
 {
     Sws<kRwBufferLength> writeBuffer(iSocket);
     WriterHttpRequest writerRequest(writeBuffer);
 
-    writerRequest.WriteMethod((iCheckContactable? Http::kMethodHead : Http::kMethodGet), iUri->PathAndQuery(), Http::eHttp11);
-    const TUint port = (iUri->Port()==Uri::kPortNotSpecified? 80 : iUri->Port());
-    Http::WriteHeaderHostAndPort(writerRequest, iUri->Host(), port);
+    writerRequest.WriteMethod(aMethod, iUri.PathAndQuery(), Http::eHttp11);
+    const TUint port = (iUri.Port()==Uri::kPortNotSpecified? 80 : iUri.Port());
+    Http::WriteHeaderHostAndPort(writerRequest, iUri.Host(), port);
     Http::WriteHeaderContentLength(writerRequest, 0);
     Http::WriteHeaderConnectionClose(writerRequest);
     writerRequest.WriteFlush();
@@ -217,7 +232,7 @@ void XmlFetch::Output(IAsyncOutput& /*aConsole*/)
     (void)Ascii::AppendDec(buf, iSequenceNumber);
     buf.PtrZ();
     aConsole.Output("SequenceNumber", (const TChar*)buf.Ptr());
-    Bws<Uri::kMaxUriBytes+1> uri(iUri->AbsoluteUri());
+    Bws<Uri::kMaxUriBytes+1> uri(iUri.AbsoluteUri());
     uri.PtrZ();
     aConsole.Output("XmlFetch", (const TChar*)uri.Ptr());
     if (Error()) {

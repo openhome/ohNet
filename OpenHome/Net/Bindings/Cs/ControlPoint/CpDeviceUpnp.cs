@@ -211,11 +211,33 @@ namespace OpenHome.Net.ControlPoint
         }
     }
 
+    public class CpDeviceListUpnp : CpDeviceList
+    {
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
+        static extern void CpDeviceListUpnpTryAdd(IntPtr aListHandlem, IntPtr aLocation);
+
+        public void TryAdd(string aLocation)
+       {
+            IntPtr location = InteropUtils.StringToHGlobalUtf8(aLocation);
+            CpDeviceListUpnpTryAdd(iHandle, location);
+            Marshal.FreeHGlobal(location);
+        }
+
+        protected CpDeviceListUpnp(ChangeHandler aAdded, ChangeHandler aRemoved)
+            : base(aAdded, aRemoved)
+        {
+        }
+    }
+
 
     /// <summary>
     /// List of all UPnP devices on the current subnet
     /// </summary>
-    public class CpDeviceListUpnpAll : CpDeviceList
+    public class CpDeviceListUpnpAll : CpDeviceListUpnp
     {
 #if IOS
         [DllImport("__Internal")]
@@ -236,9 +258,8 @@ namespace OpenHome.Net.ControlPoint
         /// and remove the device from their local collection.
         /// Clients who had not previously claimed a reference to a device must not call ReleaseRef().</param>
         public CpDeviceListUpnpAll(ChangeHandler aAdded, ChangeHandler aRemoved)
+            : base(aAdded, aRemoved)
         {
-            iAdded = aAdded;
-            iRemoved = aRemoved;
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
             iHandle = CpDeviceListCreateUpnpAll(iFnAdded, ptr, iFnRemoved, ptr);
         }
@@ -247,7 +268,7 @@ namespace OpenHome.Net.ControlPoint
     /// <summary>
     /// List of all root UPnP devices on the current subnet
     /// </summary>
-    public class CpDeviceListUpnpRoot : CpDeviceList
+    public class CpDeviceListUpnpRoot : CpDeviceListUpnp
     {
 #if IOS
         [DllImport("__Internal")]
@@ -268,9 +289,8 @@ namespace OpenHome.Net.ControlPoint
         /// and remove the device from their local collection.
         /// Clients who had not previously claimed a reference to a device must not call ReleaseRef().</param>
         public CpDeviceListUpnpRoot(ChangeHandler aAdded, ChangeHandler aRemoved)
+            : base(aAdded, aRemoved)
         {
-            iAdded = aAdded;
-            iRemoved = aRemoved;
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
             iHandle = CpDeviceListCreateUpnpRoot(iFnAdded, ptr, iFnRemoved, ptr);
         }
@@ -279,7 +299,7 @@ namespace OpenHome.Net.ControlPoint
     /// <summary>
     /// List of all UPnP devices with a given uuid (udn) on the current subnet
     /// </summary>
-    public class CpDeviceListUpnpUuid : CpDeviceList
+    public class CpDeviceListUpnpUuid : CpDeviceListUpnp
     {
 #if IOS
         [DllImport("__Internal")]
@@ -302,9 +322,8 @@ namespace OpenHome.Net.ControlPoint
         /// and remove the device from their local collection.
         /// Clients who had not previously claimed a reference to a device must not call ReleaseRef().</param>
         public CpDeviceListUpnpUuid(String aUuid, ChangeHandler aAdded, ChangeHandler aRemoved)
+            : base(aAdded, aRemoved)
         {
-            iAdded = aAdded;
-            iRemoved = aRemoved;
             IntPtr uuid = InteropUtils.StringToHGlobalUtf8(aUuid);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
             iHandle = CpDeviceListCreateUpnpUuid(uuid, iFnAdded, ptr, iFnRemoved, ptr);
@@ -315,7 +334,7 @@ namespace OpenHome.Net.ControlPoint
     /// <summary>
     /// List of all UPnP devices of a given device type on the current subnet
     /// </summary>
-    public class CpDeviceListUpnpDeviceType : CpDeviceList
+    public class CpDeviceListUpnpDeviceType : CpDeviceListUpnp
     {
 #if IOS
         [DllImport("__Internal")]
@@ -341,9 +360,8 @@ namespace OpenHome.Net.ControlPoint
         /// Clients who had not previously claimed a reference to a device must not call ReleaseRef().</param>
         public CpDeviceListUpnpDeviceType(String aDomainName, String aDeviceType, uint aVersion,
                                           ChangeHandler aAdded, ChangeHandler aRemoved)
+            : base(aAdded, aRemoved)
         {
-            iAdded = aAdded;
-            iRemoved = aRemoved;
             IntPtr domain = InteropUtils.StringToHGlobalUtf8(aDomainName);
             IntPtr type = InteropUtils.StringToHGlobalUtf8(aDeviceType);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
@@ -356,7 +374,7 @@ namespace OpenHome.Net.ControlPoint
     /// <summary>
     /// List of all UPnP devices of a given service type on the current subnet
     /// </summary>
-    public class CpDeviceListUpnpServiceType : CpDeviceList
+    public class CpDeviceListUpnpServiceType : CpDeviceListUpnp
     {
 #if IOS
         [DllImport("__Internal")]
@@ -382,9 +400,8 @@ namespace OpenHome.Net.ControlPoint
         /// Clients who had not previously claimed a reference to a device must not call ReleaseRef().</param>
         public CpDeviceListUpnpServiceType(String aDomainName, String aServiceType, uint aVersion,
                                            ChangeHandler aAdded, ChangeHandler aRemoved)
+            : base(aAdded, aRemoved)
         {
-            iAdded = aAdded;
-            iRemoved = aRemoved;
             IntPtr domain = InteropUtils.StringToHGlobalUtf8(aDomainName);
             IntPtr type = InteropUtils.StringToHGlobalUtf8(aServiceType);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);

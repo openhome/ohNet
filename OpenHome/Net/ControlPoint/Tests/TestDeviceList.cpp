@@ -89,8 +89,12 @@ void TestDeviceList(CpStack& aCpStack, const std::vector<Brn>& aArgs)
         return;
     }
 //    Debug::SetLevel(Debug::kDevice);
+    Debug::AddLevel(Debug::kXmlFetch);
+    if (mx.Value() != 0) {
+        aCpStack.Env().InitParams()->SetMsearchTime(mx.Value());
+    }
     DeviceListLogger logger;
-    CpDeviceList* deviceList = NULL;
+    CpDeviceListUpnp* deviceList = NULL;
     FunctorCpDevice added = MakeFunctorCpDevice(logger, &DeviceListLogger::Added);
     FunctorCpDevice removed = MakeFunctorCpDevice(logger, &DeviceListLogger::Removed);
     if (all.Value()) {
@@ -128,6 +132,7 @@ void TestDeviceList(CpStack& aCpStack, const std::vector<Brn>& aArgs)
     if (deviceList != NULL) {
         blocker->Wait(env.InitParams()->MsearchTimeSecs());
     }
+
     if (refresh.Value()) {
         Print("\nRefreshing...\n\n");
         deviceList->Refresh();

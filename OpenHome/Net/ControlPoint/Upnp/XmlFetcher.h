@@ -29,8 +29,8 @@ class CpStack;
 class XmlFetch : public Async
 {
 public:
-    void Set(OpenHome::Uri* aUri, FunctorAsync& aFunctor);
-    void CheckContactable(OpenHome::Uri* aUri, FunctorAsync& aFunctor);
+    void Set(const Brx& aAbsoluteUri, FunctorAsync& aFunctor);
+    void CheckContactable(const Brx& aAbsoluteUri, FunctorAsync& aFunctor);
     ~XmlFetch();
     const OpenHome::Uri& Uri() const;
     void SignalCompleted();
@@ -43,7 +43,7 @@ public:
 private:
     XmlFetch(CpStack& aCpStack);
     TBool Error() const;
-    void WriteRequest();
+    void WriteRequest(const Brx& aMethod);
     void Read();
     virtual void Output(IAsyncOutput& aConsole);
     virtual TUint Type() const;
@@ -51,7 +51,7 @@ private:
     static const TUint kRwBufferLength = 16*1024;
     static const TUint kResponseTimeoutMs = 60 * 1000;
     CpStack& iCpStack;
-    OpenHome::Uri* iUri;
+    OpenHome::Uri iUri;
     FunctorAsync iFunctor;
     TUint iSequenceNumber;
     Bwh iXml;

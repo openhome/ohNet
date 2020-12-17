@@ -30,7 +30,8 @@ using namespace OpenHome::Net;
 // CpiDeviceUpnp
 
 CpiDeviceUpnp::CpiDeviceUpnp(CpStack& aCpStack, const Brx& aUdn, const Brx& aLocation, TUint aMaxAgeSecs, IDeviceRemover& aDeviceList, CpiDeviceListUpnp& aList)
-    : iLock("CDUP")
+    : iCpStack(aCpStack)
+    , iLock("CDUP")
     , iLocation(aLocation)
     , iXmlFetch(NULL)
     , iDeviceXmlDocument(NULL)
@@ -42,7 +43,8 @@ CpiDeviceUpnp::CpiDeviceUpnp(CpStack& aCpStack, const Brx& aUdn, const Brx& aLoc
     , iSemReady("CDUS", 0)
     , iRemoved(false)
     , iNewLocation(NULL)
-    , iXmlCheck(NULL)
+    , iXmlCheckLocation(NULL)
+    , iXmlCheckRefresh(NULL)
 {
     Environment& env = aCpStack.Env();
     iHostUdpIsLowQuality = env.InitParams()->IsHostUdpLowQuality();
@@ -50,6 +52,36 @@ CpiDeviceUpnp::CpiDeviceUpnp(CpStack& aCpStack, const Brx& aUdn, const Brx& aLoc
     iTimer = new Timer(env, MakeFunctor(*this, &CpiDeviceUpnp::TimerExpired), "CpiDeviceUpnp");
     UpdateMaxAge(aMaxAgeSecs);
     iInvocable = new Invocable(*this);
+}
+
+CpiDeviceUpnp::CpiDeviceUpnp(CpStack& aCpStack, const Brx& aLocation, IDeviceRemover& aDeviceList, CpiDeviceListUpnp& aList)
+    : iCpStack(aCpStack)
+    , iLock("CDUP")
+    , iLocation(aLocation)
+    , iXmlFetch(NULL)
+    , iDeviceXmlDocument(NULL)
+    , iDeviceXml(NULL)
+    , iExpiryTime(0)
+    , iMaxAgeSeconds(0)
+    , iDeviceList(aDeviceList)
+    , iList(&aList)
+    , iSemReady("CDUS", 0)
+    , iRemoved(false)
+    , iNewLocation(NULL)
+    , iXmlCheckLocation(NULL)
+    , iXmlCheckRefresh(NULL)
+{
+    iHostUdpIsLowQuality = true; // device was "discovered" based on old IP address so we have no reason to be confident that UDP is reliable
+    iDevice = NULL; // we need to read device XML to find the udn first
+    iTimer = NULL; // don't assume we'll receive later ALIVEs
+    iInvocable = new Invocable(*this);
+
+    AutoMutex _(iLock);
+    XmlFetchManager& xmlFetchManager = aCpStack.XmlFetchManager();
+    iXmlFetch = xmlFetchManager.Fetch();
+    FunctorAsync functor = MakeFunctorAsync(*this, &CpiDeviceUpnp::XmlFetchReadUdnCompleted);
+    iXmlFetch->Set(aLocation, functor);
+    xmlFetchManager.Fetch(iXmlFetch);
 }
 
 const Brx& CpiDeviceUpnp::Udn() const
@@ -72,9 +104,18 @@ CpiDevice& CpiDeviceUpnp::Device()
     return *iDevice;
 }
 
+TBool CpiDeviceUpnp::Ready() const
+{
+    AutoMutex _(iLock);
+    return iDeviceXml != NULL;
+}
+
 void CpiDeviceUpnp::UpdateMaxAge(TUint aSeconds)
 {
     iMaxAgeSeconds = aSeconds;
+    if (iTimer == NULL) {
+        return;
+    }
     TUint delayMs = aSeconds * 1000;
     delayMs += 100; /* allow slightly longer than maxAge to cope with devices which
                        send out Alive messages at the last possible moment */
@@ -89,12 +130,19 @@ void CpiDeviceUpnp::UpdateMaxAge(TUint aSeconds)
 void CpiDeviceUpnp::FetchXml()
 {
     AutoMutex a(iLock);
+    if (iXml.Bytes() > 0) {
+        // device was constructed based on a previous location. We've already fetched the XML (to get a udn)
+        iSemReady.Signal();
+        if (iList != NULL) {
+            iList->XmlFetchCompleted(*this, true);
+        }
+        return;
+    }
     XmlFetchManager& xmlFetchManager = iDevice->GetCpStack().XmlFetchManager();
     iXmlFetch = xmlFetchManager.Fetch();
-    Uri* uri = new Uri(iLocation);
     iDevice->AddRef();
     FunctorAsync functor = MakeFunctorAsync(*this, &CpiDeviceUpnp::XmlFetchCompleted);
-    iXmlFetch->Set(uri, functor);
+    iXmlFetch->Set(iLocation, functor);
     xmlFetchManager.Fetch(iXmlFetch);
 }
 
@@ -105,9 +153,13 @@ void CpiDeviceUpnp::InterruptXmlFetch()
         iXmlFetch->Interrupt();
         iXmlFetch = NULL;
     }
-    if (iXmlCheck != NULL) {
-        iXmlCheck->Interrupt();
-        iXmlCheck = NULL;
+    if (iXmlCheckLocation != NULL) {
+        iXmlCheckLocation->Interrupt();
+        iXmlCheckLocation = NULL;
+    }
+    if (iXmlCheckRefresh != NULL) {
+        iXmlCheckRefresh->Interrupt();
+        iXmlCheckRefresh = NULL;
     }
     iList = NULL;
 }
@@ -129,14 +181,24 @@ void CpiDeviceUpnp::CheckStillAvailable(CpiDeviceUpnp* aNewLocation)
     }
     iNewLocation = aNewLocation;
     XmlFetchManager& xmlFetchManager = iDevice->GetCpStack().XmlFetchManager();
-    ASSERT(iXmlCheck == NULL);
-    iXmlCheck = xmlFetchManager.Fetch();
-    Uri* uri = new Uri(iLocation);
+    ASSERT(iXmlCheckLocation == NULL);
+    iXmlCheckLocation = xmlFetchManager.Fetch();
     iDevice->AddRef();
-    FunctorAsync functor = MakeFunctorAsync(*this, &CpiDeviceUpnp::XmlCheckCompleted);
-    iXmlCheck->CheckContactable(uri, functor);
-    xmlFetchManager.Fetch(iXmlCheck);
+    FunctorAsync functor = MakeFunctorAsync(*this, &CpiDeviceUpnp::XmlCheckLocationCompleted);
+    iXmlCheckLocation->CheckContactable(iLocation, functor);
+    xmlFetchManager.Fetch(iXmlCheckLocation);
     iLock.Signal();
+}
+
+void CpiDeviceUpnp::CheckStillAvailable()
+{
+    AutoMutex _(iLock);
+    XmlFetchManager& xmlFetchManager = iDevice->GetCpStack().XmlFetchManager();
+    iXmlCheckRefresh = xmlFetchManager.Fetch();
+    iDevice->AddRef();
+    FunctorAsync functor = MakeFunctorAsync(*this, &CpiDeviceUpnp::XmlCheckRefreshCompleted);
+    iXmlCheckRefresh->CheckContactable(iLocation, functor);
+    xmlFetchManager.Fetch(iXmlCheckRefresh);
 }
 
 TBool CpiDeviceUpnp::GetAttribute(const char* aKey, Brh& aValue) const
@@ -393,6 +455,42 @@ TBool CpiDeviceUpnp::UdnMatches(const Brx& aFound, const Brx& aTarget)
     return (udn == aTarget);
 }
 
+void CpiDeviceUpnp::XmlFetchReadUdnCompleted(IAsync& aAsync)
+{
+    iLock.Wait();
+    iXmlFetch = NULL;
+    iLock.Signal();
+    TBool err = iRemoved;
+    try {
+        XmlFetch::Xml(aAsync).TransferTo(iXml);
+        iDeviceXmlDocument = new DeviceXmlDocument(iXml);
+        iDeviceXml = new DeviceXml(iDeviceXmlDocument->Root());
+    }
+    catch (XmlFetchError&) {
+        err = true;
+        LOG_ERROR(kDevice, "Error fetching xml for %.*s\n", PBUF(iLocation));
+    }
+    catch (XmlError&) {
+        err = true;
+        LOG_ERROR(kDevice, "Error within xml for %.*s.  Xml is %.*s\n", PBUF(iLocation), PBUF(iXml));
+    }
+    if (err) {
+        delete this; // safe because no associated CpiDevice and not yet part of a device list
+        return;
+    }
+    iDevice = new CpiDevice(iCpStack, iDeviceXml->Udn(), *this, *this, this);
+    iDevice->AddRef();
+    iLock.Wait();
+    CpiDeviceList* list = iList;
+    iLock.Signal();
+    if (list != NULL) {
+        list->Add(iDevice);
+    }
+    iDevice->RemoveRef();
+    // Don't add code after the RemoveRef(), we might have
+    // just deleted this object!
+}
+
 void CpiDeviceUpnp::XmlFetchCompleted(IAsync& aAsync)
 {
     iLock.Wait();
@@ -432,10 +530,10 @@ void CpiDeviceUpnp::XmlFetchCompleted(IAsync& aAsync)
     // just deleted this object!
 }
 
-void CpiDeviceUpnp::XmlCheckCompleted(IAsync& aAsync)
+void CpiDeviceUpnp::XmlCheckLocationCompleted(IAsync& aAsync)
 {
     iLock.Wait();
-    iXmlCheck = NULL;
+    iXmlCheckLocation = NULL;
     CpiDeviceUpnp* newLocation = iNewLocation;
     iNewLocation = NULL;
     iLock.Signal();
@@ -456,6 +554,27 @@ void CpiDeviceUpnp::XmlCheckCompleted(IAsync& aAsync)
     }
     if (newLocation != NULL) {
         newLocation->Device().RemoveRef();
+    }
+    iDevice->RemoveRef();
+}
+
+void CpiDeviceUpnp::XmlCheckRefreshCompleted(IAsync& aAsync)
+{
+    iLock.Wait();
+    iXmlCheckRefresh = NULL;
+    iLock.Signal();
+    if (!iRemoved) {
+        TBool contactable = false;
+        try {
+            contactable = XmlFetch::WasContactable(aAsync);
+        }
+        catch (XmlFetchError&) {
+            Log::Print("!!! XmlFetchError\n");
+        }
+        if (!contactable) {
+            Log::Print("XmlCheckRefreshCompleted - FAIL - %.*s\n", PBUF(Udn()));
+            iDeviceList.Remove(Udn());
+        }
     }
     iDevice->RemoveRef();
 }
@@ -577,6 +696,13 @@ void CpiDeviceListUpnp::Add(CpiDeviceUpnp* aDevice)
     }
 }
 
+void CpiDeviceListUpnp::TryAdd(const Brx& aLocation)
+{
+    (void)new CpiDeviceUpnp(iCpStack, aLocation, *this, *this);
+    // CpiDeviceUpnp will try fetching its own XML and add itself to device list later
+    // FIXME - may leak if we shutdown while xml fetch is in progress
+}
+
 TBool CpiDeviceListUpnp::Update(const Brx& aUdn, const Brx& aLocation, TUint aMaxAge)
 {
     if (!IsLocationReachable(aLocation)) {
@@ -640,6 +766,10 @@ void CpiDeviceListUpnp::Refresh()
 void CpiDeviceListUpnp::DoRefresh()
 {
     Start();
+    CpDeviceMap::iterator it = iMap.begin();
+    for (; it != iMap.end(); ++it) {
+        reinterpret_cast<CpiDeviceUpnp*>(it->second->OwnerData())->CheckStillAvailable();
+    }
     TUint delayMs = iCpStack.Env().InitParams()->MsearchTimeSecs() * 1000;
     delayMs += 500; /* allow slightly longer to cope with wifi delays and devices
                        which send out Alive messages at the last possible moment */
@@ -657,7 +787,12 @@ void CpiDeviceListUpnp::DoRefresh()
 
 TBool CpiDeviceListUpnp::IsDeviceReady(CpiDevice& aDevice)
 {
-    reinterpret_cast<CpiDeviceUpnp*>(aDevice.OwnerData())->FetchXml();
+    CpiDeviceUpnp* deviceUpnp = reinterpret_cast<CpiDeviceUpnp*>(aDevice.OwnerData());
+    if (deviceUpnp->Ready()) {
+        // device was 'discovered' at last known location => we've already fetched xml
+        return true;
+    }
+    deviceUpnp->FetchXml();
     return false;
 }
 
