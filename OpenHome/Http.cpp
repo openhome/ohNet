@@ -192,7 +192,7 @@ void Http::WriteHeaderUserAgent(WriterHttpHeader& aWriter, Environment& aEnv)
     }
 }
 
-void Http::IsSuccessStatusCode(TUint aCode) 
+TBool Http::IsSuccessStatusCode(TUint aCode) 
 {
     return aCode >= 200 && aCode <= 300;
 }
