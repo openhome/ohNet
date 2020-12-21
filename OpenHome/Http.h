@@ -116,6 +116,7 @@ public:
     static void WriteHeaderContentType(WriterHttpHeader& aWriter, const Brx& aType);
     static void WriteHeaderConnectionClose(WriterHttpHeader& aWriter);
     static void WriteHeaderUserAgent(WriterHttpHeader& aWriter, Environment& aEnv);
+    static TBool IsSuccessStatusCode(TUint aCode);
 };
 
 class HttpStatus
@@ -170,6 +171,7 @@ public:
 public:
     TUint Code() const;
     const Brx& Reason() const;
+    TBool IndicatesSuccess() const;
     TBool operator==(const HttpStatus& aStatus) const;
     TBool operator!=(const HttpStatus& aStatus) const;
 protected:

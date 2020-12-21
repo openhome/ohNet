@@ -191,6 +191,11 @@ void Http::WriteHeaderUserAgent(WriterHttpHeader& aWriter, Environment& aEnv)
     }
 }
 
+void Http::IsSuccessStatusCode(TUint aCode) 
+{
+    return aCode >= 200 && aCode <= 300;
+}
+
 
 // HttpStatus
 
@@ -203,6 +208,12 @@ const Brx& HttpStatus::Reason() const
 {
     return iReason;
 }
+
+TBool HttpStatus::IndicatesSuccess() const 
+{
+    return Http::IsSuccessStatusCode(iCode);
+}
+
 
 TBool HttpStatus::operator==(const HttpStatus& aStatus) const
 {
