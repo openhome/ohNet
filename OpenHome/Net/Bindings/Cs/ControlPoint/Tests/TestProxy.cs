@@ -44,7 +44,8 @@ namespace OpenHome.Net
             ControlPoint.CpDeviceList.ChangeHandler added = new ControlPoint.CpDeviceList.ChangeHandler(DeviceAdded);
             ControlPoint.CpDeviceList.ChangeHandler removed = new ControlPoint.CpDeviceList.ChangeHandler(DeviceRemoved);
             ControlPoint.CpDeviceListUpnpServiceType list = new ControlPoint.CpDeviceListUpnpServiceType("upnp.org", "ConnectionManager", 1, added, removed);
-            //CpDeviceListUpnpUuid list = new CpDeviceListUpnpUuid("896659847466-a4badbeaacbc-737837", added, removed);
+            CpDeviceListUpnpUuid list = new CpDeviceListUpnpUuid("896659847466-a4badbeaacbc-737837", added, removed);
+
             Semaphore sem = new Semaphore(0, 1);
             sem.WaitOne(aMsearchTimeSecs * 1000);
             iListFrozen = true;

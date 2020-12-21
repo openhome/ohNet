@@ -54,7 +54,12 @@ DeviceXml::DeviceXml(const Brx& aXml)
     
     iUdn.Set(parser.Remaining());
 }
-    
+
+const Brx& DeviceXml::Udn() const
+{
+    return iUdn;
+}
+
 Brn DeviceXml::Find(const Brx& aUdn)
 {
     if (iUdn == aUdn) {

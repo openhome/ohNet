@@ -412,6 +412,7 @@ TBool CpiDeviceList::DoRemove(CpiDevice& aDevice)
 
 void CpiDeviceList::NotifyRefreshed(CpDeviceMap& aRefreshMap)
 {
+#if 0
     iLock.Wait();
     if (iActive) {
         /* map iterator is invalidated by removing an item so we'll need to iterate once per removal
@@ -446,6 +447,7 @@ void CpiDeviceList::NotifyRefreshed(CpDeviceMap& aRefreshMap)
         }
     }
     iLock.Signal();
+#endif
     ClearMap(aRefreshMap);
 }
 

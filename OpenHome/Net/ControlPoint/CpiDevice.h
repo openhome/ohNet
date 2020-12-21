@@ -216,12 +216,6 @@ public:
      * claimed.  The caller is responsible for freeing this reference.
      */
     CpiDevice* RefDevice(const Brx& aUdn);
-protected:
-    /**
-     * Construct the list but don't start populating it yet.
-     * Population is deferred until Start() is called.
-     */
-    CpiDeviceList(CpStack& aCpStack, FunctorCpiDevice aAdded, FunctorCpiDevice aRemoved);
 
     /**
      * Add a device to the list.  Relies on aDevice being newly constructed
@@ -229,6 +223,12 @@ protected:
      * then aDevice will be deleted.
      */
     void Add(CpiDevice* aDevice);
+protected:
+    /**
+     * Construct the list but don't start populating it yet.
+     * Population is deferred until Start() is called.
+     */
+    CpiDeviceList(CpStack& aCpStack, FunctorCpiDevice aAdded, FunctorCpiDevice aRemoved);
 
     /**
      * Remove a device from the list.  Does nothing if aDevice is not in the list

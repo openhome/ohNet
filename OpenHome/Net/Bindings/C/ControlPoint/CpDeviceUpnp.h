@@ -87,7 +87,7 @@ DllExport HandleCpDeviceList STDCALL CpDeviceListCreateUpnpDeviceType(const char
  * Create a list of the UPnP devices of a given service type on the current subnet
  *
  * @param[in] aDomainName  The domain name of the target service
- * @param[in] aServiceType  The type of the target service
+ * @param[in] aServiceType The type of the target service
  * @param[in] aVersion     The version number of the target service
  * @param[in] aAdded       Function pointer which is called when a device is added to the list
  * @param[in] aPtrAdded    Will be passed as the second parameter to aAdded
@@ -99,6 +99,14 @@ DllExport HandleCpDeviceList STDCALL CpDeviceListCreateUpnpDeviceType(const char
 DllExport HandleCpDeviceList STDCALL CpDeviceListCreateUpnpServiceType(const char* aDomainName, const char* aServiceType, uint32_t aVersion,
                                                                        OhNetCallbackDevice aAdded, void* aPtrAdded,
                                                                        OhNetCallbackDevice aRemoved, void* aPtrRemoved);
+
+/**
+ * Supplement normal UPnP discovery by checking a past known location for a device
+ *
+ * @param[in] aList        Device list, previously returned from a CpDeviceListCreateUpnpXxx function
+ * @param[in] aLocation    Uri to previous location for device xml
+ */
+DllExport void STDCALL CpDeviceListUpnpTryAdd(HandleCpDeviceList aList, const char* aLocation);
 
 /* @} */
 

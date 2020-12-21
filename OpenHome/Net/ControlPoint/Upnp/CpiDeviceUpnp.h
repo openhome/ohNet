@@ -35,10 +35,12 @@ class CpiDeviceUpnp : private ICpiProtocol, private ICpiDeviceObserver
 {
 public:
     CpiDeviceUpnp(CpStack& aCpStack, const Brx& aUdn, const Brx& aLocation, TUint aMaxAgeSecs, IDeviceRemover& aDeviceList, CpiDeviceListUpnp& aList);
+    CpiDeviceUpnp(CpStack& aCpStack, const Brx& aLocation, IDeviceRemover& aDeviceList, CpiDeviceListUpnp& aList);
     const Brx& Udn() const;
     const Brx& Location() const;
     TUint MaxAgeSeconds() const;
     CpiDevice& Device();
+    TBool Ready() const;
 
     /**
      * Called to reset the maxage timeout each time an alive message is received.
@@ -51,6 +53,7 @@ public:
     void FetchXml();
     void InterruptXmlFetch();
     void CheckStillAvailable(CpiDeviceUpnp* aNewDevice);
+    void CheckStillAvailable();
 private: // ICpiProtocol
     TBool GetAttribute(const char* aKey, Brh& aValue) const;
     void InvokeAction(Invocation& aInvocation);
@@ -66,8 +69,10 @@ private:
     ~CpiDeviceUpnp();
     void TimerExpired();
     void GetServiceUri(Uri& aUri, const TChar* aType, const ServiceType& aServiceType);
+    void XmlFetchReadUdnCompleted(IAsync& aAsync);
     void XmlFetchCompleted(IAsync& aAsync);
-    void XmlCheckCompleted(IAsync& aAsync);
+    void XmlCheckLocationCompleted(IAsync& aAsync);
+    void XmlCheckRefreshCompleted(IAsync& aAsync);
     static TBool UdnMatches(const Brx& aFound, const Brx& aTarget);
 private:
     class Invocable : public IInvocable, private INonCopyable
@@ -79,8 +84,9 @@ private:
         CpiDeviceUpnp& iDevice;
     };
 private:
+    CpStack& iCpStack;
     CpiDevice* iDevice;
-    Mutex iLock;
+    mutable Mutex iLock;
     Brhz iLocation;
     XmlFetch* iXmlFetch;
     Brh iXml;
@@ -96,7 +102,8 @@ private:
     TBool iRemoved;
     TBool iHostUdpIsLowQuality;
     CpiDeviceUpnp* iNewLocation;
-    XmlFetch* iXmlCheck;
+    XmlFetch* iXmlCheckLocation;
+    XmlFetch* iXmlCheckRefresh;
     friend class Invocable;
 };
 
@@ -110,6 +117,7 @@ class CpiDeviceListUpnp : public CpiDeviceList, public ISsdpNotifyHandler, priva
 public:
     void XmlFetchCompleted(CpiDeviceUpnp& aDevice, TBool aError);
     void DeviceLocationChanged(CpiDeviceUpnp* aOriginal, CpiDeviceUpnp* aNew);
+    void TryAdd(const Brx& aLocation);
 protected:
     CpiDeviceListUpnp(CpStack& aCpStack, FunctorCpiDevice aAdded, FunctorCpiDevice aRemoved);
     ~CpiDeviceListUpnp();

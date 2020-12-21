@@ -21,13 +21,22 @@ class CpStack;
  * All key names are case sensitive
  */
 
+class DllExportClass CpDeviceListUpnp : public CpDeviceList
+{
+public:
+    DllExport void TryAdd(const Brx& aLocation);
+protected:
+    DllExport CpDeviceListUpnp(FunctorCpDevice aAdded, FunctorCpDevice aRemoved);
+};
+
+
 /**
  * List of all UPnP devices on the current subnet
  *
  * @see CpDeviceList
  * @ingroup ControlPoint
  */
-class DllExportClass CpDeviceListUpnpAll : public CpDeviceList
+class DllExportClass CpDeviceListUpnpAll : public CpDeviceListUpnp
 {
 public:
     DllExport CpDeviceListUpnpAll(CpStack& aCpStack, FunctorCpDevice aAdded, FunctorCpDevice aRemoved);
@@ -37,7 +46,7 @@ public:
  * List of all root UPnP devices on the current subnet
  * @ingroup ControlPoint
  */
-class DllExportClass CpDeviceListUpnpRoot : public CpDeviceList
+class DllExportClass CpDeviceListUpnpRoot : public CpDeviceListUpnp
 {
 public:
     DllExport CpDeviceListUpnpRoot(CpStack& aCpStack, FunctorCpDevice aAdded, FunctorCpDevice aRemoved);
@@ -47,7 +56,7 @@ public:
  * List of all UPnP devices with a given uuid (udn) on the current subnet
  * @ingroup ControlPoint
  */
-class DllExportClass CpDeviceListUpnpUuid : public CpDeviceList
+class DllExportClass CpDeviceListUpnpUuid : public CpDeviceListUpnp
 {
 public:
     DllExport CpDeviceListUpnpUuid(CpStack& aCpStack, const Brx& aUuid, FunctorCpDevice aAdded, FunctorCpDevice aRemoved);
@@ -57,7 +66,7 @@ public:
  * List of all UPnP devices of a given device type on the current subnet
  * @ingroup ControlPoint
  */
-class DllExportClass CpDeviceListUpnpDeviceType : public CpDeviceList
+class DllExportClass CpDeviceListUpnpDeviceType : public CpDeviceListUpnp
 {
 public:
     DllExport CpDeviceListUpnpDeviceType(CpStack& aCpStack, const Brx& aDomainName, const Brx& aDeviceType,
@@ -68,7 +77,7 @@ public:
  * List of all UPnP devices of a given service type on the current subnet
  * @ingroup ControlPoint
  */
-class DllExportClass CpDeviceListUpnpServiceType : public CpDeviceList
+class DllExportClass CpDeviceListUpnpServiceType : public CpDeviceListUpnp
 {
 public:
     DllExport CpDeviceListUpnpServiceType(CpStack& aCpStack, const Brx& aDomainName, const Brx& aServiceType,

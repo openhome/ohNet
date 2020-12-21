@@ -65,3 +65,11 @@ HandleCpDeviceList STDCALL CpDeviceListCreateUpnpServiceType(const char* aDomain
     list->Start();
     return (THandle)list;
 }
+
+void STDCALL CpDeviceListUpnpTryAdd(HandleCpDeviceList aList, const char* aLocation)
+{
+    CpiDeviceListUpnp* list = reinterpret_cast<CpiDeviceListUpnp*>(aList);
+    ASSERT(list != NULL);
+    Brn location(aLocation);
+    list->TryAdd(location);
+}

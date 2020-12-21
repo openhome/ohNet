@@ -9,10 +9,22 @@ using namespace OpenHome;
 using namespace OpenHome::Net;
 
 
+// CpDeviceListUpnp
+
+void CpDeviceListUpnp::TryAdd(const Brx& aLocation)
+{
+    static_cast<CpiDeviceListUpnp*>(iList)->TryAdd(aLocation);
+}
+
+CpDeviceListUpnp::CpDeviceListUpnp(FunctorCpDevice aAdded, FunctorCpDevice aRemoved)
+    : CpDeviceList(aAdded, aRemoved)
+{}
+
+
 // CpDeviceListUpnpAll
 
 CpDeviceListUpnpAll::CpDeviceListUpnpAll(CpStack& aCpStack, FunctorCpDevice aAdded, FunctorCpDevice aRemoved)
-    : CpDeviceList(aAdded, aRemoved)
+    : CpDeviceListUpnp(aAdded, aRemoved)
 {
     FunctorCpiDevice added, removed;
     GetAddedFunctor(added);
@@ -25,7 +37,7 @@ CpDeviceListUpnpAll::CpDeviceListUpnpAll(CpStack& aCpStack, FunctorCpDevice aAdd
 // CpDeviceListUpnpRoot
 
 CpDeviceListUpnpRoot::CpDeviceListUpnpRoot(CpStack& aCpStack, FunctorCpDevice aAdded, FunctorCpDevice aRemoved)
-    : CpDeviceList(aAdded, aRemoved)
+    : CpDeviceListUpnp(aAdded, aRemoved)
 {
     FunctorCpiDevice added, removed;
     GetAddedFunctor(added);
@@ -38,7 +50,7 @@ CpDeviceListUpnpRoot::CpDeviceListUpnpRoot(CpStack& aCpStack, FunctorCpDevice aA
 // CpDeviceListUpnpUuid
 
 CpDeviceListUpnpUuid::CpDeviceListUpnpUuid(CpStack& aCpStack, const Brx& aUuid, FunctorCpDevice aAdded, FunctorCpDevice aRemoved)
-    : CpDeviceList(aAdded, aRemoved)
+    : CpDeviceListUpnp(aAdded, aRemoved)
 {
     FunctorCpiDevice added, removed;
     GetAddedFunctor(added);
@@ -52,7 +64,7 @@ CpDeviceListUpnpUuid::CpDeviceListUpnpUuid(CpStack& aCpStack, const Brx& aUuid, 
 
 CpDeviceListUpnpDeviceType::CpDeviceListUpnpDeviceType(CpStack& aCpStack, const Brx& aDomainName, const Brx& aDeviceType,
                                                        TUint aVersion, FunctorCpDevice aAdded, FunctorCpDevice aRemoved)
-    : CpDeviceList(aAdded, aRemoved)
+    : CpDeviceListUpnp(aAdded, aRemoved)
 {
     FunctorCpiDevice added, removed;
     GetAddedFunctor(added);
@@ -66,7 +78,7 @@ CpDeviceListUpnpDeviceType::CpDeviceListUpnpDeviceType(CpStack& aCpStack, const 
 
 CpDeviceListUpnpServiceType::CpDeviceListUpnpServiceType(CpStack& aCpStack, const Brx& aDomainName, const Brx& aServiceType,
                                                          TUint aVersion, FunctorCpDevice aAdded, FunctorCpDevice aRemoved)
-    : CpDeviceList(aAdded, aRemoved)
+    : CpDeviceListUpnp(aAdded, aRemoved)
 {
     FunctorCpiDevice added, removed;
     GetAddedFunctor(added);

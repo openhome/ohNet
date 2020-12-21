@@ -209,8 +209,10 @@ namespace OpenHome.Net.ControlPoint
             }
         }
 
-        protected CpDeviceList()
+        protected CpDeviceList(ChangeHandler aAdded, ChangeHandler aRemoved)
         {
+            iAdded = aAdded;
+            iRemoved = aRemoved;
             iGch = GCHandle.Alloc(this);
             iFnAdded = new CallbackDevice(Added);
             iFnRemoved = new CallbackDevice(Removed);

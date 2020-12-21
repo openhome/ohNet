@@ -13,17 +13,6 @@ extern void TestDeviceList(CpStack& aCpStack, const std::vector<Brn>& aArgs);
 void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::InitialisationParams* aInitParams)
 {
     std::vector<Brn> args = OptionParser::ConvertArgs(aArgc, aArgv);
-
-    OptionParser parser;
-    OptionUint mx("-mx", "--mx", 1, "[1..5] number of second to spread response over");
-    parser.AddOption(&mx);
-    if (!parser.Parse(args, true) || parser.HelpDisplayed()) {
-        return;
-    }
-
-    if (mx.Value() != 0) {
-        aInitParams->SetMsearchTime(mx.Value());
-    }
     Library* lib = new Library(aInitParams);
     std::vector<NetworkAdapter*>* subnetList = lib->CreateSubnetList();
     TIpAddress subnet = (*subnetList)[0]->Subnet();

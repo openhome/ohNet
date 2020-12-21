@@ -90,6 +90,7 @@ public:
     static const Brn kHeaderSeparator;
     static const Brn kHeaderTerminator;
     static const Brn kConnectionClose;
+    static const Brn kConnectionKeepAlive;
     static const Brn kConnectionUpgrade;
     static const Brn kContentLanguageEnglish;
     static const Brn kRangeBytes;

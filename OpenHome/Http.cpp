@@ -84,6 +84,7 @@ const Brn Http::kHeaderSeparator(": ");
 const Brn Http::kHeaderTerminator("\r\n");
 const Brn Http::kChunkedCountSeparator("\r\n");
 const Brn Http::kConnectionClose("close");
+const Brn Http::kConnectionKeepAlive("keep-alive");
 const Brn Http::kConnectionUpgrade("upgrade");
 const Brn Http::kContentLanguageEnglish("en");
 const Brn Http::kRangeBytes("bytes=");
