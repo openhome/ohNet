@@ -194,7 +194,7 @@ void Http::WriteHeaderUserAgent(WriterHttpHeader& aWriter, Environment& aEnv)
 
 TBool Http::IsSuccessStatusCode(TUint aCode) 
 {
-    return aCode >= 200 && aCode <= 300;
+    return aCode >= 200 && aCode < 300;
 }
 
 
