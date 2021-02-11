@@ -440,14 +440,15 @@ void DviDevice::SetEnabledLocked()
     iDisableLock.Signal();
     iLock.Signal();
     TUint i;
-    for (i=0; i<(TUint)iProtocols.size(); i++) {
-        iProtocols[i]->Enable();
-    }
     // queue updates for all service properties
     // nothing may have changed but individual subscriptions will spot this and skip any update message
-    for (i=0; i<iServices.size(); i++) {
+    for (i = 0; i < iServices.size(); i++) {
         iServices[i]->Enable();
         iServices[i]->PublishPropertyUpdates();
+    }
+
+    for (i=0; i<(TUint)iProtocols.size(); i++) {
+        iProtocols[i]->Enable();
     }
     iLock.Wait();
 }
