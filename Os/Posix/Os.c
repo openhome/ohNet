@@ -1161,26 +1161,60 @@ THandle OsNetworkAccept(THandle aHandle, TIpAddress* aClientAddress, uint32_t* a
     sockaddrFromEndpoint(&addr, 0, 0);
     socklen_t len = sizeof(addr);
 
-    SetFdNonBlocking(handle->iSocket);
+    /* accept() in O_NONBLOCK mode will constantly return an error of
+     * EWOULDBLOCK / EAGAIN until there is a pending connection in the
+     * queue. Calling select() on an O_NONBLOCK socket will also return
+     * instantly with EWOULDBLOCK / EAGAIN.
+     * More details can be found in accept() man pages.
+     *
+     * It is therefore more efficient to use a standard blocking call
+     * to select() to wait until work is ready. This can be either:
+     *  - A client is ready to connect, calling accept() would be good
+     *  - We've been interupted and should return.
+     *
+     * Otherwise, we end up looping around and eating CPU time until
+     * there is a client ready to connect. */
+    fd_set read;
+    fd_set error;
+    int32_t h = 0;
 
-    int32_t h = TEMP_FAILURE_RETRY_2(accept(handle->iSocket, (struct sockaddr*)&addr, &len), handle);
-    if (h==-1 && errno==EWOULDBLOCK) {
-        fd_set read;
-        fd_set error;
-        int32_t selectErr;
-        do {
-            FD_ZERO(&read);
-            FD_SET(handle->iPipe[0], &read);
-            FD_SET(handle->iSocket, &read);
-            FD_ZERO(&error);
-            FD_SET(handle->iSocket, &error);
-            selectErr = (long int) select(nfds(handle), &read, NULL, &error, NULL);
-        } while(selectErr == -1L && errno == EINTR && !SocketInterrupted(handle));
-        if (selectErr > 0 && FD_ISSET(handle->iSocket, &read)) {
-            h = TEMP_FAILURE_RETRY_2(accept(handle->iSocket, (struct sockaddr*)&addr, &len), handle);
+    while(1) 
+    {
+        FD_ZERO(&read);
+        FD_SET(handle->iPipe[0], &read);
+        FD_SET(handle->iSocket, &read);
+        FD_ZERO(&error);
+        FD_SET(handle->iSocket, &error);
+
+        // NOTE: If select() returns an error we should not assume that
+        //       any fd_set is left in a valid state (even with EINTR)
+        h = (long int) select(nfds(handle), &read, NULL, &error, NULL);
+
+        if (h < 0) {
+            // We've been interupted or something has gone wrong with select()
+            // Don't continue trying and exit our loop. 
+            if (errno != EINTR || SocketInterrupted(handle)) {
+                break;
+            }
+        }
+        else {
+            // By now we either have a pending connection, the socket itself
+            // has errors, or we've been interupted. 
+            break;
         }
     }
-    SetFdBlocking(handle->iSocket);
+
+
+    // If all is well and the socket is ready to read, we can assume that
+    // a client is waiting to connect. Otherwise, we were interupted and
+    // so shouldn't call accept().
+    if (h != -1) {
+        h = FD_ISSET(handle->iSocket, &read) ? TEMP_FAILURE_RETRY_2(accept(handle->iSocket, (struct sockaddr*)&addr, &len), handle)
+                                             : -1; //Assuming it was the pipe or an error, so use indicate this here. 
+    }
+
+    // If select() has failed, our socket wasn't readable or something
+    // has gone wrong with accept()...
     if (h == -1) {
         return kHandleNull;
     }

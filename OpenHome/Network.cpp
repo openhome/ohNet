@@ -675,17 +675,10 @@ void SocketTcpSession::Start()
     for (;;) {
         try {
             Open(iServer->Accept(iClientEndpoint));            // accept a connection for this session
-        } catch (NetworkError&) {                // server is being destroyed
+        } catch (NetworkError&) { 
+            // server is being destoryed OR there was an underlying issue with the socket operations.
             LOG_ERROR(kNetwork, "-SocketTcpSession::Start() Network Accept Exception\n");
-            if (iServer->IsInterrupted()) {
-                // server is shutting down, exit this session
-                break;
-            }
-            Log::Print("SocketTcpSession (%.*s) transient failure from accept\n", PBUF(iThread->Name()));
-            // Assume that errors from accept when not interrupted are transient
-            // Wait a short time before retrying in case error conditions apply for a short
-            // block of time (tcp sessions often run in fairly high priority threads)
-            Thread::Sleep(500);
+            break;
         }
         try {
             LOG_TRACE(kNetwork, "-SocketTcpSession::Start() Run session\n");
