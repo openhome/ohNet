@@ -83,7 +83,7 @@ private: // IDviInvocation
     void Invoke();
 
     TUint Version() const;
-    TIpAddress Adapter() const;
+    const TIpAddress& Adapter() const;
     const char* ResourceUriPrefix() const;
     Endpoint ClientEndpoint() const;
     const Brx& ClientUserAgent() const;

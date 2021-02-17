@@ -502,6 +502,7 @@ copy_build_includes:
 	$(cp) OpenHome/OsTypes.h $(inc_build)/OpenHome
 	$(cp) OpenHome/OhNetTypes.h $(inc_build)/OpenHome
 	$(cp) OpenHome/Types.h $(inc_build)/OpenHome
+	$(cp) OpenHome/TIpAddressUtils.h $(inc_build)/OpenHome
 	$(cp) OpenHome/TestFramework/*.h $(inc_build)/OpenHome/Private
 	$(cp) OpenHome/Net/*.h $(inc_build)/OpenHome/Net/Private
 	rm $(inc_build)/OpenHome/Net/Private/FunctorAsync.h

@@ -6,6 +6,7 @@
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Private/Ascii.h>
+#include <OpenHome/Private/TIpAddressUtils.h>
 
 #include <errno.h>
 
@@ -21,7 +22,7 @@ static THandle SocketCreate(Environment& aEnv, ESocketType aSocketType)
     return handle;
 }
 
-static TUint32 GetHostByName(const Brx& aAddress)
+static TIpAddress GetHostByName(const Brx& aAddress)
 {
     return OpenHome::Os::NetworkGetHostByName(aAddress);
 }
@@ -31,7 +32,8 @@ static TUint32 GetHostByName(const Brx& aAddress)
 
 Endpoint::Endpoint()
 {
-    iAddress = 0;
+    // Default to IPv4
+    iAddress = kTIpAddressEmpty;
     iPort = 0;
 }
 
@@ -87,29 +89,9 @@ TUint16 Endpoint::Port() const
     return iPort;
 }
 
-void Endpoint::AppendAddress(Bwx& aAddressBuffer, TIpAddress aAddress)
+void Endpoint::AppendAddress(Bwx& aAddressBuffer, const TIpAddress& aAddress)
 {
-    ASSERT(aAddressBuffer.MaxBytes() - aAddressBuffer.Bytes() >= kMaxAddressBytes);
-#ifdef DEFINE_LITTLE_ENDIAN
-    (void)Ascii::AppendDec(aAddressBuffer, aAddress&0xff);
-    aAddressBuffer.Append('.');
-    (void)Ascii::AppendDec(aAddressBuffer, (aAddress>>8)&0xff);
-    aAddressBuffer.Append('.');
-    (void)Ascii::AppendDec(aAddressBuffer, (aAddress>>16)&0xff);
-    aAddressBuffer.Append('.');
-    (void)Ascii::AppendDec(aAddressBuffer, (aAddress>>24)&0xff);
-#elif defined DEFINE_BIG_ENDIAN
-    (void)Ascii::AppendDec(aAddressBuffer, (aAddress>>24)&0xff);
-    aAddressBuffer.Append('.');
-    (void)Ascii::AppendDec(aAddressBuffer, (aAddress>>16)&0xff);
-    aAddressBuffer.Append('.');
-    (void)Ascii::AppendDec(aAddressBuffer, (aAddress>>8)&0xff);
-    aAddressBuffer.Append('.');
-    (void)Ascii::AppendDec(aAddressBuffer, aAddress&0xff);
-#else
-# error No endianess defined
-#endif
-    aAddressBuffer.PtrZ();
+    TIpAddressUtils::ToString(aAddress, aAddressBuffer);
 }
 
 void Endpoint::AppendAddress(Bwx& aAddress) const
@@ -120,7 +102,16 @@ void Endpoint::AppendAddress(Bwx& aAddress) const
 void Endpoint::AppendEndpoint(Bwx& aEndpoint) const
 {
     ASSERT(aEndpoint.MaxBytes() - aEndpoint.Bytes() >= kMaxEndpointBytes);
-    AppendAddress(aEndpoint, iAddress);
+
+    if (iAddress.family == kFamilyV6) {
+        aEndpoint.Append('[');
+        AppendAddress(aEndpoint, iAddress);
+        aEndpoint.Append(']');
+    }
+    else {
+        AppendAddress(aEndpoint, iAddress);
+    }
+
     aEndpoint.Append(':');
     (void)Ascii::AppendDec(aEndpoint, iPort);
     aEndpoint.PtrZ();
@@ -128,27 +119,61 @@ void Endpoint::AppendEndpoint(Bwx& aEndpoint) const
 
 void Endpoint::GetAddressOctets(TByte (&aOctets)[4]) const
 {
+    ASSERT(iAddress.family == kFamilyV4);
 #ifdef DEFINE_LITTLE_ENDIAN
-    aOctets[0] = iAddress&0xff;
-    aOctets[1] = (iAddress>>8)&0xff;
-    aOctets[2] = (iAddress>>16)&0xff;
-    aOctets[3] = (iAddress>>24)&0xff;
+    aOctets[0] = iAddress.v4&0xff;
+    aOctets[1] = (iAddress.v4>>8)&0xff;
+    aOctets[2] = (iAddress.v4>>16)&0xff;
+    aOctets[3] = (iAddress.v4>>24)&0xff;
 #elif defined DEFINE_BIG_ENDIAN
-    aOctets[0] = (iAddress>>24)&0xff;
-    aOctets[1] = (iAddress>>16)&0xff;
-    aOctets[2] = (iAddress>>8)&0xff;
-    aOctets[3] = iAddress&0xff;
+    aOctets[0] = (iAddress.v4>>24)&0xff;
+    aOctets[1] = (iAddress.v4>>16)&0xff;
+    aOctets[2] = (iAddress.v4>>8)&0xff;
+    aOctets[3] = iAddress.v4&0xff;
 #else
 # error No endianess defined
 #endif
 }
 
+void Endpoint::GetAddressFields(TUint (&aFields)[8]) const
+{
+    ASSERT(iAddress.family == kFamilyV6);
+#ifdef DEFINE_LITTLE_ENDIAN
+    aFields[0] = (iAddress.v6[1] << 8) + iAddress.v6[0];
+    aFields[1] = (iAddress.v6[3] << 8) + iAddress.v6[2];
+    aFields[2] = (iAddress.v6[5] << 8) + iAddress.v6[4];
+    aFields[3] = (iAddress.v6[7] << 8) + iAddress.v6[6];
+    aFields[4] = (iAddress.v6[9] << 8) + iAddress.v6[8];
+    aFields[5] = (iAddress.v6[11] << 8) + iAddress.v6[10];
+    aFields[6] = (iAddress.v6[13] << 8) + iAddress.v6[12];
+    aFields[7] = (iAddress.v6[15] << 8) + iAddress.v6[14];
+#elif defined DEFINE_BIG_ENDIAN
+    aFields[0] = (iAddress.v6[0] << 8) + iAddress.v6[1];
+    aFields[1] = (iAddress.v6[2] << 8) + iAddress.v6[3];
+    aFields[2] = (iAddress.v6[4] << 8) + iAddress.v6[5];
+    aFields[3] = (iAddress.v6[6] << 8) + iAddress.v6[7];
+    aFields[4] = (iAddress.v6[8] << 8) + iAddress.v6[9];
+    aFields[5] = (iAddress.v6[10] << 8) + iAddress.v6[11];
+    aFields[6] = (iAddress.v6[12] << 8) + iAddress.v6[13];
+    aFields[7] = (iAddress.v6[14] << 8) + iAddress.v6[15];
+#else
+# error No endianess defined
+#endif
+
+}
+
 void Endpoint::Externalise(IWriter& aWriter)
 {
-    TByte octets[4];
-    GetAddressOctets(octets);
-    Brn octetsBuf(octets, sizeof octets);
-    aWriter.Write(octetsBuf);
+    if (iAddress.family == kFamilyV4) {
+        TByte octets[4];
+        GetAddressOctets(octets);
+        Brn octetsBuf(octets, sizeof octets);
+        aWriter.Write(octetsBuf);
+    }
+    else {
+        Brn fieldsBuf((TByte*)&iAddress.v6[0], 16);
+        aWriter.Write(fieldsBuf);
+    }
     WriterBinary wb(aWriter);
     wb.WriteUint16Be(iPort);
 }
@@ -158,18 +183,28 @@ void Endpoint::Internalise(IReader& aReader)
     ReaderProtocolS<4> rb(aReader);
     Brn octets = rb.Read(4);
 #ifdef DEFINE_LITTLE_ENDIAN
-    iAddress  = octets[0];
-    iAddress |= (octets[1] << 8);
-    iAddress |= (octets[2] << 16);
-    iAddress |= (octets[3] << 24);
+    iAddress.v4  = octets[0];
+    iAddress.v4 |= (octets[1] << 8);
+    iAddress.v4 |= (octets[2] << 16);
+    iAddress.v4 |= (octets[3] << 24);
 #elif defined DEFINE_BIG_ENDIAN
-    iAddress  = (octets[0] << 24);
-    iAddress |= (octets[1] << 16);
-    iAddress |= (octets[2] << 8);
-    iAddress |= octets[3];
+    iAddress.v4  = (octets[0] << 24);
+    iAddress.v4 |= (octets[1] << 16);
+    iAddress.v4 |= (octets[2] << 8);
+    iAddress.v4 |= octets[3];
 #else
 # error No endianess defined
 #endif
+    iPort = (TUint16)rb.ReadUintBe(2);
+}
+
+void Endpoint::InternaliseIPv6(IReader& aReader)
+{
+    ReaderProtocolS<16> rb(aReader);
+    Brn bytes = rb.Read(16);
+    for (TUint i = 0; i < 16; i++) {
+        iAddress.v6[i] = bytes[i];
+    }
     iPort = (TUint16)rb.ReadUintBe(2);
 }
 
@@ -183,7 +218,7 @@ void Endpoint::Replace(const Endpoint& aEndpoint)
 // Test if this endpoint is equal to the specified endpoint
 TBool Endpoint::Equals(const Endpoint& aEndpoint) const
 {
-    return (iAddress==aEndpoint.iAddress && iPort==aEndpoint.iPort);
+    return (TIpAddressUtils::Equal(iAddress, aEndpoint.iAddress) && iPort==aEndpoint.iPort);
 }
 
 // Socket
@@ -588,7 +623,7 @@ void SocketTcpClient::Connect(const Endpoint& aEndpoint, TUint aTimeout)
 
 // Tcp Server
 
-SocketTcpServer::SocketTcpServer(Environment& aEnv, const TChar* aName, TUint aPort, TIpAddress aInterface,
+SocketTcpServer::SocketTcpServer(Environment& aEnv, const TChar* aName, TUint aPort, const TIpAddress& aInterface,
                                  TUint aSessionPriority, TUint aSessionStackBytes, TUint aSlots)
     : iMutex(aName)
     , iSessionPriority(aSessionPriority)
@@ -823,7 +858,7 @@ SocketUdp::SocketUdp(Environment& aEnv)
     : SocketUdpBase(aEnv)
 {
     LOG_TRACE(kNetwork, "> SocketUdp::SocketUdp\n");
-    Bind(0, 0);
+    Bind(0, kTIpAddressEmpty);
     GetPort(iPort);
     LOG_TRACE(kNetwork, "< SocketUdp::SocketUdp H = %d, P = %d\n", iHandle, iPort);
 }
@@ -832,11 +867,11 @@ SocketUdp::SocketUdp(Environment& aEnv, TUint aPort)
     : SocketUdpBase(aEnv)
 {
     LOG_TRACE(kNetwork, "> SocketUdp::SocketUdp P = %d\n", aPort);
-    Bind(aPort, 0);
+    Bind(aPort, kTIpAddressEmpty);
     LOG_TRACE(kNetwork, "< SocketUdp::SocketUdp H = %d, P = %d\n", iHandle, iPort);
 }
 
-SocketUdp::SocketUdp(Environment& aEnv, TUint aPort, TIpAddress aInterface)
+SocketUdp::SocketUdp(Environment& aEnv, TUint aPort, const TIpAddress& aInterface)
     : SocketUdpBase(aEnv)
 {
     LOG_TRACE(kNetwork, "> SocketUdp::SocketUdp P = %d, I = %x\n", aPort, aInterface);
@@ -844,20 +879,20 @@ SocketUdp::SocketUdp(Environment& aEnv, TUint aPort, TIpAddress aInterface)
     LOG_TRACE(kNetwork, "< SocketUdp::SocketUdp H = %d, P = %d\n", iHandle, iPort);
 }
 
-void SocketUdp::ReBind(TUint aPort, TIpAddress aInterface)
+void SocketUdp::ReBind(TUint aPort, const TIpAddress& aInterface)
 {
     ReCreate();
     Bind(aPort, aInterface);
 }
 
-void SocketUdp::SetMulticastIf(TIpAddress aInterface)
+void SocketUdp::SetMulticastIf(const TIpAddress& aInterface)
 {
     LOG_TRACE(kNetwork, "> SocketUdp::SetMulticastIf I = %x\n", aInterface);
     OpenHome::Os::NetworkSocketSetMulticastIf(iHandle, aInterface);
     LOG_TRACE(kNetwork, "< SocketUdp::SetMulticastIf\n");
 }
 
-void SocketUdp::Bind(TUint aPort, TIpAddress aInterface)
+void SocketUdp::Bind(TUint aPort, const TIpAddress& aInterface)
 {
     Socket::Bind(Endpoint(aPort, aInterface));
     GetPort(iPort);
@@ -866,7 +901,7 @@ void SocketUdp::Bind(TUint aPort, TIpAddress aInterface)
 
 // SocketUdpMulticast
 
-SocketUdpMulticast::SocketUdpMulticast(Environment& aEnv, TIpAddress aInterface, const Endpoint& aEndpoint)
+SocketUdpMulticast::SocketUdpMulticast(Environment& aEnv, const TIpAddress& aInterface, const Endpoint& aEndpoint)
     : SocketUdpBase(aEnv)
     , iInterface(aInterface)
     , iAddress(aEndpoint.Address())

@@ -28,11 +28,11 @@ class DvStack;
 class IUpnpMsearchHandler
 {
 public:
-    virtual void SsdpSearchAll(const Endpoint& aEndpoint, TUint aMx, TIpAddress aAdapter) = 0;
-    virtual void SsdpSearchRoot(const Endpoint& aEndpoint, TUint aMx, TIpAddress aAdapter) = 0;
-    virtual void SsdpSearchUuid(const Endpoint& aEndpoint, TUint aMx, TIpAddress aAdapter, const Brx& aUuid) = 0;
-    virtual void SsdpSearchDeviceType(const Endpoint& aEndpoint, TUint aMx, TIpAddress aAdapter, const Brx& aDomain, const Brx& aType, TUint aVersion) = 0;
-    virtual void SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx, TIpAddress aAdapter, const Brx& aDomain, const Brx& aType, TUint aVersion) = 0;
+    virtual void SsdpSearchAll(const Endpoint& aEndpoint, TUint aMx, const TIpAddress& aAdapter) = 0;
+    virtual void SsdpSearchRoot(const Endpoint& aEndpoint, TUint aMx, const TIpAddress& aAdapter) = 0;
+    virtual void SsdpSearchUuid(const Endpoint& aEndpoint, TUint aMx, const TIpAddress& aAdapter, const Brx& aUuid) = 0;
+    virtual void SsdpSearchDeviceType(const Endpoint& aEndpoint, TUint aMx, const TIpAddress& aAdapter, const Brx& aDomain, const Brx& aType, TUint aVersion) = 0;
+    virtual void SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx, const TIpAddress& aAdapter, const Brx& aDomain, const Brx& aType, TUint aVersion) = 0;
 };
 
 class IUpnpAnnouncementData
@@ -68,15 +68,15 @@ public: // from IUpnpAnnouncementData
     Brn Domain() const;
     Brn Type() const;
     TUint Version() const;
-    void SendByeByes(TIpAddress aAdapter, const Brx& aUriBase, FunctorGeneric<TBool> aCompleted);
-    void SendAlives(TIpAddress aAdapter, const Brx& aUriBase);
+    void SendByeByes(const TIpAddress& aAdapter, const Brx& aUriBase, FunctorGeneric<TBool> aCompleted);
+    void SendAlives(const TIpAddress& aAdapter, const Brx& aUriBase);
 private:
-    void SendAlivesLocked(TIpAddress aAdapter, const Brx& aUriBase);
+    void SendAlivesLocked(const TIpAddress& aAdapter, const Brx& aUriBase);
     DviProtocolUpnpAdapterSpecificData* AddInterface(const NetworkAdapter& aAdapter);
     void HandleInterfaceChange();
-    TInt FindAdapter(TIpAddress aAdapter, const std::vector<NetworkAdapter*>& aAdapterList);
-    TInt FindListenerForSubnet(TIpAddress aSubnet);
-    TInt FindListenerForInterface(TIpAddress aSubnet);
+    TInt FindAdapter(const TIpAddress& aAdapter, const std::vector<NetworkAdapter*>& aAdapterList);
+    TInt FindListenerForSubnet(const TIpAddress& aSubnet);
+    TInt FindListenerForInterface(const TIpAddress& aSubnet);
     void SubnetDisabled(TBool aCancelled);
     void SubnetUpdated(TBool aCancelled);
     void SendAliveNotifications();
@@ -84,11 +84,11 @@ private:
     void QueueAliveTimer();
     void SendUpdateNotifications();
     void GetUriDeviceXml(Bwx& aUri, const Brx& aUriBase);
-    void GetDeviceXml(Brh& aXml, TIpAddress aAdapter);
+    void GetDeviceXml(Brh& aXml, const TIpAddress& aAdapter);
     void LogMulticastNotification(const char* aType);
     void LogUnicastNotification(const char* aType);
 public: // from IDvProtocol
-    void WriteResource(const Brx& aUriTail, TIpAddress aAdapter, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter);
+    void WriteResource(const Brx& aUriTail, const TIpAddress& aAdapter, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter);
     const Brx& ProtocolName() const;
     void Enable();
     void Disable(Functor& aComplete);
@@ -98,11 +98,11 @@ public: // from IDvProtocol
     void SetCustomData(const TChar* aTag, void* aData);
     void GetResourceManagerUri(const NetworkAdapter& aAdapter, Brh& aUri);
 private: // from IUpnpMsearchHandler
-    void SsdpSearchAll(const Endpoint& aEndpoint, TUint aMx, TIpAddress aAdapter);
-    void SsdpSearchRoot(const Endpoint& aEndpoint, TUint aMx, TIpAddress aAdapter);
-    void SsdpSearchUuid(const Endpoint& aEndpoint, TUint aMx, TIpAddress aAdapter, const Brx& aUuid);
-    void SsdpSearchDeviceType(const Endpoint& aEndpoint, TUint aMx, TIpAddress aAdapter, const Brx& aDomain, const Brx& aType, TUint aVersion);
-    void SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx, TIpAddress aAdapter, const Brx& aDomain, const Brx& aType, TUint aVersion);
+    void SsdpSearchAll(const Endpoint& aEndpoint, TUint aMx, const TIpAddress& aAdapter);
+    void SsdpSearchRoot(const Endpoint& aEndpoint, TUint aMx, const TIpAddress& aAdapter);
+    void SsdpSearchUuid(const Endpoint& aEndpoint, TUint aMx, const TIpAddress& aAdapter, const Brx& aUuid);
+    void SsdpSearchDeviceType(const Endpoint& aEndpoint, TUint aMx, const TIpAddress& aAdapter, const Brx& aDomain, const Brx& aType, TUint aVersion);
+    void SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx, const TIpAddress& aAdapter, const Brx& aDomain, const Brx& aType, TUint aVersion);
 private:
     DviDevice& iDevice;
     DvStack& iDvStack;
@@ -128,8 +128,8 @@ public:
     DviProtocolUpnpAdapterSpecificData(DvStack& aDvStack, IUpnpMsearchHandler& aMsearchHandler, const NetworkAdapter& aAdapter, Bwx& aUriBase, TUint aServerPort);
     void AddRef();
     TBool RemoveRef(); // returns true if deleted
-    TIpAddress Interface() const;
-    TIpAddress Subnet() const;
+    const TIpAddress& Interface() const;
+    const TIpAddress& Subnet() const;
     const Brx& UriBase() const;
     void UpdateServerPort(DviServerUpnp& aServer);
     void UpdateUriBase(Bwx& aUriBase);
@@ -175,7 +175,7 @@ class DviProtocolUpnpDeviceXmlWriter : public IResourceWriter
 {
 public:
     DviProtocolUpnpDeviceXmlWriter(DviProtocolUpnp& aDeviceUpnp);
-    void Write(TIpAddress aAdapter);
+    void Write(const TIpAddress& aAdapter);
     void TransferTo(Brh& aBuf);
 private:
     enum ETagRequirementLevel
@@ -191,7 +191,7 @@ private:
     };
 private:
     void WriteTag(const TChar* aTagName, const TChar* aAttributeKey, ETagRequirementLevel aRequirementLevel, ETagEscaped aEscaped = eTagEscaped);
-    void WritePresentationUrlTag(TIpAddress aAdapter);
+    void WritePresentationUrlTag(const TIpAddress& aAdapter);
     void WriteResourceBegin(TUint aTotalBytes, const TChar* aMimeType);
     void WriteResource(const TByte* aData, TUint aBytes);
     void WriteResourceEnd();

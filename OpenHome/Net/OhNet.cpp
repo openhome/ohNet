@@ -7,6 +7,7 @@
 #include <OpenHome/Private/Network.h>
 #include <OpenHome/Net/Private/Globals.h>
 #include <OpenHome/OsWrapper.h>
+#include <OpenHome/Private/TIpAddressUtils.h>
 
 #include <string.h>
 
@@ -47,8 +48,8 @@ const NetworkAdapter* AutoNetworkAdapterRef::Adapter() const
 
 // NetworkAdapter
 
-NetworkAdapter::NetworkAdapter(Environment& aEnv, TIpAddress aAddress, TIpAddress aNetMask,
-                               TIpAddress aDhcp, TIpAddress aGateway,
+NetworkAdapter::NetworkAdapter(Environment& aEnv, const TIpAddress& aAddress, const TIpAddress& aNetMask,
+                               const TIpAddress& aDhcp, const TIpAddress& aGateway,
                                const char* aName, const char* aCookie)
     : iEnv(aEnv)
     , iLock("NetA")
@@ -96,24 +97,24 @@ void NetworkAdapter::RemoveRef(const char* aCookie)
     }
 }
 
-TIpAddress NetworkAdapter::Address() const
+const TIpAddress& NetworkAdapter::Address() const
 {
     return iAddress;
 }
 
-TIpAddress NetworkAdapter::Subnet() const
+const TIpAddress NetworkAdapter::Subnet() const
 {
-    return (iAddress & iNetMask);
+    return TIpAddressUtils::ApplyMask(iAddress, iNetMask);
 }
 
-TIpAddress NetworkAdapter::Mask() const
+const TIpAddress& NetworkAdapter::Mask() const
 {
     return iNetMask;
 }
 
-bool NetworkAdapter::ContainsAddress(TIpAddress aAddress) const
+bool NetworkAdapter::ContainsAddress(const TIpAddress& aAddress) const
 {
-    return ((aAddress&iNetMask) == Subnet());
+    return (TIpAddressUtils::Equal(TIpAddressUtils::ApplyMask(aAddress, iNetMask), Subnet()));
 }
 
 const char* NetworkAdapter::Name() const
@@ -139,20 +140,20 @@ char* NetworkAdapter::FullName() const
 
 TBool NetworkAdapter::DhcpServerAddressAvailable() const
 {
-    return (iDhcpServer != 0);
+    return (!TIpAddressUtils::IsZero(iDhcpServer));
 }
 
-TIpAddress NetworkAdapter::DhcpServerAddress() const
+const TIpAddress& NetworkAdapter::DhcpServerAddress() const
 {
     return iDhcpServer;
 }
 
 TBool NetworkAdapter::GatewayAddressAvailable() const
 {
-    return (iGateway != 0);
+    return (!TIpAddressUtils::IsZero(iGateway));
 }
 
-TIpAddress NetworkAdapter::GatewayAddress() const
+const TIpAddress& NetworkAdapter::GatewayAddress() const
 {
     return iGateway;
 }
@@ -789,7 +790,7 @@ void Library::DestroyNetworkAdapterList(std::vector<NetworkAdapter*>* aNetworkAd
     NetworkAdapterList::DestroyNetworkAdapterList(aNetworkAdapterList);
 }
 
-void Library::SetCurrentSubnet(TIpAddress aSubnet)
+void Library::SetCurrentSubnet(const TIpAddress& aSubnet)
 {
     iEnv->NetworkAdapterList().SetCurrentSubnet(aSubnet);
 }
@@ -857,7 +858,7 @@ void UpnpLibrary::DestroyNetworkAdapterList(std::vector<NetworkAdapter*>* aNetwo
     Library::DestroyNetworkAdapterList(aNetworkAdapterList);
 }
 
-void UpnpLibrary::SetCurrentSubnet(TIpAddress aSubnet)
+void UpnpLibrary::SetCurrentSubnet(const TIpAddress& aSubnet)
 {
     gEnv->NetworkAdapterList().SetCurrentSubnet(aSubnet);
 }

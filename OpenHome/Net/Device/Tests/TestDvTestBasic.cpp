@@ -20,7 +20,7 @@ public:
     DeviceTestBasic(DvStack& aDvStack, const Brx& aConfigDir);
     ~DeviceTestBasic();
 private:
-    void WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter);
+    void WriteResource(const Brx& aUriTail, const TIpAddress& aInterface, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter);
 private:
     DvDeviceStandard* iDevice;
     ProviderTestBasic* iTestBasic;
@@ -50,7 +50,7 @@ DeviceTestBasic::~DeviceTestBasic()
     delete iDevice;
 }
 
-void DeviceTestBasic::WriteResource(const Brx& aUriTail, TIpAddress /*aInterface*/, std::vector<char*>& /*aLanguageList*/, IResourceWriter& aResourceWriter)
+void DeviceTestBasic::WriteResource(const Brx& aUriTail, const TIpAddress& /*aInterface*/, std::vector<char*>& /*aLanguageList*/, IResourceWriter& aResourceWriter)
 {
     const Brn kIndexFile("index.html");
     Bwh filePath(iConfigDir);

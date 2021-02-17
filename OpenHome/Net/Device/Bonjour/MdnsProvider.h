@@ -20,7 +20,7 @@ public:
     virtual TUint MdnsCreateService();
     virtual void MdnsDestroyService(TUint aHandle);
     virtual void MdnsAppendTxtRecord(Bwx& aBuffer, const TChar* aKey, const TChar* aValue);
-    virtual void MdnsRegisterService(TUint aHandle, const TChar* aName, const TChar* aType, TIpAddress aInterface, TUint aPort, const TChar* aInfo);
+    virtual void MdnsRegisterService(TUint aHandle, const TChar* aName, const TChar* aType, const TIpAddress& aInterface, TUint aPort, const TChar* aInfo);
     virtual void MdnsDeregisterService(TUint aHandle);
     virtual void AddMdnsDeviceListener(IMdnsDeviceListener* aListener);
     virtual void FindDevices(const TChar* aServiceName);

@@ -40,7 +40,7 @@ DviProtocolLpec::DviProtocolLpec(DviDevice& aDevice, DviServerLpec& aServer)
 {
 }
 
-void DviProtocolLpec::WriteResource(const Brx& /*aUriTail*/, TIpAddress /*aAdapter*/, std::vector<char*>& /*aLanguageList*/, IResourceWriter& /*aResourceWriter*/)
+void DviProtocolLpec::WriteResource(const Brx& /*aUriTail*/, const TIpAddress& /*aAdapter*/, std::vector<char*>& /*aLanguageList*/, IResourceWriter& /*aResourceWriter*/)
 {
     ASSERTS(); // resources aren't served over Lpec
 }

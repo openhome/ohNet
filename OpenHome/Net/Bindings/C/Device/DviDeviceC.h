@@ -16,7 +16,7 @@ public:
 protected:
     DviDeviceC();
 private:
-    void WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter);
+    void WriteResource(const Brx& aUriTail, const TIpAddress& aInterface, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter);
     static int32_t STDCALL WriteResourceBegin(void* aPtr, uint32_t aTotalBytes, const char* aMimeType);
     static int32_t STDCALL WriteResource(void* aPtr, const uint8_t* aData, uint32_t aBytes);
     static int32_t STDCALL WriteResourceEnd(void* aPtr);

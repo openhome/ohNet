@@ -17,29 +17,29 @@ class DviServer
 {
 public:
     virtual ~DviServer();
-    TUint Port(TIpAddress aInterface);
+    TUint Port(const TIpAddress& aInterface);
     virtual void Start() = 0;
 protected:
     DviServer(DvStack& aDvStack);
     void Initialise();
     void Deinitialise();
     virtual SocketTcpServer* CreateServer(const NetworkAdapter& aNif) = 0;
-    virtual void NotifyServerDeleted(TIpAddress aInterface);
-    virtual void NotifyServerCreated(TIpAddress aInterface);
+    virtual void NotifyServerDeleted(const TIpAddress& aInterface);
+    virtual void NotifyServerCreated(const TIpAddress& aInterface);
 private:
     void AddServer(NetworkAdapter& aNif);
     void SubnetListChanged();
     void SubnetListChangedLocked();
-    TInt FindInterface(TIpAddress aInterface, const std::vector<NetworkAdapter*>& aNifList);
-    TInt FindServer(TIpAddress aSubnet);
+    TInt FindInterface(const TIpAddress& aInterface, const std::vector<NetworkAdapter*>& aNifList);
+    TInt FindServer(const TIpAddress& aSubnet);
 private:
     class Server : private INonCopyable
     {
     public:
         Server(SocketTcpServer* aTcpServer, NetworkAdapter& aNif);
         ~Server();
-        TIpAddress Interface() const { return iNif.Address(); }
-        TIpAddress Subnet() const { return iNif.Subnet(); }
+        const TIpAddress& Interface() const { return iNif.Address(); }
+        const TIpAddress Subnet() const { return iNif.Subnet(); }
         TUint Port() const { return iServer->Port(); }
     private:
         SocketTcpServer* iServer;

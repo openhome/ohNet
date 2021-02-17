@@ -78,9 +78,9 @@ THandle Os::NetworkAccept(THandle aHandle, Endpoint& aClient)
     return handle;
 }
 
-TUint32 OpenHome::Os::NetworkGetHostByName(const Brx& aAddress)
+TIpAddress OpenHome::Os::NetworkGetHostByName(const Brx& aAddress)
 {
-    TUint32 addr;
+    TIpAddress addr;
     const TInt len = aAddress.Bytes();
     char* name = new char[len+1];
     (void)memcpy(name, aAddress.Ptr(), len);

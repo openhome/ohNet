@@ -90,7 +90,7 @@ public:
      *
      * For anything other than the first call to Bind(), Clear() must have been called first.
      */
-    void Bind(TIpAddress aAddress);
+    void Bind(const TIpAddress& aAddress);
 private:
     void ThreadListen();
 private:
@@ -158,7 +158,7 @@ public:
     void SetHostName(const TChar* aName);
     TUint CreateService();
     void DeregisterService(TUint aHandle);
-    void RegisterService(TUint aHandle, const TChar* aName, const TChar* aType, TIpAddress aInterface, TUint aPort, const TChar* aInfo);
+    void RegisterService(TUint aHandle, const TChar* aName, const TChar* aType, const TIpAddress& aInterface, TUint aPort, const TChar* aInfo);
     void RenameAndReregisterService(TUint aHandle, const TChar* aName);
     void AppendTxtRecord(Bwx& aBuffer, const TChar* aKey, const TChar* aValue);
 
@@ -192,8 +192,8 @@ private:
         ~Nif();
         NetworkAdapter& Adapter();
         NetworkInterfaceInfo& Info();
-        TIpAddress Address() const;
-        TBool ContainsAddress(TIpAddress aAddress) const;
+        const TIpAddress& Address() const;
+        TBool ContainsAddress(const TIpAddress& aAddress) const;
     private:
         NetworkAdapter& iNif;
         NetworkInterfaceInfo* iMdnsInfo;
@@ -209,7 +209,7 @@ private:
     {
     public:
         MdnsService(mDNS& aMdns);
-        void Set(MdnsServiceAction aAction, TUint aHandle, ServiceRecordSet& aService, const TChar* aName, const TChar* aType, TIpAddress aInterface, TUint aPort, const TChar* aInfo);
+        void Set(MdnsServiceAction aAction, TUint aHandle, ServiceRecordSet& aService, const TChar* aName, const TChar* aType, const TIpAddress& aInterface, TUint aPort, const TChar* aInfo);
         TUint PerformAction();
     private:
         TUint Register();

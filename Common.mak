@@ -107,6 +107,7 @@ objects_core = \
 	$(objdir)TerminalOs.$(objext) \
 	$(objdir)Thread.$(objext) \
 	$(objdir)Timer.$(objext) \
+	$(objdir)TIpAddressUtils.$(objext) \
 	$(objdir)Uri.$(objext) \
 	$(objdir)XmlParser.$(objext) \
 	$(objdir)XmlFetcher.$(objext) \
@@ -161,6 +162,7 @@ headers = \
 	$(inc_build)/OpenHome/Private/Terminal.h \
 	$(inc_build)/OpenHome/Private/Thread.h \
 	$(inc_build)/OpenHome/Private/Timer.h \
+	$(inc_build)/OpenHome/TIpAddressUtils.h \
 	$(inc_build)/OpenHome/Private/Uri.h \
 	$(inc_build)/OpenHome/Net/Private/CpiDevice.h \
 	$(inc_build)/OpenHome/Net/Private/CpiDeviceDv.h \
@@ -410,6 +412,8 @@ $(objdir)Thread.$(objext) : OpenHome/Thread.cpp $(headers)
 	$(compiler)Thread.$(objext) -c $(cppflags) $(includes) OpenHome/Thread.cpp
 $(objdir)Timer.$(objext) : OpenHome/Timer.cpp $(headers)
 	$(compiler)Timer.$(objext) -c $(cppflags) $(includes) OpenHome/Timer.cpp
+$(objdir)TIpAddressUtils.$(objext) : OpenHome/TIpAddressUtils.cpp $(headers)
+	$(compiler)TIpAddressUtils.$(objext) -c $(cppflags) $(includes) OpenHome/TIpAddressUtils.cpp
 $(objdir)Uri.$(objext) : OpenHome/Uri.cpp $(headers)
 	$(compiler)Uri.$(objext) -c $(cppflags) $(includes) OpenHome/Uri.cpp
 $(objdir)XmlParser.$(objext) : OpenHome/Net/XmlParser.cpp $(headers)
