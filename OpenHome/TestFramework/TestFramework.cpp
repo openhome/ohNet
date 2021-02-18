@@ -184,7 +184,11 @@ void OpenHome::TestFramework::RandomiseUdn(Environment& aEnv, Bwh& aUdn)
     aUdn.Append('-');
     Bws<Ascii::kMaxUintStringBytes> buf;
     std::vector<NetworkAdapter*>* subnetList = aEnv.NetworkAdapterList().CreateSubnetList();
-    TUint max = (subnetList->size() > 0? (*subnetList)[0]->Address() : UINT_MAX);
+    TUint max = UINT_MAX;
+    if ((subnetList->size() > 0) &&
+        ((*subnetList)[0]->Address().family == kFamilyV4)) {
+        max = (*subnetList)[0]->Address().v4;
+    }
     aEnv.NetworkAdapterList().DestroySubnetList(subnetList);
     (void)Ascii::AppendDec(buf, aEnv.Random(max));
     aUdn.Append(buf);

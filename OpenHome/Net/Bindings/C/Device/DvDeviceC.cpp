@@ -34,7 +34,7 @@ DvDevice* DviDeviceC::Device()
     return iDevice;
 }
 
-void DviDeviceC::WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter)
+void DviDeviceC::WriteResource(const Brx& aUriTail, const TIpAddress& aInterface, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter)
 {
     ASSERT(iResourceManager != NULL);
     Brhz uriTail(aUriTail);

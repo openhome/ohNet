@@ -71,8 +71,8 @@ public:
      *                      leaked NetworkAdapter references.  The later matching call
      *                      to RemoveRef must use the same cookie.
      */
-    NetworkAdapter(Environment& aEnv, TIpAddress aAddress, TIpAddress aNetMask,
-                   TIpAddress aDhcp, TIpAddress aGateway,
+    NetworkAdapter(Environment& aEnv, const TIpAddress& aAddress, const TIpAddress& aNetMask,
+                   const TIpAddress& aDhcp, const TIpAddress& aGateway,
                    const char* aName, const char* aCookie);
     /**
      * Add a reference.  This NetworkAdapter instance won't be deleted until the last reference is removed.
@@ -99,19 +99,19 @@ public:
      *
      * @return  IPv4 address for the interface (in network byte order)
      */
-    TIpAddress Address() const;
+    const TIpAddress& Address() const;
     /**
      * Query the subnet the interface operates on
      *
      * @return  IPv4 address for the subnet (in network byte order)
      */
-    TIpAddress Subnet() const;
+    const TIpAddress Subnet() const;
     /**
      * Query the netmask of the interface
      *
      * @return  netmask for the interface (in network byte order)
      */
-    TIpAddress Mask() const;
+    const TIpAddress& Mask() const;
     /**
      * Query whether the subnet this interface operates on contains a given IP address
      *
@@ -119,7 +119,7 @@ public:
      *
      * @return  true if the address is part of the same subnet as this interface; false otherwise
      */
-    bool ContainsAddress(TIpAddress aAddress) const;
+    bool ContainsAddress(const TIpAddress& aAddress) const;
     /**
      * Get the name of the network adapter.
      *
@@ -145,7 +145,7 @@ public:
      *
      * @return  IP address of the DHCP server for this adapter
      */
-    TIpAddress DhcpServerAddress() const;
+    const TIpAddress& DhcpServerAddress() const;
     /**
     * Query whether the host OS supports reporting Gateway addresses.
     *
@@ -157,7 +157,7 @@ public:
      *
      * @return  IP address of the gateway for this adapter
      */
-    TIpAddress GatewayAddress() const;
+    const TIpAddress& GatewayAddress() const;
 private:
     virtual ~NetworkAdapter();
 private: // from IStackObject
@@ -602,7 +602,7 @@ public:
      * @param aSubnet    The subnet to use.  Likely to be the Subnet() from a
      *                   NetworkAdapter returned by CreateSubnetList.
      */
-    void SetCurrentSubnet(TIpAddress aSubnet);
+    void SetCurrentSubnet(const TIpAddress& aSubnet);
 
     /**
      * Query which network adapter is currently selected.
@@ -747,7 +747,7 @@ public:
      * @param aSubnet    The subnet to use.  Likely to be the Subnet() from a
      *                   NetworkAdapter returned by CreateSubnetList.
      */
-    static void SetCurrentSubnet(TIpAddress aSubnet);
+    static void SetCurrentSubnet(const TIpAddress& aSubnet);
 
     /**
      * Query which network adapter is currently selected.

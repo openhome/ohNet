@@ -6,6 +6,7 @@
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Exception.h>
 #include <OpenHome/Private/Debug.h>
+#include <OpenHome/Private/TIpAddressUtils.h>
 
 #include <algorithm>
 #include <vector>
@@ -15,7 +16,7 @@ using namespace OpenHome;
 
 // NetworkAdapterList
 
-NetworkAdapterList::NetworkAdapterList(Environment& aEnv, Environment::ELoopback aLoopbackPolicy, TIpAddress aDefaultSubnet)
+NetworkAdapterList::NetworkAdapterList(Environment& aEnv, Environment::ELoopback aLoopbackPolicy, const TIpAddress& aDefaultSubnet)
     : iEnv(aEnv)
     , iLoopbackPolicy(aLoopbackPolicy)
     , iListLock("MNIL")
@@ -100,17 +101,17 @@ void NetworkAdapterList::DestroyNetworkAdapterList(std::vector<NetworkAdapter*>*
     DestroySubnetList(aList);
 }
 
-void NetworkAdapterList::SetCurrentSubnet(TIpAddress aSubnet)
+void NetworkAdapterList::SetCurrentSubnet(const TIpAddress& aSubnet)
 {
     iListLock.Wait();
     iSingleSubnetMode = true;
-    const TIpAddress oldAddress = (iCurrent==NULL ? 0 : iCurrent->Address());
+    const TIpAddress oldAddress = (iCurrent==NULL ? kTIpAddressEmpty : iCurrent->Address());
     iDefaultSubnet = aSubnet;
     UpdateCurrentAdapter();
-    const TIpAddress newAddress = (iCurrent==NULL? 0 : iCurrent->Address());
+    const TIpAddress newAddress = (iCurrent==NULL? kTIpAddressEmpty : iCurrent->Address());
     iListLock.Signal();
     const TBool started = (iEnv.CpiStack() != NULL || iEnv.DviStack() != NULL);
-    if (started && newAddress != oldAddress) {
+    if (started && !TIpAddressUtils::Equal(newAddress, oldAddress)) {
         iNotifierThread->QueueCurrentChanged();
     }
 }
@@ -281,10 +282,10 @@ void NetworkAdapterList::InterfaceListChanged(void* aPtr)
     }
 }
 
-TInt NetworkAdapterList::FindSubnet(TIpAddress aSubnet, const std::vector<NetworkAdapter*>& aList)
+TInt NetworkAdapterList::FindSubnet(const TIpAddress& aSubnet, const std::vector<NetworkAdapter*>& aList)
 {
     for (TUint i=0; i<aList.size(); i++) {
-        if (aList[i]->Subnet() == aSubnet) {
+        if (TIpAddressUtils::Equal(aList[i]->Subnet(), aSubnet)) {
             return i;
         }
     }
@@ -297,7 +298,7 @@ void NetworkAdapterList::UpdateCurrentAdapter()
     if (iNetworkAdapters != NULL && iNetworkAdapters->size() > 0) {
         for (TUint i=0; i<iNetworkAdapters->size(); i++) {
             NetworkAdapter* nif = (*iNetworkAdapters)[i];
-            if (nif->Subnet() == iDefaultSubnet) {
+            if (TIpAddressUtils::Equal(nif->Subnet(), iDefaultSubnet)) {
                 iCurrent = nif;
                 TraceAdapter("Subnet changed", *iCurrent);
                 break;
@@ -311,7 +312,7 @@ void NetworkAdapterList::UpdateCurrentAdapter()
 
 TBool NetworkAdapterList::CompareSubnets(NetworkAdapter* aI, NetworkAdapter* aJ)
 {
-    return (aI->Subnet() < aJ->Subnet());
+    return TIpAddressUtils::LessThan(aI->Subnet(), aJ->Subnet());
 }
 
 void NetworkAdapterList::HandleInterfaceListChanged()
@@ -319,13 +320,13 @@ void NetworkAdapterList::HandleInterfaceListChanged()
     static const char* kRemovedAdapterCookie = "RemovedAdapter";
     iListLock.Wait();
     std::vector<NetworkAdapter*>* list = Os::NetworkListAdapters(iEnv, iLoopbackPolicy, "NetworkAdapterList");
-    TIpAddress oldAddress = (iCurrent==NULL ? 0 : iCurrent->Address());
+    TIpAddress oldAddress = (iCurrent==NULL ? kTIpAddressEmpty : iCurrent->Address());
     DestroySubnetList(iNetworkAdapters);
     iNetworkAdapters = list;
 
     // update the 'current' adapter and inform observers if it has changed
     UpdateCurrentAdapter();
-    TIpAddress newAddress = (iCurrent==NULL? 0 : iCurrent->Address());
+    TIpAddress newAddress = (iCurrent==NULL? kTIpAddressEmpty : iCurrent->Address());
 
     // update the subnet list, noting if it has changed
     std::vector<NetworkAdapter*>* subnets = CreateSubnetListLocked();
@@ -335,7 +336,7 @@ void NetworkAdapterList::HandleInterfaceListChanged()
     }
     else {
         for (TUint i=0; i<iSubnets->size(); i++) {
-            if ((*iSubnets)[i]->Address() != (*subnets)[i]->Address()) {
+            if (!TIpAddressUtils::Equal((*iSubnets)[i]->Address(),  (*subnets)[i]->Address())) {
                 subnetsChanged = true;
                 break;
             }
@@ -369,14 +370,16 @@ void NetworkAdapterList::HandleInterfaceListChanged()
     else {
         TUint j = 0;
         for (TUint i=0; i < newSubnets->size(); i++) {
-            while (j < oldSubnets->size() && (*oldSubnets)[j]->Subnet() < (*newSubnets)[i]->Subnet()) {
+            while (j < oldSubnets->size() && 
+                    TIpAddressUtils::LessThan((*oldSubnets)[j]->Subnet(), (*newSubnets)[i]->Subnet())) {
                 NetworkAdapter* removedAdapter = (*oldSubnets)[j];
                 removed.push_back(removedAdapter);
                 removedAdapter->AddRef(kRemovedAdapterCookie);
                 j++;
             }
-            if (j < oldSubnets->size() && (*oldSubnets)[j]->Subnet() == (*newSubnets)[i]->Subnet()) {
-                if ((*oldSubnets)[j]->Address() != (*newSubnets)[i]->Address()) {
+            if (j < oldSubnets->size() &&
+                TIpAddressUtils::Equal((*oldSubnets)[j]->Subnet(), (*newSubnets)[i]->Subnet())) {
+                if (!TIpAddressUtils::Equal((*oldSubnets)[j]->Address(), (*newSubnets)[i]->Address())) {
                     adapterChanged.push_back((*newSubnets)[i]);
                 }
                 j++;
@@ -392,11 +395,13 @@ void NetworkAdapterList::HandleInterfaceListChanged()
         }
         j = 0;
         for (TUint i=0; i < oldSubnets->size(); i++) {
-            while (j < newSubnets->size() && (*newSubnets)[j]->Subnet() < (*oldSubnets)[i]->Subnet()) {
+            while (j < newSubnets->size() &&
+                    TIpAddressUtils::LessThan((*newSubnets)[j]->Subnet(), (*oldSubnets)[i]->Subnet())) {
                 added.push_back((*newSubnets)[j]);
                 j++;
             }
-            if (j < newSubnets->size() && (*newSubnets)[j]->Subnet() == (*oldSubnets)[i]->Subnet()) {
+            if (j < newSubnets->size() &&
+                TIpAddressUtils::Equal((*newSubnets)[j]->Subnet(), (*oldSubnets)[i]->Subnet())) {
                 j++;
             }
         }
@@ -415,7 +420,7 @@ void NetworkAdapterList::HandleInterfaceListChanged()
     if (subnetsChanged) {
         iNotifierThread->QueueSubnetsChanged();
     }
-    if (newAddress != oldAddress) {
+    if (!TIpAddressUtils::Equal(newAddress, oldAddress)) {
         iNotifierThread->QueueCurrentChanged();
     }
 

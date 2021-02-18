@@ -8,6 +8,7 @@
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/OsTypes.h>
 #include <OpenHome/Private/Env.h>
+#include <OpenHome/Private/TIpAddressUtils.h>
 
 #include <vector>
 
@@ -41,9 +42,9 @@ enum ESocketType
 class Endpoint
 {
 public:
-    static const TUint kMaxAddressBytes = 16;
-    static const TUint kMaxEndpointBytes = 22;
-    typedef Bws<kMaxAddressBytes> AddressBuf;
+    static const TUint kMaxAddressBytes = TIpAddressUtils::kMaxAddressBytes; // Potentially 32 Hex characters + 7 colon de-limiters + terminator for IPv6 addr
+    static const TUint kMaxEndpointBytes = 48;                               // As above with de-limiter before port of 5 characters and '[]' enclosing the address
+    typedef Bws<TIpAddressUtils::kMaxAddressBytes> AddressBuf;
     typedef Bws<kMaxEndpointBytes> EndpointBuf;
 public:
     Endpoint();
@@ -61,10 +62,12 @@ public:
     TUint16 Port() const;                                // return port as a network order uint16
     void AppendAddress(Bwx& aAddress) const;
     void AppendEndpoint(Bwx& aEndpoint) const;
-    void GetAddressOctets(TByte (&aOctets)[4]) const;
+    void GetAddressOctets(TByte (&aOctets)[4]) const;    // return individual octets for an IPv4 address
+    void GetAddressFields(TUint (&aFields)[8]) const;    // return individual fields for an IPv6 address
     void Externalise(IWriter& aWriter);
     void Internalise(IReader& aReader);
-    static void AppendAddress(Bwx& aAddressBuffer, TIpAddress aAddress);
+    void InternaliseIPv6(IReader& aReader);
+    static void AppendAddress(Bwx& aAddressBuffer, const TIpAddress& aAddress);
 private:
     TIpAddress iAddress;
     TUint16 iPort;
@@ -220,13 +223,13 @@ class SocketTcpServer : public Socket
 {
     friend class SocketTcpSession;
 public:
-    SocketTcpServer(Environment& aEnv, const TChar* aName, TUint aPort, TIpAddress aInterface,
+    SocketTcpServer(Environment& aEnv, const TChar* aName, TUint aPort, const TIpAddress& aInterface,
                     TUint aSessionPriority = kPriorityHigh, TUint aSessionStackBytes = Thread::kDefaultStackBytes,
                     TUint aSlots = 128);
     // Add is not thread safe, but why would you want that?
     void Add(const TChar* aName, SocketTcpSession* aSession, TInt aPriorityOffset = 0);
     TUint Port() const { return iPort; }
-    TIpAddress Interface() const { return iInterface; }
+    const TIpAddress& Interface() const { return iInterface; }
     ~SocketTcpServer(); // Closes the server
 private:
     TBool Terminating();            // indicates server is in process of being destroyed
@@ -266,18 +269,18 @@ class SocketUdp : public SocketUdpBase
 public:
     SocketUdp(Environment& aEnv); // lets the os select a port
     SocketUdp(Environment& aEnv, TUint aPort); // stipulate a port
-    SocketUdp(Environment& aEnv, TUint aPort, TIpAddress aInterface); // stipulate a port and an interface
-    void ReBind(TUint aPort, TIpAddress aInterface);
-    void SetMulticastIf(TIpAddress aInterface);
+    SocketUdp(Environment& aEnv, TUint aPort, const TIpAddress& aInterface); // stipulate a port and an interface
+    void ReBind(TUint aPort, const TIpAddress& aInterface);
+    void SetMulticastIf(const TIpAddress& aInterface);
 private:
-    void Bind(TUint aPort, TIpAddress aInterface);
+    void Bind(TUint aPort, const TIpAddress& aInterface);
 };
 
 // multicast receiver
 class SocketUdpMulticast : public SocketUdpBase
 {
 public:
-    SocketUdpMulticast(Environment& aEnv, TIpAddress aInterface, const Endpoint& aEndpoint);
+    SocketUdpMulticast(Environment& aEnv, const TIpAddress& aInterface, const Endpoint& aEndpoint);
     ~SocketUdpMulticast();
     void ReCreate();
 private:

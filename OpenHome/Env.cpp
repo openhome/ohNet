@@ -14,6 +14,7 @@
 #include <OpenHome/Private/InfoProvider.h>
 #include <OpenHome/Private/ShellCommandDebug.h>
 #include <OpenHome/Net/Private/MdnsProvider.h>
+#include <OpenHome/Private/TIpAddressUtils.h>
 
 #ifdef PLATFORM_MACOSX_GNU
 # include <sys/time.h>
@@ -28,10 +29,10 @@ namespace OpenHome {
 class MListener
 {
 public:
-    MListener(Environment& aStack, TIpAddress aInterface);
+    MListener(Environment& aStack, const TIpAddress& aInterface);
     ~MListener();
     Net::SsdpListenerMulticast& Listener();
-    TIpAddress Interface() const;
+    const TIpAddress& Interface() const;
     void AddRef();
     TBool RemoveRef();
 private:
@@ -110,7 +111,7 @@ Environment::Environment(FunctorMsg& aLogOutput,
 {
     Construct(aLogOutput, aSchedulerPolicy);
     iTimerManager = new OpenHome::TimerManager(*this, aTimerManagerPriority);
-    iNetworkAdapterList = new OpenHome::NetworkAdapterList(*this, aLoopbackPolicy, 0);
+    iNetworkAdapterList = new OpenHome::NetworkAdapterList(*this, aLoopbackPolicy, kTIpAddressEmpty);
 }
 
 Environment::Environment(InitialisationParams* aInitParams)
@@ -140,7 +141,7 @@ Environment::Environment(InitialisationParams* aInitParams)
     SetRandomSeed((TUint)(time(NULL) % UINT32_MAX));
 #endif // PLATFORM_MACOSX_GNU
     iTimerManager = new OpenHome::TimerManager(*this, aInitParams->TimerManagerPriority());
-    iNetworkAdapterList = new OpenHome::NetworkAdapterList(*this, aInitParams->LoopbackNetworkAdapter(), 0);
+    iNetworkAdapterList = new OpenHome::NetworkAdapterList(*this, aInitParams->LoopbackNetworkAdapter(), kTIpAddressEmpty);
 
     DoSetInitParams(aInitParams);
 }
@@ -252,13 +253,13 @@ OpenHome::ShellCommandDebug* Environment::ShellCommandDebug()
     return iShellCommandDebug;
 }
 
-Net::SsdpListenerMulticast& Environment::MulticastListenerClaim(TIpAddress aInterface)
+Net::SsdpListenerMulticast& Environment::MulticastListenerClaim(const TIpAddress& aInterface)
 {
     AutoMutex a(*iPrivateLock);
     const TInt count = (TUint)iMulticastListeners.size();
     for (TInt i=0; i<count; i++) {
         MListener* listener = iMulticastListeners[i];
-        if (listener->Interface() == aInterface) {
+        if (TIpAddressUtils::Equal(listener->Interface(), aInterface)) {
             listener->AddRef();
             return listener->Listener();
         }
@@ -270,13 +271,13 @@ Net::SsdpListenerMulticast& Environment::MulticastListenerClaim(TIpAddress aInte
     return listener->Listener();
 }
 
-void Environment::MulticastListenerRelease(TIpAddress aInterface)
+void Environment::MulticastListenerRelease(const TIpAddress& aInterface)
 {
     iPrivateLock->Wait();
     const TInt count = (TUint)iMulticastListeners.size();
     for (TInt i=0; i<count; i++) {
         MListener* listener = iMulticastListeners[i];
-        if (listener->Interface() == aInterface) {
+        if (TIpAddressUtils::Equal(listener->Interface(), aInterface)) {
             if (listener->RemoveRef()) {
                 iMulticastListeners.erase(iMulticastListeners.begin() + i);
                 iPrivateLock->Signal();
@@ -529,7 +530,7 @@ void Environment::DnsChanged(void* aSelf)
 
 // MListener
 
-MListener::MListener(Environment& aEnv, TIpAddress aInterface)
+MListener::MListener(Environment& aEnv, const TIpAddress& aInterface)
     : iListener(aEnv, aInterface)
     , iRefCount(1)
 {
@@ -544,7 +545,7 @@ Net::SsdpListenerMulticast& MListener::Listener()
     return iListener;
 }
 
-TIpAddress MListener::Interface() const
+const TIpAddress& MListener::Interface() const
 {
     return iListener.Interface();
 }

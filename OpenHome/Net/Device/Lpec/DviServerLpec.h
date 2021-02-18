@@ -114,7 +114,7 @@ private:
 class DviSessionLpec : public SocketTcpSession, private IDviInvocation
 {
 public:
-    DviSessionLpec(DvStack& aDvStack, TIpAddress aAdapter, TUint aPort);
+    DviSessionLpec(DvStack& aDvStack, const TIpAddress& aAdapter, TUint aPort);
     ~DviSessionLpec();
     void SendAnnouncement();
     void NotifyDeviceDisabled(const Brx& aName, const Brx& aUdn);
@@ -133,7 +133,7 @@ private:
 private: // from IDviInvocation
     void Invoke();
     TUint Version() const;
-    TIpAddress Adapter() const;
+    const TIpAddress& Adapter() const;
     const char* ResourceUriPrefix() const;
     Endpoint ClientEndpoint() const;
     const Brx& ClientUserAgent() const;
@@ -233,12 +233,12 @@ public: // from DviServer
     void Start();
 private: // from DviServerUpnp
     SocketTcpServer* CreateServer(const NetworkAdapter& aNif);
-    void NotifyServerDeleted(TIpAddress aInterface);
+    void NotifyServerDeleted(const TIpAddress& aInterface);
 private:
     class AdapterData
     {
     public:
-        AdapterData(TIpAddress aInterface);
+        AdapterData(const TIpAddress& aInterface);
     public:
         TIpAddress iInterface;
         std::vector<DviSessionLpec*> iSessions;

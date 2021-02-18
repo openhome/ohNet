@@ -475,11 +475,11 @@ void SuiteEndpoint::Test()
     TEST_THROWS(ep.SetAddress(Brn("baddomainname.linn.co.uk")), NetworkError);
     TEST_THROWS(Endpoint ep2(1234, Brn("baddomainname.linn.co.uk")); (void)ep2, NetworkError);
 
-    Bws<32> buffer;
+    Bws<Endpoint::kMaxAddressBytes> buffer;
     ep.SetAddress(Brn("127.0.0.1"));
 
     // Confirm that TIpAddress is network-order.
-    TEST(ep.Address() == Arch::BigEndian4(0x7F000001));
+    TEST(ep.Address().v4 == Arch::BigEndian4(0x7F000001));
 
     // Check address -> string.
     ep.AppendAddress(buffer);
@@ -598,7 +598,7 @@ void SuiteMulticast::Test()
 void SuiteMulticast::Receiver()
 {
     iPortLock.Wait();
-    SocketUdpMulticast recv(*gEnv, 0, Endpoint(iPort, kMulticastAddress));
+    SocketUdpMulticast recv(*gEnv, kTIpAddressEmpty, Endpoint(iPort, kMulticastAddress));
     iPort = recv.Port();
     iPortLock.Signal();
 

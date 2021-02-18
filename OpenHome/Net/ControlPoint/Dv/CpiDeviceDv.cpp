@@ -251,9 +251,9 @@ TUint InvocationDv::Version() const
     return iInvocation.ServiceType().Version();
 }
 
-TIpAddress InvocationDv::Adapter() const
+const TIpAddress& InvocationDv::Adapter() const
 {
-    return 0;
+    return kTIpAddressEmpty;
 }
 
 const char* InvocationDv::ResourceUriPrefix() const
@@ -263,7 +263,7 @@ const char* InvocationDv::ResourceUriPrefix() const
 
 Endpoint InvocationDv::ClientEndpoint() const
 {
-    return Endpoint(0, 0);
+    return Endpoint(0, kTIpAddressEmpty);
 }
 
 const Brx& InvocationDv::ClientUserAgent() const

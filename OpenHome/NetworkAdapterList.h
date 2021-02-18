@@ -33,7 +33,7 @@ class NetworkAdapterList : private IStackObject, private INetworkAdapterChangeNo
 public:
     static const TUint kListenerIdNull = 0;
 public:
-    NetworkAdapterList(Environment& aEnv, Environment::ELoopback aLoopbackPolicy, TIpAddress aDefaultSubnet=0);
+    NetworkAdapterList(Environment& aEnv, Environment::ELoopback aLoopbackPolicy, const TIpAddress& aDefaultSubnet=kTIpAddressEmpty);
     virtual ~NetworkAdapterList();
     TBool SingleSubnetModeEnabled() const;
     Optional<NetworkAdapter> CurrentAdapter(const char* aCookie) const;
@@ -41,7 +41,7 @@ public:
     static void DestroySubnetList(std::vector<NetworkAdapter*>* aList);
     std::vector<NetworkAdapter*>* CreateNetworkAdapterList() const;
     static void DestroyNetworkAdapterList(std::vector<NetworkAdapter*>* aList);
-    void SetCurrentSubnet(TIpAddress aSubnet);
+    void SetCurrentSubnet(const TIpAddress& aSubnet);
     void Refresh();
     TUint AddCurrentChangeListener(Functor aFunctor, const TChar* aId, TBool aInternalClient = true); // internal clients are notified first
     void RemoveCurrentChangeListener(TUint aId);
@@ -84,7 +84,7 @@ private:
     TUint AddSubnetListener(FunctorNetworkAdapter aFunctor, const TChar* aId, MapNetworkAdapter& aMap);
     void RemoveSubnetListener(TUint aId, MapNetworkAdapter& aMap);
     static void InterfaceListChanged(void* aPtr);
-    static TInt FindSubnet(TIpAddress aSubnet, const std::vector<NetworkAdapter*>& aList);
+    static TInt FindSubnet(const TIpAddress& aSubnet, const std::vector<NetworkAdapter*>& aList);
     void UpdateCurrentAdapter();
     void HandleInterfaceListChanged();
     void RunCallbacks(const VectorListener& aCallbacks);

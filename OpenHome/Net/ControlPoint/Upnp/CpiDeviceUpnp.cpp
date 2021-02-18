@@ -20,6 +20,7 @@
 #include <OpenHome/Private/NetworkAdapterList.h>
 #include <OpenHome/OsWrapper.h>
 #include <OpenHome/Net/Private/Globals.h>
+#include <OpenHome/Private/TIpAddressUtils.h>
 
 #include <string.h>
 
@@ -622,7 +623,7 @@ CpiDeviceListUpnp::CpiDeviceListUpnp(CpStack& aCpStack, FunctorCpiDevice aAdded,
     iSubnetListChangeListenerId = ifList.AddSubnetListChangeListener(MakeFunctor(*this, &CpiDeviceListUpnp::SubnetListChanged), "CpiDeviceListUpnp-subnet");
     iSsdpLock.Wait();
     if (current == NULL) {
-        iInterface = 0;
+        iInterface = kTIpAddressEmpty;
         iUnicastListener = NULL;
         iMulticastListener = NULL;
         iNotifyHandlerId = 0;
@@ -819,7 +820,7 @@ TBool CpiDeviceListUpnp::IsLocationReachable(const Brx& aLocation) const
         Optional<NetworkAdapter> onif = iCpStack.Env().NetworkAdapterList().CurrentAdapter("CpiDeviceListUpnp::IsLocationReachable");
         if (onif.Ok()) {
             NetworkAdapter& nif = onif.Unwrap();
-            if (nif.Address() == iInterface && nif.ContainsAddress(endpt.Address())) {
+            if (TIpAddressUtils::Equal(nif.Address(), iInterface) && nif.ContainsAddress(endpt.Address())) {
                 reachable = true;
             }
             nif.RemoveRef("CpiDeviceListUpnp::IsLocationReachable");
@@ -865,7 +866,7 @@ void CpiDeviceListUpnp::SubnetListChanged()
 void CpiDeviceListUpnp::HandleInterfaceChange()
 {
     NetworkAdapter* current = iCpStack.Env().NetworkAdapterList().CurrentAdapter("CpiDeviceListUpnp::HandleInterfaceChange").Ptr();
-    if (current != NULL && current->Address() == iInterface) {
+    if (current != NULL && TIpAddressUtils::Equal(current->Address(), iInterface)) {
         // list of subnets has changed but our interface is still available so there's nothing for us to do here
         current->RemoveRef("CpiDeviceListUpnp::HandleInterfaceChange");
         return;
@@ -874,7 +875,7 @@ void CpiDeviceListUpnp::HandleInterfaceChange()
 
     if (current == NULL) {
         iLock.Wait();
-        iInterface = 0;
+        iInterface = kTIpAddressEmpty;
         iLock.Signal();
         RemoveAll();
         return;

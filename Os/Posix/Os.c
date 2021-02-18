@@ -873,12 +873,57 @@ static int32_t SocketInterrupted(const OsNetworkHandle* aHandle)
     return interrupted;
 }
 
-static void sockaddrFromEndpoint(struct sockaddr_in* aAddr, TIpAddress aAddress, uint16_t aPort)
+static TIpAddress TIpAddressFromSockAddr(const struct sockaddr* aAddr)
 {
-    memset(aAddr, 0, sizeof(*aAddr));
-    aAddr->sin_family = 2;
-    aAddr->sin_port = htons(aPort);
-    aAddr->sin_addr.s_addr = aAddress;
+    TIpAddress addr;
+
+    // Check for IPv6, default to IPv4
+    if (aAddr->sa_family == AF_INET6) {
+        addr.family = kFamilyV6;
+        for (uint8_t i = 0; i < 16; i++) {
+            addr.v6[i] = ((const struct sockaddr_in6*)aAddr)->sin6_addr.s6_addr[i];
+        }
+    }
+    else {
+        addr.family = kFamilyV4;
+        addr.v4 = ((const struct sockaddr_in*)aAddr)->sin_addr.s_addr;
+    }
+
+    return addr;
+}
+
+static uint16_t PortFromSockAddr(const struct sockaddr* aAddr)
+{
+    return (aAddr->sa_family == AF_INET6) ? ntohs(((const struct sockaddr_in6*)aAddr)->sin6_port) : ntohs(((const struct sockaddr_in*)aAddr)->sin_port);
+}
+
+static void in6AddrFromTIpAddress(struct in6_addr* aAddr, const TIpAddress* aAddress)
+{
+    for (uint8_t i = 0; i < 16; i++) {
+        aAddr->s6_addr[i] = aAddress->v6[i];
+    }
+}
+
+uint32_t sockaddrFromEndpoint(struct sockaddr* aAddr, const TIpAddress* aAddress, uint16_t aPort)
+{
+    memset(aAddr, 0, sizeof(struct sockaddr_in6));
+    // Check for IPv6 default to IPv4
+    if (aAddress->family == kFamilyV6) {
+        struct sockaddr_in6 addr;
+        addr.sin6_family = 10; // AF_INET6
+        addr.sin6_port = htons(aPort);
+        in6AddrFromTIpAddress(&addr.sin6_addr, aAddress);
+        memcpy(aAddr, &addr, sizeof(addr));
+        return sizeof(addr);
+    }
+    else {
+        struct sockaddr_in addr;
+        addr.sin_family = 2; // AF_INET
+        addr.sin_port = htons(aPort);
+        addr.sin_addr.s_addr = aAddress->v4;
+        memcpy(aAddr, &addr, sizeof(addr));
+        return sizeof(addr);
+    }
 }
 
 static OsNetworkHandle* CreateHandle(OsContext* aContext, int32_t aSocket)
@@ -923,10 +968,14 @@ int32_t OsNetworkBind(THandle aHandle, TIpAddress aAddress, uint32_t aPort)
 {
     int32_t err;
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
-    struct sockaddr_in addr;
-    uint16_t port = (uint16_t)aPort;
-    sockaddrFromEndpoint(&addr, aAddress, port);
-    err = bind(handle->iSocket, (struct sockaddr*)&addr, sizeof(addr));
+
+    // Create storage for the larger of the two structs (sockaddr_in/sockaddr_in6)
+    // Helper function will setup sockaddr for IPv4/v6
+    struct sockaddr_in6 addr;
+    int32_t len = sockaddrFromEndpoint((struct sockaddr*)&addr, &aAddress, (uint16_t)aPort);
+
+    err = bind(handle->iSocket, (struct sockaddr*)&addr, len);
+
     if (err == -1 && errno == EADDRINUSE) {
         err = -2;
     }
@@ -945,11 +994,12 @@ int32_t OsNetworkPort(THandle aHandle, uint32_t* aPort)
     if (SocketInterrupted(handle)) {
         return -1;
     }
-    struct sockaddr_in addr;
+    struct sockaddr addr;
     socklen_t len = sizeof(addr);
-    err = getsockname(handle->iSocket, (struct sockaddr*)&addr, &len);
+    err = getsockname(handle->iSocket, &addr, &len);
     if (err == 0) {
-        uint16_t port = ntohs(addr.sin_port);
+        // PortFromSockAddr handles IPv4 and v6 sockets
+        uint16_t port = PortFromSockAddr(&addr);
         *aPort = port;
     }
     return err;
@@ -965,10 +1015,12 @@ int32_t OsNetworkConnect(THandle aHandle, TIpAddress aAddress, uint16_t aPort, u
 
     SetFdNonBlocking(handle->iSocket);
 
-    struct sockaddr_in addr;
-    sockaddrFromEndpoint(&addr, aAddress, aPort);
+    // Create storage for the larger of the two structs (sockaddr_in/sockaddr_in6)
+    // Helper function will setup sockaddr for IPv4/v6
+    struct sockaddr_in6 addr;
+    sockaddrFromEndpoint((struct sockaddr*)&addr, &aAddress, aPort);
     /* ignore err as we expect this to fail due to EINPROGRESS */
-    (void)connect(handle->iSocket, (struct sockaddr*)&addr, sizeof(addr));
+    (void)connect(handle->iSocket, &addr, sizeof(addr));
 
     fd_set read;
     fd_set write;
@@ -1024,12 +1076,15 @@ int32_t OsNetworkSendTo(THandle aHandle, const uint8_t* aBuffer, uint32_t aBytes
     if (SocketInterrupted(handle)) {
         return -1;
     }
-    struct sockaddr_in addr;
-    sockaddrFromEndpoint(&addr, aAddress, aPort);
+    // Create storage for the larger of the two structs (sockaddr_in/sockaddr_in6)
+    // Helper function will setup sockaddr for IPv4/v6
+    struct sockaddr_in6 addr;
+    sockaddrFromEndpoint((struct sockaddr*)&addr, &aAddress, aPort);
+
     int32_t sent = 0;
     int32_t bytes = 0;
     do {
-        bytes = TEMP_FAILURE_RETRY_2(sendto(handle->iSocket, &aBuffer[sent], aBytes-sent, MSG_NOSIGNAL, (struct sockaddr*)&addr, sizeof(addr)), handle);
+        bytes = TEMP_FAILURE_RETRY_2(sendto(handle->iSocket, &aBuffer[sent], aBytes-sent, MSG_NOSIGNAL, &addr, sizeof(addr)), handle);
         if (bytes != -1) {
             sent += bytes;
         }
@@ -1074,13 +1129,12 @@ int32_t OsNetworkReceiveFrom(THandle aHandle, uint8_t* aBuffer, uint32_t aBytes,
     if (SocketInterrupted(handle)) {
         return -1;
     }
-    struct sockaddr_in addr;
-    sockaddrFromEndpoint(&addr, 0, 0);
+    struct sockaddr addr;
     socklen_t addrLen = sizeof(addr);
 
     SetFdNonBlocking(handle->iSocket);
 
-    int32_t received = TEMP_FAILURE_RETRY_2(recvfrom(handle->iSocket, aBuffer, aBytes, MSG_NOSIGNAL, (struct sockaddr*)&addr, &addrLen), handle);
+    int32_t received = TEMP_FAILURE_RETRY_2(recvfrom(handle->iSocket, aBuffer, aBytes, MSG_NOSIGNAL, &addr, &addrLen), handle);
     if (received==-1 && errno==EWOULDBLOCK) {
         fd_set read;
         fd_set error;
@@ -1095,12 +1149,13 @@ int32_t OsNetworkReceiveFrom(THandle aHandle, uint8_t* aBuffer, uint32_t aBytes,
         } while(selectErr == -1L && errno == EINTR && !SocketInterrupted(handle));
 
         if (selectErr > 0 && FD_ISSET(handle->iSocket, &read)) {
-            received = TEMP_FAILURE_RETRY_2(recvfrom(handle->iSocket, aBuffer, aBytes, MSG_NOSIGNAL, (struct sockaddr*)&addr, &addrLen), handle);
+            received = TEMP_FAILURE_RETRY_2(recvfrom(handle->iSocket, aBuffer, aBytes, MSG_NOSIGNAL, &addr, &addrLen), handle);
         }
     }
     SetFdBlocking(handle->iSocket);
-    *aAddress = addr.sin_addr.s_addr;
-    *aPort = ntohs(addr.sin_port);
+    // Helper functions determine protocol family (IPv4/v6)
+    *aAddress = TIpAddressFromSockAddr(&addr);
+    *aPort = PortFromSockAddr(&addr);
     return received;
 }
 
@@ -1152,13 +1207,12 @@ int32_t OsNetworkListen(THandle aHandle, uint32_t aSlots)
 THandle OsNetworkAccept(THandle aHandle, TIpAddress* aClientAddress, uint32_t* aClientPort)
 {
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
-    *aClientAddress = 0;
+    *aClientAddress = kTIpAddressEmpty;
     *aClientPort = 0;
     if (SocketInterrupted(handle)) {
         return kHandleNull;
     }
-    struct sockaddr_in addr;
-    sockaddrFromEndpoint(&addr, 0, 0);
+    struct sockaddr addr;
     socklen_t len = sizeof(addr);
 
     /* accept() in O_NONBLOCK mode will constantly return an error of
@@ -1209,7 +1263,7 @@ THandle OsNetworkAccept(THandle aHandle, TIpAddress* aClientAddress, uint32_t* a
     // a client is waiting to connect. Otherwise, we were interupted and
     // so shouldn't call accept().
     if (h != -1) {
-        h = FD_ISSET(handle->iSocket, &read) ? TEMP_FAILURE_RETRY_2(accept(handle->iSocket, (struct sockaddr*)&addr, &len), handle)
+        h = FD_ISSET(handle->iSocket, &read) ? TEMP_FAILURE_RETRY_2(accept(handle->iSocket, &addr, &len), handle)
                                              : -1; //Assuming it was the pipe or an error, so use indicate this here. 
     }
 
@@ -1225,21 +1279,18 @@ THandle OsNetworkAccept(THandle aHandle, TIpAddress* aClientAddress, uint32_t* a
         return kHandleNull;
     }
 
-    *aClientAddress = addr.sin_addr.s_addr;
-    *aClientPort = ntohs(addr.sin_port);
+    // Helper functions determine protocol family (IPv4/v6)
+    *aClientAddress = TIpAddressFromSockAddr(&addr);
+    *aClientPort = PortFromSockAddr(&addr);
     return (THandle)newHandle;
 }
 
 int32_t OsNetworkGetHostByName(const char* aAddress, TIpAddress* aHost)
 {
     struct addrinfo *res;
-    struct addrinfo hints;
-    memset(&hints, 0, sizeof(hints));
-    hints.ai_family = AF_INET;
-
-    if (getaddrinfo(aAddress, NULL, &hints, &res) == 0) {
-        struct sockaddr_in* s = (struct sockaddr_in*)res->ai_addr;
-        *aHost = s->sin_addr.s_addr;
+    if (getaddrinfo(aAddress, NULL, NULL, &res) == 0) {
+        // Helper function determines protocol family (IPv4/v6)
+        *aHost = TIpAddressFromSockAddr(res->ai_addr);
         freeaddrinfo(res);
         return 0;
     }
@@ -1249,16 +1300,16 @@ int32_t OsNetworkGetHostByName(const char* aAddress, TIpAddress* aHost)
     // Try re-read configuration files.
     if (res_init() == 0) {
         // Configuration files were re-read. Try getaddrinfo() again.
-        if (getaddrinfo(aAddress, NULL, &hints, &res) == 0) {
-            struct sockaddr_in* s = (struct sockaddr_in*)res->ai_addr;
-            *aHost = s->sin_addr.s_addr;
+        if (getaddrinfo(aAddress, NULL, NULL, &res) == 0) {
+            // Helper function determines protocol family (IPv4/v6)
+            *aHost = TIpAddressFromSockAddr(res->ai_addr);
             freeaddrinfo(res);
             return 0;
         }
     }
 #endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD && !defined(__ANDROID__) */
 
-    *aHost = 0;
+    *aHost = kTIpAddressEmpty;
     return -1;
 }
 
@@ -1322,17 +1373,27 @@ int32_t OsNetworkSocketMulticastAddMembership(THandle aHandle, TIpAddress aInter
     char loop;
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
 
-    struct ip_mreq mreq;
-    mreq.imr_multiaddr.s_addr = aAddress;
-    mreq.imr_interface.s_addr = aInterface;
-    err = setsockopt(handle->iSocket, IPPROTO_IP, IP_ADD_MEMBERSHIP, (const char*)&mreq, sizeof(mreq));
+    // Check for IPv6, default to IPv4
+    if (aInterface.family == kFamilyV6) {
+        struct ipv6_mreq mreq;
+        in6AddrFromTIpAddress((struct in6_addr*)&mreq.ipv6mr_multiaddr, &aAddress);
+        in6AddrFromTIpAddress((struct in6_addr*)&mreq.ipv6mr_interface, &aInterface);
+        err = setsockopt(handle->iSocket, IPPROTO_IPV6, IP_ADD_MEMBERSHIP, (const char*)&mreq, sizeof(mreq));
+    }
+    else {
+        struct ip_mreq mreq;
+        mreq.imr_multiaddr.s_addr = aAddress.v4;
+        mreq.imr_interface.s_addr = aInterface.v4;
+        err = setsockopt(handle->iSocket, IPPROTO_IP, IP_ADD_MEMBERSHIP, (const char*)&mreq, sizeof(mreq));
+    }
 
     if (err != 0) {
         return err;
     }
     
     loop = 0;
-    err = setsockopt(handle->iSocket, IPPROTO_IP, IP_MULTICAST_LOOP, &loop, sizeof(loop));
+    int level = (aInterface.family == kFamilyV6) ? IPPROTO_IPV6 : IPPROTO_IP;
+    err = setsockopt(handle->iSocket, level, IP_MULTICAST_LOOP, &loop, sizeof(loop));
     
     return err;
 }
@@ -1341,25 +1402,42 @@ int32_t OsNetworkSocketMulticastDropMembership(THandle aHandle, TIpAddress aInte
 {
     int32_t err;
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
-    struct ip_mreq mreq;
-    mreq.imr_multiaddr.s_addr = aAddress;
-    mreq.imr_interface.s_addr = aInterface;
-    err = setsockopt(handle->iSocket, IPPROTO_IP, IP_DROP_MEMBERSHIP, &mreq, sizeof(mreq));
+
+    // Check for IPv6, default to IPv4
+    if (aInterface.family == kFamilyV6) {
+        struct ipv6_mreq mreq;
+        in6AddrFromTIpAddress((struct in6_addr*)&mreq.ipv6mr_multiaddr, &aAddress);
+        in6AddrFromTIpAddress((struct in6_addr*)&mreq.ipv6mr_interface, &aInterface);
+        err = setsockopt(handle->iSocket, IPPROTO_IPV6, IP_DROP_MEMBERSHIP, &mreq, sizeof(mreq));
+    }
+    else {
+        struct ip_mreq mreq;
+        mreq.imr_multiaddr.s_addr = aAddress.v4;
+        mreq.imr_interface.s_addr = aInterface.v4;
+        err = setsockopt(handle->iSocket, IPPROTO_IP, IP_DROP_MEMBERSHIP, &mreq, sizeof(mreq));
+    }
     return err;
 }
  
-int32_t OsNetworkSocketSetMulticastIf(THandle aHandle,  TIpAddress aInterface)
+int32_t OsNetworkSocketSetMulticastIf(THandle aHandle, TIpAddress aInterface)
 {
 #if defined(PLATFORM_MACOSX_GNU) || defined(PLATFORM_FREEBSD)
+    int err;
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
-    int32_t err = setsockopt(handle->iSocket, IPPROTO_IP, IP_MULTICAST_IF, &aInterface, sizeof(aInterface));
+
+    if (aInterface.family == kFamilyV6) {
+        err = setsockopt(handle->iSocket, IPPROTO_IPV6, IP_MULTICAST_IF, &aInterface.v6, sizeof(aInterface));
+    }
+    else {
+        err = setsockopt(handle->iSocket, IPPROTO_IP, IP_MULTICAST_IF, &aInterface.v4, sizeof(aInterface));
+    }
     return err;
 #else
     return 0;
 #endif
 }
 
-static int32_t isWireless(const char* ifname)
+static int32_t isWireless(const char* ifname, int domain)
 {
 #if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_QNAP)
     int sock = -1;
@@ -1368,7 +1446,7 @@ static int32_t isWireless(const char* ifname)
     memset(&pwrq, 0, sizeof(pwrq));
     strncpy(pwrq.ifr_name, ifname, IFNAMSIZ);
 
-    if ((sock = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+    if ((sock = socket(domain, SOCK_STREAM, 0)) == -1) {
         return 0;
     }
 
@@ -1378,6 +1456,58 @@ static int32_t isWireless(const char* ifname)
 #else
     return 0;
 #endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_QNAP */
+}
+
+static int32_t TIpAddressesAreEqual(const TIpAddress* aAddr1, const TIpAddress* aAddr2)
+{
+    if ((aAddr1->family == aAddr2->family) &&
+       ((aAddr1->family == kFamilyV6 && (aAddr1->v6 == aAddr2->v6)) ||
+        (aAddr1->family == kFamilyV4 && (aAddr1->v4 == aAddr2->v4)))) {
+        return 1;
+    }
+    return 0;
+}
+
+static int32_t NetMasksAreEqual(const TIpAddress* aAddr1, const TIpAddress* aAddr2)
+{
+    if (aAddr1->family != aAddr2->family) {
+        return 0;
+    }
+
+    if (aAddr1->family == kFamilyV6) {
+        for (uint8_t i = 0; i < 16; i++) {
+            if ((aAddr1->v6[i] & aAddr2->v6[i]) != aAddr1->v6[i]) {
+                return 0;
+            }
+        }
+        return 1;
+    }
+    else {
+        return ((aAddr1->v4 & aAddr2->v4) == aAddr1->v4);
+    }
+    return 0;
+}
+
+static int32_t isLoopback(struct sockaddr* aInterface)
+{
+#ifdef DEFINE_BIG_ENDIAN
+#define MakeIpAddress(aByte1, aByte2, aByte3, aByte4) \
+        (aByte4 | (aByte3<<8) | (aByte2<<16) | (aByte1<<24))
+#elif defined(DEFINE_LITTLE_ENDIAN)
+#define MakeIpAddress(aByte1, aByte2, aByte3, aByte4) \
+        (aByte1 | (aByte2<<8) | (aByte3<<16) | (aByte4<<24))
+#else
+#error "Endianness must be defined."
+#endif
+
+    uint32_t loopbackAddrV4 = MakeIpAddress(127, 0, 0, 1);
+
+    if (aInterface->sa_family == AF_INET6) {
+        return IN6_IS_ADDR_LOOPBACK(&((struct sockaddr_in6*)aInterface)->sin6_addr);
+    }
+    else {
+        return (((struct sockaddr_in*)aInterface)->sin_addr.s_addr == loopbackAddrV4);
+    }
 }
 
 static void append(OsNetworkAdapter* aAdapter, OsNetworkAdapter** aHead, OsNetworkAdapter** aTail)
@@ -1393,16 +1523,6 @@ static void append(OsNetworkAdapter* aAdapter, OsNetworkAdapter** aHead, OsNetwo
 
 int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters, uint32_t aUseLoopback)
 {
-#ifdef DEFINE_BIG_ENDIAN
-#define MakeIpAddress(aByte1, aByte2, aByte3, aByte4) \
-        (aByte4 | (aByte3<<8) | (aByte2<<16) | (aByte1<<24))
-#elif defined(DEFINE_LITTLE_ENDIAN)
-#define MakeIpAddress(aByte1, aByte2, aByte3, aByte4) \
-        (aByte1 | (aByte2<<8) | (aByte3<<16) | (aByte4<<24))
-#else
-#error "Endianness must be defined."
-#endif
-
     int32_t ret = -1;
     struct ifaddrs* networkIf;
     struct ifaddrs* iter;
@@ -1411,17 +1531,25 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
     if (TEMP_FAILURE_RETRY(getifaddrs(&networkIf)) == -1) {
         return -1;
     }
-    TIpAddress loopbackAddr = MakeIpAddress(127, 0, 0, 1);
+
     /* first check whether we have any suitable interfaces other than loopback */
     if (aUseLoopback == 0) {
         iter = networkIf;
         while (iter != NULL) {
             if (iter->ifa_addr != NULL &&
-                iter->ifa_addr->sa_family == AF_INET &&
-                (iter->ifa_flags & IFF_RUNNING) != 0 &&
-                ((struct sockaddr_in*)iter->ifa_addr)->sin_addr.s_addr != loopbackAddr) {
-                includeLoopback = 0;
-                break;
+                (iter->ifa_flags & IFF_RUNNING) != 0) {
+                
+                // isLoopback determines protocol family (v4/v6)
+                if (iter->ifa_addr->sa_family == AF_INET && !isLoopback(iter->ifa_addr)) {
+                    includeLoopback = 0;
+                    break;
+                }
+#if !defined(PLATFORM_MACOSX_GNU)
+                else if (iter->ifa_addr->sa_family == AF_INET6 && !isLoopback(iter->ifa_addr)) {
+                    includeLoopback = 0;
+                    break;
+                }
+#endif
             }
             iter = iter->ifa_next;
         }
@@ -1440,10 +1568,16 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
         if (iter->ifa_addr == NULL) {
             continue;
         }
-        const int ifaceIsWireless = isWireless(iter->ifa_name);
-        const int ifaceIsLoopback = (((struct sockaddr_in*)iter->ifa_addr)->sin_addr.s_addr == loopbackAddr) ? 1 : 0;
+        const int ifaceIsWireless = isWireless(iter->ifa_name, iter->ifa_addr->sa_family);
+        const int ifaceIsLoopback = isLoopback(iter->ifa_addr);
 
-        if (iter->ifa_addr->sa_family != AF_INET ||
+#if !defined(PLATFORM_MACOSX_GNU)
+        const uint8_t familyIsValid = (iter->ifa_addr->sa_family == AF_INET || iter->ifa_addr->sa_family == AF_INET6);
+#else
+        // Omit IPv6 adapters on macOS platforms
+        const uint8_t familyIsValid = (iter->ifa_addr->sa_family == AF_INET);
+#endif
+        if (!familyIsValid ||
             (iter->ifa_flags & IFF_RUNNING) == 0 ||
             (includeLoopback == 0 && ifaceIsLoopback == 1) ||
             (aUseLoopback == 1    && ifaceIsLoopback == 0)) {
@@ -1472,8 +1606,9 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
         }
 
         (void)strcpy(iface->iName, iter->ifa_name);
-        iface->iAddress = ((struct sockaddr_in*)iter->ifa_addr)->sin_addr.s_addr;
-        iface->iNetMask = ((struct sockaddr_in*)iter->ifa_netmask)->sin_addr.s_addr;
+        // Helper functions handle Ipv4 and v6 addresses
+        iface->iAddress = TIpAddressFromSockAddr(iter->ifa_addr);
+        iface->iNetMask = TIpAddressFromSockAddr(iter->ifa_netmask);
         iface->iReserved = ifaceIsWireless;
     }
 
@@ -1509,10 +1644,11 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
         // inner loop: check other adapters (not ifaceIter) for priority
         OsNetworkAdapter* addrsIter = head;
         while (addrsIter != NULL) {
+            // Helper functions distinguish between IPv4 and v6
             if (addrsIter != ifaceIter &&
-                addrsIter->iAddress == ifaceIter->iAddress &&
-                (addrsIter->iNetMask & ifaceIter->iNetMask) == addrsIter->iNetMask) {
-                // found another adapter with same address and same or less specific netmask
+                TIpAddressesAreEqual(&addrsIter->iAddress, &ifaceIter->iAddress) &&
+                NetMasksAreEqual(&addrsIter->iNetMask, &ifaceIter->iNetMask)) { // Order of arguments is important here
+
                 removeIface = 0; // true
                 break;
             }

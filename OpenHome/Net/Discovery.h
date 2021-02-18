@@ -45,7 +45,7 @@ public:
 class SsdpSocketReader : public SocketUdpMulticast, public IReaderSource
 {
 public:
-    SsdpSocketReader(Environment& aEnv, TIpAddress aInterface, const Endpoint& aMulticast);
+    SsdpSocketReader(Environment& aEnv, const TIpAddress& aInterface, const Endpoint& aMulticast);
     ~SsdpSocketReader();
     Endpoint Sender() const; // endpoint of the sender to the multicast address
 private: // from IReaderSource
@@ -112,13 +112,13 @@ class SsdpListenerMulticast : public SsdpListener, private IResumeObserver
     typedef std::vector<NotifyHandler*> VectorNotifyHandler;
     typedef std::vector<MsearchHandler*> VectorMsearchHandler;
 public:
-    SsdpListenerMulticast(Environment& aEnv, TIpAddress aInterface);
+    SsdpListenerMulticast(Environment& aEnv, const TIpAddress& aInterface);
     virtual ~SsdpListenerMulticast();
     TInt AddNotifyHandler(ISsdpNotifyHandler* aNotifyHandler);
     TInt AddMsearchHandler(ISsdpMsearchHandler* aMsearchHandler);
     void RemoveNotifyHandler(TInt aHandlerId);
     void RemoveMsearchHandler(TInt aHandlerId);
-    TIpAddress Interface() const;
+    const TIpAddress& Interface() const;
 private:
     void Run();
     void Terminated();
@@ -159,7 +159,7 @@ class SsdpListenerUnicast : public SsdpListener, private IResumeObserver
     static const TUint kMaxBufferBytes = 1024;
     static const TUint kRecvBufBytes = 64 * 1024;
 public:
-    SsdpListenerUnicast(Environment& aEnv, ISsdpNotifyHandler& aNotifyHandler, TIpAddress aInterface);
+    SsdpListenerUnicast(Environment& aEnv, ISsdpNotifyHandler& aNotifyHandler, const TIpAddress& aInterface);
     ~SsdpListenerUnicast();
     void MsearchRoot();
     void MsearchUuid(const Brx& aUuid);

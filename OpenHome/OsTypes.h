@@ -12,7 +12,18 @@ typedef void* THandle;
 /**
  * IpV4 address as network order uint32
  */
-typedef uint32_t TIpAddress;
+
+#define kFamilyV4 0
+#define kFamilyV6 1
+
+typedef struct TIpAddress
+{
+    uint8_t family;
+    uint32_t v4;
+    uint8_t v6[16];
+} TIpAddress;
+
+static const TIpAddress kTIpAddressEmpty = {0};
 
 /**
  * Opaque handle to a singleton, setup before other Os functions are called

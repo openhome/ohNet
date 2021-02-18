@@ -9,6 +9,7 @@
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Private/Printer.h>
+#include <OpenHome/Private/TIpAddressUtils.h>
 
 #include <limits.h>
 
@@ -310,7 +311,7 @@ void PropertyWriterFactoryLpec::RemoveRef()
 
 // DviSessionLpec
 
-DviSessionLpec::DviSessionLpec(DvStack& aDvStack, TIpAddress aAdapter, TUint aPort)
+DviSessionLpec::DviSessionLpec(DvStack& aDvStack, const TIpAddress& aAdapter, TUint aPort)
     : iDvStack(aDvStack)
     , iAdapter(aAdapter)
     , iPort(aPort)
@@ -688,7 +689,7 @@ TUint DviSessionLpec::Version() const
     return iVersion;
 }
 
-TIpAddress DviSessionLpec::Adapter() const
+const TIpAddress& DviSessionLpec::Adapter() const
 {
     return iAdapter;
 }
@@ -988,11 +989,11 @@ DviServerLpec::~DviServerLpec()
     Deinitialise();
 }
 
-void DviServerLpec::NotifyServerDeleted(TIpAddress aInterface)
+void DviServerLpec::NotifyServerDeleted(const TIpAddress& aInterface)
 {
     for (TUint i=0; i<iAdapterData.size(); i++) {
         AdapterData* ad = iAdapterData[i];
-        if (ad->iInterface == aInterface) {
+        if (TIpAddressUtils::Equal(ad->iInterface, aInterface)) {
             iAdapterData.erase(iAdapterData.begin() + i);
             delete ad;
             break;
@@ -1003,7 +1004,7 @@ void DviServerLpec::NotifyServerDeleted(TIpAddress aInterface)
 
 // DviServerLpec::AdapterData
 
-DviServerLpec::AdapterData::AdapterData(TIpAddress aInterface)
+DviServerLpec::AdapterData::AdapterData(const TIpAddress& aInterface)
     : iInterface(aInterface)
 {
 }
