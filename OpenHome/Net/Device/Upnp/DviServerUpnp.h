@@ -143,8 +143,8 @@ class DvStack;
 class PropertyWriterFactory : public IPropertyWriterFactory
 {
 public:
-    PropertyWriterFactory(DvStack& aDvStack, TIpAddress aAdapter, TUint aPort);
-    TUint Adapter() const;
+    PropertyWriterFactory(DvStack& aDvStack, const TIpAddress& aAdapter, TUint aPort);
+    const TIpAddress& Adapter() const;
     void SubscriptionAdded(DviSubscription& aSubscription);
     void Disable();
 private: // IPropertyWriterFactory
@@ -196,7 +196,7 @@ private: // IResourceWriter
 private: // IDviInvocation
     void Invoke();
     TUint Version() const;
-    TIpAddress Adapter() const;
+    const TIpAddress& Adapter() const;
     const char* ResourceUriPrefix() const;
     Endpoint ClientEndpoint() const;
     const Brx& ClientUserAgent() const;
@@ -277,7 +277,7 @@ public: // from DviServer
     void Start();
 protected: // from DviServer
     SocketTcpServer* CreateServer(const NetworkAdapter& aNif);
-    void NotifyServerDeleted(TIpAddress aInterface);
+    void NotifyServerDeleted(const TIpAddress& aInterface);
 private: // from IPathMapperUpnp
     TBool TryMapPath(const Brx& aReqPath, Bwx& aMappedPath);
 private: // from IRedirector

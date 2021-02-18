@@ -316,7 +316,7 @@ TBool DviDevice::IsRoot() const
     return (root == this);
 }
 
-void DviDevice::WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter)
+void DviDevice::WriteResource(const Brx& aUriTail, const TIpAddress& aInterface, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter)
 {
     Parser parser(aUriTail);
     Brn dir = parser.Next('/');
@@ -336,7 +336,7 @@ void DviDevice::WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::v
     }
 }
 
-void DviDevice::GetUriBase(Bwx& aUriBase, TIpAddress aInterface, TUint aPort, IDvProtocol& aProtocol)
+void DviDevice::GetUriBase(Bwx& aUriBase, const TIpAddress& aInterface, TUint aPort, IDvProtocol& aProtocol)
 {
     const Brx& name = aProtocol.ProtocolName();
     aUriBase.Append(Http::kSchemeHttp);
@@ -738,7 +738,7 @@ void DviDeviceMap::ClearMap(std::map<Brn, DviDevice*, BufferCmp>& aMap)
     aMap.clear();
 }
 
-void DviDeviceMap::WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter)
+void DviDeviceMap::WriteResource(const Brx& aUriTail, const TIpAddress& aInterface, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter)
 {
     iLock.Wait();
     Parser parser(aUriTail);

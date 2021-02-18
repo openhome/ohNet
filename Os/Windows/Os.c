@@ -594,12 +594,12 @@ static int32_t SocketInterrupted(const OsNetworkHandle* aHandle)
     return interrupted;
 }
 
-static void sockaddrFromEndpoint(struct sockaddr_in* aAddr, TIpAddress aAddress, uint16_t aPort)
+static void sockaddrFromEndpoint(struct sockaddr_in* aAddr, const TIpAddress* aAddress, uint16_t aPort)
 {
     memset(aAddr, 0, sizeof(*aAddr));
     aAddr->sin_family = AF_INET;
     aAddr->sin_port = SwapEndian16(aPort);
-    aAddr->sin_addr.s_addr = aAddress;
+    aAddr->sin_addr.s_addr = aAddress->v4;
 }
 
 static OsNetworkHandle* CreateHandle(OsContext* aContext, SOCKET aSocket)
@@ -660,7 +660,7 @@ int32_t OsNetworkBind(THandle aHandle, TIpAddress aAddress, uint32_t aPort)
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
     struct sockaddr_in addr;
     uint16_t port = (uint16_t)aPort;
-    sockaddrFromEndpoint(&addr, aAddress, port);
+    sockaddrFromEndpoint(&addr, &aAddress, port);
     err = bind(handle->iSocket, (struct sockaddr*)&addr, sizeof(addr));
     if (err == SOCKET_ERROR) {
         if (WSAGetLastError() == WSAEADDRINUSE) {
@@ -703,6 +703,9 @@ int32_t OsNetworkConnect(THandle aHandle, TIpAddress aAddress, uint16_t aPort, u
     HANDLE handles[2];
     DWORD ret;
 
+    if (aAddress.family != kFamilyV4) {
+        return -1;
+    }
     if (SocketInterrupted(handle)) {
         return -1;
     }
@@ -710,7 +713,7 @@ int32_t OsNetworkConnect(THandle aHandle, TIpAddress aAddress, uint16_t aPort, u
     handles[0] = handle->iEventSocket;
     handles[1] = handle->iEventInterrupt;
 
-    sockaddrFromEndpoint(&addr, aAddress, aPort);
+    sockaddrFromEndpoint(&addr, &aAddress, aPort);
     (void)connect(handle->iSocket, (struct sockaddr*)&addr, sizeof(addr));
     ret = WSAWaitForMultipleEvents(2, &handles[0], FALSE, aTimeoutMs, FALSE);
     if (WAIT_OBJECT_0 == ret) {
@@ -767,10 +770,13 @@ int32_t OsNetworkSendTo(THandle aHandle, const uint8_t* aBuffer, uint32_t aBytes
     int32_t bytes = 0;
     struct sockaddr_in addr;
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
+    if (aAddress.family != kFamilyV4) {
+        return -1;
+    }
     if (SocketInterrupted(handle)) {
         return -1;
     }
-    sockaddrFromEndpoint(&addr, aAddress, aPort);
+    sockaddrFromEndpoint(&addr, &aAddress, aPort);
     do {
         bytes = sendto(handle->iSocket, (const char*)aBuffer, aBytes, 0, (struct sockaddr*)&addr, sizeof(addr));
         if (bytes != -1) {
@@ -816,6 +822,9 @@ int32_t OsNetworkReceiveFrom(THandle aHandle, uint8_t* aBuffer, uint32_t aBytes,
     HANDLE handles[2];
     DWORD ret = 0;
 
+    if (aAddress->family != kFamilyV4) {
+        return -1;
+    }
     if (SocketInterrupted(handle)) {
         return -1;
     }
@@ -839,7 +848,8 @@ int32_t OsNetworkReceiveFrom(THandle aHandle, uint8_t* aBuffer, uint32_t aBytes,
         received = recvfrom(handle->iSocket, (char*)aBuffer, aBytes, 0, (struct sockaddr*)&addr, &len);
     }
 
-    *aAddress = addr.sin_addr.s_addr;
+    aAddress->family = kFamilyV4;
+    aAddress->v4 = addr.sin_addr.s_addr;
     *aPort = SwapEndian16(addr.sin_port);
     return received;
 }
@@ -893,12 +903,13 @@ THandle OsNetworkAccept(THandle aHandle, TIpAddress* aClientAddress, uint32_t* a
     struct sockaddr_in addr;
     socklen_t len = sizeof(addr);
 
-    *aClientAddress = 0;
+    aClientAddress->family = kFamilyV4;
+    aClientAddress->v4 = 0;
     *aClientPort = 0;
     if (SocketInterrupted(handle)) {
         return kHandleNull;
     }
-    sockaddrFromEndpoint(&addr, 0, 0);
+    sockaddrFromEndpoint(&addr, &kTIpAddressEmpty, 0);
     handles[0] = handle->iEventSocket;
     handles[1] = handle->iEventInterrupt;
 
@@ -920,7 +931,7 @@ THandle OsNetworkAccept(THandle aHandle, TIpAddress* aClientAddress, uint32_t* a
         return kHandleNull;
     }
 
-    *aClientAddress = addr.sin_addr.s_addr;
+    aClientAddress->v4 = addr.sin_addr.s_addr;
     *aClientPort = SwapEndian16(addr.sin_port);
     return (THandle)newHandle;
 }
@@ -934,7 +945,8 @@ int32_t OsNetworkGetHostByName(const char* aAddress, TIpAddress* aHost)
         struct addrinfo *res = results;
         while (res != NULL) {
             if (res->ai_family == AF_INET) {
-                *aHost = ((struct sockaddr_in*)res->ai_addr)->sin_addr.s_addr;
+                aHost->family = kFamilyV4;
+                aHost->v4 = ((struct sockaddr_in*)res->ai_addr)->sin_addr.s_addr;
                 ret = 0;
                 break;
             }
@@ -995,13 +1007,15 @@ int32_t OsNetworkSocketSetMulticastTtl(THandle aHandle, uint8_t aTtl)
 
 int32_t OsNetworkSocketMulticastAddMembership(THandle aHandle, TIpAddress aInterface, TIpAddress aAddress)
 {
+    if (aInterface.family != kFamilyV4)
+        return -1;
     int32_t err;
     char loop;
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
 
     struct ip_mreq mreq;
-    mreq.imr_multiaddr.s_addr = aAddress;
-    mreq.imr_interface.s_addr = aInterface;
+    mreq.imr_multiaddr.s_addr = aAddress.v4;
+    mreq.imr_interface.s_addr = aInterface.v4;
     err = setsockopt(handle->iSocket, IPPROTO_IP, IP_ADD_MEMBERSHIP, (const char*)&mreq, sizeof(mreq));
 
     if (err != 0) {
@@ -1016,17 +1030,21 @@ int32_t OsNetworkSocketMulticastAddMembership(THandle aHandle, TIpAddress aInter
 
 int32_t OsNetworkSocketMulticastDropMembership(THandle aHandle, TIpAddress aInterface, TIpAddress aAddress)
 {
+    if (aInterface.family != kFamilyV4 || aAddress.family != kFamilyV4)
+        return -1;
     int32_t err;
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
     struct ip_mreq mreq;
-    mreq.imr_multiaddr.s_addr = aAddress;
-    mreq.imr_interface.s_addr = aInterface;
+    mreq.imr_multiaddr.s_addr = aAddress.v4;
+    mreq.imr_interface.s_addr = aInterface.v4;
     err = setsockopt(handle->iSocket, IPPROTO_IP, IP_DROP_MEMBERSHIP, (const char*)&mreq, sizeof(mreq));
     return err;
 }
 
 int32_t OsNetworkSocketSetMulticastIf(THandle aHandle,  TIpAddress aInterface)
 {
+    if (aInterface.family != kFamilyV4)
+        return -1;
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
     int32_t err = setsockopt(handle->iSocket, IPPROTO_IP, IP_MULTICAST_IF, (const char*)&aInterface, sizeof(aInterface));
     return err;
@@ -1049,9 +1067,12 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aInterface
     ULONG bytes                   = 0;
     OsNetworkAdapter* head      = NULL;
     int32_t index                 = 0;
-    const TIpAddress loopbackAddr = MakeIpAddress(127, 0, 0, 1);
     int32_t includeLoopback       = 1;
     uint32_t i;
+    TIpAddress loopbackAddr;
+    loopbackAddr.family = kFamilyV4;
+    loopbackAddr.v4 = MakeIpAddress(127, 0, 0, 1);
+
 
     if (ERROR_INSUFFICIENT_BUFFER != GetIpAddrTable(NULL, &bytes, FALSE)) {
         return -1;
@@ -1073,7 +1094,7 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aInterface
         // Only include loopback if there are no non-loopback adapters
         for (i=0; i<addrTable->dwNumEntries; i++) {
             MIB_IPADDRROW* addrRow = &(addrTable->table[i]);
-            if (addrRow->dwAddr != loopbackAddr) {
+            if (addrRow->dwAddr != loopbackAddr.v4) {
                 includeLoopback = 0;
                 break;
             }
@@ -1099,8 +1120,8 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aInterface
             continue;
         }
 
-        if ((addrRow->dwAddr == loopbackAddr && includeLoopback == 0) ||
-            (addrRow->dwAddr != loopbackAddr && aUseLoopback == LOOPBACK_USE)) {
+        if ((addrRow->dwAddr == loopbackAddr.v4 && includeLoopback == 0) ||
+            (addrRow->dwAddr != loopbackAddr.v4 && aUseLoopback == LOOPBACK_USE)) {
             continue;
         }
         if (-1 != aContext->iTestInterfaceIndex && index++ != aContext->iTestInterfaceIndex) {
@@ -1115,8 +1136,10 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aInterface
             goto failure;
         }
         nif->iReserved = ifRow->dwType;
-        nif->iAddress = addrRow->dwAddr;
-        nif->iNetMask = addrRow->dwMask;
+        nif->iAddress.family = kFamilyV4;
+        nif->iAddress.v4 = addrRow->dwAddr;
+        nif->iNetMask.family = kFamilyV4;
+        nif->iNetMask.v4 = addrRow->dwMask;
         len = ifRow->dwDescrLen;
         nif->iName = (char*)malloc(len+1);
         if (NULL == nif->iName) {
@@ -1132,11 +1155,13 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aInterface
             head = nif;
         }
         else {
-            TIpAddress subnet = (nif->iAddress & nif->iNetMask);
+            TIpAddress subnet;
+            subnet.family = kFamilyV4;
+            subnet.v4 = (nif->iAddress.v4 & nif->iNetMask.v4);
             OsNetworkAdapter* p1 = head;
             OsNetworkAdapter* prev = NULL;
             while (NULL != p1) {
-                if ((p1->iAddress & p1->iNetMask) == subnet) {
+                if ((p1->iAddress.v4 & p1->iNetMask.v4) == subnet.v4) {
                     while (NULL != p1 && IF_TYPE_ETHERNET_CSMACD == p1->iReserved) {
                         prev = p1;
                         p1 = p1->iNext;
@@ -1214,9 +1239,11 @@ failure:
                     return -1;
                 }
 
-                TIpAddress netmask = 0xFFFFFFFF;
-                netmask <<= 32 - prefixLength;
-                netmask = htonl(netmask);
+                TIpAddress netmask;
+                netmask.family = kFamilyV4;
+                netmask.v4 = 0xFFFFFFFF;
+                netmask.v4 <<= 32 - prefixLength;
+                netmask = htonl(netmask.v4);
 
                 OsNetworkAdapter* nif;
                 nif = (OsNetworkAdapter*)calloc(1, sizeof(*nif));
@@ -1234,12 +1261,14 @@ failure:
                 }
                 else 
                 {
-                    TIpAddress subnet = (nif->iAddress & nif->iNetMask);
+                    TIpAddress subnet;
+                    subnet.family = kFamilyV4;
+                    subnet.v4 = (nif->iAddress & nif->iNetMask);
                     OsNetworkAdapter* p1 = head;
                     OsNetworkAdapter* prev = NULL;
                     while (NULL != p1) 
                     {
-                        if ((p1->iAddress & p1->iNetMask) == subnet) 
+                        if ((p1->iAddress.v4 & p1->iNetMask.v4) == subnet.v4) 
                         {
                             while (NULL != p1 && IF_TYPE_ETHERNET_CSMACD == p1->iReserved) 
                             {

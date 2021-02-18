@@ -318,7 +318,7 @@ void DviInvocation::EndResponse()
     iInvocation.InvocationWriteEnd();
 }
 
-TIpAddress DviInvocation::Adapter() const
+const TIpAddress& DviInvocation::Adapter() const
 {
     return iInvocation.Adapter();
 }

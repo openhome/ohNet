@@ -10,7 +10,7 @@ using namespace OpenHome::Net;
 
 // SsdpSocketReader
 
-SsdpSocketReader::SsdpSocketReader(Environment& aEnv, TIpAddress aInterface, const Endpoint& aMulticast)
+SsdpSocketReader::SsdpSocketReader(Environment& aEnv, const TIpAddress& aInterface, const Endpoint& aMulticast)
     : SocketUdpMulticast(aEnv, aInterface, aMulticast)
 {
     SetTtl(aEnv.InitParams()->MsearchTtl()); 
@@ -54,7 +54,7 @@ SsdpListener::SsdpListener(const TChar* aName)
 // Reader chain: Multicast Socket -> Srs -> ReaderHttpRequest -> this -> aMsearch
 //                                                                    -> aNotify
 
-SsdpListenerMulticast::SsdpListenerMulticast(Environment& aEnv, TIpAddress aInterface)
+SsdpListenerMulticast::SsdpListenerMulticast(Environment& aEnv, const TIpAddress& aInterface)
     : SsdpListener("SsdpListenerM")
     , iEnv(aEnv)
     , iLock("LMCM")
@@ -407,7 +407,7 @@ void SsdpListenerMulticast::RemoveMsearchHandler(TInt aHandlerId)
     iLock.Signal();
 }
 
-TIpAddress SsdpListenerMulticast::Interface() const
+const TIpAddress& SsdpListenerMulticast::Interface() const
 {
     return iInterface;
 }
@@ -468,7 +468,7 @@ void SsdpListenerMulticast::NotifyResumed()
 // Reader chain: Multicast Socket -> Srs -> ReaderHttpRequest -> this -> aMsearch
 //                                                                    -> aNotify
 
-SsdpListenerUnicast::SsdpListenerUnicast(Environment& aEnv, ISsdpNotifyHandler& aNotifyHandler, TIpAddress aInterface)
+SsdpListenerUnicast::SsdpListenerUnicast(Environment& aEnv, ISsdpNotifyHandler& aNotifyHandler, const TIpAddress& aInterface)
     : SsdpListener("SsdpListenerU")
     , iEnv(aEnv)
     , iNotifyHandler(aNotifyHandler)

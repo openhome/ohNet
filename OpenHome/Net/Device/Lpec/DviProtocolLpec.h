@@ -31,7 +31,7 @@ class DviProtocolLpec : public IDvProtocol
 public:
     DviProtocolLpec(DviDevice& aDevice, DviServerLpec& aServer);
 private: // from IResourceManager
-    void WriteResource(const Brx& aUriTail, TIpAddress aAdapter, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter);
+    void WriteResource(const Brx& aUriTail, const TIpAddress& aAdapter, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter);
 private: // from IDvProtocol
     const Brx& ProtocolName() const;
     void Enable();

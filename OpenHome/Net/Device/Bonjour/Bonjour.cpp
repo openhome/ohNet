@@ -15,7 +15,7 @@ BonjourWebPage::~BonjourWebPage()
     iMdns.MdnsDestroyService(iMdnsHandle);
 }
 
-void BonjourWebPage::SetEnabled(const TChar* aName, TIpAddress aInterface, TUint aPort, const TChar* aUri)
+void BonjourWebPage::SetEnabled(const TChar* aName, const TIpAddress& aInterface, TUint aPort, const TChar* aUri)
 {
     Bws<200> info;
     iMdns.MdnsAppendTxtRecord(info, "path", aUri);

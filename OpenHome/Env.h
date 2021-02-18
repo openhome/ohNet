@@ -92,8 +92,8 @@ public:
     OpenHome::Shell* Shell();
     IInfoAggregator* InfoAggregator();
     OpenHome::ShellCommandDebug* ShellCommandDebug();
-    Net::SsdpListenerMulticast& MulticastListenerClaim(TIpAddress aInterface);
-    void MulticastListenerRelease(TIpAddress aInterface);
+    Net::SsdpListenerMulticast& MulticastListenerClaim(const TIpAddress& aInterface);
+    void MulticastListenerRelease(const TIpAddress& aInterface);
     void AddSuspendObserver(ISuspendObserver& aObserver);
     void AddResumeObserver(IResumeObserver& aObserver);
     void RemoveSuspendObserver(ISuspendObserver& aObserver);

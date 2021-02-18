@@ -37,7 +37,7 @@ void MdnsProvider::MdnsAppendTxtRecord(Bwx& aBuffer, const TChar* aKey, const TC
     iPlatform.AppendTxtRecord(aBuffer, aKey, aValue);
 }
 
-void MdnsProvider::MdnsRegisterService(TUint aHandle, const TChar* aName, const TChar* aType, TIpAddress aInterface, TUint aPort, const TChar* aInfo)
+void MdnsProvider::MdnsRegisterService(TUint aHandle, const TChar* aName, const TChar* aType, const TIpAddress& aInterface, TUint aPort, const TChar* aInfo)
 {
     iPlatform.RegisterService(aHandle, aName, aType, aInterface, aPort, aInfo);
 }

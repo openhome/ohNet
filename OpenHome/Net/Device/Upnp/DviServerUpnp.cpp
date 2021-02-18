@@ -17,6 +17,7 @@
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Net/Private/Error.h>
 #include <OpenHome/OsWrapper.h>
+#include <OpenHome/Private/TIpAddressUtils.h>
 
 #include <stdlib.h>
 
@@ -443,7 +444,7 @@ void PropertyWriterUpnp::PropertyWriteEnd()
 
 // PropertyWriterFactory
 
-PropertyWriterFactory::PropertyWriterFactory(DvStack& aDvStack, TIpAddress aAdapter, TUint aPort)
+PropertyWriterFactory::PropertyWriterFactory(DvStack& aDvStack, const TIpAddress& aAdapter, TUint aPort)
     : iRefCount(1)
     , iLock("DPWF")
     , iEnabled(true)
@@ -458,7 +459,7 @@ PropertyWriterFactory::PropertyWriterFactory(DvStack& aDvStack, TIpAddress aAdap
     }
 }
 
-TUint PropertyWriterFactory::Adapter() const
+const TIpAddress& PropertyWriterFactory::Adapter() const
 {
     return iAdapter;
 }
@@ -1091,7 +1092,7 @@ TUint DviSessionUpnp::Version() const
     return iHeaderSoapAction.Version();
 }
 
-TIpAddress DviSessionUpnp::Adapter() const
+const TIpAddress& DviSessionUpnp::Adapter() const
 {
     return iInterface;
 }
@@ -1469,10 +1470,10 @@ SocketTcpServer* DviServerUpnp::CreateServer(const NetworkAdapter& aNif)
     return server;
 }
 
-void DviServerUpnp::NotifyServerDeleted(TIpAddress aInterface)
+void DviServerUpnp::NotifyServerDeleted(const TIpAddress& aInterface)
 {
     for (std::vector<PropertyWriterFactory*>::iterator it=iPropertyWriterFactories.begin(); it!=iPropertyWriterFactories.end(); ++it) {
-        if ((*it)->Adapter() == aInterface) {
+        if (TIpAddressUtils::Equal((*it)->Adapter(), aInterface)) {
             (*it)->Disable();
             iPropertyWriterFactories.erase(it);
             break;

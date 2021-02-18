@@ -440,7 +440,7 @@ TIpAddress STDCALL OhNetNetworkAdapterAddress(OhNetHandleNetworkAdapter aNif)
     catch (std::exception& ex) {
         UnhandledExceptionHandler(ex);
     }
-    return 0;
+    return kTIpAddressEmpty;
 }
 
 TIpAddress STDCALL OhNetNetworkAdapterSubnet(OhNetHandleNetworkAdapter aNif)
@@ -456,7 +456,7 @@ TIpAddress STDCALL OhNetNetworkAdapterSubnet(OhNetHandleNetworkAdapter aNif)
     catch (std::exception& ex) {
         UnhandledExceptionHandler(ex);
     }
-    return 0;
+    return kTIpAddressEmpty;
 }
 
 TIpAddress STDCALL OhNetNetworkAdapterMask(OhNetHandleNetworkAdapter aNif)
@@ -472,7 +472,7 @@ TIpAddress STDCALL OhNetNetworkAdapterMask(OhNetHandleNetworkAdapter aNif)
     catch (std::exception& ex) {
         UnhandledExceptionHandler(ex);
     }
-    return 0;
+    return kTIpAddressEmpty;
 }
 
 const char* STDCALL OhNetNetworkAdapterName(OhNetHandleNetworkAdapter aNif)
@@ -660,7 +660,10 @@ void STDCALL OhNetNetworkAdapterListDestroy(OhNetHandleNetworkAdapterList aList)
 void STDCALL OhNetSetCurrentSubnet(uint32_t aSubnet)
 {
     try {
-        UpnpLibrary::SetCurrentSubnet(aSubnet);
+        TIpAddress subnet;
+        subnet.family = kFamilyV4;
+        subnet.v4 = aSubnet;
+        UpnpLibrary::SetCurrentSubnet(subnet);
     }
     catch (Exception& ex) {
         UnhandledExceptionHandler(ex);
