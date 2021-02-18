@@ -253,7 +253,7 @@ TUint InvocationDv::Version() const
 
 const TIpAddress& InvocationDv::Adapter() const
 {
-    return kTIpAddressEmpty;
+    return kIpAddressV4AllAdapters;
 }
 
 const char* InvocationDv::ResourceUriPrefix() const
@@ -263,7 +263,7 @@ const char* InvocationDv::ResourceUriPrefix() const
 
 Endpoint InvocationDv::ClientEndpoint() const
 {
-    return Endpoint(0, kTIpAddressEmpty);
+    return Endpoint(0, kIpAddressV4AllAdapters);
 }
 
 const Brx& InvocationDv::ClientUserAgent() const

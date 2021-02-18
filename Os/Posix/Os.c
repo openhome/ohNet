@@ -879,14 +879,14 @@ static TIpAddress TIpAddressFromSockAddr(const struct sockaddr* aAddr)
 
     // Check for IPv6, default to IPv4
     if (aAddr->sa_family == AF_INET6) {
-        addr.family = kFamilyV6;
+        addr.iFamily = kFamilyV6;
         for (uint8_t i = 0; i < 16; i++) {
-            addr.v6[i] = ((const struct sockaddr_in6*)aAddr)->sin6_addr.s6_addr[i];
+            addr.iV6[i] = ((const struct sockaddr_in6*)aAddr)->sin6_addr.s6_addr[i];
         }
     }
     else {
-        addr.family = kFamilyV4;
-        addr.v4 = ((const struct sockaddr_in*)aAddr)->sin_addr.s_addr;
+        addr.iFamily = kFamilyV4;
+        addr.iV4 = ((const struct sockaddr_in*)aAddr)->sin_addr.s_addr;
     }
 
     return addr;
@@ -900,7 +900,7 @@ static uint16_t PortFromSockAddr(const struct sockaddr* aAddr)
 static void in6AddrFromTIpAddress(struct in6_addr* aAddr, const TIpAddress* aAddress)
 {
     for (uint8_t i = 0; i < 16; i++) {
-        aAddr->s6_addr[i] = aAddress->v6[i];
+        aAddr->s6_addr[i] = aAddress->iV6[i];
     }
 }
 
@@ -908,7 +908,7 @@ uint32_t sockaddrFromEndpoint(struct sockaddr* aAddr, const TIpAddress* aAddress
 {
     memset(aAddr, 0, sizeof(struct sockaddr_in6));
     // Check for IPv6 default to IPv4
-    if (aAddress->family == kFamilyV6) {
+    if (aAddress->iFamily == kFamilyV6) {
         struct sockaddr_in6 addr;
         addr.sin6_family = 10; // AF_INET6
         addr.sin6_port = htons(aPort);
@@ -920,7 +920,7 @@ uint32_t sockaddrFromEndpoint(struct sockaddr* aAddr, const TIpAddress* aAddress
         struct sockaddr_in addr;
         addr.sin_family = 2; // AF_INET
         addr.sin_port = htons(aPort);
-        addr.sin_addr.s_addr = aAddress->v4;
+        addr.sin_addr.s_addr = aAddress->iV4;
         memcpy(aAddr, &addr, sizeof(addr));
         return sizeof(addr);
     }
@@ -1207,7 +1207,7 @@ int32_t OsNetworkListen(THandle aHandle, uint32_t aSlots)
 THandle OsNetworkAccept(THandle aHandle, TIpAddress* aClientAddress, uint32_t* aClientPort)
 {
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
-    *aClientAddress = kTIpAddressEmpty;
+    *aClientAddress = kIpAddressV4AllAdapters;
     *aClientPort = 0;
     if (SocketInterrupted(handle)) {
         return kHandleNull;
@@ -1309,7 +1309,7 @@ int32_t OsNetworkGetHostByName(const char* aAddress, TIpAddress* aHost)
     }
 #endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD && !defined(__ANDROID__) */
 
-    *aHost = kTIpAddressEmpty;
+    *aHost = kIpAddressV4AllAdapters;
     return -1;
 }
 
@@ -1374,7 +1374,7 @@ int32_t OsNetworkSocketMulticastAddMembership(THandle aHandle, TIpAddress aInter
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
 
     // Check for IPv6, default to IPv4
-    if (aInterface.family == kFamilyV6) {
+    if (aInterface.iFamily == kFamilyV6) {
         struct ipv6_mreq mreq;
         in6AddrFromTIpAddress((struct in6_addr*)&mreq.ipv6mr_multiaddr, &aAddress);
         in6AddrFromTIpAddress((struct in6_addr*)&mreq.ipv6mr_interface, &aInterface);
@@ -1382,8 +1382,8 @@ int32_t OsNetworkSocketMulticastAddMembership(THandle aHandle, TIpAddress aInter
     }
     else {
         struct ip_mreq mreq;
-        mreq.imr_multiaddr.s_addr = aAddress.v4;
-        mreq.imr_interface.s_addr = aInterface.v4;
+        mreq.imr_multiaddr.s_addr = aAddress.iV4;
+        mreq.imr_interface.s_addr = aInterface.iV4;
         err = setsockopt(handle->iSocket, IPPROTO_IP, IP_ADD_MEMBERSHIP, (const char*)&mreq, sizeof(mreq));
     }
 
@@ -1392,7 +1392,7 @@ int32_t OsNetworkSocketMulticastAddMembership(THandle aHandle, TIpAddress aInter
     }
     
     loop = 0;
-    int level = (aInterface.family == kFamilyV6) ? IPPROTO_IPV6 : IPPROTO_IP;
+    int level = (aInterface.iFamily == kFamilyV6) ? IPPROTO_IPV6 : IPPROTO_IP;
     err = setsockopt(handle->iSocket, level, IP_MULTICAST_LOOP, &loop, sizeof(loop));
     
     return err;
@@ -1404,7 +1404,7 @@ int32_t OsNetworkSocketMulticastDropMembership(THandle aHandle, TIpAddress aInte
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
 
     // Check for IPv6, default to IPv4
-    if (aInterface.family == kFamilyV6) {
+    if (aInterface.iFamily == kFamilyV6) {
         struct ipv6_mreq mreq;
         in6AddrFromTIpAddress((struct in6_addr*)&mreq.ipv6mr_multiaddr, &aAddress);
         in6AddrFromTIpAddress((struct in6_addr*)&mreq.ipv6mr_interface, &aInterface);
@@ -1412,8 +1412,8 @@ int32_t OsNetworkSocketMulticastDropMembership(THandle aHandle, TIpAddress aInte
     }
     else {
         struct ip_mreq mreq;
-        mreq.imr_multiaddr.s_addr = aAddress.v4;
-        mreq.imr_interface.s_addr = aInterface.v4;
+        mreq.imr_multiaddr.s_addr = aAddress.iV4;
+        mreq.imr_interface.s_addr = aInterface.iV4;
         err = setsockopt(handle->iSocket, IPPROTO_IP, IP_DROP_MEMBERSHIP, &mreq, sizeof(mreq));
     }
     return err;
@@ -1425,11 +1425,11 @@ int32_t OsNetworkSocketSetMulticastIf(THandle aHandle, TIpAddress aInterface)
     int err;
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
 
-    if (aInterface.family == kFamilyV6) {
-        err = setsockopt(handle->iSocket, IPPROTO_IPV6, IP_MULTICAST_IF, &aInterface.v6, sizeof(aInterface));
+    if (aInterface.iFamily == kFamilyV6) {
+        err = setsockopt(handle->iSocket, IPPROTO_IPV6, IP_MULTICAST_IF, &aInterface.iV6, sizeof(aInterface));
     }
     else {
-        err = setsockopt(handle->iSocket, IPPROTO_IP, IP_MULTICAST_IF, &aInterface.v4, sizeof(aInterface));
+        err = setsockopt(handle->iSocket, IPPROTO_IP, IP_MULTICAST_IF, &aInterface.iV4, sizeof(aInterface));
     }
     return err;
 #else
@@ -1460,9 +1460,9 @@ static int32_t isWireless(const char* ifname, int domain)
 
 static int32_t TIpAddressesAreEqual(const TIpAddress* aAddr1, const TIpAddress* aAddr2)
 {
-    if ((aAddr1->family == aAddr2->family) &&
-       ((aAddr1->family == kFamilyV6 && (aAddr1->v6 == aAddr2->v6)) ||
-        (aAddr1->family == kFamilyV4 && (aAddr1->v4 == aAddr2->v4)))) {
+    if ((aAddr1->iFamily == aAddr2->iFamily) &&
+       ((aAddr1->iFamily == kFamilyV6 && (aAddr1->iV6 == aAddr2->iV6)) ||
+        (aAddr1->iFamily == kFamilyV4 && (aAddr1->iV4 == aAddr2->iV4)))) {
         return 1;
     }
     return 0;
@@ -1470,20 +1470,20 @@ static int32_t TIpAddressesAreEqual(const TIpAddress* aAddr1, const TIpAddress* 
 
 static int32_t NetMasksAreEqual(const TIpAddress* aAddr1, const TIpAddress* aAddr2)
 {
-    if (aAddr1->family != aAddr2->family) {
+    if (aAddr1->iFamily != aAddr2->iFamily) {
         return 0;
     }
 
-    if (aAddr1->family == kFamilyV6) {
+    if (aAddr1->iFamily == kFamilyV6) {
         for (uint8_t i = 0; i < 16; i++) {
-            if ((aAddr1->v6[i] & aAddr2->v6[i]) != aAddr1->v6[i]) {
+            if ((aAddr1->iV6[i] & aAddr2->iV6[i]) != aAddr1->iV6[i]) {
                 return 0;
             }
         }
         return 1;
     }
     else {
-        return ((aAddr1->v4 & aAddr2->v4) == aAddr1->v4);
+        return ((aAddr1->iV4 & aAddr2->iV4) == aAddr1->iV4);
     }
     return 0;
 }

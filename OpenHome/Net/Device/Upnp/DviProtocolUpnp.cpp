@@ -50,11 +50,11 @@ DviProtocolUpnp::DviProtocolUpnp(DviDevice& aDevice)
     AutoNetworkAdapterRef ref(iDvStack.Env(), "DviProtocolUpnp ctor");
     const NetworkAdapter* current = ref.Adapter();
     TIpAddress kLoopbackAddr;
-    kLoopbackAddr.family = kFamilyV4;
-    kLoopbackAddr.v4 = MakeIpAddress(127, 0, 0, 1);
+    kLoopbackAddr.iFamily = kFamilyV4;
+    kLoopbackAddr.iV4 = MakeIpAddress(127, 0, 0, 1);
     for (TUint i=0; i<subnetList->size(); i++) {
         NetworkAdapter* subnet = (*subnetList)[i];
-        if (current != NULL && !TIpAddressUtils::Equal(subnet->Address(), current->Address()) && !TIpAddressUtils::Equal(subnet->Address(), kLoopbackAddr)) {
+        if (current != NULL && !TIpAddressUtils::Equals(subnet->Address(), current->Address()) && !TIpAddressUtils::Equals(subnet->Address(), kLoopbackAddr)) {
             continue;
         }
         try {
@@ -155,8 +155,8 @@ void DviProtocolUpnp::HandleInterfaceChange()
     std::vector<DviProtocolUpnpAdapterSpecificData*> unchanged;
     {
         TIpAddress kLoopbackAddr;
-        kLoopbackAddr.family = kFamilyV4;
-        kLoopbackAddr.v4 = MakeIpAddress(127, 0, 0, 1);
+        kLoopbackAddr.iFamily = kFamilyV4;
+        kLoopbackAddr.iV4 = MakeIpAddress(127, 0, 0, 1);
         AutoMutex a(iLock);
         NetworkAdapterList& adapterList = iDvStack.Env().NetworkAdapterList();
         AutoNetworkAdapterRef ref(iDvStack.Env(), "DviProtocolUpnp::HandleInterfaceChange");
@@ -168,8 +168,8 @@ void DviProtocolUpnp::HandleInterfaceChange()
         while (i<iAdapters.size()) {
             if (FindAdapter(iAdapters[i]->Interface(), *adapters) != -1
                 && (!adapterList.SingleSubnetModeEnabled() ||
-                (current != NULL && TIpAddressUtils::Equal(iAdapters[i]->Interface(), current->Address())) ||
-                TIpAddressUtils::Equal(iAdapters[i]->Interface(), kLoopbackAddr))) {
+                (current != NULL && TIpAddressUtils::Equals(iAdapters[i]->Interface(), current->Address())) ||
+                TIpAddressUtils::Equals(iAdapters[i]->Interface(), kLoopbackAddr))) {
                 i++;
             }
             else {
@@ -185,8 +185,8 @@ void DviProtocolUpnp::HandleInterfaceChange()
             NetworkAdapter* subnet = (*subnetList)[i];
             if (FindListenerForSubnet(subnet->Subnet()) == -1
                 && (!adapterList.SingleSubnetModeEnabled() ||
-                   (current != NULL && TIpAddressUtils::Equal(subnet->Address(), current->Address())) ||
-                    TIpAddressUtils::Equal(subnet->Address(),kLoopbackAddr))) {
+                   (current != NULL && TIpAddressUtils::Equals(subnet->Address(), current->Address())) ||
+                    TIpAddressUtils::Equals(subnet->Address(),kLoopbackAddr))) {
                 DviProtocolUpnpAdapterSpecificData* asd = AddInterface(*subnet);
                 added.push_back(asd);
             }
@@ -216,7 +216,7 @@ void DviProtocolUpnp::HandleInterfaceChange()
 TInt DviProtocolUpnp::FindAdapter(const TIpAddress& aAdapter, const std::vector<NetworkAdapter*>& aAdapterList)
 {
     for (TUint i=0; i<aAdapterList.size(); i++) {
-        if (TIpAddressUtils::Equal(aAdapterList[i]->Address(), aAdapter)) {
+        if (TIpAddressUtils::Equals(aAdapterList[i]->Address(), aAdapter)) {
             return i;
         }
     }
@@ -226,7 +226,7 @@ TInt DviProtocolUpnp::FindAdapter(const TIpAddress& aAdapter, const std::vector<
 TInt DviProtocolUpnp::FindListenerForSubnet(const TIpAddress& aSubnet)
 {
     for (TUint i=0; i<iAdapters.size(); i++) {
-        if (TIpAddressUtils::Equal(iAdapters[i]->Subnet(), aSubnet)) {
+        if (TIpAddressUtils::Equals(iAdapters[i]->Subnet(), aSubnet)) {
             return i;
         }
     }
@@ -236,7 +236,7 @@ TInt DviProtocolUpnp::FindListenerForSubnet(const TIpAddress& aSubnet)
 TInt DviProtocolUpnp::FindListenerForInterface(const TIpAddress& aAdapter)
 {
     for (TUint i=0; i<iAdapters.size(); i++) {
-        if (TIpAddressUtils::Equal(iAdapters[i]->Interface(), aAdapter)) {
+        if (TIpAddressUtils::Equals(iAdapters[i]->Interface(), aAdapter)) {
             return i;
         }
     }
@@ -467,7 +467,7 @@ void DviProtocolUpnp::GetResourceManagerUri(const NetworkAdapter& aAdapter, Brh&
         return;
     }
     for (TUint i=0; i<(TUint)iAdapters.size(); i++) {
-        if (TIpAddressUtils::Equal(iAdapters[i]->Interface(), aAdapter.Address())) {
+        if (TIpAddressUtils::Equals(iAdapters[i]->Interface(), aAdapter.Address())) {
             WriterBwh writer(1024);
             writer.Write("http://");
             Bws<Endpoint::kMaxEndpointBytes> buf;
@@ -622,7 +622,7 @@ TBool DviProtocolUpnpAdapterSpecificData::IsLocationReachable(const Endpoint& aE
     TIpAddress addr1 = TIpAddressUtils::ApplyMask(aEndpoint.Address(), iMask);
     TIpAddress addr2 = TIpAddressUtils::ApplyMask(iSubnet, iMask);
 
-    return TIpAddressUtils::Equal(addr1, addr2);
+    return TIpAddressUtils::Equals(addr1, addr2);
 }
 
 void DviProtocolUpnp::SsdpSearchAll(const Endpoint& aEndpoint, TUint aMx, const TIpAddress& aAdapter)
@@ -1145,7 +1145,7 @@ void DviProtocolUpnpDeviceXmlWriter::WritePresentationUrlTag(const TIpAddress& a
            Intel device spy messes up resolution of this against the base
            (device xml) url so publish an absolute url instead */
         for (TUint i=0; i<iDeviceUpnp.iAdapters.size(); i++) {
-            if (TIpAddressUtils::Equal(iDeviceUpnp.iAdapters[i]->Interface(), aAdapter)) {
+            if (TIpAddressUtils::Equals(iDeviceUpnp.iAdapters[i]->Interface(), aAdapter)) {
                 iWriter.Write(iDeviceUpnp.iAdapters[i]->UriBase());
                 break;
             }

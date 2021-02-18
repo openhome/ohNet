@@ -33,7 +33,7 @@ class NetworkAdapterList : private IStackObject, private INetworkAdapterChangeNo
 public:
     static const TUint kListenerIdNull = 0;
 public:
-    NetworkAdapterList(Environment& aEnv, Environment::ELoopback aLoopbackPolicy, const TIpAddress& aDefaultSubnet=kTIpAddressEmpty);
+    NetworkAdapterList(Environment& aEnv, Environment::ELoopback aLoopbackPolicy, const TIpAddress& aDefaultSubnet=kIpAddressV4AllAdapters);
     virtual ~NetworkAdapterList();
     TBool SingleSubnetModeEnabled() const;
     Optional<NetworkAdapter> CurrentAdapter(const char* aCookie) const;

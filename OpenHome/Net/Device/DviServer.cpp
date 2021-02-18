@@ -37,7 +37,7 @@ TUint DviServer::Port(const TIpAddress& aInterface)
     AutoMutex a(iLock);
     for (TUint i=0; i<iServers.size(); i++) {
         DviServer::Server* server = iServers[i];
-        if (TIpAddressUtils::Equal(server->Interface(), aInterface)) {
+        if (TIpAddressUtils::Equals(server->Interface(), aInterface)) {
             return server->Port();
         }
     }
@@ -93,8 +93,8 @@ void DviServer::SubnetListChangedLocked()
        any device listeners are run. */
 
     TIpAddress kLoopbackAddr;
-    kLoopbackAddr.family = kFamilyV4;
-    kLoopbackAddr.v4 = MakeIpAddress(127, 0, 0, 1);
+    kLoopbackAddr.iFamily = kFamilyV4;
+    kLoopbackAddr.iV4 = MakeIpAddress(127, 0, 0, 1);
     NetworkAdapterList& adapterList = iDvStack.Env().NetworkAdapterList();
     AutoNetworkAdapterRef ref(iDvStack.Env(), "DviServer::SubnetListChanged");
     NetworkAdapter* current = ref.Adapter();
@@ -106,7 +106,7 @@ void DviServer::SubnetListChangedLocked()
         DviServer::Server* server = iServers[i];
         if (FindInterface(server->Interface(), *nifList) == -1
             || (adapterList.SingleSubnetModeEnabled()
-            && (current == NULL || !TIpAddressUtils::Equal(server->Interface(), current->Address())))) {
+            && (current == NULL || !TIpAddressUtils::Equals(server->Interface(), current->Address())))) {
             NotifyServerDeleted(server->Interface());
             delete server;
             iServers.erase(iServers.begin() + i);
@@ -117,8 +117,8 @@ void DviServer::SubnetListChangedLocked()
         NetworkAdapter* subnet = (*subnetList)[i];
         if (FindServer(subnet->Subnet()) == -1
             && (!adapterList.SingleSubnetModeEnabled() ||
-               (current != NULL && TIpAddressUtils::Equal(subnet->Address(), current->Address())) ||
-                TIpAddressUtils::Equal(subnet->Address(), kLoopbackAddr))) {
+               (current != NULL && TIpAddressUtils::Equals(subnet->Address(), current->Address())) ||
+                TIpAddressUtils::Equals(subnet->Address(), kLoopbackAddr))) {
                 AddServer(*subnet);
         }
     }
@@ -129,7 +129,7 @@ void DviServer::SubnetListChangedLocked()
 TInt DviServer::FindInterface(const TIpAddress& aInterface, const std::vector<NetworkAdapter*>& aNifList)
 {
     for (TUint i=0; i<aNifList.size(); i++) {
-        if (TIpAddressUtils::Equal(aNifList[i]->Address(), aInterface)) {
+        if (TIpAddressUtils::Equals(aNifList[i]->Address(), aInterface)) {
             return i;
         }
     }
@@ -139,7 +139,7 @@ TInt DviServer::FindInterface(const TIpAddress& aInterface, const std::vector<Ne
 TInt DviServer::FindServer(const TIpAddress& aSubnet)
 {
     for (TUint i=0; i<iServers.size(); i++) {
-        if (TIpAddressUtils::Equal(iServers[i]->Subnet(), aSubnet)) {
+        if (TIpAddressUtils::Equals(iServers[i]->Subnet(), aSubnet)) {
             return i;
         }
     }

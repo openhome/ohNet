@@ -18,12 +18,12 @@ typedef void* THandle;
 
 typedef struct TIpAddress
 {
-    uint8_t family;
-    uint32_t v4;
-    uint8_t v6[16];
+    uint8_t iFamily;
+    uint32_t iV4;
+    uint8_t iV6[16];
 } TIpAddress;
 
-static const TIpAddress kTIpAddressEmpty = {0};
+static const TIpAddress kIpAddressV4AllAdapters = {0};
 
 /**
  * Opaque handle to a singleton, setup before other Os functions are called

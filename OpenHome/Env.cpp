@@ -111,7 +111,7 @@ Environment::Environment(FunctorMsg& aLogOutput,
 {
     Construct(aLogOutput, aSchedulerPolicy);
     iTimerManager = new OpenHome::TimerManager(*this, aTimerManagerPriority);
-    iNetworkAdapterList = new OpenHome::NetworkAdapterList(*this, aLoopbackPolicy, kTIpAddressEmpty);
+    iNetworkAdapterList = new OpenHome::NetworkAdapterList(*this, aLoopbackPolicy, kIpAddressV4AllAdapters);
 }
 
 Environment::Environment(InitialisationParams* aInitParams)
@@ -141,7 +141,7 @@ Environment::Environment(InitialisationParams* aInitParams)
     SetRandomSeed((TUint)(time(NULL) % UINT32_MAX));
 #endif // PLATFORM_MACOSX_GNU
     iTimerManager = new OpenHome::TimerManager(*this, aInitParams->TimerManagerPriority());
-    iNetworkAdapterList = new OpenHome::NetworkAdapterList(*this, aInitParams->LoopbackNetworkAdapter(), kTIpAddressEmpty);
+    iNetworkAdapterList = new OpenHome::NetworkAdapterList(*this, aInitParams->LoopbackNetworkAdapter(), kIpAddressV4AllAdapters);
 
     DoSetInitParams(aInitParams);
 }
@@ -259,7 +259,7 @@ Net::SsdpListenerMulticast& Environment::MulticastListenerClaim(const TIpAddress
     const TInt count = (TUint)iMulticastListeners.size();
     for (TInt i=0; i<count; i++) {
         MListener* listener = iMulticastListeners[i];
-        if (TIpAddressUtils::Equal(listener->Interface(), aInterface)) {
+        if (TIpAddressUtils::Equals(listener->Interface(), aInterface)) {
             listener->AddRef();
             return listener->Listener();
         }
@@ -277,7 +277,7 @@ void Environment::MulticastListenerRelease(const TIpAddress& aInterface)
     const TInt count = (TUint)iMulticastListeners.size();
     for (TInt i=0; i<count; i++) {
         MListener* listener = iMulticastListeners[i];
-        if (TIpAddressUtils::Equal(listener->Interface(), aInterface)) {
+        if (TIpAddressUtils::Equals(listener->Interface(), aInterface)) {
             if (listener->RemoveRef()) {
                 iMulticastListeners.erase(iMulticastListeners.begin() + i);
                 iPrivateLock->Signal();
