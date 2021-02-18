@@ -1506,12 +1506,12 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
                 (iter->ifa_flags & IFF_RUNNING) != 0) {
                 
                 // isLoopback determines protocol family (v4/v6)
-                if (iter->ifa_addr->sa_family == AF_INET && isLoopback(iter->ifa_addr)) {
+                if (iter->ifa_addr->sa_family == AF_INET && !isLoopback(iter->ifa_addr)) {
                     includeLoopback = 0;
                     break;
                 }
 #if !defined(PLATFORM_MACOSX_GNU)
-                else if (iter->ifa_addr->sa_family == AF_INET6 && isLoopback(iter->ifa_addr)) {
+                else if (iter->ifa_addr->sa_family == AF_INET6 && !isLoopback(iter->ifa_addr)) {
                     includeLoopback = 0;
                     break;
                 }
@@ -1537,7 +1537,13 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
         const int ifaceIsWireless = isWireless(iter->ifa_name, iter->ifa_addr->sa_family);
         const int ifaceIsLoopback = isLoopback(iter->ifa_addr);
 
-        if (iter->ifa_addr->sa_family != AF_INET ||
+#if !defined(PLATFORM_MACOSX_GNU)
+        const uint8_t familyIsValid = (iter->ifa_addr->sa_family == AF_INET || iter->ifa_addr->sa_family == AF_INET6);
+#else
+        // Omit IPv6 adapters on macOS platforms
+        const uint8_t familyIsValid = (iter->ifa_addr->sa_family == AF_INET);
+#endif
+        if (!familyIsValid ||
             (iter->ifa_flags & IFF_RUNNING) == 0 ||
             (includeLoopback == 0 && ifaceIsLoopback == 1) ||
             (aUseLoopback == 1    && ifaceIsLoopback == 0)) {
