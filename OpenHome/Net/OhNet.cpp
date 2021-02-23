@@ -114,7 +114,7 @@ const TIpAddress& NetworkAdapter::Mask() const
 
 bool NetworkAdapter::ContainsAddress(const TIpAddress& aAddress) const
 {
-    return (TIpAddressUtils::Equal(TIpAddressUtils::ApplyMask(aAddress, iNetMask), Subnet()));
+    return (TIpAddressUtils::Equals(TIpAddressUtils::ApplyMask(aAddress, iNetMask), Subnet()));
 }
 
 const char* NetworkAdapter::Name() const

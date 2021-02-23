@@ -993,7 +993,7 @@ void DviServerLpec::NotifyServerDeleted(const TIpAddress& aInterface)
 {
     for (TUint i=0; i<iAdapterData.size(); i++) {
         AdapterData* ad = iAdapterData[i];
-        if (TIpAddressUtils::Equal(ad->iInterface, aInterface)) {
+        if (TIpAddressUtils::Equals(ad->iInterface, aInterface)) {
             iAdapterData.erase(iAdapterData.begin() + i);
             delete ad;
             break;

@@ -479,7 +479,7 @@ void SuiteEndpoint::Test()
     ep.SetAddress(Brn("127.0.0.1"));
 
     // Confirm that TIpAddress is network-order.
-    TEST(ep.Address().v4 == Arch::BigEndian4(0x7F000001));
+    TEST(ep.Address().iV4 == Arch::BigEndian4(0x7F000001));
 
     // Check address -> string.
     ep.AppendAddress(buffer);
@@ -598,7 +598,7 @@ void SuiteMulticast::Test()
 void SuiteMulticast::Receiver()
 {
     iPortLock.Wait();
-    SocketUdpMulticast recv(*gEnv, kTIpAddressEmpty, Endpoint(iPort, kMulticastAddress));
+    SocketUdpMulticast recv(*gEnv, kIpAddressV4AllAdapters, Endpoint(iPort, kMulticastAddress));
     iPort = recv.Port();
     iPortLock.Signal();
 

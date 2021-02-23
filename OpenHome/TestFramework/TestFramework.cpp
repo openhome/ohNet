@@ -186,8 +186,8 @@ void OpenHome::TestFramework::RandomiseUdn(Environment& aEnv, Bwh& aUdn)
     std::vector<NetworkAdapter*>* subnetList = aEnv.NetworkAdapterList().CreateSubnetList();
     TUint max = UINT_MAX;
     if ((subnetList->size() > 0) &&
-        ((*subnetList)[0]->Address().family == kFamilyV4)) {
-        max = (*subnetList)[0]->Address().v4;
+        ((*subnetList)[0]->Address().iFamily == kFamilyV4)) {
+        max = (*subnetList)[0]->Address().iV4;
     }
     aEnv.NetworkAdapterList().DestroySubnetList(subnetList);
     (void)Ascii::AppendDec(buf, aEnv.Random(max));

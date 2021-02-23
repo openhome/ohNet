@@ -3,90 +3,89 @@
 
 using namespace OpenHome;
 
-TBool TIpAddressUtils::Equal(const TIpAddress& aAddr1, const TIpAddress& aAddr2)
+TBool TIpAddressUtils::Equals(const TIpAddress& aAddr1, const TIpAddress& aAddr2)
 {
-    if ((aAddr1.family == aAddr2.family) &&
-    ((aAddr1.family == kFamilyV6 && (aAddr1.v6 == aAddr2.v6)) ||
-        (aAddr1.family == kFamilyV4 && (aAddr1.v4 == aAddr2.v4)))) {
+    if (aAddr1.iFamily != aAddr2.iFamily)
+        return false;
+    if (aAddr1.iFamily == kFamilyV6) {
+        for (TUint i = 0; i < 16; i++) {
+            if (aAddr1.iV6[i] != aAddr2.iV6[i])
+                return false;
+        }
         return true;
     }
-    return false;
+    return (aAddr1.iV4 == aAddr2.iV4);
 }
 
 TBool TIpAddressUtils::LessThan(const TIpAddress& aAddr1, const TIpAddress& aAddr2)
 {
-    if (aAddr1.family != aAddr2.family) {
-        return (aAddr1.family == kFamilyV4) ? true : false;
-    }
+    if (aAddr1.iFamily != aAddr2.iFamily)
+        return (aAddr1.iFamily == kFamilyV4);
 
-    if (aAddr1.family == kFamilyV6) {
+    if (aAddr1.iFamily == kFamilyV6) {
         for (TUint i = 0; i < 16; i++) {
-            if (aAddr1.v6[i] < aAddr2.v6[i])
+            if (aAddr1.iV6[i] < aAddr2.iV6[i])
                 return true;
         }
         return false;
     }
-    else {
-        return (aAddr1.v4 < aAddr2.v4);
-    }
+    return (aAddr1.iV4 < aAddr2.iV4);
 }
 
-TIpAddress TIpAddressUtils::ApplyMask(const TIpAddress& aAddr1, const TIpAddress& aAddr2)
+TIpAddress TIpAddressUtils::ApplyMask(const TIpAddress& aAddr, const TIpAddress& aMask)
 {
-    ASSERT(aAddr1.family == aAddr2.family);
+    ASSERT(aAddr.iFamily == aMask.iFamily);
     TIpAddress address;
-    if (aAddr1.family == kFamilyV6) {
-        address.family = kFamilyV6;
+    if (aAddr.iFamily == kFamilyV6) {
+        address.iFamily = kFamilyV6;
         for (TUint i = 0; i < 16; i++) {
-            address.v6[i] = (aAddr1.v6[i] & aAddr2.v6[i]);
+            address.iV6[i] = (aAddr.iV6[i] & aMask.iV6[i]);
         }
     }
     else {
-        address.family = kFamilyV4;
-        address.v4 = (aAddr1.v4 & aAddr2.v4);
+        address.iFamily = kFamilyV4;
+        address.iV4 = (aAddr.iV4 & aMask.iV4);
     }
     return address;
 }
 
 TBool TIpAddressUtils::IsZero(const TIpAddress& aAddr)
 {
-    if (aAddr.family == kFamilyV6) {
+    if (aAddr.iFamily == kFamilyV6) {
         for (TUint i = 0; i < 16; i++) {
-            if (aAddr.v6[i] != 0x00) {
+            if (aAddr.iV6[i] != 0x00) {
                 return false;
             }
         }
         return true;
     }
-    else {
-        return (aAddr.v4 == kTIpAddressEmpty.v4);
-    }
+    return (aAddr.iV4 == 0);
 }
 
 void TIpAddressUtils::ToString(const TIpAddress& aAddr, Bwx& aAddressBuffer)
 {
-    (aAddr.family == kFamilyV6) ? AddressToStringV6(aAddressBuffer, aAddr) : AddressToStringV4(aAddressBuffer, aAddr);
+    (aAddr.iFamily == kFamilyV6) ? AddressToStringV6(aAddressBuffer, aAddr) : AddressToStringV4(aAddressBuffer, aAddr);
 }
 
 void TIpAddressUtils::AddressToStringV4(Bwx& aAddressBuffer, const TIpAddress& aAddress)
 {
     ASSERT(aAddressBuffer.MaxBytes() - aAddressBuffer.Bytes() >= kMaxAddressBytes);
 #ifdef DEFINE_LITTLE_ENDIAN
-    (void)Ascii::AppendDec(aAddressBuffer, aAddress.v4&0xff);
+    (void)Ascii::AppendDec(aAddressBuffer, aAddress.iV4&0xff);
     aAddressBuffer.Append('.');
-    (void)Ascii::AppendDec(aAddressBuffer, (aAddress.v4>>8)&0xff);
+    (void)Ascii::AppendDec(aAddressBuffer, (aAddress.iV4>>8)&0xff);
     aAddressBuffer.Append('.');
-    (void)Ascii::AppendDec(aAddressBuffer, (aAddress.v4>>16)&0xff);
+    (void)Ascii::AppendDec(aAddressBuffer, (aAddress.iV4>>16)&0xff);
     aAddressBuffer.Append('.');
-    (void)Ascii::AppendDec(aAddressBuffer, (aAddress.v4>>24)&0xff);
+    (void)Ascii::AppendDec(aAddressBuffer, (aAddress.iV4>>24)&0xff);
 #elif defined DEFINE_BIG_ENDIAN
-    (void)Ascii::AppendDec(aAddressBuffer, (aAddress.v4>>24)&0xff);
+    (void)Ascii::AppendDec(aAddressBuffer, (aAddress.iV4>>24)&0xff);
     aAddressBuffer.Append('.');
-    (void)Ascii::AppendDec(aAddressBuffer, (aAddress.v4>>16)&0xff);
+    (void)Ascii::AppendDec(aAddressBuffer, (aAddress.iV4>>16)&0xff);
     aAddressBuffer.Append('.');
-    (void)Ascii::AppendDec(aAddressBuffer, (aAddress.v4>>8)&0xff);
+    (void)Ascii::AppendDec(aAddressBuffer, (aAddress.iV4>>8)&0xff);
     aAddressBuffer.Append('.');
-    (void)Ascii::AppendDec(aAddressBuffer, aAddress.v4&0xff);
+    (void)Ascii::AppendDec(aAddressBuffer, aAddress.iV4&0xff);
 #else
 # error No endianess defined
 #endif
@@ -102,7 +101,7 @@ void TIpAddressUtils::AddressToStringV6(Bwx& aAddressBuffer, const TIpAddress& a
     for (TUint i = 0; i < 8; i++) {
         TUint byte = i * 2;
         // Combine the two bytes into a singular group (e.g., FFFF:)
-        TUint16 fieldAsNumber = (aAddress.v6[byte] << 8) + aAddress.v6[byte+1];
+        TUint16 fieldAsNumber = (aAddress.iV6[byte] << 8) + aAddress.iV6[byte+1];
         // Trim leading zeros for the field and append to local buffer
         if (!Ascii::AppendHexTrim(fields[i], fieldAsNumber)) {
             // We haven't written any bytes for this field; substitute '0'

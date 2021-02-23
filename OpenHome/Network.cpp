@@ -33,7 +33,7 @@ static TIpAddress GetHostByName(const Brx& aAddress)
 Endpoint::Endpoint()
 {
     // Default to IPv4
-    iAddress = kTIpAddressEmpty;
+    iAddress = kIpAddressV4AllAdapters;
     iPort = 0;
 }
 
@@ -103,7 +103,7 @@ void Endpoint::AppendEndpoint(Bwx& aEndpoint) const
 {
     ASSERT(aEndpoint.MaxBytes() - aEndpoint.Bytes() >= kMaxEndpointBytes);
 
-    if (iAddress.family == kFamilyV6) {
+    if (iAddress.iFamily == kFamilyV6) {
         aEndpoint.Append('[');
         AppendAddress(aEndpoint, iAddress);
         aEndpoint.Append(']');
@@ -119,17 +119,17 @@ void Endpoint::AppendEndpoint(Bwx& aEndpoint) const
 
 void Endpoint::GetAddressOctets(TByte (&aOctets)[4]) const
 {
-    ASSERT(iAddress.family == kFamilyV4);
+    ASSERT(iAddress.iFamily == kFamilyV4);
 #ifdef DEFINE_LITTLE_ENDIAN
-    aOctets[0] = iAddress.v4&0xff;
-    aOctets[1] = (iAddress.v4>>8)&0xff;
-    aOctets[2] = (iAddress.v4>>16)&0xff;
-    aOctets[3] = (iAddress.v4>>24)&0xff;
+    aOctets[0] = iAddress.iV4&0xff;
+    aOctets[1] = (iAddress.iV4>>8)&0xff;
+    aOctets[2] = (iAddress.iV4>>16)&0xff;
+    aOctets[3] = (iAddress.iV4>>24)&0xff;
 #elif defined DEFINE_BIG_ENDIAN
-    aOctets[0] = (iAddress.v4>>24)&0xff;
-    aOctets[1] = (iAddress.v4>>16)&0xff;
-    aOctets[2] = (iAddress.v4>>8)&0xff;
-    aOctets[3] = iAddress.v4&0xff;
+    aOctets[0] = (iAddress.iV4>>24)&0xff;
+    aOctets[1] = (iAddress.iV4>>16)&0xff;
+    aOctets[2] = (iAddress.iV4>>8)&0xff;
+    aOctets[3] = iAddress.iV4&0xff;
 #else
 # error No endianess defined
 #endif
@@ -137,25 +137,25 @@ void Endpoint::GetAddressOctets(TByte (&aOctets)[4]) const
 
 void Endpoint::GetAddressFields(TUint (&aFields)[8]) const
 {
-    ASSERT(iAddress.family == kFamilyV6);
+    ASSERT(iAddress.iFamily == kFamilyV6);
 #ifdef DEFINE_LITTLE_ENDIAN
-    aFields[0] = (iAddress.v6[1] << 8) + iAddress.v6[0];
-    aFields[1] = (iAddress.v6[3] << 8) + iAddress.v6[2];
-    aFields[2] = (iAddress.v6[5] << 8) + iAddress.v6[4];
-    aFields[3] = (iAddress.v6[7] << 8) + iAddress.v6[6];
-    aFields[4] = (iAddress.v6[9] << 8) + iAddress.v6[8];
-    aFields[5] = (iAddress.v6[11] << 8) + iAddress.v6[10];
-    aFields[6] = (iAddress.v6[13] << 8) + iAddress.v6[12];
-    aFields[7] = (iAddress.v6[15] << 8) + iAddress.v6[14];
+    aFields[0] = (iAddress.iV6[1] << 8) + iAddress.iV6[0];
+    aFields[1] = (iAddress.iV6[3] << 8) + iAddress.iV6[2];
+    aFields[2] = (iAddress.iV6[5] << 8) + iAddress.iV6[4];
+    aFields[3] = (iAddress.iV6[7] << 8) + iAddress.iV6[6];
+    aFields[4] = (iAddress.iV6[9] << 8) + iAddress.iV6[8];
+    aFields[5] = (iAddress.iV6[11] << 8) + iAddress.iV6[10];
+    aFields[6] = (iAddress.iV6[13] << 8) + iAddress.iV6[12];
+    aFields[7] = (iAddress.iV6[15] << 8) + iAddress.iV6[14];
 #elif defined DEFINE_BIG_ENDIAN
-    aFields[0] = (iAddress.v6[0] << 8) + iAddress.v6[1];
-    aFields[1] = (iAddress.v6[2] << 8) + iAddress.v6[3];
-    aFields[2] = (iAddress.v6[4] << 8) + iAddress.v6[5];
-    aFields[3] = (iAddress.v6[6] << 8) + iAddress.v6[7];
-    aFields[4] = (iAddress.v6[8] << 8) + iAddress.v6[9];
-    aFields[5] = (iAddress.v6[10] << 8) + iAddress.v6[11];
-    aFields[6] = (iAddress.v6[12] << 8) + iAddress.v6[13];
-    aFields[7] = (iAddress.v6[14] << 8) + iAddress.v6[15];
+    aFields[0] = (iAddress.iV6[0] << 8) + iAddress.iV6[1];
+    aFields[1] = (iAddress.iV6[2] << 8) + iAddress.iV6[3];
+    aFields[2] = (iAddress.iV6[4] << 8) + iAddress.iV6[5];
+    aFields[3] = (iAddress.iV6[6] << 8) + iAddress.iV6[7];
+    aFields[4] = (iAddress.iV6[8] << 8) + iAddress.iV6[9];
+    aFields[5] = (iAddress.iV6[10] << 8) + iAddress.iV6[11];
+    aFields[6] = (iAddress.iV6[12] << 8) + iAddress.iV6[13];
+    aFields[7] = (iAddress.iV6[14] << 8) + iAddress.iV6[15];
 #else
 # error No endianess defined
 #endif
@@ -164,14 +164,14 @@ void Endpoint::GetAddressFields(TUint (&aFields)[8]) const
 
 void Endpoint::Externalise(IWriter& aWriter)
 {
-    if (iAddress.family == kFamilyV4) {
+    if (iAddress.iFamily == kFamilyV4) {
         TByte octets[4];
         GetAddressOctets(octets);
         Brn octetsBuf(octets, sizeof octets);
         aWriter.Write(octetsBuf);
     }
     else {
-        Brn fieldsBuf((TByte*)&iAddress.v6[0], 16);
+        Brn fieldsBuf((TByte*)&iAddress.iV6[0], 16);
         aWriter.Write(fieldsBuf);
     }
     WriterBinary wb(aWriter);
@@ -183,15 +183,15 @@ void Endpoint::Internalise(IReader& aReader)
     ReaderProtocolS<4> rb(aReader);
     Brn octets = rb.Read(4);
 #ifdef DEFINE_LITTLE_ENDIAN
-    iAddress.v4  = octets[0];
-    iAddress.v4 |= (octets[1] << 8);
-    iAddress.v4 |= (octets[2] << 16);
-    iAddress.v4 |= (octets[3] << 24);
+    iAddress.iV4  = octets[0];
+    iAddress.iV4 |= (octets[1] << 8);
+    iAddress.iV4 |= (octets[2] << 16);
+    iAddress.iV4 |= (octets[3] << 24);
 #elif defined DEFINE_BIG_ENDIAN
-    iAddress.v4  = (octets[0] << 24);
-    iAddress.v4 |= (octets[1] << 16);
-    iAddress.v4 |= (octets[2] << 8);
-    iAddress.v4 |= octets[3];
+    iAddress.iV4  = (octets[0] << 24);
+    iAddress.iV4 |= (octets[1] << 16);
+    iAddress.iV4 |= (octets[2] << 8);
+    iAddress.iV4 |= octets[3];
 #else
 # error No endianess defined
 #endif
@@ -203,7 +203,7 @@ void Endpoint::InternaliseIPv6(IReader& aReader)
     ReaderProtocolS<16> rb(aReader);
     Brn bytes = rb.Read(16);
     for (TUint i = 0; i < 16; i++) {
-        iAddress.v6[i] = bytes[i];
+        iAddress.iV6[i] = bytes[i];
     }
     iPort = (TUint16)rb.ReadUintBe(2);
 }
@@ -218,7 +218,7 @@ void Endpoint::Replace(const Endpoint& aEndpoint)
 // Test if this endpoint is equal to the specified endpoint
 TBool Endpoint::Equals(const Endpoint& aEndpoint) const
 {
-    return (TIpAddressUtils::Equal(iAddress, aEndpoint.iAddress) && iPort==aEndpoint.iPort);
+    return (TIpAddressUtils::Equals(iAddress, aEndpoint.iAddress) && iPort==aEndpoint.iPort);
 }
 
 // Socket
@@ -710,17 +710,10 @@ void SocketTcpSession::Start()
     for (;;) {
         try {
             Open(iServer->Accept(iClientEndpoint));            // accept a connection for this session
-        } catch (NetworkError&) {                // server is being destroyed
+        } catch (NetworkError&) { 
+            // server is being destoryed OR there was an underlying issue with the socket operations.
             LOG_ERROR(kNetwork, "-SocketTcpSession::Start() Network Accept Exception\n");
-            if (iServer->IsInterrupted()) {
-                // server is shutting down, exit this session
-                break;
-            }
-            Log::Print("SocketTcpSession (%.*s) transient failure from accept\n", PBUF(iThread->Name()));
-            // Assume that errors from accept when not interrupted are transient
-            // Wait a short time before retrying in case error conditions apply for a short
-            // block of time (tcp sessions often run in fairly high priority threads)
-            Thread::Sleep(500);
+            break;
         }
         try {
             LOG_TRACE(kNetwork, "-SocketTcpSession::Start() Run session\n");
@@ -858,7 +851,7 @@ SocketUdp::SocketUdp(Environment& aEnv)
     : SocketUdpBase(aEnv)
 {
     LOG_TRACE(kNetwork, "> SocketUdp::SocketUdp\n");
-    Bind(0, kTIpAddressEmpty);
+    Bind(0, kIpAddressV4AllAdapters);
     GetPort(iPort);
     LOG_TRACE(kNetwork, "< SocketUdp::SocketUdp H = %d, P = %d\n", iHandle, iPort);
 }
@@ -867,7 +860,7 @@ SocketUdp::SocketUdp(Environment& aEnv, TUint aPort)
     : SocketUdpBase(aEnv)
 {
     LOG_TRACE(kNetwork, "> SocketUdp::SocketUdp P = %d\n", aPort);
-    Bind(aPort, kTIpAddressEmpty);
+    Bind(aPort, kIpAddressV4AllAdapters);
     LOG_TRACE(kNetwork, "< SocketUdp::SocketUdp H = %d, P = %d\n", iHandle, iPort);
 }
 

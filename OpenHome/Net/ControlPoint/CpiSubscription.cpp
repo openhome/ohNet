@@ -223,7 +223,7 @@ void CpiSubscription::DoSubscribe()
     Bws<Uri::kMaxUriBytes> uri;
     uri.Append(Http::kSchemeHttp);
     NetworkAdapter* nif = iEnv.NetworkAdapterList().CurrentAdapter("CpiSubscription::DoSubscribe").Ptr();
-    TIpAddress nifAddr = kTIpAddressEmpty;
+    TIpAddress nifAddr = kIpAddressV4AllAdapters;
     if (nif != NULL) {
         nifAddr = nif->Address();
         nif->RemoveRef("CpiSubscription::DoSubscribe");
@@ -577,7 +577,7 @@ CpiSubscriptionManager::CpiSubscriptionManager(CpStack& aCpStack)
     , iFree(aCpStack.Env().InitParams()->NumSubscriberThreads())
     , iWaiter("SBSS", 0)
     , iShutdownSem("SBMS", 0)
-    , iInterface(kTIpAddressEmpty)
+    , iInterface(kIpAddressV4AllAdapters)
     , iNextSubscriptionId(1)
 {
     NetworkAdapterList& ifList = iCpStack.Env().NetworkAdapterList();
@@ -788,7 +788,7 @@ void CpiSubscriptionManager::HandleInterfaceChange(TBool aNewSubnet)
     AutoNetworkAdapterRef ref(iCpStack.Env(), "CpiSubscriptionManager::HandleInterfaceChange");
     const NetworkAdapter* currentInterface = ref.Adapter();
     if (aNewSubnet) {
-        if (currentInterface != NULL && TIpAddressUtils::Equal(currentInterface->Address(), iInterface)) {
+        if (currentInterface != NULL && TIpAddressUtils::Equals(currentInterface->Address(), iInterface)) {
             iLock.Signal();
             return;
         }
@@ -810,7 +810,7 @@ void CpiSubscriptionManager::HandleInterfaceChange(TBool aNewSubnet)
     // recreate the event server on the new interface
     delete server;
     if (currentInterface == NULL) {
-        iInterface = kTIpAddressEmpty;
+        iInterface = kIpAddressV4AllAdapters;
     }
     else {
         iInterface = currentInterface->Address();

@@ -1473,7 +1473,7 @@ SocketTcpServer* DviServerUpnp::CreateServer(const NetworkAdapter& aNif)
 void DviServerUpnp::NotifyServerDeleted(const TIpAddress& aInterface)
 {
     for (std::vector<PropertyWriterFactory*>::iterator it=iPropertyWriterFactories.begin(); it!=iPropertyWriterFactories.end(); ++it) {
-        if (TIpAddressUtils::Equal((*it)->Adapter(), aInterface)) {
+        if (TIpAddressUtils::Equals((*it)->Adapter(), aInterface)) {
             (*it)->Disable();
             iPropertyWriterFactories.erase(it);
             break;
