@@ -1043,28 +1043,42 @@ int32_t OsNetworkReceive(THandle aHandle, uint8_t* aBuffer, uint32_t aBytes)
     if (SocketInterrupted(handle)) {
         return -1;
     }
-    SetFdNonBlocking(handle->iSocket);
 
-    int32_t received = TEMP_FAILURE_RETRY_2(recv(handle->iSocket, aBuffer, aBytes, MSG_NOSIGNAL), handle);
-    if (received==-1 && errno==EWOULDBLOCK) {
-        fd_set read;
-        fd_set error;
-        int32_t selectErr;
-        do {
-            FD_ZERO(&read);
-            FD_SET(handle->iPipe[0], &read);
-            FD_SET(handle->iSocket, &read);
-            FD_ZERO(&error);
-            FD_SET(handle->iSocket, &error);
-            selectErr = (long int) select(nfds(handle), &read, NULL, &error, NULL);
-        } while(selectErr == -1L && errno == EINTR && !SocketInterrupted(handle));
+    fd_set read;
+    fd_set error;
+    int32_t selectErr;
 
-        if (selectErr > 0 && FD_ISSET(handle->iSocket, &read)) {
-            received = TEMP_FAILURE_RETRY_2(recv(handle->iSocket, aBuffer, aBytes, MSG_NOSIGNAL), handle);
+    while(1) 
+    {
+        FD_ZERO(&read);
+        FD_SET(handle->iPipe[0], &read);
+        FD_SET(handle->iSocket, &read);
+        FD_ZERO(&error);
+        FD_SET(handle->iSocket, &error);
+
+        selectErr = (long int) select(nfds(handle), &read, NULL, &error, NULL);
+
+        if (selectErr < 0) {
+            // We've been interupted or something has gone wrong with select()
+            // Don't continue trying and exit our loop. 
+            if (errno != EINTR || SocketInterrupted(handle)) {
+                break;
+            }
+        }
+        else {
+            // By now we either have a data ready to read, the socket itself
+            // has errors, or we've been interupted. 
+            break;
         }
     }
 
-    SetFdBlocking(handle->iSocket);
+
+    int32_t received = -1;
+    if (selectErr != -1) {
+        received = FD_ISSET(handle->iSocket, &read) ? TEMP_FAILURE_RETRY_2(recv(handle->iSocket, aBuffer, aBytes, MSG_NOSIGNAL), handle)
+                                                    : -1; //Assuming it was the pipe or an error
+    }
+
     return received;
 }
 
@@ -1078,27 +1092,41 @@ int32_t OsNetworkReceiveFrom(THandle aHandle, uint8_t* aBuffer, uint32_t aBytes,
     sockaddrFromEndpoint(&addr, 0, 0);
     socklen_t addrLen = sizeof(addr);
 
-    SetFdNonBlocking(handle->iSocket);
+    fd_set read;
+    fd_set error;
+    int32_t selectErr;
 
-    int32_t received = TEMP_FAILURE_RETRY_2(recvfrom(handle->iSocket, aBuffer, aBytes, MSG_NOSIGNAL, (struct sockaddr*)&addr, &addrLen), handle);
-    if (received==-1 && errno==EWOULDBLOCK) {
-        fd_set read;
-        fd_set error;
-        int32_t selectErr;
-        do {
-            FD_ZERO(&read);
-            FD_SET(handle->iPipe[0], &read);
-            FD_SET(handle->iSocket, &read);
-            FD_ZERO(&error);
-            FD_SET(handle->iSocket, &error);
-            selectErr = (long int) select(nfds(handle), &read, NULL, &error, NULL);
-        } while(selectErr == -1L && errno == EINTR && !SocketInterrupted(handle));
+    while(1) 
+    {
+        FD_ZERO(&read);
+        FD_SET(handle->iPipe[0], &read);
+        FD_SET(handle->iSocket, &read);
+        FD_ZERO(&error);
+        FD_SET(handle->iSocket, &error);
 
-        if (selectErr > 0 && FD_ISSET(handle->iSocket, &read)) {
-            received = TEMP_FAILURE_RETRY_2(recvfrom(handle->iSocket, aBuffer, aBytes, MSG_NOSIGNAL, (struct sockaddr*)&addr, &addrLen), handle);
+        selectErr = (long int) select(nfds(handle), &read, NULL, &error, NULL);
+
+        if (selectErr < 0) {
+            // We've been interupted or something has gone wrong with select()
+            // Don't continue trying and exit our loop. 
+            if (errno != EINTR || SocketInterrupted(handle)) {
+                break;
+            }
+        }
+        else {
+            // By now we either have data ready to read, the socket itself
+            // has errors, or we've been interupted. 
+            break;
         }
     }
-    SetFdBlocking(handle->iSocket);
+
+
+    int32_t received = -1;
+    if (selectErr != -1) {
+        received = FD_ISSET(handle->iSocket, &read) ? TEMP_FAILURE_RETRY_2(recvfrom(handle->iSocket, aBuffer, aBytes, MSG_NOSIGNAL, (struct sockaddr*)&addr, &addrLen), handle)
+                                                    : -1; //Assuming it was the pipe or an error 
+    }
+
     *aAddress = addr.sin_addr.s_addr;
     *aPort = ntohs(addr.sin_port);
     return received;
