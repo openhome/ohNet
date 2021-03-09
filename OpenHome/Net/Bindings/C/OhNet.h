@@ -714,7 +714,7 @@ DllExport uint32_t STDCALL OhNetInitParamsIsHostUdpLowQuality(OhNetHandleInitPar
  *
  * @return  IpV4 address as network order uint32
  */
-DllExport TIpAddress STDCALL OhNetNetworkAdapterAddress(OhNetHandleNetworkAdapter aNif);
+DllExport uint32_t STDCALL OhNetNetworkAdapterAddress(OhNetHandleNetworkAdapter aNif);
 
 /**
  * Query the subnet of a network interface is available on
@@ -723,7 +723,7 @@ DllExport TIpAddress STDCALL OhNetNetworkAdapterAddress(OhNetHandleNetworkAdapte
  *
  * @return  IpV4 address as network order uint32
  */
-DllExport TIpAddress STDCALL OhNetNetworkAdapterSubnet(OhNetHandleNetworkAdapter aNif);
+DllExport uint32_t STDCALL OhNetNetworkAdapterSubnet(OhNetHandleNetworkAdapter aNif);
 
 /**
  * Query the netmask that a network interface is available on

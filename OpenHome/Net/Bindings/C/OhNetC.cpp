@@ -427,12 +427,15 @@ uint32_t STDCALL OhNetInitParamsIsHostUdpLowQuality(OhNetHandleInitParams aParam
     return (ip->IsHostUdpLowQuality()? 1 : 0);
 }
 
-TIpAddress STDCALL OhNetNetworkAdapterAddress(OhNetHandleNetworkAdapter aNif)
+uint32_t STDCALL OhNetNetworkAdapterAddress(OhNetHandleNetworkAdapter aNif)
 {
     try {
         NetworkAdapter* nif = reinterpret_cast<NetworkAdapter*>(aNif);
         ASSERT(nif != NULL);
-        return nif->Address();
+        if (nif->Address().iFamily == kFamilyV4) {
+            return nif->Address().iV4;
+        }
+        return 0;
     }
     catch (Exception& ex) {
         UnhandledExceptionHandler(ex);
@@ -440,15 +443,18 @@ TIpAddress STDCALL OhNetNetworkAdapterAddress(OhNetHandleNetworkAdapter aNif)
     catch (std::exception& ex) {
         UnhandledExceptionHandler(ex);
     }
-    return kIpAddressV4AllAdapters;
+    return 0;
 }
 
-TIpAddress STDCALL OhNetNetworkAdapterSubnet(OhNetHandleNetworkAdapter aNif)
+uint32_t STDCALL OhNetNetworkAdapterSubnet(OhNetHandleNetworkAdapter aNif)
 {
     try {
         NetworkAdapter* nif = reinterpret_cast<NetworkAdapter*>(aNif);
         ASSERT(nif != NULL);
-        return nif->Subnet();
+        if (nif->Subnet().iFamily == kFamilyV4) {
+            return nif->Subnet().iV4;
+        }
+        return 0;
     }
     catch (Exception& ex) {
         UnhandledExceptionHandler(ex);
@@ -456,7 +462,7 @@ TIpAddress STDCALL OhNetNetworkAdapterSubnet(OhNetHandleNetworkAdapter aNif)
     catch (std::exception& ex) {
         UnhandledExceptionHandler(ex);
     }
-    return kIpAddressV4AllAdapters;
+    return 0;
 }
 
 TIpAddress STDCALL OhNetNetworkAdapterMask(OhNetHandleNetworkAdapter aNif)
