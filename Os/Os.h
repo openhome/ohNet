@@ -389,6 +389,15 @@ typedef enum
    ,eOsNetworkSocketDatagram = 2 /**< used by UDP sockets */
 } OsNetworkSocketType;
 
+/**
+ * Network socket families
+ */
+typedef enum
+{
+    eOsNetworkSocketV4 = 1
+   ,eOsNetworkSocketV6 = 2
+} OsNetworkSocketFamily;
+
 
 /**
  * Create a socket.
@@ -396,12 +405,13 @@ typedef enum
  * This is equivalent to the BSD socket() function with two of its parameters assumed
  * to be constant - 'af' should always be 2 (IpV4) and 'protocol' should always be 0.
  *
- * @param[in] aContext     Returned from OsCreate().
- * @param[in] aSocketType  The type of socket to create
+ * @param[in] aContext          Returned from OsCreate().
+ * @param[in] aSocketType       The type of socket to create
+ * @param[in] aSocketFamily     The protocol family the socket supports (IPv4/IPv6) 
  *
  * @return  a valid handle on success; kHandleNull if creation failed.
  */
-THandle OsNetworkCreate(OsContext* aContext, OsNetworkSocketType aSocketType);
+THandle OsNetworkCreate(OsContext* aContext, OsNetworkSocketType aSocketType, OsNetworkSocketFamily aSocketFamily);
 
 /**
  * Assign a name to a socket.

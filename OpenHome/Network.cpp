@@ -14,10 +14,10 @@ using namespace OpenHome;
 
 // OS sockets interface
 
-static THandle SocketCreate(Environment& aEnv, ESocketType aSocketType)
+static THandle SocketCreate(Environment& aEnv, ESocketType aSocketType, ESocketFamily aSocketFamily)
 {
     LOG_TRACE(kNetwork, "SocketCreate  ST = %d, \n", aSocketType);
-    THandle handle = OpenHome::Os::NetworkCreate(aEnv.OsCtx(), aSocketType);
+    THandle handle = OpenHome::Os::NetworkCreate(aEnv.OsCtx(), aSocketType, aSocketFamily);
     LOG_TRACE(kNetwork, "SocketCreate  Socket H = %d\n", handle);
     return handle;
 }
@@ -309,9 +309,9 @@ void Socket::LogVerbose(TBool aLog, TBool aHex)
     }
 }
 
-void Socket::Create(Environment& aEnv, ESocketType aSocketType)
+void Socket::Create(Environment& aEnv, ESocketType aSocketType, ESocketFamily aSocketFamily)
 {
-    THandle handle = SocketCreate(aEnv, aSocketType);
+    THandle handle = SocketCreate(aEnv, aSocketType, aSocketFamily);
     iLock.Wait();
     iHandle = handle;
     iLock.Signal();
@@ -611,7 +611,7 @@ void SocketTcpClient::Open(Environment& aEnv)
 {
     ASSERT(iHandle == kHandleNull);     // Ensure there isn't an open socket handle that's about to be leaked.
     LOG_TRACE(kNetwork, "SocketTcpClient::Open\n");
-    Create(aEnv, eSocketTypeStream);
+    Create(aEnv, eSocketTypeStream, eSocketFamilyV4);
     TryNetworkTcpSetNoDelay(iHandle);
 }
 
@@ -631,7 +631,7 @@ SocketTcpServer::SocketTcpServer(Environment& aEnv, const TChar* aName, TUint aP
     , iTerminating(false)
 {
     LOG_TRACE(kNetwork, "SocketTcpServer::SocketTcpServer\n");
-    iHandle = SocketCreate(aEnv, eSocketTypeStream);
+    iHandle = SocketCreate(aEnv, eSocketTypeStream, eSocketFamilyV4);
     OpenHome::Os::NetworkSocketSetReuseAddress(iHandle);
     TryNetworkTcpSetNoDelay(iHandle);
     iInterface = aInterface;
@@ -791,11 +791,12 @@ SocketTcpSession::~SocketTcpSession()
 
 // SocketUdpBase
 
-SocketUdpBase::SocketUdpBase(Environment& aEnv)
+SocketUdpBase::SocketUdpBase(Environment& aEnv, ESocketFamily aSocketFamily)
     : iEnv(aEnv)
+    , iSocketFamily(aSocketFamily)
 {
     LOG_TRACE(kNetwork, "> SocketUdpBase::SocketUdpBase\n");
-    Create();
+    Create(aSocketFamily);
     LOG_TRACE(kNetwork, "< SocketUdpBase::SocketUdpBase H = %d\n", iHandle);
 }
 
@@ -834,13 +835,13 @@ Endpoint SocketUdpBase::Receive(Bwx& aBuffer)
 void SocketUdpBase::ReCreate()
 {
     Close();
-    Create();
+    Create(iSocketFamily);
 }
 
-void SocketUdpBase::Create()
+void SocketUdpBase::Create(ESocketFamily aSocketFamily)
 {
     ASSERT(iHandle == kHandleNull);     // Ensure there isn't an open socket handle that's about to be leaked.
-    Socket::Create(iEnv, eSocketTypeDatagram);
+    Socket::Create(iEnv, eSocketTypeDatagram, aSocketFamily);
     OpenHome::Os::NetworkSocketSetReuseAddress(iHandle);
 }
 
@@ -848,7 +849,7 @@ void SocketUdpBase::Create()
 // SocketUdp
 
 SocketUdp::SocketUdp(Environment& aEnv)
-    : SocketUdpBase(aEnv)
+    : SocketUdpBase(aEnv, eSocketFamilyV4)
 {
     LOG_TRACE(kNetwork, "> SocketUdp::SocketUdp\n");
     Bind(0, kIpAddressV4AllAdapters);
@@ -857,15 +858,31 @@ SocketUdp::SocketUdp(Environment& aEnv)
 }
 
 SocketUdp::SocketUdp(Environment& aEnv, TUint aPort)
-    : SocketUdpBase(aEnv)
+    : SocketUdpBase(aEnv, eSocketFamilyV4)
 {
     LOG_TRACE(kNetwork, "> SocketUdp::SocketUdp P = %d\n", aPort);
     Bind(aPort, kIpAddressV4AllAdapters);
     LOG_TRACE(kNetwork, "< SocketUdp::SocketUdp H = %d, P = %d\n", iHandle, iPort);
 }
 
+SocketUdp::SocketUdp(Environment& aEnv, TUint aPort, ESocketFamily aSocketFamily)
+    : SocketUdpBase(aEnv, aSocketFamily)
+{
+    if (aSocketFamily == eSocketFamilyV6) {
+        TIpAddress addr;
+        addr.iFamily = kFamilyV6;
+        for (TUint i = 0; i < 16; i++) {
+            addr.iV6[i] = 0;
+        }
+        Bind(aPort, addr);
+    }
+    else {
+        Bind(aPort, kIpAddressV4AllAdapters);
+    }
+}
+
 SocketUdp::SocketUdp(Environment& aEnv, TUint aPort, const TIpAddress& aInterface)
-    : SocketUdpBase(aEnv)
+    : SocketUdpBase(aEnv, eSocketFamilyV4)
 {
     LOG_TRACE(kNetwork, "> SocketUdp::SocketUdp P = %d, I = %x\n", aPort, aInterface);
     Bind(aPort, aInterface);
@@ -895,7 +912,7 @@ void SocketUdp::Bind(TUint aPort, const TIpAddress& aInterface)
 // SocketUdpMulticast
 
 SocketUdpMulticast::SocketUdpMulticast(Environment& aEnv, const TIpAddress& aInterface, const Endpoint& aEndpoint)
-    : SocketUdpBase(aEnv)
+    : SocketUdpBase(aEnv, ((aInterface.iFamily == kFamilyV4) ? eSocketFamilyV4 : eSocketFamilyV6))
     , iInterface(aInterface)
     , iAddress(aEndpoint.Address())
 {

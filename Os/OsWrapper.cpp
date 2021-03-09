@@ -37,9 +37,9 @@ void Os::ThreadGetPriorityRange(OsContext* aContext, TUint& aHostMin, TUint& aHo
     aHostMax = (TUint)hostMax;
 }
 
-THandle Os::NetworkCreate(OsContext* aContext, ESocketType aSocketType)
+THandle Os::NetworkCreate(OsContext* aContext, ESocketType aSocketType, ESocketFamily aSocketFamily)
 {
-    THandle handle = OsNetworkCreate(aContext, (OsNetworkSocketType)aSocketType);
+    THandle handle = OsNetworkCreate(aContext, (OsNetworkSocketType)aSocketType, (OsNetworkSocketFamily)aSocketFamily);
     if (handle == kHandleNull) {
         THROW(NetworkError);
     }
