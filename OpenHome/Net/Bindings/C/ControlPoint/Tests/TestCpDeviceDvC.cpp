@@ -25,9 +25,10 @@ extern "C" void OhNetTestRunner(OhNetHandleInitParams aInitParams)
     Print("TestCpDeviceDvC - starting\n");
     OhNetHandleNetworkAdapterList subnetList = OhNetSubnetListCreate();
     OhNetHandleNetworkAdapter nif = OhNetSubnetAt(subnetList, 0);
-    TIpAddress subnet = OhNetNetworkAdapterSubnet(nif);
+    TUint subnet = OhNetNetworkAdapterSubnet(nif);
+    TIpAddress subnetAddr = {.iFamily = kFamilyV4, .iV4 = subnet};
     OhNetSubnetListDestroy(subnetList);
-    (void)OhNetLibraryStartCombined(subnet);
+    (void)OhNetLibraryStartCombined(subnetAddr);
 
     DeviceBasicC* device = new DeviceBasicC(DeviceBasicC::eProtocolNone);
     CpDeviceC cph = CpDeviceDvCreate(device->Device());

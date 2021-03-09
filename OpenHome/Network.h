@@ -34,6 +34,12 @@ enum ESocketType
     eSocketTypeDatagram = 2,            /// Udp
 };
 
+enum ESocketFamily
+{
+    eSocketFamilyV4 = 1,
+    eSocketFamilyV6 = 2,
+};
+
 // Addressing
 
 // The Endpoint class has been designed with a restricted interface in order to facilitate
@@ -91,7 +97,7 @@ public:
 protected:
     Socket();
     virtual ~Socket() {}
-    void Create(Environment& aEnv, ESocketType aSocketType);
+    void Create(Environment& aEnv, ESocketType aSocketType, ESocketFamily aSocketFamily);
     void Send(const Brx& aBuffer);
     void SendTo(const Brx& aBuffer, const Endpoint& aEndpoint);
     void Receive(Bwx& aBuffer);
@@ -256,11 +262,12 @@ public:
     ~SocketUdpBase();
     void ReCreate();
 protected:
-    SocketUdpBase(Environment& aEnv);
+    SocketUdpBase(Environment& aEnv, ESocketFamily aSocketFamily);
 private:
-    void Create();
+    void Create(ESocketFamily aSocketFamily);
 protected:
     Environment& iEnv;
+    ESocketFamily iSocketFamily;
     TUint iPort;
 };
 
@@ -269,6 +276,7 @@ class SocketUdp : public SocketUdpBase
 public:
     SocketUdp(Environment& aEnv); // lets the os select a port
     SocketUdp(Environment& aEnv, TUint aPort); // stipulate a port
+    SocketUdp(Environment& aEnv, TUint aPort, ESocketFamily aSocketFamily);
     SocketUdp(Environment& aEnv, TUint aPort, const TIpAddress& aInterface); // stipulate a port and an interface
     void ReBind(TUint aPort, const TIpAddress& aInterface);
     void SetMulticastIf(const TIpAddress& aInterface);

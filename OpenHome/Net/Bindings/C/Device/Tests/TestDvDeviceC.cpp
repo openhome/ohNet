@@ -134,9 +134,10 @@ extern "C" void OhNetTestRunner(OhNetHandleInitParams aInitParams)
     Print("TestDvDeviceC - starting\n");
     OhNetHandleNetworkAdapterList subnetList = OhNetSubnetListCreate();
     OhNetHandleNetworkAdapter nif = OhNetSubnetAt(subnetList, 0);
-    TIpAddress subnet = OhNetNetworkAdapterSubnet(nif);
+    TUint subnet = OhNetNetworkAdapterSubnet(nif);
+    TIpAddress subnetAddr = {.iFamily = kFamilyV4, .iV4 = subnet};
     OhNetSubnetListDestroy(subnetList);
-    (void)OhNetLibraryStartCombined(subnet);
+    (void)OhNetLibraryStartCombined(subnetAddr);
 //    Debug::SetLevel(Debug::kService);
 
     Semaphore* sem = new Semaphore("SEM1", 0);

@@ -49,7 +49,7 @@ public:
     inline static void* ThreadTls(OsContext* aContext);
     inline static void ThreadDestroy(THandle aThread);
     inline static TBool ThreadSupportsPriorities(OsContext* aContext);
-    static THandle NetworkCreate(OsContext* aContext, ESocketType aSocketType);
+    static THandle NetworkCreate(OsContext* aContext, ESocketType aSocketType, ESocketFamily aSocketFamily);
     static TInt NetworkBind(THandle aHandle, const Endpoint& aEndpoint);
     static TInt NetworkBindMulticast(THandle aHandle, TIpAddress aAdapter, const Endpoint& aMulticast);
     static TInt NetworkPort(THandle aHandle, TUint& aPort);
