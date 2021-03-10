@@ -1243,7 +1243,7 @@ failure:
                 netmask.iFamily = kFamilyV4;
                 netmask.iV4 = 0xFFFFFFFF;
                 netmask.iV4 <<= 32 - prefixLength;
-                netmask = htonl(netmask.iV4);
+                netmask.iV4 = htonl(netmask.iV4);
 
                 OsNetworkAdapter* nif;
                 nif = (OsNetworkAdapter*)calloc(1, sizeof(*nif));
@@ -1263,7 +1263,7 @@ failure:
                 {
                     TIpAddress subnet;
                     subnet.iFamily = kFamilyV4;
-                    subnet.iV4 = (nif->iAddress & nif->iNetMask);
+                    subnet.iV4 = (nif->iAddress.iV4 & nif->iNetMask.iV4);
                     OsNetworkAdapter* p1 = head;
                     OsNetworkAdapter* prev = NULL;
                     while (NULL != p1) 

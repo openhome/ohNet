@@ -1021,7 +1021,7 @@ int32_t OsNetworkConnect(THandle aHandle, TIpAddress aAddress, uint16_t aPort, u
     struct sockaddr_in6 addr;
     sockaddrFromEndpoint((struct sockaddr*)&addr, &aAddress, aPort);
     /* ignore err as we expect this to fail due to EINPROGRESS */
-    (void)connect(handle->iSocket, &addr, sizeof(addr));
+    (void)connect(handle->iSocket, (struct sockaddr*)&addr, sizeof(addr));
 
     fd_set read;
     fd_set write;
