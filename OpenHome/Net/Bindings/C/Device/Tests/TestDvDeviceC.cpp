@@ -134,8 +134,9 @@ extern "C" void OhNetTestRunner(OhNetHandleInitParams aInitParams)
     Print("TestDvDeviceC - starting\n");
     OhNetHandleNetworkAdapterList subnetList = OhNetSubnetListCreate();
     OhNetHandleNetworkAdapter nif = OhNetSubnetAt(subnetList, 0);
-    TUint subnet = OhNetNetworkAdapterSubnet(nif);
-    TIpAddress subnetAddr = {.iFamily = kFamilyV4, .iV4 = subnet};
+    TIpAddress subnetAddr;
+    subnetAddr.iFamily = kFamilyV4;
+    subnetAddr.iV4 = OhNetNetworkAdapterSubnet(nif);
     OhNetSubnetListDestroy(subnetList);
     (void)OhNetLibraryStartCombined(subnetAddr);
 //    Debug::SetLevel(Debug::kService);
