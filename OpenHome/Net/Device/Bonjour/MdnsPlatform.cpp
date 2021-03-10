@@ -449,7 +449,7 @@ void MulticastListeners::Rebind(std::vector<NetworkAdapter*>& aAdapters)
             isLoopback = (addrOctets[0] == 127);
         }
         else {
-            isLoopback = (addr.iV6[16] == 0x01);
+            isLoopback = (addr.iV6[15] == 0x01);
         }
 
 
