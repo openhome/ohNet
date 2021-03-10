@@ -101,6 +101,7 @@ LOCAL_SRC_FILES := $(ohroot)OpenHome/Ascii.cpp \
                    $(ohroot)OpenHome/Terminal.cpp \
                    $(ohroot)OpenHome/Thread.cpp \
                    $(ohroot)OpenHome/Timer.cpp \
+                   $(ohroot)OpenHome/TIpAddressUtils.cpp \
                    $(ohroot)OpenHome/Uri.cpp \
                    $(ohroot)OpenHome/Net/XmlParser.cpp \
                    $(ohroot)OpenHome/Net/ControlPoint/Upnp/XmlFetcher.cpp \
