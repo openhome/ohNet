@@ -1085,7 +1085,7 @@ int32_t OsNetworkSendTo(THandle aHandle, const uint8_t* aBuffer, uint32_t aBytes
     int32_t sent = 0;
     int32_t bytes = 0;
     do {
-        bytes = TEMP_FAILURE_RETRY_2(sendto(handle->iSocket, &aBuffer[sent], aBytes-sent, MSG_NOSIGNAL, &addr, sizeof(addr)), handle);
+        bytes = TEMP_FAILURE_RETRY_2(sendto(handle->iSocket, &aBuffer[sent], aBytes-sent, MSG_NOSIGNAL, (struct sockaddr*)&addr, sizeof(addr)), handle);
         if (bytes != -1) {
             sent += bytes;
         }

@@ -16,7 +16,7 @@ extern "C" {
 JNIEXPORT jint JNICALL Java_org_openhome_net_core_NetworkAdapter_OhNetNetworkAdapterAddress
   (JNIEnv *aEnv, jclass aClass, jlong aNif)
 {
-	TIpAddress ipAddr;
+	jint ipAddr;
 	OhNetHandleNetworkAdapter adapter = (OhNetHandleNetworkAdapter) (size_t)aNif;
 	aEnv = aEnv;
 	aClass = aClass;
@@ -24,9 +24,9 @@ JNIEXPORT jint JNICALL Java_org_openhome_net_core_NetworkAdapter_OhNetNetworkAda
 	ipAddr = OhNetNetworkAdapterAddress(adapter);
 	
 #ifdef DEFINE_LITTLE_ENDIAN
-    return (jint) SwapEndian32(ipAddr);
+    return SwapEndian32(ipAddr);
 #elif defined DEFINE_BIG_ENDIAN
-    return (jint) ipAddr;
+    return ipAddr;
 #else
 # error Endianness not defined
 #endif
@@ -40,7 +40,7 @@ JNIEXPORT jint JNICALL Java_org_openhome_net_core_NetworkAdapter_OhNetNetworkAda
 JNIEXPORT jint JNICALL Java_org_openhome_net_core_NetworkAdapter_OhNetNetworkAdapterSubnet
   (JNIEnv *aEnv, jclass aClass, jlong aNif)
 {
-	TIpAddress ipAddr;
+	jint ipAddr;
 	OhNetHandleNetworkAdapter adapter = (OhNetHandleNetworkAdapter) (size_t)aNif;
 	aEnv = aEnv;
 	aClass = aClass;
@@ -48,9 +48,9 @@ JNIEXPORT jint JNICALL Java_org_openhome_net_core_NetworkAdapter_OhNetNetworkAda
 	ipAddr = OhNetNetworkAdapterSubnet(adapter);
 	
 #ifdef DEFINE_LITTLE_ENDIAN
-    return (jint) SwapEndian32(ipAddr);
+    return SwapEndian32(ipAddr);
 #elif defined DEFINE_BIG_ENDIAN
-	return (jint) ipAddr;
+	return ipAddr;
 #else
 # error Endianness not defined
 #endif
@@ -64,7 +64,7 @@ JNIEXPORT jint JNICALL Java_org_openhome_net_core_NetworkAdapter_OhNetNetworkAda
 JNIEXPORT jint JNICALL Java_org_openhome_net_core_NetworkAdapter_OhNetNetworkAdapterMask
   (JNIEnv *aEnv, jclass aClass, jlong aNif)
 {
-	TIpAddress ipAddr;
+	jint ipAddr;
 	OhNetHandleNetworkAdapter adapter = (OhNetHandleNetworkAdapter) (size_t)aNif;
 	aEnv = aEnv;
 	aClass = aClass;
@@ -72,9 +72,9 @@ JNIEXPORT jint JNICALL Java_org_openhome_net_core_NetworkAdapter_OhNetNetworkAda
 	ipAddr = OhNetNetworkAdapterMask(adapter);
 	
 #ifdef DEFINE_LITTLE_ENDIAN
-    return (jint) SwapEndian32(ipAddr);
+    return SwapEndian32(ipAddr);
 #elif defined DEFINE_BIG_ENDIAN
-	return (jint) ipAddr;
+	return ipAddr;
 #else
 # error Endianness not defined
 #endif

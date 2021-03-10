@@ -647,7 +647,7 @@ static void SetSocketBlocking(SOCKET aSocket)
     }
 }
 
-THandle OsNetworkCreate(OsContext* aContext, OsNetworkSocketType aSocketType)
+THandle OsNetworkCreate(OsContext* aContext, OsNetworkSocketType aSocketType, OsNetworkSocketFamily /*aSocketFamily*/)
 {
     SOCKET socketH = socket(AF_INET, aSocketType, 0);
     OsNetworkHandle* handle = CreateHandle(aContext, socketH);

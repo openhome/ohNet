@@ -45,16 +45,18 @@ JNIEXPORT jint JNICALL Java_org_openhome_net_core_Library_OhNetLibraryStartCp
   (JNIEnv *aEnv, jclass aClass, jint aSubnet)
 {
 #ifdef DEFINE_LITTLE_ENDIAN
-    TIpAddress subnet = (TIpAddress) SwapEndian32(aSubnet);
+    jint subnet = SwapEndian32(aSubnet.iV4);
 #elif defined DEFINE_BIG_ENDIAN
-    TIpAddress subnet = (TIpAddress) aSubnet;
+    jint subnet = aSubnet.iV4;
 #else
 # error Endianness not defined
 #endif
     aEnv = aEnv;
     aClass = aClass;
-    
-    return (jint) OhNetLibraryStartCp(subnet);
+    TIpAddress addr;
+    addr.iFamily = kFamilyV4;
+    addr.iV4 = subnet;
+    return (jint) OhNetLibraryStartCp(addr);
 }
 
 /*
@@ -80,15 +82,17 @@ JNIEXPORT jint JNICALL Java_org_openhome_net_core_Library_OhNetLibraryStartCombi
   (JNIEnv *aEnv, jclass aClass, jint aSubnet)
 {
 #ifdef DEFINE_LITTLE_ENDIAN
-    TIpAddress subnet = (TIpAddress) SwapEndian32(aSubnet);
+    jint subnet = SwapEndian32(aSubnet.iV4);
 #elif defined DEFINE_BIG_ENDIAN
-    TIpAddress subnet = (TIpAddress) aSubnet;
+    jint subnet = aSubnet.iV4;
 #else
  #error Endianness not defined
 #endif
     aEnv = aEnv;
     aClass = aClass;
-    
+    TIpAddress addr;
+    addr.iFamily = kFamilyV4;
+    addr.iV4 = subnet;
     return (jint) OhNetLibraryStartCombined(subnet);
 }
 
@@ -115,7 +119,7 @@ JNIEXPORT void JNICALL Java_org_openhome_net_core_Library_OhNetSetCurrentSubnet
   (JNIEnv *aEnv, jclass aClass, jlong aSubnet)
 {
     OhNetHandleNetworkAdapter subnet = (OhNetHandleNetworkAdapter) (size_t)aSubnet;
-    TIpAddress subnetAddress = OhNetNetworkAdapterSubnet(subnet);
+    jint subnetAddress = OhNetNetworkAdapterSubnet(subnet);
     aEnv = aEnv;
     aClass = aClass;
 
