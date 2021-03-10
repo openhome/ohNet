@@ -48,13 +48,19 @@ int32_t STDCALL CallbackResourceManager(void* aUserData, const char* aUriTail, T
 		return 0;
 	}
 
+	if (aInterface.iFamily == kFamilyV6) {
+		printf("Attempted to WriteResource to IPv6 Address\n");
+		fflush(stdout);
+		return 0;
+	}
+
 	(*env)->CallVoidMethod(env, ref->callbackObj, mid,
 			(jlong) (size_t)aUserData,
 			(jstring) (*env)->NewStringUTF(env, aUriTail),
 #ifdef DEFINE_LITTLE_ENDIAN
-            (jint) SwapEndian32(aInterface),
+            (jint) SwapEndian32(aInterface.iV4),
 #elif defined DEFINE_BIG_ENDIAN
-			(jint) aInterface,
+			(jint) aInterface.iV4,
 #else
 # error Endianness not defined
 #endif
