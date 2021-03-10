@@ -1,4 +1,4 @@
-#include <OpenHome/TIpAddressUtils.h>
+#include <OpenHome/Private/TIpAddressUtils.h>
 #include <OpenHome/Private/Ascii.h>
 
 using namespace OpenHome;

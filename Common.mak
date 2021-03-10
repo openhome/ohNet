@@ -167,7 +167,7 @@ headers = \
 	$(inc_build)/OpenHome/Private/Terminal.h \
 	$(inc_build)/OpenHome/Private/Thread.h \
 	$(inc_build)/OpenHome/Private/Timer.h \
-	$(inc_build)/OpenHome/TIpAddressUtils.h \
+	$(inc_build)/OpenHome/Private/TIpAddressUtils.h \
 	$(inc_build)/OpenHome/Private/Uri.h \
 	$(inc_build)/OpenHome/Net/Private/CpiDevice.h \
 	$(inc_build)/OpenHome/Net/Private/CpiDeviceDv.h \
