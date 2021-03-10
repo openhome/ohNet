@@ -40,10 +40,14 @@ JNIEXPORT jint JNICALL Java_org_openhome_net_device_DvInvocation_DvInvocationGet
 	aClass = aClass;
 	
 	DvInvocationGetAdapter(invocation, &adapter);
+	if (adapter.iFamily == kFamilyV6) {
+		return 0;
+	}
+
 #ifdef DEFINE_LITTLE_ENDIAN
-    return (jint) SwapEndian32(adapter);
+    return (jint) SwapEndian32(adapter.iV4);
 #elif defined DEFINE_BIG_ENDIAN
-    return (jint) adapter;
+    return (jint) adapter.iV4;
 #else
 # error Endianness not defined
 #endif
@@ -82,10 +86,13 @@ JNIEXPORT jint JNICALL Java_org_openhome_net_device_DvInvocation_DvInvocationGet
     aClass = aClass;
     
     DvInvocationGetClientEndpoint(invocation, &adapter, &port);
+	if (adapter.iFamily == kFamilyV6) {
+		return 0;
+	}
 #ifdef DEFINE_LITTLE_ENDIAN
-    return (jint) SwapEndian32(adapter);
+    return (jint) SwapEndian32(adapter.iV4);
 #elif defined DEFINE_BIG_ENDIAN
-    return (jint) adapter;
+    return (jint) adapter.iV4;
 #else
 # error Endianness not defined
 #endif

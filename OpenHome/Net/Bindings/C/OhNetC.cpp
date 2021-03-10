@@ -465,12 +465,15 @@ uint32_t STDCALL OhNetNetworkAdapterSubnet(OhNetHandleNetworkAdapter aNif)
     return 0;
 }
 
-TIpAddress STDCALL OhNetNetworkAdapterMask(OhNetHandleNetworkAdapter aNif)
+uint32_t STDCALL OhNetNetworkAdapterMask(OhNetHandleNetworkAdapter aNif)
 {
     try {
         NetworkAdapter* nif = reinterpret_cast<NetworkAdapter*>(aNif);
         ASSERT(nif != NULL);
-        return nif->Mask();
+        if (nif->Mask().iFamily == kFamilyV4) {
+            return nif->Mask().iV4;
+        }
+        return 0;
     }
     catch (Exception& ex) {
         UnhandledExceptionHandler(ex);
@@ -478,7 +481,7 @@ TIpAddress STDCALL OhNetNetworkAdapterMask(OhNetHandleNetworkAdapter aNif)
     catch (std::exception& ex) {
         UnhandledExceptionHandler(ex);
     }
-    return kIpAddressV4AllAdapters;
+    return 0;
 }
 
 const char* STDCALL OhNetNetworkAdapterName(OhNetHandleNetworkAdapter aNif)

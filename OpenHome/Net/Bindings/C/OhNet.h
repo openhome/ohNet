@@ -732,7 +732,7 @@ DllExport uint32_t STDCALL OhNetNetworkAdapterSubnet(OhNetHandleNetworkAdapter a
  *
  * @return  IpV4 address as network order uint32
  */
-DllExport TIpAddress STDCALL OhNetNetworkAdapterMask(OhNetHandleNetworkAdapter aNif);
+DllExport uint32_t STDCALL OhNetNetworkAdapterMask(OhNetHandleNetworkAdapter aNif);
 
 /**
  * Query the name of a network interface
