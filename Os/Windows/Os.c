@@ -822,14 +822,11 @@ int32_t OsNetworkReceiveFrom(THandle aHandle, uint8_t* aBuffer, uint32_t aBytes,
     HANDLE handles[2];
     DWORD ret = 0;
 
-    if (aAddress->iFamily != kFamilyV4) {
-        return -1;
-    }
     if (SocketInterrupted(handle)) {
         return -1;
     }
 
-    sockaddrFromEndpoint(&addr, 0, 0);
+    sockaddrFromEndpoint(&addr, &kIpAddressV4AllAdapters, 0);
 
     handles[0] = handle->iEventSocket;
     handles[1] = handle->iEventInterrupt;
