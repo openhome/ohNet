@@ -1019,9 +1019,9 @@ int32_t OsNetworkConnect(THandle aHandle, TIpAddress aAddress, uint16_t aPort, u
     // Create storage for the larger of the two structs (sockaddr_in/sockaddr_in6)
     // Helper function will setup sockaddr for IPv4/v6
     struct sockaddr_in6 addr;
-    sockaddrFromEndpoint((struct sockaddr*)&addr, &aAddress, aPort);
+    uint32_t len = sockaddrFromEndpoint((struct sockaddr*)&addr, &aAddress, aPort);
     /* ignore err as we expect this to fail due to EINPROGRESS */
-    (void)connect(handle->iSocket, (struct sockaddr*)&addr, sizeof(addr));
+    (void)connect(handle->iSocket, (struct sockaddr*)&addr, len);
 
     fd_set read;
     fd_set write;
@@ -1080,12 +1080,12 @@ int32_t OsNetworkSendTo(THandle aHandle, const uint8_t* aBuffer, uint32_t aBytes
     // Create storage for the larger of the two structs (sockaddr_in/sockaddr_in6)
     // Helper function will setup sockaddr for IPv4/v6
     struct sockaddr_in6 addr;
-    sockaddrFromEndpoint((struct sockaddr*)&addr, &aAddress, aPort);
+    uint32_t len = sockaddrFromEndpoint((struct sockaddr*)&addr, &aAddress, aPort);
 
     int32_t sent = 0;
     int32_t bytes = 0;
     do {
-        bytes = TEMP_FAILURE_RETRY_2(sendto(handle->iSocket, &aBuffer[sent], aBytes-sent, MSG_NOSIGNAL, (struct sockaddr*)&addr, sizeof(addr)), handle);
+        bytes = TEMP_FAILURE_RETRY_2(sendto(handle->iSocket, &aBuffer[sent], aBytes-sent, MSG_NOSIGNAL, (struct sockaddr*)&addr, len), handle);
         if (bytes != -1) {
             sent += bytes;
         }
@@ -1564,20 +1564,19 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
     if (aUseLoopback == 0) {
         iter = networkIf;
         while (iter != NULL) {
-            if (iter->ifa_addr != NULL &&
-                (iter->ifa_flags & IFF_RUNNING) != 0) {
-                
-                // isLoopback determines protocol family (v4/v6)
-                if (iter->ifa_addr->sa_family == AF_INET && !isLoopback(iter->ifa_addr)) {
-                    includeLoopback = 0;
-                    break;
-                }
+
 #if !defined(PLATFORM_MACOSX_GNU)
-                else if (iter->ifa_addr->sa_family == AF_INET6 && !isLoopback(iter->ifa_addr)) {
-                    includeLoopback = 0;
-                    break;
-                }
+            const uint8_t familyIsValid = (iter->ifa_addr->sa_family == AF_INET || iter->ifa_addr->sa_family == AF_INET6);
+#else
+            // Omit IPv6 adapters on macOS platforms
+            const uint8_t familyIsValid = (iter->ifa_addr->sa_family == AF_INET);
 #endif
+            if (iter->ifa_addr != NULL &&
+                familyIsValid &&
+                (iter->ifa_flags & IFF_RUNNING) != 0 &&
+                !isLoopback(iter->ifa_addr)) {
+                includeLoopback = 0;
+                break;
             }
             iter = iter->ifa_next;
         }
