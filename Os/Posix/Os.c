@@ -880,7 +880,8 @@ static TIpAddress TIpAddressFromSockAddr(const struct sockaddr* aAddr)
     // Check for IPv6, default to IPv4
     if (aAddr->sa_family == AF_INET6) {
         addr.iFamily = kFamilyV6;
-        for (uint8_t i = 0; i < 16; i++) {
+        uint8_t i;
+        for (i = 0; i < 16; i++) {
             addr.iV6[i] = ((const struct sockaddr_in6*)aAddr)->sin6_addr.s6_addr[i];
         }
     }
@@ -899,7 +900,8 @@ static uint16_t PortFromSockAddr(const struct sockaddr* aAddr)
 
 static void in6AddrFromTIpAddress(struct in6_addr* aAddr, const TIpAddress* aAddress)
 {
-    for (uint8_t i = 0; i < 16; i++) {
+    uint8_t i;
+    for (i = 0; i < 16; i++) {
         aAddr->s6_addr[i] = aAddress->iV6[i];
     }
 }
@@ -1503,7 +1505,8 @@ static int32_t NetMasksAreEqual(const TIpAddress* aAddr1, const TIpAddress* aAdd
     }
 
     if (aAddr1->iFamily == kFamilyV6) {
-        for (uint8_t i = 0; i < 16; i++) {
+        uint8_t i;
+        for (i = 0; i < 16; i++) {
             if ((aAddr1->iV6[i] & aAddr2->iV6[i]) != aAddr1->iV6[i]) {
                 return 0;
             }
