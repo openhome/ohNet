@@ -1181,11 +1181,12 @@ int32_t OsNetworkReceiveFrom(THandle aHandle, uint8_t* aBuffer, uint32_t aBytes,
     int32_t received = -1;
     if (selectErr != -1) {
         received = FD_ISSET(handle->iSocket, &read) ? TEMP_FAILURE_RETRY_2(recvfrom(handle->iSocket, aBuffer, aBytes, MSG_NOSIGNAL, (struct sockaddr*)&addr, &addrLen), handle)
-                                                    : -1; //Assuming it was the pipe or an error 
+                                                    : -1; //Assuming it was the pipe or an error
+        if (received != -1) {
+            *aAddress = TIpAddressFromSockAddr(&addr);
+            *aPort = PortFromSockAddr(&addr);
+        }
     }
-
-    *aAddress = TIpAddressFromSockAddr(&addr);
-    *aPort = PortFromSockAddr(&addr);
     return received;
 }
 
