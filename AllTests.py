@@ -348,7 +348,7 @@ gAllTests = [ TestCase('TestBuffer', [], True)
              #,TestCase('TestCpDeviceDvStd', [], True)
              #,TestCase('TestCpDeviceDvC', [], True)
              ,TestCase('TestDvLpec', [], True)
-             ,TestCase('TestProxyCs', [], False, False)
+            #  ,TestCase('TestProxyCs', [], False, False)
             #  ,TestCase('TestDvDeviceCs', [], True, False)
             #  ,TestCase('TestCpDeviceDvCs', [], True, False)
             ]
