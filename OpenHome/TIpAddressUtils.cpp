@@ -62,6 +62,27 @@ TBool TIpAddressUtils::IsZero(const TIpAddress& aAddr)
     return (aAddr.iV4 == 0);
 }
 
+TBool TIpAddressUtils::IsLoopback(const TIpAddress& aAddr)
+{
+    if (aAddr.iFamily == kFamilyV4) {
+#ifdef DEFINE_LITTLE_ENDIAN
+        if ((aAddr.iV4&0xff) == 127)
+            return true;
+#elif defined DEFINE_BIG_ENDIAN
+        if(((aAddr.iV4>>24)&0xff) == 127)
+            return true;
+#endif
+    }
+    else {
+        TIpAddressUtils::AddressBuf buf;
+        TIpAddressUtils::ToString(aAddr, buf);
+        if (buf == Brn("::1")) {
+            return true;
+        }
+    }
+    return false;
+}
+
 void TIpAddressUtils::ToString(const TIpAddress& aAddr, Bwx& aAddressBuffer)
 {
     (aAddr.iFamily == kFamilyV6) ? AddressToStringV6(aAddressBuffer, aAddr) : AddressToStringV4(aAddressBuffer, aAddr);
@@ -150,12 +171,12 @@ void TIpAddressUtils::AddressToStringV6(Bwx& aAddressBuffer, const TIpAddress& a
             k += (consecutiveZeroFields - 1); // remove one from consecutiveZeroFields so that we iterate onto the next field on continuation of loop
             continue;
         }
-
-        aAddressBuffer.Append(fields[k]);
         // Do not apply colon de-limiter to the end of the string
-        if (k < 7) {
+        if (k > 0) {
             aAddressBuffer.Append(':');
         }
+
+        aAddressBuffer.Append(fields[k]);
     }
     aAddressBuffer.PtrZ();
 }

@@ -144,6 +144,7 @@ class MdnsPlatform : public IMdnsMulticastPacketReceiver
     static const TUint kMaxHostBytes = 16;
     static const TUint kMaxQueueLength = 25;
     static const TChar* kNifCookie;
+    static const TUint kInterfaceIdPoolSize = 10;
 public:
     static const TUint kRRCacheSize = 500;
 public: 
@@ -172,6 +173,8 @@ private:
     void TimerExpired();
     void SubnetListChanged();
     void CurrentAdapterChanged();
+    void UpdateInterfaceList();
+    Status AddValidInterfaces(std::vector<NetworkAdapter*>& aSubnetList);
     void DoSetHostName();
     Status AddInterface(NetworkAdapter* aNif);
     TInt InterfaceIndex(const NetworkAdapter& aNif);
@@ -198,6 +201,19 @@ private:
         NetworkAdapter& iNif;
         NetworkInterfaceInfo* iMdnsInfo;
     };
+    class InterfaceIdAllocator
+    {
+    public:
+        InterfaceIdAllocator();
+        ~InterfaceIdAllocator();
+
+        mDNSInterfaceID AllocateId(NetworkAdapter& aInterface);
+        void DeallocateId(mDNSInterfaceID aInterfaceId);
+        mDNSInterfaceID GetIdForAddress(const TIpAddress& aAddress);
+    private:
+        FifoLite<TUint, kInterfaceIdPoolSize> iIdPool;
+        std::map<TUint, NetworkAdapter&> iInterfaces;
+    };
     enum MdnsServiceAction
     {
         eInvalid,
@@ -209,7 +225,7 @@ private:
     {
     public:
         MdnsService(mDNS& aMdns);
-        void Set(MdnsServiceAction aAction, TUint aHandle, ServiceRecordSet& aService, const TChar* aName, const TChar* aType, const TIpAddress& aInterface, TUint aPort, const TChar* aInfo);
+        void Set(MdnsServiceAction aAction, TUint aHandle, ServiceRecordSet& aService, const TChar* aName, const TChar* aType, const mDNSInterfaceID aInterfaceId, TUint aPort, const TChar* aInfo);
         TUint PerformAction();
     private:
         TUint Register();
@@ -223,7 +239,7 @@ private:
         ServiceRecordSet* iService;
         Bws<MAX_DOMAIN_LABEL-1> iName;
         Bws<MAX_DOMAIN_NAME-1> iType;
-        TIpAddress iInterface;
+        mDNSInterfaceID iInterfaceId;
         TUint iPort;
         Bws<2048> iInfo;
     };
@@ -258,6 +274,7 @@ private:
     mDNS* iMdns;
     Mutex iInterfacesLock;
     std::vector<MdnsPlatform::Nif*> iInterfaces;
+    InterfaceIdAllocator iInterfaceIdAllocator;
     TUint iSubnetListChangeListenerId;
     TUint iCurrentAdapterChangeListenerId;
     typedef std::map<TUint, ServiceRecordSet*> Map;

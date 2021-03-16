@@ -16,6 +16,7 @@ public:
     static TBool LessThan(const TIpAddress& aAddr1, const TIpAddress& aAddr2);          // Returns true if aAddr1.iFamily == IPv4 and aAddr2.iFamily == IPv6
     static TIpAddress ApplyMask(const TIpAddress& aAddr, const TIpAddress& aMask);
     static TBool IsZero(const TIpAddress& aAddr);
+    static TBool IsLoopback(const TIpAddress& aAddr);
     static void ToString(const TIpAddress& aAddr, Bwx& aAddressBuffer);
 private:
     static void AddressToStringV4(Bwx& aAddressBuffer, const TIpAddress& aAddress);

@@ -94,6 +94,45 @@ TBool MdnsPlatform::Nif::ContainsAddress(const TIpAddress& aAddress) const
     return iNif.ContainsAddress(aAddress);
 }
 
+// InterfaceIdAllocator
+
+MdnsPlatform::InterfaceIdAllocator::InterfaceIdAllocator()
+{
+    for (TUint i = 1; i <= iIdPool.SlotsFree(); i++) iIdPool.Write(i);
+}
+
+MdnsPlatform::InterfaceIdAllocator::~InterfaceIdAllocator()
+{
+    ASSERT(iInterfaces.size() == 0);
+}
+
+mDNSInterfaceID MdnsPlatform::InterfaceIdAllocator::AllocateId(NetworkAdapter& aInterface)
+{
+    TUint id = iIdPool.Read();
+    iInterfaces.insert(std::pair<TUint, NetworkAdapter&>(id, aInterface));
+    return (mDNSInterfaceID)id;
+}
+
+void MdnsPlatform::InterfaceIdAllocator::DeallocateId(mDNSInterfaceID aInterfaceId)
+{
+    TUint id = (TUint)aInterfaceId;
+    std::map<TUint, NetworkAdapter&>::iterator it = iInterfaces.find(id);
+    if (it != iInterfaces.end()) {
+        iInterfaces.erase(it);
+        iIdPool.Write(id);
+    }
+}
+
+mDNSInterfaceID MdnsPlatform::InterfaceIdAllocator::GetIdForAddress(const TIpAddress& aAddress)
+{
+    std::map<TUint, NetworkAdapter&>::iterator it;
+    for (it = iInterfaces.begin(); it != iInterfaces.end(); it++) {
+        if (it->second.ContainsAddress(aAddress)) {
+            return (mDNSInterfaceID)it->first;
+        }
+    }
+    return 0;
+}
 
 // MdnsPlatform::MdnsService
 MdnsPlatform::MdnsService::MdnsService(mDNS& aMdns)
@@ -102,7 +141,7 @@ MdnsPlatform::MdnsService::MdnsService(mDNS& aMdns)
 {
 }
 
-void MdnsPlatform::MdnsService::Set(MdnsServiceAction aAction, TUint aHandle, ServiceRecordSet& aService, const TChar* aName, const TChar* aType, const TIpAddress& aInterface, TUint aPort, const TChar* aInfo)
+void MdnsPlatform::MdnsService::Set(MdnsServiceAction aAction, TUint aHandle, ServiceRecordSet& aService, const TChar* aName, const TChar* aType, const mDNSInterfaceID aInterfaceId, TUint aPort, const TChar* aInfo)
 {
     iAction = aAction;
     iHandle = aHandle;
@@ -127,7 +166,7 @@ void MdnsPlatform::MdnsService::Set(MdnsServiceAction aAction, TUint aHandle, Se
     }
 
     iType.Replace((aType == NULL) ? "" : aType);
-    iInterface = aInterface;
+    iInterfaceId = aInterfaceId;
     iPort = aPort;
     iInfo.Replace((aInfo == NULL) ? "" : aInfo);
 }
@@ -162,8 +201,7 @@ TUint MdnsPlatform::MdnsService::Register()
     SetDomainName(host, "");
     SetPort(port, iPort);
 #ifndef DEFINE_WINDOWS_UNIVERSAL
-    mDNSInterfaceID interface = (iInterface.iFamily == kFamilyV6) ? (mDNSInterfaceID)iInterface.iV6 : (mDNSInterfaceID)iInterface.iV4;
-    return mDNS_RegisterService(&iMdns, iService, &name, &type, &domain, 0, port, NULL, (const mDNSu8*)iInfo.PtrZ(), (mDNSu16)strlen(iInfo.PtrZ()), 0, 0, interface, &MdnsPlatform::ServiceCallback, this, 0);
+    return mDNS_RegisterService(&iMdns, iService, &name, &type, &domain, 0, port, NULL, (const mDNSu8*)iInfo.PtrZ(), (mDNSu16)strlen(iInfo.PtrZ()), 0, 0, iInterfaceId, &MdnsPlatform::ServiceCallback, this, 0);
 #else // DEFINE_WINDOWS_UNIVERSAL
     return 0;
 #endif // DEFINE_WINDOWS_UNIVERSAL
@@ -441,19 +479,8 @@ void MulticastListeners::Rebind(std::vector<NetworkAdapter*>& aAdapters)
         Endpoint::AddressBuf addressBuf;
         epAddr.AppendAddress(addressBuf);
 
-        TBool isLoopback = false;
-        if (addr.iFamily == kFamilyV4) {
-            TByte addrOctets[4];
-            epAddr.GetAddressOctets(addrOctets);
-            isLoopback = (addrOctets[0] == 127);
-        }
-        else {
-            isLoopback = (addr.iV6[15] == 0x01);
-        }
-
-
         LOG(kBonjour, "MulticastListeners::Rebind aAdapters.size(): %u, i: %u, addr: %.*s\n", aAdapters.size(), i, PBUF(addressBuf));
-        if (!isLoopback) {
+        if (!TIpAddressUtils::IsLoopback(epAddr.Address())) {
             // Found a non-localhost adapter.
 
             ASSERT(nextListenerIdx <= iListeners.size());   // Check no errors incrementing nextListenerIndex.
@@ -495,8 +522,9 @@ MdnsPlatform::MdnsPlatform(Environment& aEnv, const TChar* aHost, TBool aHasCach
     , iHasCache(aHasCache)
     , iTimerLock("BNJ4")
     , iListeners(iEnv, *this)
-    , iClient(aEnv, 5353)
+    , iClient(aEnv, 5353, ESocketFamily::eSocketFamilyV6) // Create IPv6 socket to send on both v6 and v4
     , iInterfacesLock("BNJ2")
+    , iInterfaceIdAllocator()
     , iServicesLock("BNJ3")
     , iFifoFree(kMaxQueueLength)
     , iFifoPending(kMaxQueueLength)
@@ -559,6 +587,7 @@ MdnsPlatform::~MdnsPlatform()
         it++;
     }
     for (TUint i=0; i<(TUint)iInterfaces.size(); i++) {
+        iInterfaceIdAllocator.DeallocateId(iInterfaces[i]->Info().InterfaceID);
         delete iInterfaces[i];
     }
     for (TUint i=0; i<iDynamicCache.size(); i++) {
@@ -584,92 +613,59 @@ void MdnsPlatform::TimerExpired()
 
 void MdnsPlatform::SubnetListChanged()
 {
-    iInterfacesLock.Wait();
-    NetworkAdapter* current = iEnv.NetworkAdapterList().CurrentAdapter(kNifCookie).Ptr();
-    NetworkAdapterList& nifList = iEnv.NetworkAdapterList();
-    std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
-    for (TInt i=(TInt)iInterfaces.size()-1; i>=0; i--) {
-        // Remove adapters with subnets no longer available and which don't
-        // match the currently selected adapter (if there is one).
-        if (InterfaceIndex(iInterfaces[i]->Adapter(), *subnetList) == -1
-            || (current != NULL && !TIpAddressUtils::Equals(current->Address(), iInterfaces[i]->Adapter().Address()))) {
-            mDNS_DeregisterInterface(iMdns, &iInterfaces[i]->Info(), NormalActivation);
-            delete iInterfaces[i];
-            iInterfaces.erase(iInterfaces.begin()+i);
-        }
-    }
-    if (current == NULL) { // no adapter selected; add new subnets
-        for (TUint i=0; i<(TUint)subnetList->size(); i++) {
-            NetworkAdapter* nif = (*subnetList)[i];
-            if (InterfaceIndex(*nif) == -1) {
-                AddInterface(nif);
-            }
-        }
-    }
-    if (current != NULL) {
-        if (iInterfaces.size() == 0) { // current adapter is on a newly added subnet
-            AddInterface(current);
-        }
-        // Set multicast iface in case current adapter was previously in a list
-        // subnets so no multicast iface was set.
-        iClient.SetMulticastIf(current->Address());
-        current->RemoveRef(kNifCookie);
-    }
-    iInterfacesLock.Signal();
-
-    iListeners.Rebind(*subnetList);     // May throw NetworkError.
-    nifList.DestroySubnetList(subnetList);
+    UpdateInterfaceList();
 }
 
 void MdnsPlatform::CurrentAdapterChanged()
+{
+    UpdateInterfaceList();
+}
+
+void MdnsPlatform::UpdateInterfaceList()
 {
     iInterfacesLock.Wait();
     NetworkAdapter* current = iEnv.NetworkAdapterList().CurrentAdapter(kNifCookie).Ptr();
     NetworkAdapterList& nifList = iEnv.NetworkAdapterList();
     std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
 
+    // Check to see if any interfaces are no longer available
+    for (TInt i=(TInt)iInterfaces.size()-1; i>=0; i--) {
+        if (InterfaceIndex(iInterfaces[i]->Adapter(), *subnetList) == -1) {
+            mDNS_DeregisterInterface(iMdns, &iInterfaces[i]->Info(), NormalActivation);
+            iInterfaceIdAllocator.DeallocateId(iInterfaces[i]->Info().InterfaceID);
+            delete iInterfaces[i];
+            iInterfaces.erase(iInterfaces.begin()+i);
+        }
+    }
+
+    TBool addInterfaces = false;
     if (current != NULL) {
-        // Remove existing interface(s) if not belonging to current adapter,
-        // then add current adapter if it didn't exist before.
-        for (TInt i=(TInt)iInterfaces.size()-1; i>=0; i--) {
-            if (InterfaceIndex(iInterfaces[i]->Adapter(), *subnetList) == -1
-            || (current != NULL && !TIpAddressUtils::Equals(current->Address(), iInterfaces[i]->Adapter().Address()))) {
-                mDNS_DeregisterInterface(iMdns, &iInterfaces[i]->Info(), NormalActivation);
-                    delete iInterfaces[i];
-                    iInterfaces.erase(iInterfaces.begin()+i);
-            }
-        }
         if (iInterfaces.size() == 0) { // current adapter is on a newly added subnet
-            AddInterface(current);
+            addInterfaces = true;
         }
-        // Set multicast iface in case current adapter was previously in a list
-        // subnets so no multicast iface was set.
-        iClient.SetMulticastIf(current->Address());
         current->RemoveRef(kNifCookie);
     }
-    else {
-        // No adapter selected.
-        // First, check if selected interface should be removed.
-        for (TInt i=(TInt)iInterfaces.size()-1; i>=0; i--) {
-            if (InterfaceIndex(iInterfaces[i]->Adapter(), *subnetList) == -1) {
-                mDNS_DeregisterInterface(iMdns, &iInterfaces[i]->Info(), NormalActivation);
-                delete iInterfaces[i];
-                iInterfaces.erase(iInterfaces.begin()+i);
-            }
-        }
 
-        // Then, re-add all subnets that aren't already added.
-        for (TUint i=0; i<(TUint)subnetList->size(); i++) {
-            NetworkAdapter* nif = (*subnetList)[i];
-            if (InterfaceIndex(*nif) == -1) {
-                AddInterface(nif);
-            }
-        }
+    if (current == NULL || addInterfaces) { // add new subnets
+        AddValidInterfaces(*subnetList);
     }
+
     iInterfacesLock.Signal();
 
     iListeners.Rebind(*subnetList);     // May throw NetworkError.
     nifList.DestroySubnetList(subnetList);
+}
+
+MdnsPlatform::Status MdnsPlatform::AddValidInterfaces(std::vector<NetworkAdapter*>& aSubnetList)
+{
+    Status status = mStatus_NoError;
+    for (TUint i=0; i<(TUint)aSubnetList.size() && status==mStatus_NoError; i++) {
+        if ((InterfaceIndex(*(aSubnetList[i])) == -1) &&
+            !TIpAddressUtils::IsLoopback(aSubnetList[i]->Address())) {
+            status = AddInterface(aSubnetList[i]);
+        }
+    }
+    return status;
 }
 
 MdnsPlatform::Status MdnsPlatform::AddInterface(NetworkAdapter* aNif)
@@ -677,7 +673,7 @@ MdnsPlatform::Status MdnsPlatform::AddInterface(NetworkAdapter* aNif)
     Status status;
     NetworkInterfaceInfo* nifInfo = (NetworkInterfaceInfo*)calloc(1, sizeof(*nifInfo));
 #ifndef DEFINE_WINDOWS_UNIVERSAL
-    nifInfo->InterfaceID = (aNif->Address().iFamily == kFamilyV6) ? (mDNSInterfaceID)aNif->Address().iV6 : (mDNSInterfaceID)aNif->Address().iV4;
+    nifInfo->InterfaceID = iInterfaceIdAllocator.AllocateId(*aNif);
 #endif // DEFINE_WINDOWS_UNIVERSAL    
     SetAddress(nifInfo->ip, Endpoint(0, aNif->Address()));
     SetAddress(nifInfo->mask, Endpoint(0, aNif->Mask()));
@@ -750,7 +746,7 @@ void MdnsPlatform::ReceiveMulticastPacket(const Brx& aMsg, const Endpoint aSrc, 
         for (TUint i=0; i<(TUint)iInterfaces.size(); i++) {
             if (iInterfaces[i]->ContainsAddress(senderAddr)) {
 #ifndef DEFINE_WINDOWS_UNIVERSAL
-                interfaceId = (iInterfaces[i]->Address().iFamily == kFamilyV6) ? (mDNSInterfaceID)iInterfaces[i]->Address().iV6 : (mDNSInterfaceID)iInterfaces[i]->Address().iV4;
+                interfaceId = iInterfaces[i]->Info().InterfaceID;
 #endif // DEFINE_WINDOWS_UNIVERSAL
                 break;
             }
@@ -896,7 +892,7 @@ void MdnsPlatform::DeregisterService(TUint aHandle)
             iServicesLock.Signal();
             return;
         }
-        mdnsService->Set(eDeregister, aHandle, *it->second, NULL, NULL, kIpAddressV4AllAdapters, 0, NULL);
+        mdnsService->Set(eDeregister, aHandle, *it->second, NULL, NULL, 0, 0, NULL);
         iFifoPending.Write(mdnsService);
     }
     iServicesLock.Signal();
@@ -919,7 +915,8 @@ void MdnsPlatform::RegisterService(TUint aHandle, const TChar* aName, const TCha
     catch (FifoReadError&) {
         return;
     }
-    mdnsService->Set(eRegister, aHandle, *service, aName, aType, aInterface, aPort, aInfo);
+    mDNSInterfaceID interfaceId = iInterfaceIdAllocator.GetIdForAddress(aInterface);
+    mdnsService->Set(eRegister, aHandle, *service, aName, aType, interfaceId, aPort, aInfo);
     iFifoPending.Write(mdnsService);
 
     LOG(kBonjour, "Bonjour             RegisterService - Complete\n");
@@ -939,7 +936,7 @@ void MdnsPlatform::RenameAndReregisterService(TUint aHandle, const TChar* aName)
     catch (FifoReadError) {
         return;
     }
-    mdnsService->Set(eRenameAndReregister, aHandle, *service, aName, NULL, kIpAddressV4AllAdapters, 0, NULL);
+    mdnsService->Set(eRenameAndReregister, aHandle, *service, aName, NULL, 0, 0, NULL);
     iFifoPending.Write(mdnsService);
 
     LOG(kBonjour, "Bonjour             RenameAndReregisterService - Complete\n");
@@ -997,22 +994,10 @@ MdnsPlatform::Status MdnsPlatform::Init()
     iCurrentAdapterChangeListenerId = nifList.AddCurrentChangeListener(functorAdapter, "MdnsPlatform-current");
 
     // Subnet list changed and current adapter changed callbacks do not happen on registration, so set up interface list here.
-    NetworkAdapter* current = iEnv.NetworkAdapterList().CurrentAdapter(kNifCookie).Ptr();
-    if (current == NULL) { // Listening on all adapters.
-        std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
-        for (TUint i=0; i<(TUint)subnetList->size() && status==mStatus_NoError; i++) {
-            status = AddInterface((*subnetList)[i]);
-        }
-        nifList.DestroySubnetList(subnetList);
-    }
-    else { // Using a single adapter.
-        status = AddInterface(current);
-        iClient.SetMulticastIf(current->Address());
-        current->RemoveRef(kNifCookie);
-    }
+    std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
+    status = AddValidInterfaces(*subnetList);
 
     // Attempt initial bind of multicast adapters, as subnet list changed and current adapter changed callbacks do not happen on registration.
-    std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
     // This will throw NetworkAdapter if there is a valid (non-localhost) adapter which is unable to listen for multicast.
     // Allow exception to bubble up, as can't use mDNS without listening for multicast!
     iListeners.Rebind(*subnetList);
@@ -1325,12 +1310,24 @@ mStatus mDNSPlatformSendUDP(const mDNS* m, const void* const aMessage, const mDN
     MdnsPlatform& platform = *(MdnsPlatform*)m->p;
     Brn buffer((const TByte*)aMessage, (TUint)((const TByte*)aEnd - (const TByte*)aMessage));
     ASSERT(aAddress->type == mDNSAddrType_IPv4 || aAddress->type == mDNSAddrType_IPv6);
-    Bws<16> address;
-    address.AppendPrintf("%d.%d.%d.%d",
-        aAddress->ip.v4.b[0],
-        aAddress->ip.v4.b[1],
-        aAddress->ip.v4.b[2],
-        aAddress->ip.v4.b[3] );
+
+
+    Endpoint::AddressBuf address;
+    if (aAddress->type == mDNSAddrType_IPv4) {
+        address.AppendPrintf("%d.%d.%d.%d",
+            aAddress->ip.v4.b[0],
+            aAddress->ip.v4.b[1],
+            aAddress->ip.v4.b[2],
+            aAddress->ip.v4.b[3] );
+        }
+    else {
+        TIpAddress addr;
+        addr.iFamily= kFamilyV6;
+        for (TUint i = 0; i < 16; i++) {
+            addr.iV6[i] = aAddress->ip.v6.b[i];
+        }
+        TIpAddressUtils::ToString(addr, address);
+    }
 
     Endpoint endpoint(Arch::BigEndian2(aPort.NotAnInteger), address);
     mStatus status;
