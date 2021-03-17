@@ -87,9 +87,9 @@ DllExport int32_t STDCALL OhNetLibraryInitialiseMinimal(OhNetHandleInitParams aI
  *
  * Must be called after OhNetLibraryInitialise but before any function from other headers
  *
- * @param aSubnet      Subnet address of the network adapter to use.
+ * @param aSubnetV4    IPv4 subnet address of the network adapter to use.
  */
-DllExport EOhNetLibraryInitError STDCALL OhNetLibraryStartCp(TIpAddress aSubnet);
+DllExport EOhNetLibraryInitError STDCALL OhNetLibraryStartCp(uint32_t aSubnetV4);
 
 /**
  * Start the library as a UPnP device stack
@@ -103,10 +103,10 @@ DllExport EOhNetLibraryInitError STDCALL OhNetLibraryStartDv();
  *
  * Must be called after OhNetLibraryInitialise but before any function from other headers
  *
- * @param aSubnet      Subnet address of the network adapter for the control point stack to use.
+ * @param aSubnetV4    IPv4 subnet address of the network adapter for the control point stack to use.
  *                     (The device stack operates on all adapters.)
  */
-DllExport EOhNetLibraryInitError STDCALL OhNetLibraryStartCombined(TIpAddress aSubnet);
+DllExport EOhNetLibraryInitError STDCALL OhNetLibraryStartCombined(uint32_t aSubnetV4);
 
 /**
  * Close the UPnP library.

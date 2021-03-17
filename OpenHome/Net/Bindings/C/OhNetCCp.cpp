@@ -5,10 +5,13 @@
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
-EOhNetLibraryInitError STDCALL OhNetLibraryStartCp(TIpAddress aSubnet)
+EOhNetLibraryInitError STDCALL OhNetLibraryStartCp(uint32_t aSubnetV4)
 {
+    TIpAddress subnet;
+    subnet.iFamily = kFamilyV4;
+    subnet.iV4 = aSubnetV4;
     try {
-        UpnpLibrary::StartCp(aSubnet);
+        UpnpLibrary::StartCp(subnet);
     }
     catch (NetworkAddressInUse& ) {
         return eOhNetInitErrorNetworkAddressInUse;
