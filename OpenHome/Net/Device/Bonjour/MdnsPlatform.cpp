@@ -1048,7 +1048,8 @@ MdnsPlatform::Status MdnsPlatform::GetPrimaryInterface(mDNSAddr* aInterfaceV4, m
         addr = current->Address();
 
         // Go through the interface list, if the interface name matches our current adapter then supply that as the primary interface. Check for IPv6 on the same adapter.
-        TBool v4Available, v6Available = false;
+        TBool v4Available, v6Available;
+        v4Available = v6Available = false;
         for (TUint i = 0; i < iInterfaces.size(); i++) {
             NetworkAdapter& adapter = iInterfaces[i]->Adapter();
             if (strcmp(adapter.Name(), current->Name()) == 0) {
