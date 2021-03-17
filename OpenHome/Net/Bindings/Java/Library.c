@@ -53,10 +53,7 @@ JNIEXPORT jint JNICALL Java_org_openhome_net_core_Library_OhNetLibraryStartCp
 #endif
     aEnv = aEnv;
     aClass = aClass;
-    TIpAddress addr;
-    addr.iFamily = kFamilyV4;
-    addr.iV4 = subnet;
-    return (jint) OhNetLibraryStartCp(addr);
+    return (jint) OhNetLibraryStartCp(subnet);
 }
 
 /*
@@ -90,10 +87,7 @@ JNIEXPORT jint JNICALL Java_org_openhome_net_core_Library_OhNetLibraryStartCombi
 #endif
     aEnv = aEnv;
     aClass = aClass;
-    TIpAddress addr;
-    addr.iFamily = kFamilyV4;
-    addr.iV4 = subnet;
-    return (jint) OhNetLibraryStartCombined(addr);
+    return (jint) OhNetLibraryStartCombined(subnet);
 }
 
 /*
