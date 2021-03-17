@@ -153,7 +153,7 @@ public:
     void Lock();
     void Unlock();
     void Close();
-    Status GetPrimaryInterface(TIpAddress& aInterface);
+    Status GetPrimaryInterface(mDNSAddr* aInterfaceV4, mDNSAddr* aInterfaceV6, mDNSAddr* aRouter);
     Status SendUdp(const Brx& aBuffer, const Endpoint& aEndpoint);
     void SetHostName(const TChar* aName);
     TUint CreateService();

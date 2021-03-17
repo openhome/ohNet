@@ -1026,27 +1026,61 @@ MdnsPlatform::Status MdnsPlatform::Init()
     return status;
 }
 
-MdnsPlatform::Status MdnsPlatform::GetPrimaryInterface(TIpAddress& aInterface)
+MdnsPlatform::Status MdnsPlatform::GetPrimaryInterface(mDNSAddr* aInterfaceV4, mDNSAddr* aInterfaceV6, mDNSAddr* aRouter)
 {
     LOG(kBonjour, "Bonjour             GetPrimaryInterface ");
     Status status = mStatus_NoError;
+    TIpAddress addr = kIpAddressV4AllAdapters;
     iInterfacesLock.Wait();
     if (iInterfaces.size() == 0) {
         status = mStatus_NotInitializedErr;
-        aInterface = kIpAddressV4AllAdapters;
+        aInterfaceV4->ip.v4.NotAnInteger = kIpAddressV4AllAdapters.iV4;
+        for (TUint j = 0; j < 16; j++) {
+            aInterfaceV6->ip.v6.b[j] = 0;
+        }
     }
     if (status != mStatus_NotInitializedErr) {
-        aInterface = iInterfaces[0]->Address();
-        if (TIpAddressUtils::IsZero(aInterface)) {
+        NetworkAdapter* current = iEnv.NetworkAdapterList().CurrentAdapter(kNifCookie).Ptr();
+        if (current == NULL) {
+            // We don't have a default adapter, but there is at least one interface stored in iInterfaces, use the first interface
+            current = &iInterfaces[0]->Adapter();
+        }
+        addr = current->Address();
+
+        // Go through the interface list, if the interface name matches our current adapter then supply that as the primary interface. Check for IPv6 on the same adapter.
+        TBool v4Available, v6Available = false;
+        for (TUint i = 0; i < iInterfaces.size(); i++) {
+            NetworkAdapter& adapter = iInterfaces[i]->Adapter();
+            if (strcmp(adapter.Name(), current->Name()) == 0) {
+                if (!v4Available && adapter.Address().iFamily == kFamilyV4) {
+                    aInterfaceV4->ip.v4.NotAnInteger = adapter.Address().iV4;
+                    v4Available = true;
+                }
+                else if (!v6Available && adapter.Address().iFamily == kFamilyV6) {
+                    for (TUint j = 0; j < 16; j++) {
+                        aInterfaceV6->ip.v6.b[j] = adapter.Address().iV6[j];
+                    }
+                    v6Available = true;
+                }
+            }
+            if (v4Available && v6Available) {
+                break;
+            }
+        }
+        // Require at least the primary interface we selected (current or iInterfaces[0]->Adapter()) to be valid
+        if (TIpAddressUtils::IsZero(current->Address())) {
             status = mStatus_NotInitializedErr;
-            aInterface = kIpAddressV4AllAdapters;
+            aInterfaceV4->ip.v4.NotAnInteger = kIpAddressV4AllAdapters.iV4;
+            for (TUint j = 0; j < 16; j++) {
+                aInterfaceV6->ip.v6.b[j] = 0;
+            }
         }
     }
     iInterfacesLock.Signal();
 
-    Bws<Endpoint::kMaxAddressBytes> addr;
-    Endpoint::AppendAddress(addr, aInterface);
-    LOG(kBonjour, addr);
+    Bws<Endpoint::kMaxAddressBytes> addrBuf;
+    TIpAddressUtils::ToString(addr, addrBuf);
+    LOG(kBonjour, addrBuf);
     LOG(kBonjour, "\n");
 
     return status;
@@ -1692,10 +1726,7 @@ mStatus mDNSPlatformGetPrimaryInterface(mDNS* const m, mDNSAddr* v4, mDNSAddr* v
     LOG(kBonjour, "Bonjour             mDNSPlatformGetPrimaryInterface\n");
     mStatus err = mStatus_NoError;
     MdnsPlatform& platform = *(MdnsPlatform*)m->p;
-    *v6 = zeroAddr;
-    *router = zeroAddr;
-    *v4 = zeroAddr;
-    err = platform.GetPrimaryInterface((TIpAddress&)*v4);
+    err = platform.GetPrimaryInterface(v4, v6, router);
 
     return err;
 }
