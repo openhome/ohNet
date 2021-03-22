@@ -1022,7 +1022,7 @@ MdnsPlatform::Status MdnsPlatform::Init()
     return status;
 }
 
-MdnsPlatform::Status MdnsPlatform::GetPrimaryInterface(mDNSAddr* aInterfaceV4, mDNSAddr* aInterfaceV6, mDNSAddr* aRouter)
+MdnsPlatform::Status MdnsPlatform::GetPrimaryInterface(mDNSAddr* aInterfaceV4, mDNSAddr* aInterfaceV6, mDNSAddr* /*aRouter*/)
 {
     LOG(kBonjour, "Bonjour             GetPrimaryInterface ");
     Status status = mStatus_NoError;
