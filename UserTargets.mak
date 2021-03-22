@@ -10,7 +10,6 @@ clean :
 	$(rmdir) $(inc_build)
 	$(rmdir) $(bundle_build)
 	$(rmdir) Build/Docs
-	$(rmdir) $(mDNSdir)
 
 mostlyclean : clean clean-t4
 	$(rmdir) Generated
