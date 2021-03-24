@@ -1,0 +1,22 @@
+diff --git a/thirdparty/mDNSResponder-765.50.9/mDNSShared/dnssd_clientlib.c b/thirdparty/mDNSResponder-765.50.9/mDNSShared/dnssd_clientlib.c
+index cfc1d424..d0c780b4 100644
+--- a/Build/mDNS/dnssd_clientlib.c
++++ b/Build/mDNS/dnssd_clientlib.c
+@@ -187,7 +187,7 @@ void DNSSD_API TXTRecordCreate
+     void             *buffer
+ )
+ {
+-    txtRec->buffer   = buffer;
++    txtRec->buffer   = (uint8_t*)buffer;
+     txtRec->buflen   = buffer ? bufferLen : (uint16_t)0;
+     txtRec->datalen  = 0;
+     txtRec->malloced = 0;
+@@ -220,7 +220,7 @@ DNSServiceErrorType DNSSD_API TXTRecordSetValue
+         unsigned char *newbuf;
+         unsigned long newlen = txtRec->datalen + keyvalsize;
+         if (newlen > 0xFFFF) return(kDNSServiceErr_Invalid);
+-        newbuf = malloc((size_t)newlen);
++        newbuf = (unsigned char*)malloc((size_t)newlen);
+         if (!newbuf) return(kDNSServiceErr_NoMemory);
+         memcpy(newbuf, txtRec->buffer, txtRec->datalen);
+         if (txtRec->malloced) free(txtRec->buffer);

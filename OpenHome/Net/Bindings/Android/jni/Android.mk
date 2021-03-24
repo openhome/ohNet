@@ -3,6 +3,7 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
 ohroot := ../../../../../
+mDNSdir := Build/mDNS
 
 LOCAL_C_INCLUDES := $(ohroot)Build/Include
 LOCAL_CFLAGS := -fexceptions -Wall -Werror -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE -fvisibility=hidden -Wno-unused -Wno-address-of-packed-member -Wno-int-to-pointer-cast
@@ -71,11 +72,15 @@ LOCAL_SRC_FILES := $(ohroot)OpenHome/Ascii.cpp \
                    $(ohroot)OpenHome/FileStream.cpp \
                    $(ohroot)OpenHome/Net/Globals.cpp \
                    $(ohroot)OpenHome/Http.cpp \
-                   $(ohroot)OpenHome/Net/Device/Bonjour/mDNSCore/DNSCommon.c \
-                   $(ohroot)OpenHome/Net/Device/Bonjour/mDNSCore/DNSDigest.c \
-                   $(ohroot)OpenHome/Net/Device/Bonjour/mDNSCore/mDNS.c \
-                   $(ohroot)OpenHome/Net/Device/Bonjour/mDNSCore/uDNS.c \
-                   $(ohroot)OpenHome/Net/Device/Bonjour/mDNSShared/dnssd_clientshim.c \
+                   $(ohroot)$(mDNSdir)/anonymous.c \
+                   $(ohroot)$(mDNSdir)/CryptoAlg.c \
+                   $(ohroot)$(mDNSdir)/DNSCommon.c \
+                   $(ohroot)$(mDNSdir)/DNSDigest.c \
+                   $(ohroot)$(mDNSdir)/mDNS.c \
+                   $(ohroot)$(mDNSdir)/nsec.c \
+                   $(ohroot)$(mDNSdir)/nsec3.c \
+                   $(ohroot)$(mDNSdir)/uDNS.c \
+                   $(ohroot)$(mDNSdir)/dnssd_clientshim.c \
                    $(ohroot)OpenHome/Net/Device/Bonjour/MdnsPlatform.cpp \
                    $(ohroot)OpenHome/Net/Device/Bonjour/MdnsProvider.cpp \
                    $(ohroot)OpenHome/md5.c \

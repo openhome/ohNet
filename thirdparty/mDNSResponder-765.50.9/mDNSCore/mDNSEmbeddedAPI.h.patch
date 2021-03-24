@@ -1,0 +1,41 @@
+diff --git a/thirdparty/mDNSResponder-765.50.9/mDNSCore/mDNSEmbeddedAPI.h b/thirdparty/mDNSResponder-765.50.9/mDNSCore/mDNSEmbeddedAPI.h
+index 1ee28d89..888e3eed 100755
+--- a/Build/mDNS/mDNSEmbeddedAPI.h
++++ b/Build/mDNS/mDNSEmbeddedAPI.h
+@@ -275,6 +275,9 @@ typedef struct mDNSInterfaceID_dummystruct { void *dummy; } *mDNSInterfaceID;
+ // and if you make the mistake of trying to do those using the NotAnInteger field, then you'll
+ // find you get code that doesn't work consistently on big-endian and little-endian machines.
+ #if defined(_WIN32)
++ #ifdef interface
++ #undef interface
++ #endif
+  #pragma pack(push,2)
+ #endif
+ typedef       union { mDNSu8 b[ 2]; mDNSu16 NotAnInteger; } mDNSOpaque16;
+@@ -2042,7 +2045,7 @@ typedef void ZoneDataCallback (mDNS *const m, mStatus err, const ZoneData *resul
+ struct ZoneData_struct
+ {
+     domainname ChildName;               // Name for which we're trying to find the responsible server
+-    ZoneService ZoneService;            // Which service we're seeking for this zone (update, query, or LLQ)
++    ZoneService Service;                // Which service we're seeking for this zone (update, query, or LLQ)
+     domainname       *CurrentSOA;       // Points to somewhere within ChildName
+     domainname ZoneName;                // Discovered result: Left-hand-side of SOA record
+     mDNSu16 ZoneClass;                  // Discovered result: DNS Class from SOA record
+@@ -2050,7 +2053,7 @@ struct ZoneData_struct
+     mDNSIPPort Port;                    // Discovered result: Update port, query port, or LLQ port from SRV record
+     mDNSAddr Addr;                      // Discovered result: Address of Target host from SRV record
+     mDNSBool ZonePrivate;               // Discovered result: Does zone require encrypted queries?
+-    ZoneDataCallback *ZoneDataCallback; // Caller-specified function to be called upon completion
++    ZoneDataCallback *DataCallback;     // Caller-specified function to be called upon completion
+     void             *ZoneDataContext;
+     DNSQuestion question;               // Storage for any active question
+ };
+@@ -2928,7 +2931,7 @@ extern mDNSBool DeconstructServiceName(const domainname *const fqdn, domainlabel
+ extern mDNSu32 mDNS_vsnprintf(char *sbuffer, mDNSu32 buflen, const char *fmt, va_list arg) IS_A_PRINTF_STYLE_FUNCTION(3,0);
+ extern mDNSu32 mDNS_snprintf(char *sbuffer, mDNSu32 buflen, const char *fmt, ...) IS_A_PRINTF_STYLE_FUNCTION(3,4);
+ extern mDNSu32 NumCacheRecordsForInterfaceID(const mDNS *const m, mDNSInterfaceID id);
+-extern char *DNSTypeName(mDNSu16 rrtype);
++extern const char *DNSTypeName(mDNSu16 rrtype);
+ extern char *GetRRDisplayString_rdb(const ResourceRecord *const rr, const RDataBody *const rd1, char *const buffer);
+ #define RRDisplayString(m, rr) GetRRDisplayString_rdb(rr, &(rr)->rdata->u, (m)->MsgBuffer)
+ #define ARDisplayString(m, rr) GetRRDisplayString_rdb(&(rr)->resrec, &(rr)->resrec.rdata->u, (m)->MsgBuffer)

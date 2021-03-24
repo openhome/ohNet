@@ -338,7 +338,7 @@ managed_only ?= no
 no_shared_objects ?= no
 endian ?= LITTLE
 cflags_base = $(CFLAGS) -fexceptions -Wall $(version_specific_cflags_third_party) -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_$(endian)_ENDIAN -DDEFINE_TRACE $(debug_specific_cflags) -fvisibility=hidden $(platform_cflags)
-cflags_third_party = $(cflags_base) -Wno-int-to-pointer-cast
+cflags_third_party = $(cflags_base) -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast
 ifeq ($(nocpp11), yes)
     cppflags = $(cflags_base) -Werror
 else ifeq ($(platform),IntelMac)
@@ -350,6 +350,7 @@ cflags = $(cflags_base) -Werror
 inc_build = Build/Include
 includes = -IBuild/Include/ $(version_specific_includes)
 bundle_build = Build/Bundles
+mDNSdir = Build/mDNS
 osdir ?= Posix
 objext = o
 libprefix = lib
@@ -544,8 +545,6 @@ copy_build_includes:
 	$(cp) OpenHome/Net/Device/FunctorDviInvocation.h $(inc_build)/OpenHome/Net/Private
 	$(cp) OpenHome/Net/Device/DviProviderSubscriptionLongPoll.h $(inc_build)/OpenHome/Net/Private
 	$(cp) OpenHome/Net/Device/Bonjour/*.h $(inc_build)/OpenHome/Net/Private
-	$(cp) OpenHome/Net/Device/Bonjour/mDNSCore/*.h $(inc_build)/OpenHome/Net/Private
-	$(cp) OpenHome/Net/Device/Bonjour/mDNSShared/*.h $(inc_build)/OpenHome/Net/Private
 	$(cp) OpenHome/Net/Device/Providers/*.h $(inc_build)/OpenHome/Net/Core
 	$(cp) OpenHome/Net/Device/Upnp/*.h $(inc_build)/OpenHome/Net/Private
 	$(cp) OpenHome/Net/Device/Lpec/*.h $(inc_build)/OpenHome/Net/Private
@@ -564,6 +563,21 @@ copy_build_includes:
 	$(cp) OpenHome/Net/Bindings/Js/ControlPoint/Proxies/CpOpenhomeOrgSubscriptionLongPoll1.js $(inc_build)/OpenHome/Net/Private/Js/Tests/proxies
 	$(cp) Os/*.h $(inc_build)/OpenHome
 	$(cp) Os/*.inl $(inc_build)/OpenHome
+
+patch_thirdparty_sources:
+	$(mkdir) $(mDNSdir)
+	$(cp) thirdparty/mDNSResponder-765.50.9/mDNSCore/*.c $(mDNSdir)
+	$(cp) thirdparty/mDNSResponder-765.50.9/mDNSCore/*.h $(mDNSdir)
+	$(cp) thirdparty/mDNSResponder-765.50.9/mDNSCore/*.patch $(mDNSdir)
+	$(cp) thirdparty/mDNSResponder-765.50.9/mDNSShared/*.patch $(mDNSdir)
+
+	$(cp) thirdparty/mDNSResponder-765.50.9/mDNSShared/dnssd_clientshim.c $(mDNSdir)
+	$(cp) thirdparty/mDNSResponder-765.50.9/mDNSShared/dnssd_clientlib.c $(mDNSdir)
+	$(cp) thirdparty/mDNSResponder-765.50.9/mDNSShared/dns_sd.h $(mDNSdir)
+
+	for i in $(mDNSdir)/*.patch; do python thirdparty/python_patch/patch.py $$i; done
+
+	$(cp) $(mDNSdir)/*.h $(inc_build)/OpenHome/Net/Private
 
 install : install-pkgconf install-libs install-includes
 
