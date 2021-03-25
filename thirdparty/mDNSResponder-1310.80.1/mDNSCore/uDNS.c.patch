@@ -1,5 +1,5 @@
 diff --git a/thirdparty/mDNSResponder-1310.80.1/mDNSCore/uDNS.c b/thirdparty/mDNSResponder-1310.80.1/mDNSCore/uDNS.c
-index 98d8ea09..9b6b4553 100755
+index 98d8ea09..cc0044c8 100755
 --- a/Build/mDNS/uDNS.c
 +++ b/Build/mDNS/uDNS.c
 @@ -21,6 +21,8 @@
@@ -97,7 +97,15 @@ index 98d8ea09..9b6b4553 100755
      zd->ZoneDataContext  = ZoneDataContext;
  
      zd->question.QuestionContext = zd;
-@@ -3182,7 +3184,7 @@ mDNSlocal AuthRecord *MarkRRForSending(mDNS *const m)
+@@ -2269,7 +2271,6 @@ mDNSlocal void UpdateOneSRVRecord(mDNS *m, AuthRecord *rr)
+ 
+     case regState_NATError:
+         if (!NATChanged) return;
+-        fallthrough();
+     // if nat changed, register if we have a target (below)
+ 
+     case regState_NoTarget:
+@@ -3182,7 +3183,7 @@ mDNSlocal AuthRecord *MarkRRForSending(mDNS *const m)
  
  mDNSlocal mDNSBool SendGroupUpdates(mDNS *const m)
  {
@@ -106,7 +114,7 @@ index 98d8ea09..9b6b4553 100755
      mDNSs32 spaceleft = 0;
      mDNSs32 zoneSize, rrSize;
      mDNSu8 *oldnext; // for debugging
-@@ -5571,12 +5573,14 @@ mDNSlocal void FlushAddressCacheRecords(mDNS *const m)
+@@ -5571,12 +5572,14 @@ mDNSlocal void FlushAddressCacheRecords(mDNS *const m)
      CacheRecord *cr;
      FORALL_CACHERECORDS(slot, cg, cr)
      {
@@ -123,7 +131,7 @@ index 98d8ea09..9b6b4553 100755
          {
              LogInfo("FlushAddressCacheRecords: Purging Resourcerecord %s", CRDisplayString(m, cr));
              mDNS_PurgeCacheResourceRecord(m, cr);
-@@ -6541,6 +6545,9 @@ mDNSexport void DiscoverDNSPushNotificationServer(mDNS *m, DNSQuestion *q)
+@@ -6541,6 +6544,9 @@ mDNSexport void DiscoverDNSPushNotificationServer(mDNS *m, DNSQuestion *q)
  
  #endif // !UNICAST_DISABLED
  
