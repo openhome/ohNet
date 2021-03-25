@@ -1,16 +1,19 @@
 diff --git a/thirdparty/mDNSResponder-1310.80.1/mDNSCore/DNSCommon.c b/thirdparty/mDNSResponder-1310.80.1/mDNSCore/DNSCommon.c
-index f24495e6..4331317a 100644
+index f24495e6..e2171d97 100644
 --- a/Build/mDNS/DNSCommon.c
 +++ b/Build/mDNS/DNSCommon.c
-@@ -18,6 +18,7 @@
- #ifndef STANDALONE
+@@ -15,9 +15,9 @@
+  * limitations under the License.
+  */
+ 
+-#ifndef STANDALONE
  // Set mDNS_InstantiateInlines to tell mDNSEmbeddedAPI.h to instantiate inline functions, if necessary
  #define mDNS_InstantiateInlines 1
 +#include "mDNSEmbeddedAPI.h"
  #include "DNSCommon.h"
  #if MDNSRESPONDER_SUPPORTS(APPLE, DNSSECv2)
  #include "dnssec_v2.h"
-@@ -120,6 +121,8 @@ extern mDNS mDNSStorage;
+@@ -120,6 +120,8 @@ extern mDNS mDNSStorage;
  #pragma mark - General Utility Functions
  #endif
  
@@ -19,7 +22,7 @@ index f24495e6..4331317a 100644
  // return true for RFC1918 private addresses
  mDNSexport mDNSBool mDNSv4AddrIsRFC1918(const mDNSv4Addr * const addr)
  {
-@@ -189,7 +192,7 @@ mDNSexport mDNSu32 NumCacheRecordsForInterfaceID(const mDNS *const m, mDNSInterf
+@@ -189,7 +191,7 @@ mDNSexport mDNSu32 NumCacheRecordsForInterfaceID(const mDNS *const m, mDNSInterf
      return(used);
  }
  
@@ -28,7 +31,7 @@ index f24495e6..4331317a 100644
  {
      switch (rrtype)
      {
-@@ -1333,7 +1336,6 @@ mDNSexport mDNSu32 RDataHashValue(const ResourceRecord *const rr)
+@@ -1333,7 +1335,6 @@ mDNSexport mDNSu32 RDataHashValue(const ResourceRecord *const rr)
          sum = DomainNameHashValue((domainname *)rdb->data);
          ptr += dlen;
          len -= dlen;
@@ -36,7 +39,25 @@ index f24495e6..4331317a 100644
          /* FALLTHROUGH */
      }
  
-@@ -3421,7 +3423,8 @@ mDNSlocal void DNSMessageDumpToLog(const DNSMessage *const msg, const mDNSu8 *co
+@@ -1863,8 +1864,6 @@ mDNSexport void InitializeDNSMessage(DNSMessageHeader *h, mDNSOpaque16 id, mDNSO
+     h->numAdditionals = 0;
+ }
+ 
+-#endif // !STANDALONE
+-
+ mDNSexport const mDNSu8 *FindCompressionPointer(const mDNSu8 *const base, const mDNSu8 *const end, const mDNSu8 *const domname)
+ {
+     const mDNSu8 *result = end - *domname - 1;
+@@ -1971,8 +1970,6 @@ mDNSexport mDNSu8 *putDomainNameAsLabels(const DNSMessage *const msg,
+     return(ptr);
+ }
+ 
+-#ifndef STANDALONE
+-
+ mDNSlocal mDNSu8 *putVal16(mDNSu8 *ptr, mDNSu16 val)
+ {
+     ptr[0] = (mDNSu8)((val >> 8 ) & 0xFF);
+@@ -3421,7 +3418,8 @@ mDNSlocal void DNSMessageDumpToLog(const DNSMessage *const msg, const mDNSu8 *co
      questions[0] = '\0';
      char *questions_dst = questions;
      const char *const questions_lim = &questions[512];
@@ -46,7 +67,7 @@ index f24495e6..4331317a 100644
      {
          mDNSu16 qtype, qclass;
  
-@@ -3444,7 +3447,7 @@ mDNSlocal void DNSMessageDumpToLog(const DNSMessage *const msg, const mDNSu8 *co
+@@ -3444,7 +3442,7 @@ mDNSlocal void DNSMessageDumpToLog(const DNSMessage *const msg, const mDNSu8 *co
      char *rrs_dst = rrs;
      const char *const rrs_lim = &rrs[512];
      const mDNSu32 rrcount = msg->h.numAnswers + msg->h.numAuthorities + msg->h.numAdditionals;
@@ -55,7 +76,7 @@ index f24495e6..4331317a 100644
      {
          mDNSu16 rrtype, rrclass, rdlength;
          mDNSu32 ttl;
-@@ -4121,7 +4124,6 @@ decimal:    if (!F.havePrecision)
+@@ -4121,7 +4119,6 @@ decimal:    if (!F.havePrecision)
  
              case 'p':  F.havePrecision = F.lSize = 1;
                  F.precision = sizeof(void*) * 2;                // 8 characters on 32-bit; 16 characters on 64-bit
@@ -63,10 +84,11 @@ index f24495e6..4331317a 100644
              case 'X':  digits = kHexDigitsUppercase;
                  goto hexadecimal;
              case 'x':  digits = kHexDigitsLowercase;
-@@ -4338,3 +4340,22 @@ mDNSexport mDNSBool GetReverseIPv6Addr(const domainname *name, mDNSu8 outIPv6[16
+@@ -4337,4 +4334,22 @@ mDNSexport mDNSBool GetReverseIPv6Addr(const domainname *name, mDNSu8 outIPv6[16
+     if (outIPv6) mDNSPlatformMemCopy(outIPv6, ipv6, 16);
      return (mDNStrue);
  }
- #endif // !STANDALONE
+-#endif // !STANDALONE
 +
 +#else // DEFINE_WINDOWS_UNIVERSAL
 +
