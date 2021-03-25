@@ -1,0 +1,301 @@
+diff --git a/thirdparty/mDNSResponder-1310.80.1/mDNSShared/dnssd_clientshim.c b/thirdparty/mDNSResponder-1310.80.1/mDNSShared/dnssd_clientshim.c
+index 3c0371e4..00b30524 100644
+--- a/Build/mDNS/dnssd_clientshim.c
++++ b/Build/mDNS/dnssd_clientshim.c
+@@ -24,14 +24,18 @@
+ 
+ #include "dns_sd.h"             // Defines the interface to the client layer above
+ #include "mDNSEmbeddedAPI.h"        // The interface we're building on top of
+-#include <sys/socket.h>
+-#include <netinet/in.h>
++// #include <sys/socket.h>
++// #include <netinet/in.h>
+ extern mDNS mDNSStorage;        // We need to pass the address of this storage to the lower-layer functions
+ 
+ #if MDNS_BUILDINGSHAREDLIBRARY || MDNS_BUILDINGSTUBLIBRARY
+ #pragma export on
+ #endif
+ 
++#ifndef NULL
++ #define NULL ((void*)0)
++#endif
++
+ //*************************************************************************************************************
+ // General Utility Functions
+ 
+@@ -69,15 +73,28 @@ typedef struct
+     DNSQuestion q;
+ } mDNS_DirectOP_Browse;
+ 
++// typedef struct
++// {
++//     mDNS_DirectOP_Dispose        *disposefn;
++//     DNSServiceRef                aQuery;
++//     DNSServiceGetAddrInfoReply   callback;
++//     void                         *context;
++// } mDNS_DirectOP_GetAddrInfo;
++
++
+ typedef struct
+ {
+     mDNS_DirectOP_Dispose  *disposefn;
+     DNSServiceResolveReply callback;
+     void                   *context;
++    const ResourceRecord   *Av4;
+     const ResourceRecord   *SRV;
+     const ResourceRecord   *TXT;
++    DNSQuestion qAv4;
+     DNSQuestion qSRV;
+     DNSQuestion qTXT;
++    domainlabel Device;
++    domainlabel ServiceType;
+ } mDNS_DirectOP_Resolve;
+ 
+ typedef struct
+@@ -98,19 +115,21 @@ typedef struct
+     DNSQuestion                aaaa;
+ } mDNS_DirectOP_GetAddrInfo;
+ 
+-dnssd_sock_t DNSServiceRefSockFD(DNSServiceRef sdRef)
++#ifndef DEFINE_WINDOWS_UNIVERSAL // cannot build as c++ on winrt arm so def it out...
++
++dnssd_sock_t DNSSD_API DNSServiceRefSockFD(DNSServiceRef sdRef)
+ {
+     (void)sdRef;    // Unused
+     return(0);
+ }
+ 
+-DNSServiceErrorType DNSServiceProcessResult(DNSServiceRef sdRef)
++DNSServiceErrorType DNSSD_API DNSServiceProcessResult(DNSServiceRef sdRef)
+ {
+     (void)sdRef;    // Unused
+     return(kDNSServiceErr_NoError);
+ }
+ 
+-void DNSServiceRefDeallocate(DNSServiceRef sdRef)
++void DNSSD_API DNSServiceRefDeallocate(DNSServiceRef sdRef)
+ {
+     mDNS_DirectOP *op = (mDNS_DirectOP *)sdRef;
+     //LogMsg("DNSServiceRefDeallocate");
+@@ -138,7 +157,7 @@ static mDNSInterfaceID DNSServiceInterfaceIndexToID(mDNSu32 interfaceIndex, DNSS
+ // is run against this Extension, it will get a reasonable error code instead of just
+ // failing to launch (Strong Link) or calling an unresolved symbol and crashing (Weak Link)
+ #if !MDNS_BUILDINGSTUBLIBRARY
+-DNSServiceErrorType DNSServiceEnumerateDomains
++DNSServiceErrorType DNSSD_API DNSServiceEnumerateDomains
+ (
+     DNSServiceRef                       *sdRef,
+     DNSServiceFlags flags,
+@@ -228,7 +247,7 @@ mDNSlocal void RegCallback(mDNS *const m, ServiceRecordSet *const sr, mStatus re
+     }
+ }
+ 
+-DNSServiceErrorType DNSServiceRegister
++DNSServiceErrorType DNSSD_API DNSServiceRegister
+ (
+     DNSServiceRef                       *sdRef,
+     DNSServiceFlags flags,
+@@ -286,7 +305,7 @@ DNSServiceErrorType DNSServiceRegister
+                                &x->name, &t, &d, // Name, type, domain
+                                &x->host, port, // Host and port
+ 							   mDNSNULL,
+-                               txtRecord, txtLen, // TXT data, length
++                               (const mDNSu8*)txtRecord, txtLen, // TXT data, length
+                                SubTypes, NumSubTypes, // Subtypes
+                                mDNSInterface_Any, // Interface ID
+                                RegCallback, x, 0); // Callback, context, flags
+@@ -311,7 +330,7 @@ fail:
+ // is run against this Extension, it will get a reasonable error code instead of just
+ // failing to launch (Strong Link) or calling an unresolved symbol and crashing (Weak Link)
+ #if !MDNS_BUILDINGSTUBLIBRARY
+-DNSServiceErrorType DNSServiceAddRecord
++DNSServiceErrorType DNSSD_API DNSServiceAddRecord
+ (
+     DNSServiceRef sdRef,
+     DNSRecordRef                        *RecordRef,
+@@ -332,7 +351,7 @@ DNSServiceErrorType DNSServiceAddRecord
+     return(kDNSServiceErr_Unsupported);
+ }
+ 
+-DNSServiceErrorType DNSServiceUpdateRecord
++DNSServiceErrorType DNSSD_API DNSServiceUpdateRecord
+ (
+     DNSServiceRef sdRef,
+     DNSRecordRef RecordRef,                            /* may be NULL */
+@@ -351,7 +370,7 @@ DNSServiceErrorType DNSServiceUpdateRecord
+     return(kDNSServiceErr_Unsupported);
+ }
+ 
+-DNSServiceErrorType DNSServiceRemoveRecord
++DNSServiceErrorType DNSSD_API DNSServiceRemoveRecord
+ (
+     DNSServiceRef sdRef,
+     DNSRecordRef RecordRef,
+@@ -404,7 +423,7 @@ mDNSlocal void FoundInstance(mDNS *const m, DNSQuestion *question, const Resourc
+         x->callback((DNSServiceRef)x, flags, 0, 0, cname, ctype, cdom, x->context);
+ }
+ 
+-DNSServiceErrorType DNSServiceBrowse
++DNSServiceErrorType DNSSD_API DNSServiceBrowse
+ (
+     DNSServiceRef                       *sdRef,
+     DNSServiceFlags flags,
+@@ -457,6 +476,7 @@ fail:
+ static void DNSServiceResolveDispose(mDNS_DirectOP *op)
+ {
+     mDNS_DirectOP_Resolve *x = (mDNS_DirectOP_Resolve*)op;
++    if (x->qAv4.ThisQInterval >= 0) mDNS_StopQuery(&mDNSStorage, &x->qAv4);
+     if (x->qSRV.ThisQInterval >= 0) mDNS_StopQuery(&mDNSStorage, &x->qSRV);
+     if (x->qTXT.ThisQInterval >= 0) mDNS_StopQuery(&mDNSStorage, &x->qTXT);
+     mDNSPlatformMemFree(x);
+@@ -468,25 +488,50 @@ mDNSlocal void FoundServiceInfo(mDNS *const m, DNSQuestion *question, const Reso
+     (void)m;    // Unused
+     if (!AddRecord)
+     {
++        if (answer->rrtype == kDNSType_A && x->Av4 == answer) x->Av4 = mDNSNULL;
+         if (answer->rrtype == kDNSType_SRV && x->SRV == answer) x->SRV = mDNSNULL;
+         if (answer->rrtype == kDNSType_TXT && x->TXT == answer) x->TXT = mDNSNULL;
+     }
+     else
+     {
+-        if (answer->rrtype == kDNSType_SRV) x->SRV = answer;
++        if (answer->rrtype == kDNSType_A) x->Av4 = answer;
++        if (answer->rrtype == kDNSType_SRV)
++        {
++            x->SRV = answer;
++            x->qAv4.InterfaceID = answer->InterfaceID;
++            AssignDomainName(&x->qAv4.qname, &answer->rdata->u.srv.target);
++            mStatus err = mDNS_StartQuery(m, &x->qAv4);
++            if (err) {
++                DNSServiceResolveDispose((mDNS_DirectOP*)x);
++                LogMsg("FoundServiceInfo failed (mDNS_StartQuery qAv4): %s", err);
++                return;
++            }
++        }
+         if (answer->rrtype == kDNSType_TXT) x->TXT = answer;
+-        if (x->SRV && x->TXT && x->callback)
++        if (x->Av4 && x->SRV && x->TXT && x->callback)
+         {
+-            char fullname[MAX_ESCAPED_DOMAIN_NAME], targethost[MAX_ESCAPED_DOMAIN_NAME];
+-            ConvertDomainNameToCString(answer->name, fullname);
++            char fullname[MAX_ESCAPED_DOMAIN_LABEL], targethost[MAX_ESCAPED_DOMAIN_NAME], type[MAX_ESCAPED_DOMAIN_LABEL];
++            ConvertDomainLabelToCString_unescaped(&x->Device, fullname);
++            ConvertDomainLabelToCString(&x->ServiceType, type);
+             ConvertDomainNameToCString(&x->SRV->rdata->u.srv.target, targethost);
+-            x->callback((DNSServiceRef)x, 0, 0, kDNSServiceErr_NoError, fullname, targethost,
+-                        x->SRV->rdata->u.srv.port.NotAnInteger, x->TXT->rdlength, (unsigned char*)x->TXT->rdata->u.txt.c, x->context);
++            uint16_t port = (x->SRV->rdata->u.srv.port.b[0] << 8) + x->SRV->rdata->u.srv.port.b[1];
++            x->callback((DNSServiceRef)x,
++                         0,
++                         0,
++                         kDNSServiceErr_NoError,
++                         fullname,
++                         targethost,
++                         port,
++                         x->Av4->rdata->u.ipv4.b,
++                         type,
++                         x->TXT->rdlength,
++                         x->TXT->rdata->u.txt.c,
++                         x->context);
+         }
+     }
+ }
+ 
+-DNSServiceErrorType DNSServiceResolve
++DNSServiceErrorType DNSSD_API DNSServiceResolve
+ (
+     DNSServiceRef                       *sdRef,
+     DNSServiceFlags flags,
+@@ -515,11 +560,35 @@ DNSServiceErrorType DNSServiceResolve
+     if (!x) { err = mStatus_NoMemoryErr; errormsg = "No memory"; goto fail; }
+ 
+     // Set up object
+-    x->disposefn = DNSServiceResolveDispose;
+-    x->callback  = callback;
+-    x->context   = context;
+-    x->SRV       = mDNSNULL;
+-    x->TXT       = mDNSNULL;
++    x->disposefn    = DNSServiceResolveDispose;
++    x->callback     = callback;
++    x->context      = context;
++    x->Av4          = mDNSNULL;
++    x->SRV          = mDNSNULL;
++    x->TXT          = mDNSNULL;
++
++    x->Device       = n;
++    // x->ServiceType  = t;
++
++    x->qAv4.ThisQInterval       = -1;       // So that mDNS_StopResolveService() knows whether to cancel this question
++    x->qAv4.InterfaceID         = mDNSInterface_Any;
++    x->qSRV.flags               = flags;
++    AssignDomainName(&x->qAv4.qname, &srv);
++    x->qAv4.qtype               = kDNSType_A;
++    x->qAv4.qclass              = kDNSClass_IN;
++    x->qAv4.LongLived           = mDNSfalse;
++    x->qAv4.ExpectUnique        = mDNStrue;
++    x->qAv4.ForceMCast          = mDNSfalse;
++    x->qAv4.ReturnIntermed      = mDNSfalse;
++    x->qAv4.SuppressUnusable    = mDNSfalse;
++    x->qAv4.AppendSearchDomains = 0;
++    x->qAv4.TimeoutQuestion     = 0;
++    x->qAv4.WakeOnResolve       = 0;
++    x->qAv4.UseBackgroundTraffic = (flags & kDNSServiceFlagsBackgroundTrafficClass) != 0;
++    x->qAv4.ProxyQuestion       = 0;
++    x->qAv4.pid                 = mDNSPlatformGetPID();
++    x->qAv4.QuestionCallback    = FoundServiceInfo;
++    x->qAv4.QuestionContext     = x;
+ 
+     x->qSRV.ThisQInterval       = -1;       // So that DNSServiceResolveDispose() knows whether to cancel this question
+     x->qSRV.InterfaceID         = DNSServiceInterfaceIndexToID(interfaceIndex, &flags);
+@@ -585,13 +654,13 @@ fail:
+ // is run against this Extension, it will get a reasonable error code instead of just
+ // failing to launch (Strong Link) or calling an unresolved symbol and crashing (Weak Link)
+ #if !MDNS_BUILDINGSTUBLIBRARY
+-DNSServiceErrorType DNSServiceCreateConnection(DNSServiceRef *sdRef)
++DNSServiceErrorType DNSSD_API DNSServiceCreateConnection(DNSServiceRef *sdRef)
+ {
+     (void)sdRef;    // Unused
+     return(kDNSServiceErr_Unsupported);
+ }
+ 
+-DNSServiceErrorType DNSServiceRegisterRecord
++DNSServiceErrorType DNSSD_API DNSServiceRegisterRecord
+ (
+     DNSServiceRef sdRef,
+     DNSRecordRef                        *RecordRef,
+@@ -643,7 +712,7 @@ mDNSlocal void DNSServiceQueryRecordResponse(mDNS *const m, DNSQuestion *questio
+                 fullname, answer->rrtype, answer->rrclass, answer->rdlength, answer->rdata->u.data, answer->rroriginalttl, x->context);
+ }
+ 
+-DNSServiceErrorType DNSServiceQueryRecord
++DNSServiceErrorType DNSSD_API DNSServiceQueryRecord
+ (
+     DNSServiceRef             *sdRef,
+     DNSServiceFlags            flags,
+@@ -703,7 +772,7 @@ fail:
+ //*************************************************************************************************************
+ // DNSServiceGetAddrInfo
+ //
+-
++#if 0
+ static void DNSServiceGetAddrInfoDispose(mDNS_DirectOP *op)
+ {
+     mDNS_DirectOP_GetAddrInfo *x = (mDNS_DirectOP_GetAddrInfo*)op;
+@@ -887,6 +956,8 @@ fail:
+     return(err);
+ }
+ 
++#endif // mDNS_DirectOP_GetAddrInfoDisable
++
+ //*************************************************************************************************************
+ // DNSServiceReconfirmRecord
+ 
+@@ -918,6 +989,8 @@ DNSServiceErrorType DNSSD_API DNSServiceReconfirmRecord
+ 
+ #endif // !MDNS_BUILDINGSTUBLIBRARY
+ 
++#endif // DEFINE_WINDOWS_UNIVERSAL
++
+ // Local Variables:
+ // mode: C
+ // tab-width: 4

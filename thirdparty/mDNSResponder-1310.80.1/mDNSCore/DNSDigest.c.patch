@@ -1,0 +1,202 @@
+diff --git a/thirdparty/mDNSResponder-1310.80.1/mDNSCore/DNSDigest.c b/thirdparty/mDNSResponder-1310.80.1/mDNSCore/DNSDigest.c
+index 95df5fd6..f33e75e0 100644
+--- a/Build/mDNS/DNSDigest.c
++++ b/Build/mDNS/DNSDigest.c
+@@ -21,6 +21,8 @@ extern "C" {
+ #include "mDNSEmbeddedAPI.h"
+ #include "DNSCommon.h"
+ 
++#ifndef DEFINE_WINDOWS_UNIVERSAL // cannot build as c++ on winrt arm so def it out...
++
+ // Disable certain benign warnings with Microsoft compilers
+ #if (defined(_MSC_VER))
+ // Disable "conditional expression is constant" warning for debug macros.
+@@ -188,6 +190,15 @@ mDNSlocal mDNSu32 NToH32(mDNSu8 * bytes)
+ #define MD5_LBLOCK  (MD5_CBLOCK/4)
+ #define MD5_DIGEST_LENGTH 16
+ 
++#define MD5_Init OpenHome_MD5_Init
++#define MD5_Update OpenHome_MD5_Update
++#define MD5_Final OpenHome_MD5_Final
++#define MD5_Transform OpenHome_MD5_Transform
++int OpenHome_MD5_Init(MD5_CTX *c);
++int OpenHome_MD5_Update(MD5_CTX *c, const void *data, unsigned long len);
++int OpenHome_MD5_Final(unsigned char *md, MD5_CTX *c);
++void OpenHome_MD5_Transform(MD5_CTX *c, const unsigned char *b);
++
+ void MD5_Transform(MD5_CTX *c, const unsigned char *b);
+ 
+ // From md5_locl.h
+@@ -198,15 +209,15 @@ void MD5_Transform(MD5_CTX *c, const unsigned char *b);
+ 
+ #ifdef MD5_ASM
+ # if defined(__i386) || defined(__i386__) || defined(_M_IX86) || defined(__INTEL__)
+-#  define md5_block_host_order md5_block_asm_host_order
++#  define define OpenHome_md5_block_host_order OpenHome_md5_block_asm_host_order
+ # elif defined(__sparc) && defined(OPENSSL_SYS_ULTRASPARC)
+-void md5_block_asm_data_order_aligned (MD5_CTX *c, const mDNSu32 *p,int num);
+-#  define HASH_BLOCK_DATA_ORDER_ALIGNED md5_block_asm_data_order_aligned
++    void OpenHome_md5_block_asm_data_order_aligned (MD5_CTX *c, const mDNSu32 *p,int num);
++#  define HASH_BLOCK_DATA_ORDER_ALIGNED OpenHome_md5_block_asm_data_order_aligned
+ # endif
+ #endif
+ 
+-void md5_block_host_order (MD5_CTX *c, const void *p,int num);
+-void md5_block_data_order (MD5_CTX *c, const void *p,int num);
++void OpenHome_md5_block_host_order (MD5_CTX *c, const void *p,int num);
++void OpenHome_md5_block_data_order (MD5_CTX *c, const void *p,int num);
+ 
+ #if defined(__i386) || defined(__i386__) || defined(_M_IX86) || defined(__INTEL__)
+ /*
+@@ -252,9 +263,9 @@ void md5_block_data_order (MD5_CTX *c, const void *p,int num);
+         ll=(c)->C; HOST_l2c(ll,(s));    \
+         ll=(c)->D; HOST_l2c(ll,(s));    \
+ } while (0)
+-#define HASH_BLOCK_HOST_ORDER   md5_block_host_order
+-#if !defined(L_ENDIAN) || defined(md5_block_data_order)
+-#define HASH_BLOCK_DATA_ORDER   md5_block_data_order
++#define HASH_BLOCK_HOST_ORDER   OpenHome_md5_block_host_order
++#if !defined(L_ENDIAN) || defined(OpenHome_md5_block_data_order)
++#define HASH_BLOCK_DATA_ORDER   OpenHome_md5_block_data_order
+ /*
+  * Little-endians (Intel and Alpha) feel better without this.
+  * It looks like memcpy does better job than generic
+@@ -572,21 +583,16 @@ void md5_block_data_order (MD5_CTX *c, const void *p,int num);
+ #define HOST_p_c2l(c,l,n)   {                       \
+         switch (n) {                                \
+         case 0: l =((unsigned long)(*((c)++)))<<24; \
+-            fallthrough();                          \
+         case 1: l|=((unsigned long)(*((c)++)))<<16; \
+-            fallthrough();                          \
+         case 2: l|=((unsigned long)(*((c)++)))<< 8; \
+-            fallthrough();                          \
+         case 3: l|=((unsigned long)(*((c)++)));     \
+         } }
+ #define HOST_p_c2l_p(c,l,sc,len) {                  \
+         switch (sc) {                               \
+         case 0: l =((unsigned long)(*((c)++)))<<24; \
+             if (--len == 0) break;                  \
+-            fallthrough();                          \
+         case 1: l|=((unsigned long)(*((c)++)))<<16; \
+             if (--len == 0) break;                  \
+-            fallthrough();                          \
+         case 2: l|=((unsigned long)(*((c)++)))<< 8; \
+         } }
+ /* NOTE the pointer is not incremented at the end of this */
+@@ -594,9 +600,7 @@ void md5_block_data_order (MD5_CTX *c, const void *p,int num);
+         l=0; (c)+=n;                                \
+         switch (n) {                                \
+         case 3: l =((unsigned long)(*(--(c))))<< 8; \
+-            fallthrough();                          \
+         case 2: l|=((unsigned long)(*(--(c))))<<16; \
+-            fallthrough();                          \
+         case 1: l|=((unsigned long)(*(--(c))))<<24; \
+         } }
+ #define _HOST_l2c(l,c)  (*((c)++)=(unsigned char)(((l)>>24)&0xff),  \
+@@ -615,21 +619,16 @@ void md5_block_data_order (MD5_CTX *c, const void *p,int num);
+ #define HOST_p_c2l(c,l,n)   {                       \
+         switch (n) {                                \
+         case 0: l =((unsigned long)(*((c)++)));     \
+-            fallthrough();                          \
+         case 1: l|=((unsigned long)(*((c)++)))<< 8; \
+-            fallthrough();                          \
+         case 2: l|=((unsigned long)(*((c)++)))<<16; \
+-            fallthrough();                          \
+         case 3: l|=((unsigned long)(*((c)++)))<<24; \
+         } }
+ #define HOST_p_c2l_p(c,l,sc,len) {                  \
+         switch (sc) {                               \
+         case 0: l =((unsigned long)(*((c)++)));     \
+             if (--len == 0) break;                  \
+-            fallthrough();                          \
+         case 1: l|=((unsigned long)(*((c)++)))<< 8; \
+             if (--len == 0) break;                  \
+-            fallthrough();                          \
+         case 2: l|=((unsigned long)(*((c)++)))<<16; \
+         } }
+ /* NOTE the pointer is not incremented at the end of this */
+@@ -637,9 +636,7 @@ void md5_block_data_order (MD5_CTX *c, const void *p,int num);
+         l=0; (c)+=n;                                \
+         switch (n) {                                \
+         case 3: l =((unsigned long)(*(--(c))))<<16; \
+-            fallthrough();                          \
+         case 2: l|=((unsigned long)(*(--(c))))<< 8; \
+-            fallthrough();                          \
+         case 1: l|=((unsigned long)(*(--(c))));     \
+         } }
+ #define _HOST_l2c(l,c)  (*((c)++)=(unsigned char)(((l)    )&0xff),  \
+@@ -929,7 +926,7 @@ int HASH_FINAL (unsigned char *md, HASH_CTX *c)
+ #define INIT_DATA_C (unsigned long)0x98badcfeL
+ #define INIT_DATA_D (unsigned long)0x10325476L
+ 
+-int MD5_Init(MD5_CTX *c)
++int OpenHome_MD5_Init(MD5_CTX *c)
+ {
+     c->A=INIT_DATA_A;
+     c->B=INIT_DATA_B;
+@@ -941,8 +938,8 @@ int MD5_Init(MD5_CTX *c)
+     return 1;
+ }
+ 
+-#ifndef md5_block_host_order
+-void md5_block_host_order (MD5_CTX *c, const void *data, int num)
++#ifndef OpenHome_md5_block_host_order
++void OpenHome_md5_block_host_order (MD5_CTX *c, const void *data, int num)
+ {
+     const mDNSu32 *X=(const mDNSu32 *)data;
+     register unsigned MD32_REG_T A,B,C,D;
+@@ -1031,11 +1028,11 @@ void md5_block_host_order (MD5_CTX *c, const void *data, int num)
+ }
+ #endif
+ 
+-#ifndef md5_block_data_order
++#ifndef OpenHome_md5_block_data_order
+ #ifdef X
+ #undef X
+ #endif
+-void md5_block_data_order (MD5_CTX *c, const void *data_, int num)
++void OpenHome_md5_block_data_order (MD5_CTX *c, const void *data_, int num)
+ {
+     const unsigned char *data=data_;
+     register unsigned MD32_REG_T A,B,C,D,l;
+@@ -1293,7 +1290,7 @@ mDNSlocal mDNSs32 DNSDigest_Base64ToBin(const char *src, mDNSu8 *target, mDNSu32
+ #define HMAC_OPAD   0x5c
+ #define MD5_LEN     16
+ 
+-#define HMAC_MD5_AlgName "\010" "hmac-md5" "\007" "sig-alg" "\003" "reg" "\003" "int"
++const domainname HMAC_MD5_AlgName = {"\010" "hmac-md5" "\007" "sig-alg" "\003" "reg" "\003" "int"};
+ 
+ // Adapted from Appendix, RFC 2104
+ mDNSlocal void DNSDigest_ConstructHMACKey(DomainAuthInfo *info, const mDNSu8 *key, mDNSu32 len)
+@@ -1371,10 +1368,10 @@ mDNSexport void DNSDigest_SignMessage(DNSMessage *msg, mDNSu8 **end, DomainAuthI
+     MD5_Update(&c, (mDNSu8 *)&tsig.resrec.rroriginalttl, sizeof(tsig.resrec.rroriginalttl));
+ 
+     // alg name
+-    AssignConstStringDomainName(&tsig.resrec.rdata->u.name, HMAC_MD5_AlgName);
+-    len = DomainNameLengthLimit((domainname *)HMAC_MD5_AlgName, (mDNSu8 *)HMAC_MD5_AlgName + sizeof HMAC_MD5_AlgName);
++    AssignConstStringDomainName(&tsig.resrec.rdata->u.name, &HMAC_MD5_AlgName);
++    len = DomainNameLengthLimit((domainname *)&HMAC_MD5_AlgName, (mDNSu8 *)&HMAC_MD5_AlgName + sizeof HMAC_MD5_AlgName);
+     rdata = tsig.resrec.rdata->u.data + len;
+-    MD5_Update(&c, (mDNSu8 *)HMAC_MD5_AlgName, len);
++    MD5_Update(&c, (mDNSu8 *)&HMAC_MD5_AlgName, len);
+ 
+     // time
+     // get UTC (universal time), convert to 48-bit unsigned in network byte order
+@@ -1455,7 +1452,7 @@ mDNSexport mDNSBool DNSDigest_VerifyMessage(DNSMessage *msg, mDNSu8 *end, LargeC
+ 
+     algo = (domainname*) ptr;
+ 
+-    if (!SameDomainName(algo, (domainname *)HMAC_MD5_AlgName))
++    if (!SameDomainName(algo, (domainname *)&HMAC_MD5_AlgName))
+     {
+         LogMsg("ERROR: DNSDigest_VerifyMessage - TSIG algorithm not supported: %##s", algo->c);
+         *rcode = kDNSFlag1_RC_NotAuth;
+@@ -1578,6 +1575,8 @@ exit:
+     return ok;
+ }
+ 
++#else   // DEFINE_WINDOWS_UNIVERSAL
++#endif  // DEFINE_WINDOWS_UNIVERSAL
+ 
+ #ifdef __cplusplus
+ }

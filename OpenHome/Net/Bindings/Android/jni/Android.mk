@@ -72,13 +72,9 @@ LOCAL_SRC_FILES := $(ohroot)OpenHome/Ascii.cpp \
                    $(ohroot)OpenHome/FileStream.cpp \
                    $(ohroot)OpenHome/Net/Globals.cpp \
                    $(ohroot)OpenHome/Http.cpp \
-                   $(ohroot)$(mDNSdir)/anonymous.c \
-                   $(ohroot)$(mDNSdir)/CryptoAlg.c \
                    $(ohroot)$(mDNSdir)/DNSCommon.c \
                    $(ohroot)$(mDNSdir)/DNSDigest.c \
                    $(ohroot)$(mDNSdir)/mDNS.c \
-                   $(ohroot)$(mDNSdir)/nsec.c \
-                   $(ohroot)$(mDNSdir)/nsec3.c \
                    $(ohroot)$(mDNSdir)/uDNS.c \
                    $(ohroot)$(mDNSdir)/dnssd_clientshim.c \
                    $(ohroot)OpenHome/Net/Device/Bonjour/MdnsPlatform.cpp \

@@ -1,0 +1,13 @@
+diff --git a/thirdparty/mDNSResponder-1310.80.1/mDNSShared/dns_sd_private.h b/thirdparty/mDNSResponder-1310.80.1/mDNSShared/dns_sd_private.h
+index 1c4baabf..983cd6f9 100644
+--- a/Build/mDNS/dns_sd_private.h
++++ b/Build/mDNS/dns_sd_private.h
+@@ -17,7 +17,7 @@
+ #ifndef _DNS_SD_PRIVATE_H
+ #define _DNS_SD_PRIVATE_H
+ 
+-#include <dns_sd.h>
++#include "dns_sd.h"
+ 
+ #if !defined(DNS_SD_EXCLUDE_PRIVATE_API)
+     #if defined(__APPLE__)

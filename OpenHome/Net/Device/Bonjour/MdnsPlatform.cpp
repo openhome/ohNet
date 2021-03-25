@@ -16,7 +16,6 @@
 #include <string.h>
 
 #include <OpenHome/Net/Private/mDNSEmbeddedAPI.h>
-#include <OpenHome/Net/Private/dnssec.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -164,7 +163,7 @@ TUint MdnsPlatform::MdnsService::Register()
     SetPort(port, iPort);
 #ifndef DEFINE_WINDOWS_UNIVERSAL
     mDNSInterfaceID interface = (iInterface.iFamily == kFamilyV6) ? (mDNSInterfaceID)iInterface.iV6 : (mDNSInterfaceID)iInterface.iV4;
-    return mDNS_RegisterService(&iMdns, iService, &name, &type, &domain, 0, port, (const mDNSu8*)iInfo.PtrZ(), (mDNSu16)strlen(iInfo.PtrZ()), 0, 0, interface, &MdnsPlatform::ServiceCallback, this, 0);
+    return mDNS_RegisterService(&iMdns, iService, &name, &type, &domain, 0, port, NULL, (const mDNSu8*)iInfo.PtrZ(), (mDNSu16)strlen(iInfo.PtrZ()), 0, 0, interface, &MdnsPlatform::ServiceCallback, this, 0);
 #else // DEFINE_WINDOWS_UNIVERSAL
     return 0;
 #endif // DEFINE_WINDOWS_UNIVERSAL
@@ -594,7 +593,7 @@ void MdnsPlatform::SubnetListChanged()
         // match the currently selected adapter (if there is one).
         if (InterfaceIndex(iInterfaces[i]->Adapter(), *subnetList) == -1
             || (current != NULL && !TIpAddressUtils::Equals(current->Address(), iInterfaces[i]->Adapter().Address()))) {
-            mDNS_DeregisterInterface(iMdns, &iInterfaces[i]->Info(), false);
+            mDNS_DeregisterInterface(iMdns, &iInterfaces[i]->Info(), NormalActivation);
             delete iInterfaces[i];
             iInterfaces.erase(iInterfaces.begin()+i);
         }
@@ -635,7 +634,7 @@ void MdnsPlatform::CurrentAdapterChanged()
         for (TInt i=(TInt)iInterfaces.size()-1; i>=0; i--) {
             if (InterfaceIndex(iInterfaces[i]->Adapter(), *subnetList) == -1
             || (current != NULL && !TIpAddressUtils::Equals(current->Address(), iInterfaces[i]->Adapter().Address()))) {
-                mDNS_DeregisterInterface(iMdns, &iInterfaces[i]->Info(), false);
+                mDNS_DeregisterInterface(iMdns, &iInterfaces[i]->Info(), NormalActivation);
                     delete iInterfaces[i];
                     iInterfaces.erase(iInterfaces.begin()+i);
             }
@@ -653,7 +652,7 @@ void MdnsPlatform::CurrentAdapterChanged()
         // First, check if selected interface should be removed.
         for (TInt i=(TInt)iInterfaces.size()-1; i>=0; i--) {
             if (InterfaceIndex(iInterfaces[i]->Adapter(), *subnetList) == -1) {
-                mDNS_DeregisterInterface(iMdns, &iInterfaces[i]->Info(), false);
+                mDNS_DeregisterInterface(iMdns, &iInterfaces[i]->Info(), NormalActivation);
                 delete iInterfaces[i];
                 iInterfaces.erase(iInterfaces.begin()+i);
             }
@@ -689,7 +688,7 @@ MdnsPlatform::Status MdnsPlatform::AddInterface(NetworkAdapter* aNif)
     strncpy(nifInfo->ifname, aNif->Name(), len);
     nifInfo->Advertise = mDNStrue;
     nifInfo->McastTxRx = mDNStrue;
-    status = mDNS_RegisterInterface(iMdns, nifInfo, false);
+    status = mDNS_RegisterInterface(iMdns, nifInfo, NormalActivation);
     if (status == mStatus_NoError) {
         iInterfaces.push_back(new MdnsPlatform::Nif(*aNif, nifInfo));
     }
@@ -1354,6 +1353,12 @@ void* mDNSPlatformMemAllocate(mDNSu32 aLength)
     return malloc(aLength);
 }
 
+void* mDNSPlatformMemAllocateClear(mDNSu32 aLength)
+{
+    LOG(kBonjour, "Bonjour             mDNSPlatformMemAllocateClear(%u)\n", aLength);
+    return malloc(aLength);  
+}
+
 void  mDNSPlatformMemFree(void* aPtr)
 {
     LOG(kBonjour, "Bonjour             mDNSPlatformMemFree\n");
@@ -1453,73 +1458,73 @@ void mDNSPlatformQsort(void *base, int nel, int width, int (*compar)(const void 
     return (qsort(base, nel, width, compar));
 }
 
-// DNSSEC stub functions
-void VerifySignature(mDNS *const /*m*/, DNSSECVerifier* /*dv*/, DNSQuestion* /*q*/)
-{
-}
+// // DNSSEC stub functions
+// void VerifySignature(mDNS *const /*m*/, DNSSECVerifier* /*dv*/, DNSQuestion* /*q*/)
+// {
+// }
 
-void BumpDNSSECStats(mDNS *const /*m*/, DNSSECStatsAction /*action*/, DNSSECStatsType /*type*/, mDNSu32 /*value*/)
-{
-}
+// void BumpDNSSECStats(mDNS *const /*m*/, DNSSECStatsAction /*action*/, DNSSECStatsType /*type*/, mDNSu32 /*value*/)
+// {
+// }
 
-void StartDNSSECVerification(mDNS *const /*m*/, void* /*context*/)
-{
-}
+// void StartDNSSECVerification(mDNS *const /*m*/, void* /*context*/)
+// {
+// }
 
-RRVerifier* AllocateRRVerifier(const ResourceRecord *const rr, mStatus *status)
-{
-    return NULL;
-}
+// RRVerifier* AllocateRRVerifier(const ResourceRecord *const rr, mStatus *status)
+// {
+//     return NULL;
+// }
 
-mStatus AddRRSetToVerifier(DNSSECVerifier *dv, const ResourceRecord *const rr, RRVerifier *rv, RRVerifierSet set)
-{
-    return mStatus_NoError;
-}
+// mStatus AddRRSetToVerifier(DNSSECVerifier *dv, const ResourceRecord *const rr, RRVerifier *rv, RRVerifierSet set)
+// {
+//     return mStatus_NoError;
+// }
 
-void FreeDNSSECVerifier(mDNS *const /*m*/, DNSSECVerifier* /*dv*/)
-{
-}
+// void FreeDNSSECVerifier(mDNS *const /*m*/, DNSSECVerifier* /*dv*/)
+// {
+// }
 
-DNSSECVerifier *AllocateDNSSECVerifier(mDNS *const m, const domainname *name, mDNSu16 rrtype, mDNSInterfaceID InterfaceID, mDNSu8 ValidationRequired, DNSSECVerifierCallback dvcallback, mDNSQuestionCallback qcallback)
-{
-    return NULL;
-}
+// DNSSECVerifier *AllocateDNSSECVerifier(mDNS *const m, const domainname *name, mDNSu16 rrtype, mDNSInterfaceID InterfaceID, mDNSu8 ValidationRequired, DNSSECVerifierCallback dvcallback, mDNSQuestionCallback qcallback)
+// {
+//     return NULL;
+// }
 
-void InitializeQuestion(mDNS *const /*m*/, DNSQuestion* /*question*/, mDNSInterfaceID /*InterfaceID*/, const domainname* /*qname*/, mDNSu16 /*qtype*/, mDNSQuestionCallback* /*callback*/, void* /*context*/)
-{
-}
+// void InitializeQuestion(mDNS *const /*m*/, DNSQuestion* /*question*/, mDNSInterfaceID /*InterfaceID*/, const domainname* /*qname*/, mDNSu16 /*qtype*/, mDNSQuestionCallback* /*callback*/, void* /*context*/)
+// {
+// }
 
-void ValidateRRSIG(DNSSECVerifier* /*dv*/, RRVerifierSet /*type*/, const ResourceRecord *const /*rr*/)
-{
-}
+// void ValidateRRSIG(DNSSECVerifier* /*dv*/, RRVerifierSet /*type*/, const ResourceRecord *const /*rr*/)
+// {
+// }
 
-void AuthChainLink(DNSSECVerifier* /*dv*/, AuthChain* /*ae*/)
-{
-}
+// void AuthChainLink(DNSSECVerifier* /*dv*/, AuthChain* /*ae*/)
+// {
+// }
 
-int DNSSECCanonicalOrder(const domainname *const /*d1*/, const domainname *const /*d2*/, int* /*subdomain*/)
-{
-    return 0;
-}
+// int DNSSECCanonicalOrder(const domainname *const /*d1*/, const domainname *const /*d2*/, int* /*subdomain*/)
+// {
+//     return 0;
+// }
 
-int DNSMemCmp(const mDNSu8 *const m1, const mDNSu8 *const m2, int len)
-{
-    int res = 0;
-	if (memcmp( m1, m2, len ) != 0) {
-        return (res < 0 ? -1 : 1);
-    }
-    return res;
-}
+// int DNSMemCmp(const mDNSu8 *const m1, const mDNSu8 *const m2, int len)
+// {
+//     int res = 0;
+// 	if (memcmp( m1, m2, len ) != 0) {
+//         return (res < 0 ? -1 : 1);
+//     }
+//     return res;
+// }
 
-void ProveInsecure(mDNS *const /*m*/, DNSSECVerifier* /*dv*/, InsecureContext* /*ic*/, domainname* /*trigger*/)
-{
-}
+// void ProveInsecure(mDNS *const /*m*/, DNSSECVerifier* /*dv*/, InsecureContext* /*ic*/, domainname* /*trigger*/)
+// {
+// }
 
-void DNSSECProbe(mDNS *const /*m*/)
-{
-    // DarwinOS specific function
-    ASSERTS();
-}
+// void DNSSECProbe(mDNS *const /*m*/)
+// {
+//     // DarwinOS specific function
+//     ASSERTS();
+// }
 
 // Proxy stub functions
 mDNSu8 *DNSProxySetAttributes(DNSQuestion* /*q*/, DNSMessageHeader* /*h*/, DNSMessage* /*msg*/, mDNSu8* /*ptr*/, mDNSu8* /*limit*/)
@@ -1541,7 +1546,7 @@ int mDNS_McastTracingEnabled = 0;
 
 static const TUint kMaxLogMsgBytes = 200;
 
-void LogMsgWithLevel(mDNSLogLevel_t /*logLevel*/, const char *format, ...)
+void LogMsgWithLevel(mDNSLogCategory_t /*category*/, mDNSLogLevel_t /*logLevel*/, const char *format, ...)
 {
 #ifdef DEFINE_TRACE
     va_list args;
@@ -1596,7 +1601,7 @@ mDNSs32 mDNSPlatformUTC()
 
 // TCP handlers
 
-TCPSocket* mDNSPlatformTCPSocket(mDNS* const /*m*/, TCPSocketFlags /*flags*/, mDNSIPPort* /*port*/, mDNSBool /*useBackgroundTrafficClass*/)
+TCPSocket* mDNSPlatformTCPSocket(TCPSocketFlags /*flags*/, mDNSAddr_Type /*addrtype*/, mDNSIPPort */*port*/, domainname */*hostname*/, mDNSBool /*useBackgroundTrafficClass*/)
 {
     LOG(kBonjour, "Bonjour             mDNSPlatformTCPSocket\n");
     ASSERTS();
@@ -1617,7 +1622,7 @@ int mDNSPlatformTCPGetFD(TCPSocket* /*sock*/)
     return 0;
 }
 
-mStatus mDNSPlatformTCPConnect(TCPSocket* /*sock*/, const mDNSAddr* /*dst*/, mDNSOpaque16 /*dstport*/, domainname* /*hostname*/,
+mStatus mDNSPlatformTCPConnect(TCPSocket* /*sock*/, const mDNSAddr* /*dst*/, mDNSOpaque16 /*dstport*/,
                                mDNSInterfaceID /*InterfaceID*/, TCPConnectionCallback /*callback*/, void* /*context*/)
 {
     LOG(kBonjour, "Bonjour             mDNSPlatformTCPConnect\n");
@@ -1647,7 +1652,7 @@ long mDNSPlatformWriteTCP(TCPSocket* /*sock*/, const char* /*msg*/, unsigned lon
 
 // unused UDP handlers
 
-UDPSocket* mDNSPlatformUDPSocket(mDNS* const /*m*/, const mDNSIPPort /*requestedport*/)
+UDPSocket* mDNSPlatformUDPSocket(const mDNSIPPort /*requestedport*/)
 {
     LOG(kBonjour, "Bonjour             mDNSPlatformUDPSocket\n");
     ASSERTS();
@@ -1662,13 +1667,13 @@ void mDNSPlatformUDPClose(UDPSocket* /*sock*/)
 
 // unused misc socket handlers
 
-void mDNSPlatformReceiveBPF_fd(mDNS* const /*m*/, int /*fd*/)
+void mDNSPlatformReceiveBPF_fd(int /*fd*/)
 {
     LOG(kBonjour, "Bonjour             mDNSPlatformReceiveBPF_fd\n");
     ASSERTS();
 }
 
-void mDNSPlatformUpdateProxyList(mDNS* const /*m*/, const mDNSInterfaceID /*InterfaceID*/)
+void mDNSPlatformUpdateProxyList(const mDNSInterfaceID /*InterfaceID*/)
 {
     LOG(kBonjour, "Bonjour             mDNSPlatformUpdateProxyList\n");
     ASSERTS();
@@ -1680,7 +1685,7 @@ void mDNSPlatformSendRawPacket(const void* const /*msg*/, const mDNSu8* const /*
     ASSERTS();
 }
 
-void mDNSPlatformSetLocalAddressCacheEntry(mDNS* const /*m*/, const mDNSAddr* const /*tpa*/, const mDNSEthAddr* const /*tha*/, mDNSInterfaceID /*InterfaceID*/)
+void mDNSPlatformSetLocalAddressCacheEntry(const mDNSAddr *const /*tpa*/, const mDNSEthAddr *const /*tha*/, mDNSInterfaceID /*InterfaceID*/)
 {
     LOG(kBonjour, "Bonjour             mDNSPlatformSetLocalAddressCacheEntry\n");
     ASSERTS();
@@ -1710,7 +1715,7 @@ void mDNSPlatformTLSTearDownCerts()
 // Handlers for unicast browsing/dynamic update for clients who do not specify a domain
 // in browse/registration
 
-mDNSBool mDNSPlatformSetDNSConfig(mDNS* const /*m*/, mDNSBool /*setservers*/, mDNSBool /*setsearch*/, domainname* const fqdn,
+mDNSBool mDNSPlatformSetDNSConfig(mDNSBool /*setservers*/, mDNSBool /*setsearch*/, domainname* const fqdn,
                               DNameListElem** /*RegDomains*/, DNameListElem** /*BrowseDomains*/, mDNSBool /*ackConfig*/)
 
 {
@@ -1738,13 +1743,13 @@ void mDNSPlatformDynDNSHostNameStatusChanged(const domainname* const /*dname*/, 
     ASSERTS();
 }
 
-void mDNSPlatformSetAllowSleep(mDNS* const /*m*/, mDNSBool /*allowSleep*/, const char* /*reason*/)
+void mDNSPlatformSetAllowSleep(mDNSBool /*allowSleep*/, const char* /*reason*/)
 {
     // unused, but called by Bonjour
     LOG(kBonjour, "Bonjour             mDNSPlatformSetAllowSleep\n");
 }
 
-void mDNSPlatformSendWakeupPacket(mDNS* const /*m*/, mDNSInterfaceID /*InterfaceID*/, char* /*EthAddr*/, char* /*IPAddr*/, int /*iteration*/)
+void mDNSPlatformSendWakeupPacket(mDNSInterfaceID /*InterfaceID*/, char* /*EthAddr*/, char* /*IPAddr*/, int /*iteration*/)
 {
     LOG(kBonjour, "Bonjour             mDNSPlatformSendWakeupPacket\n");
     ASSERTS();
@@ -1772,12 +1777,12 @@ void mDNSPlatformSendKeepalive(mDNSAddr* /*sadd*/, mDNSAddr* /*dadd*/, mDNSIPPor
 
 }
 
-mStatus mDNSPlatformRetrieveTCPInfo(mDNS *const /*m*/, mDNSAddr *laddr, mDNSIPPort* /*lport*/, mDNSAddr* /*raddr*/, mDNSIPPort* /*rport*/, mDNSTCPInfo* /*mti*/)
+mStatus mDNSPlatformRetrieveTCPInfo(mDNSAddr *laddr, mDNSIPPort* /*lport*/, mDNSAddr* /*raddr*/, mDNSIPPort* /*rport*/, mDNSTCPInfo* /*mti*/)
 {
     return mStatus_NoError;
 }
 
-mStatus mDNSPlatformGetRemoteMacAddr(mDNS *const /*m*/, mDNSAddr* /*raddr*/)
+mStatus mDNSPlatformGetRemoteMacAddr(mDNSAddr* /*raddr*/)
 {
     return mStatus_NoError;
 }

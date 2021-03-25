@@ -1,0 +1,38 @@
+diff --git a/thirdparty/mDNSResponder-1310.80.1/mDNSShared/dns_sd.h b/thirdparty/mDNSResponder-1310.80.1/mDNSShared/dns_sd.h
+index fbc6b52c..7f83f8ae 100644
+--- a/Build/mDNS/dns_sd.h
++++ b/Build/mDNS/dns_sd.h
+@@ -103,6 +103,10 @@ typedef SOCKET dnssd_sock_t;
+ typedef int dnssd_sock_t;
+ #endif
+ 
++#ifdef interface
++#undef interface
++#endif
++
+ /* stdint.h does not exist on FreeBSD 4.x; its types are defined in sys/types.h instead */
+ #if defined(__FreeBSD__) && (__FreeBSD__ < 5)
+ #include <sys/types.h>
+@@ -1613,14 +1617,16 @@ DNSServiceErrorType DNSSD_API DNSServiceBrowse
+ 
+ typedef void (DNSSD_API *DNSServiceResolveReply)
+ (
+-    DNSServiceRef sdRef,
+-    DNSServiceFlags flags,
+-    uint32_t interfaceIndex,
+-    DNSServiceErrorType errorCode,
++    DNSServiceRef                       sdRef,
++    DNSServiceFlags                     flags,
++    uint32_t                            interfaceIndex,
++    DNSServiceErrorType                 errorCode,
+     const char                          *fullname,
+     const char                          *hosttarget,
+-    uint16_t port,                                   /* In network byte order */
+-    uint16_t txtLen,
++    uint16_t                            port,        /* In network byte order */
++    const unsigned char                 *ipAddr,
++    const char                          *regtype,
++    uint16_t                            txtLen,
+     const unsigned char                 *txtRecord,
+     void                                *context
+ );

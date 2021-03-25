@@ -80,13 +80,9 @@ objects_core = \
 	$(objdir)FileStream.$(objext) \
 	$(objdir)Globals.$(objext) \
 	$(objdir)Http.$(objext) \
-	$(objdir)anonymous.$(objext) \
-	$(objdir)CryptoAlg.$(objext) \
 	$(objdir)DNSCommon.$(objext) \
 	$(objdir)DNSDigest.$(objext) \
 	$(objdir)mDNS.$(objext) \
-	$(objdir)nsec.$(objext) \
-	$(objdir)nsec3.$(objext) \
 	$(objdir)uDNS.$(objext) \
 	$(objdir)dnssd_clientshim.$(objext) \
 	$(objdir)dnssd_clientlib.$(objext) \

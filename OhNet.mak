@@ -283,14 +283,18 @@ copy_build_includes:
 
 patch_thirdparty_sources:
 	if not exist $(mDNSdir) mkdir $(mDNSdir)
-	copy thirdparty\mDNSResponder-765.50.9\mDNSCore\*.c $(mDNSdir) > nul
-	copy thirdparty\mDNSResponder-765.50.9\mDNSCore\*.h $(mDNSdir) > nul
-	copy thirdparty\mDNSResponder-765.50.9\mDNSCore\*.patch $(mDNSdir) > nul
-	copy thirdparty\mDNSResponder-765.50.9\mDNSShared\*.patch $(mDNSdir) > nul
 
-	copy thirdparty\mDNSResponder-765.50.9\mDNSShared\dnssd_clientshim.c $(mDNSdir) > nul
-	copy thirdparty\mDNSResponder-765.50.9\mDNSShared\dnssd_clientlib.c $(mDNSdir) > nul
-	copy thirdparty\mDNSResponder-765.50.9\mDNSShared\dns_sd.h $(mDNSdir) > nul
+	copy thirdparty\mDNSResponder-1310.80.1\mDNSCore\*.c $(mDNSdir) > nul
+	copy thirdparty\mDNSResponder-1310.80.1\mDNSCore\*.h $(mDNSdir) > nul
+	copy thirdparty\mDNSResponder-1310.80.1\mDNSCore\*.patch $(mDNSdir) > nul
+	copy thirdparty\mDNSResponder-1310.80.1\mDNSShared\*.patch $(mDNSdir) > nul
+
+	copy thirdparty\mDNSResponder-1310.80.1\mDNSShared\dnssd_clientshim.c $(mDNSdir) > nul
+	copy thirdparty\mDNSResponder-1310.80.1\mDNSShared\dnssd_clientlib.c $(mDNSdir) > nul
+	copy thirdparty\mDNSResponder-1310.80.1\mDNSShared\dns_sd.h $(mDNSdir) > nul
+	copy thirdparty\mDNSResponder-1310.80.1\mDNSShared\dns_sd_internal.h $(mDNSdir) > nul
+	copy thirdparty\mDNSResponder-1310.80.1\mDNSShared\dns_sd_private.h $(mDNSdir) > nul
+	copy thirdparty\mDNSResponder-1310.80.1\mDNSShared\mDNSFeatures.h $(mDNSdir) > nul
 
 	for %%i in ($(mDNSdir)\*.patch) do (python thirdparty\python_patch\patch.py %%i)
 

@@ -338,7 +338,7 @@ managed_only ?= no
 no_shared_objects ?= no
 endian ?= LITTLE
 cflags_base = $(CFLAGS) -fexceptions -Wall $(version_specific_cflags_third_party) -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_$(endian)_ENDIAN -DDEFINE_TRACE $(debug_specific_cflags) -fvisibility=hidden $(platform_cflags)
-cflags_third_party = $(cflags_base) -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast
+cflags_third_party = $(cflags_base) -Wno-int-to-pointer-cast
 ifeq ($(nocpp11), yes)
     cppflags = $(cflags_base) -Werror
 else ifeq ($(platform),IntelMac)
@@ -566,14 +566,17 @@ copy_build_includes:
 
 patch_thirdparty_sources:
 	$(mkdir) $(mDNSdir)
-	$(cp) thirdparty/mDNSResponder-765.50.9/mDNSCore/*.c $(mDNSdir)
-	$(cp) thirdparty/mDNSResponder-765.50.9/mDNSCore/*.h $(mDNSdir)
-	$(cp) thirdparty/mDNSResponder-765.50.9/mDNSCore/*.patch $(mDNSdir)
-	$(cp) thirdparty/mDNSResponder-765.50.9/mDNSShared/*.patch $(mDNSdir)
+	$(cp) thirdparty/mDNSResponder-1310.80.1/mDNSCore/*.c $(mDNSdir)
+	$(cp) thirdparty/mDNSResponder-1310.80.1/mDNSCore/*.h $(mDNSdir)
+	$(cp) thirdparty/mDNSResponder-1310.80.1/mDNSCore/*.patch $(mDNSdir)
+	$(cp) thirdparty/mDNSResponder-1310.80.1/mDNSShared/*.patch $(mDNSdir)
 
-	$(cp) thirdparty/mDNSResponder-765.50.9/mDNSShared/dnssd_clientshim.c $(mDNSdir)
-	$(cp) thirdparty/mDNSResponder-765.50.9/mDNSShared/dnssd_clientlib.c $(mDNSdir)
-	$(cp) thirdparty/mDNSResponder-765.50.9/mDNSShared/dns_sd.h $(mDNSdir)
+	$(cp) thirdparty/mDNSResponder-1310.80.1/mDNSShared/dnssd_clientshim.c $(mDNSdir)
+	$(cp) thirdparty/mDNSResponder-1310.80.1/mDNSShared/dnssd_clientlib.c $(mDNSdir)
+	$(cp) thirdparty/mDNSResponder-1310.80.1/mDNSShared/dns_sd.h $(mDNSdir)
+	$(cp) thirdparty/mDNSResponder-1310.80.1/mDNSShared/dns_sd_internal.h $(mDNSdir)
+	$(cp) thirdparty/mDNSResponder-1310.80.1/mDNSShared/dns_sd_private.h $(mDNSdir)
+	$(cp) thirdparty/mDNSResponder-1310.80.1/mDNSShared/mDNSFeatures.h $(mDNSdir)
 
 	for i in $(mDNSdir)/*.patch; do python thirdparty/python_patch/patch.py $$i; done
 
