@@ -1,7 +1,7 @@
 diff --git a/thirdparty/mDNSResponder-1310.80.1/mDNSCore/mDNS.c b/thirdparty/mDNSResponder-1310.80.1/mDNSCore/mDNS.c
-index c32c9154..1d759c85 100644
---- a/Build/mDNS/mDNS.c
-+++ b/Build/mDNS/mDNS.c
+index c32c9154..a362410f 100644
+--- a/thirdparty/mDNSResponder-1310.80.1/mDNSCore/mDNS.c
++++ b/thirdparty/mDNSResponder-1310.80.1/mDNSCore/mDNS.c
 @@ -26,6 +26,8 @@
  #include "DNSCommon.h"                  // Defines general DNS utility routines
  #include "uDNS.h"                       // Defines entry points into unicast-specific routines
@@ -193,12 +193,12 @@ index c32c9154..1d759c85 100644
 +{
 +}
 +
-+mDNSexport mStatus mDNS_RegisterInterface(mDNS *const /*m*/, NetworkInterfaceInfo * /*set*/, mDNSBool /*flapping*/)
++mDNSexport mStatus mDNS_RegisterInterface(mDNS *const /*m*/, NetworkInterfaceInfo * /*set*/, InterfaceActivationSpeed /*probeDelay*/)
 +{
 +    return mStatus_NoError;
 +}
 +
-+mDNSexport void mDNS_DeregisterInterface(mDNS *const /*m*/, NetworkInterfaceInfo * /*set*/, mDNSBool /*flapping*/)
++mDNSexport void mDNS_DeregisterInterface(mDNS *const /*m*/, NetworkInterfaceInfo * /*set*/, InterfaceActivationSpeed /*probeDelay*/)
 +{
 +}
 +
