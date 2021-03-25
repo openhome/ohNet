@@ -1,7 +1,7 @@
 diff --git a/thirdparty/mDNSResponder-1310.80.1/mDNSCore/mDNS.c b/thirdparty/mDNSResponder-1310.80.1/mDNSCore/mDNS.c
 index c32c9154..a362410f 100644
---- a/thirdparty/mDNSResponder-1310.80.1/mDNSCore/mDNS.c
-+++ b/thirdparty/mDNSResponder-1310.80.1/mDNSCore/mDNS.c
+--- a/Build/mDNS/mDNS.c
++++ b/Build/mDNS/mDNS.c
 @@ -26,6 +26,8 @@
  #include "DNSCommon.h"                  // Defines general DNS utility routines
  #include "uDNS.h"                       // Defines entry points into unicast-specific routines
