@@ -1365,15 +1365,15 @@ void  mDNSPlatformMemFree(void* aPtr)
 mDNSInterfaceID mDNSPlatformInterfaceIDfromInterfaceIndex(mDNS* /*m*/, mDNSu32 /*aIndex*/)
 {
     LOG(kBonjour, "Bonjour             mDNSPlatformInterfaceIDfromInterfaceIndex\n");
-    ASSERTS(); // not sure what an interface index is and can't find any mDNS callers for this function
-    return 0;
+    // All interfaces registered in mDNS platform are general purpose for advertising/receiving on, return mDNSInterface_Any
+    return mDNSInterface_Any;
 }
 
 mDNSu32 mDNSPlatformInterfaceIndexfromInterfaceID(mDNS* /*m*/, mDNSInterfaceID /*aId*/, mDNSBool /*suppressNetworkChange*/)
 {
     LOG(kBonjour, "Bonjour             mDNSPlatformInterfaceIndexFromInterfaceID\n");
-    ASSERTS(); // not sure what an interface index is and can't find any mDNS callers for this function
-    return 0;
+    // All interfaces registered in mDNS platform are general purpose for advertising/receiving on, return kDNSServiceInterfaceIndexAny
+    return kDNSServiceInterfaceIndexAny;
 }
 
 // mDNS core calls this routine when it wants to prevent
