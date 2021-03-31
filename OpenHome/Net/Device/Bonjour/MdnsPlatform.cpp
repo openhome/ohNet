@@ -522,7 +522,7 @@ MdnsPlatform::MdnsPlatform(Environment& aEnv, const TChar* aHost, TBool aHasCach
     , iHasCache(aHasCache)
     , iTimerLock("BNJ4")
     , iListeners(iEnv, *this)
-    , iClient(aEnv, 5353, ESocketFamily::eSocketFamilyV6) // Create IPv6 socket to send on both v6 and v4
+    , iClient(aEnv, 5353)
     , iInterfacesLock("BNJ2")
     , iInterfaceIdAllocator()
     , iServicesLock("BNJ3")
