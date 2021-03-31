@@ -106,17 +106,17 @@ MdnsPlatform::InterfaceIdAllocator::~InterfaceIdAllocator()
     ASSERT(iInterfaces.size() == 0);
 }
 
-mDNSInterfaceID MdnsPlatform::InterfaceIdAllocator::AllocateId(NetworkAdapter& aInterface)
+mDNSInterfaceID MdnsPlatform::InterfaceIdAllocator::AllocateId(NetworkAdapter* aInterface)
 {
     TUint id = iIdPool.Read();
-    iInterfaces.insert(std::pair<TUint, NetworkAdapter&>(id, aInterface));
+    iInterfaces.insert(std::pair<TUint, NetworkAdapter*>(id, aInterface));
     return (mDNSInterfaceID)id;
 }
 
 void MdnsPlatform::InterfaceIdAllocator::DeallocateId(mDNSInterfaceID aInterfaceId)
 {
     TUint64 id = (TUint64)aInterfaceId;
-    std::map<TUint, NetworkAdapter&>::iterator it = iInterfaces.find(id);
+    std::map<TUint, NetworkAdapter*>::iterator it = iInterfaces.find(id);
     if (it != iInterfaces.end()) {
         iInterfaces.erase(it);
         iIdPool.Write(id);
@@ -125,9 +125,9 @@ void MdnsPlatform::InterfaceIdAllocator::DeallocateId(mDNSInterfaceID aInterface
 
 mDNSInterfaceID MdnsPlatform::InterfaceIdAllocator::GetIdForAddress(const TIpAddress& aAddress)
 {
-    std::map<TUint, NetworkAdapter&>::iterator it;
+    std::map<TUint, NetworkAdapter*>::iterator it;
     for (it = iInterfaces.begin(); it != iInterfaces.end(); it++) {
-        if (it->second.ContainsAddress(aAddress)) {
+        if (it->second->ContainsAddress(aAddress)) {
             return (mDNSInterfaceID)it->first;
         }
     }
@@ -673,7 +673,7 @@ MdnsPlatform::Status MdnsPlatform::AddInterface(NetworkAdapter* aNif)
     Status status;
     NetworkInterfaceInfo* nifInfo = (NetworkInterfaceInfo*)calloc(1, sizeof(*nifInfo));
 #ifndef DEFINE_WINDOWS_UNIVERSAL
-    nifInfo->InterfaceID = iInterfaceIdAllocator.AllocateId(*aNif);
+    nifInfo->InterfaceID = iInterfaceIdAllocator.AllocateId(aNif);
 #endif // DEFINE_WINDOWS_UNIVERSAL    
     SetAddress(nifInfo->ip, Endpoint(0, aNif->Address()));
     SetAddress(nifInfo->mask, Endpoint(0, aNif->Mask()));

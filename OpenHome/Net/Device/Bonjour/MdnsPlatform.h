@@ -207,12 +207,12 @@ private:
         InterfaceIdAllocator();
         ~InterfaceIdAllocator();
 
-        mDNSInterfaceID AllocateId(NetworkAdapter& aInterface);
+        mDNSInterfaceID AllocateId(NetworkAdapter* aInterface);
         void DeallocateId(mDNSInterfaceID aInterfaceId);
         mDNSInterfaceID GetIdForAddress(const TIpAddress& aAddress);
     private:
         FifoLite<TUint, kInterfaceIdPoolSize> iIdPool;
-        std::map<TUint, NetworkAdapter&> iInterfaces;
+        std::map<TUint, NetworkAdapter*> iInterfaces;
     };
     enum MdnsServiceAction
     {
