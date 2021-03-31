@@ -115,7 +115,7 @@ mDNSInterfaceID MdnsPlatform::InterfaceIdAllocator::AllocateId(NetworkAdapter& a
 
 void MdnsPlatform::InterfaceIdAllocator::DeallocateId(mDNSInterfaceID aInterfaceId)
 {
-    TUint id = (TUint)aInterfaceId;
+    TUint64 id = (TUint64)aInterfaceId;
     std::map<TUint, NetworkAdapter&>::iterator it = iInterfaces.find(id);
     if (it != iInterfaces.end()) {
         iInterfaces.erase(it);
