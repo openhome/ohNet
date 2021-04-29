@@ -1038,11 +1038,13 @@ MdnsPlatform::Status MdnsPlatform::GetPrimaryInterface(mDNSAddr* aInterfaceV4, m
             NetworkAdapter& adapter = iInterfaces[i]->Adapter();
             if (strcmp(adapter.Name(), current->Name()) == 0) {
                 if (!v4Available && adapter.Address().iFamily == kFamilyV4) {
+                    aInterfaceV4->type = mDNSAddrType_IPv4;
                     aInterfaceV4->ip.v4.NotAnInteger = adapter.Address().iV4;
                     v4Available = true;
                 }
                 else if (!v6Available && adapter.Address().iFamily == kFamilyV6) {
                     for (TUint j = 0; j < 16; j++) {
+                        aInterfaceV6->type = mDNSAddrType_IPv6;
                         aInterfaceV6->ip.v6.b[j] = adapter.Address().iV6[j];
                     }
                     v6Available = true;
