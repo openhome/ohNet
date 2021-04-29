@@ -339,6 +339,11 @@ void DviDevice::WriteResource(const Brx& aUriTail, const TIpAddress& aInterface,
 void DviDevice::GetUriBase(Bwx& aUriBase, const TIpAddress& aInterface, TUint aPort, IDvProtocol& aProtocol)
 {
     const Brx& name = aProtocol.ProtocolName();
+    GetUriBase(aUriBase, aInterface, aPort, name);
+}
+
+void DviDevice::GetUriBase(Bwx& aUriBase, const TIpAddress& aInterface, TUint aPort, const Brx& aProtocolName)
+{
     aUriBase.Append(Http::kSchemeHttp);
     Endpoint endpt(aPort, aInterface);
     Endpoint::EndpointBuf buf;
@@ -347,7 +352,7 @@ void DviDevice::GetUriBase(Bwx& aUriBase, const TIpAddress& aInterface, TUint aP
     aUriBase.Append('/');
     Uri::Escape(aUriBase, iUdn);
     aUriBase.Append('/');
-    aUriBase.Append(name);
+    aUriBase.Append(aProtocolName);
     aUriBase.Append('/');
 }
 

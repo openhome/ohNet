@@ -71,6 +71,7 @@ public:
     DviDevice* Root() const;
     void WriteResource(const Brx& aUriTail, const TIpAddress& aInterface, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter);
     void GetUriBase(Bwx& aUriBase, const TIpAddress& aInterface, TUint aPort, IDvProtocol& aProtocol);
+    void GetUriBase(Bwx& aUriBase, const TIpAddress& aInterface, TUint aPort, const Brx& aProtocolName);
     TUint ConfigId();
     void CreateSid(Brh& aSid);
     IResourceManager* ResourceManager();
