@@ -374,11 +374,9 @@ else
 	CROSS_COMPILE_LIBGCC ?= -shared-libgcc
 	link_dll = $(version_specific_library_path) ${CROSS_COMPILE}g++ -pthread  $(platform_linkflags) -shared ${CROSS_COMPILE_LIBGCC}
 endif
-ifeq ($(platform), iOS)
-	csharp = /Developer/MonoTouch/usr/bin/smcs /nologo $(debug_csharp)
-else
-	csharp = mcs /nologo $(debug_csharp)
-endif
+
+csharp = mcs /nologo $(debug_csharp)
+
 csharpdefines ?=
 publicjavadir = OpenHome/Net/Bindings/Java/
 
