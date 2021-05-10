@@ -185,7 +185,7 @@ ifeq ($(platform),iOS)
 	# link = $(toolroot)/clang++ -pthread -stdlib=libc++ $(platform_linkflags)
 	ar = $(toolroot)/ar rc $(objdir)
     mono_lib_dir=/Library/Frameworks/Xamarin.iOS.framework/Versions/Current/lib/mono/Xamarin.iOS
-	csharpdefines = /define:IOS /r:$(mono_lib_dir)/Xamarin.iOS.dll /r:$(mono_lib_dir)/System.dll /r:$(mono_lib_dir)/System.Core.dll
+	csharpdefines = /define:IOS /r:$(mono_lib_dir)/Xamarin.iOS.dll
 	no_shared_objects = yes
 endif
 
