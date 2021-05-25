@@ -184,8 +184,8 @@ ifeq ($(platform),iOS)
 	# link = $(devroot)/usr/bin/llvm-gcc-4.2  -pthread -Wl $(platform_linkflags)
 	# link = $(toolroot)/clang++ -pthread -stdlib=libc++ $(platform_linkflags)
 	ar = $(toolroot)/ar rc $(objdir)
-    mono_lib_dir=/Developer/MonoTouch/usr/lib/mono/Xamarin.iOS
-	csharpdefines = /define:IOS /r:$(mono_lib_dir)/Xamarin.iOS.dll /r:$(mono_lib_dir)/System.dll /r:$(mono_lib_dir)/System.Core.dll
+    mono_lib_dir=/Library/Frameworks/Xamarin.iOS.framework/Versions/Current/lib/mono/Xamarin.iOS
+	csharpdefines = /define:IOS /r:$(mono_lib_dir)/Xamarin.iOS.dll
 	no_shared_objects = yes
 endif
 
@@ -374,11 +374,9 @@ else
 	CROSS_COMPILE_LIBGCC ?= -shared-libgcc
 	link_dll = $(version_specific_library_path) ${CROSS_COMPILE}g++ -pthread  $(platform_linkflags) -shared ${CROSS_COMPILE_LIBGCC}
 endif
-ifeq ($(platform), iOS)
-	csharp = /Developer/MonoTouch/usr/bin/smcs /nologo $(debug_csharp)
-else
-	csharp = mcs /nologo $(debug_csharp)
-endif
+
+csharp = mcs /nologo $(debug_csharp)
+
 csharpdefines ?=
 publicjavadir = OpenHome/Net/Bindings/Java/
 
