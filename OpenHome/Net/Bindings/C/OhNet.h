@@ -408,6 +408,11 @@ DllExport void STDCALL OhNetInitParamsSetUseLoopbackNetworkAdapter(OhNetHandleIn
 DllExport void STDCALL OhNetInitParamsSetIncludeLoopbackNetworkAdapter(OhNetHandleInitParams aParams);
 
 /**
+ * Set whether IPv6 should be supported
+ */
+DllExport void STDCALL OhNetInitParamsSetIPv6Supported(OhNetHandleInitParams aParams, uint8_t aSupported);
+
+/**
  * Set the maximum time between device announcements for the device stack
  */
 DllExport void STDCALL OhNetInitParamsSetDvMaxUpdateTime(OhNetHandleInitParams aParams, uint32_t aSecs);

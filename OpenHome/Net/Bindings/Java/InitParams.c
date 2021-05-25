@@ -574,10 +574,9 @@ JNIEXPORT void JNICALL Java_org_openhome_net_core_OhNetInitParamsSetIPv6Supporte
   (JNIEnv *aEnv, jclass aClass, jlong aParams, jboolean aSupported)
 {
     OhNetHandleInitParams params = (OhNetHandleInitParams)(size_t)aParams;
-    const char* hostName = (*aEnv)->GetStringUTFChars(aEnv, aHostName, NULL);
     aClass = aClass;
 
-    OhNetInitParamsSetDvEnableBonjour(params, (uint8_t)aSupported);
+    OhNetInitParamsSetIPv6Supported(params, (uint8_t)aSupported);
 }
 
 /*
