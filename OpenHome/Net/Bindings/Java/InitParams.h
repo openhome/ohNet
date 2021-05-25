@@ -274,7 +274,7 @@ JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetI
 /*
  * Class:     org_openhome_net_core_InitParams
  * Method:    OhNetInitParamsSetIPv6Supported
- * Signature: (JLjava/lang/String;)V
+ * Signature: (JZ)V
  */
 JNIEXPORT void JNICALL Java_org_openhome_net_core_OhNetInitParamsSetIPv6Supported
   (JNIEnv *aEnv, jclass aClass, jlong aParams, jboolean aSupported);
