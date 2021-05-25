@@ -242,6 +242,13 @@ void STDCALL OhNetInitParamsSetIncludeLoopbackNetworkAdapter(OhNetHandleInitPara
     ip->SetIncludeLoopbackNetworkAdapter();
 }
 
+void STDCALL OhNetInitParamsSetIPv6Supported(OhNetHandleInitParams aParams, uint8_t aSupported)
+{
+    InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
+    const TBool supported = (aSupported != 0);
+    ip->SetIPv6Supported(supported);
+}
+
 void STDCALL OhNetInitParamsSetDvMaxUpdateTime(OhNetHandleInitParams aParams, uint32_t aSecs)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);

@@ -293,6 +293,10 @@ public:
      */
     void SetIncludeLoopbackNetworkAdapter();
     /**
+     * Set whether IPv6 adapters should be listed (default is yes)
+     */
+    void SetIPv6Supported(TBool aSupported);
+    /**
      * Set the maximum time between device announcements for the device stack
      */
     void SetDvMaxUpdateTime(uint32_t aSecs);
@@ -429,6 +433,7 @@ public:
     uint32_t PendingSubscriptionTimeoutMs() const;
     OhNetCallbackFreeExternal FreeExternal() const;
     Environment::ELoopback LoopbackNetworkAdapter() const;
+    bool IPv6Supported() const;
     uint32_t DvMaxUpdateTimeSecs() const;
     uint32_t DvNumServerThreads() const;
     uint32_t DvNumPublisherThreads() const;
@@ -489,6 +494,7 @@ private:
     bool iHostUdpLowQuality;
     bool iEnableBonjour;
     bool iRequiresMdnsCache;
+    bool iIPv6Supported;
     Brhz iDvBonjourHostName;
     uint32_t iDvNumLpecThreads;
     uint32_t iDvLpecServerPort;

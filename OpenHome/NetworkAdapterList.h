@@ -130,6 +130,7 @@ private:
     TUint iNextListenerId;
     NetworkAdapterChangeNotifier* iNotifierThread;
     TBool iSingleSubnetMode;
+    TBool iIpv6Supported;
 };
 
 class NetworkAdapterChangeNotifier : public Thread

@@ -706,6 +706,9 @@ typedef struct OsNetworkAdapter
 #define LOOPBACK_USE     (1) /* exclude everything but loopback from list of available subnets */
 #define LOOPBACK_INCLUDE (2) /* include loopback in list of available subnets */
 
+#define IP_VERSION_ALL (0) /* include both v4 and v6 adapters*/
+#define IP_VERSION_4   (1) /* include v4 adapters only */
+
 /**
  * Return a list of all available network interfaces (aka adaptors).
  *
@@ -716,13 +719,15 @@ typedef struct OsNetworkAdapter
  * @param[in] aContext          Returned from OsCreate().
  * @param[out] aInterfaces      List of available interfaces.  Allocated inside this function;
  *                              the caller should use OsNetworkFreeInterfaces to free it
- * @param[out] aUseLoopback     2 if all interfaces, including loopback, should be returned;
+ * @param[in] aUseLoopback      2 if all interfaces, including loopback, should be returned;
  *                              1 if only the loopback interface should be returned;
  *                              0 (default) if normal behaviour is required
+ * @param[in] aIpVersion        0 if v4 and v6 interfaces should be returned;
+ *                              1 if only v4 interfaces should be returned
  *
  * @return  0 on success; -1 on failure
  */
-int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aInterfaces, uint32_t aUseLoopback);
+int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aInterfaces, uint32_t aUseLoopback, uint32_t aIpVersion);
 
 /**
  * Destroy list returned by OsNetworkListAdapters.

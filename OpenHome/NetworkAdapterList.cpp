@@ -24,13 +24,17 @@ NetworkAdapterList::NetworkAdapterList(Environment& aEnv, Environment::ELoopback
     , iCurrent(NULL)
     , iNextListenerId(1)
     , iSingleSubnetMode(false)
+    , iIpv6Supported(true)
 {
     iEnv.AddObject(this);
     iEnv.AddResumeObserver(*this);
     iDefaultSubnet = aDefaultSubnet;
+    if (iEnv.InitParams() != NULL) {
+        iIpv6Supported = iEnv.InitParams()->IPv6Supported();
+    }
     iNotifierThread = new NetworkAdapterChangeNotifier(*this);
     iNotifierThread->Start();
-    iNetworkAdapters = Os::NetworkListAdapters(iEnv, iLoopbackPolicy, "NetworkAdapterList");
+    iNetworkAdapters = Os::NetworkListAdapters(iEnv, iLoopbackPolicy, iIpv6Supported, "NetworkAdapterList");
     iSubnets = CreateSubnetList();
     Os::NetworkSetInterfaceChangedObserver(iEnv.OsCtx(), &InterfaceListChanged, this);
     for (size_t i=0; i<iSubnets->size(); i++) {
@@ -319,7 +323,7 @@ void NetworkAdapterList::HandleInterfaceListChanged()
 {
     static const char* kRemovedAdapterCookie = "RemovedAdapter";
     iListLock.Wait();
-    std::vector<NetworkAdapter*>* list = Os::NetworkListAdapters(iEnv, iLoopbackPolicy, "NetworkAdapterList");
+    std::vector<NetworkAdapter*>* list = Os::NetworkListAdapters(iEnv, iLoopbackPolicy, iIpv6Supported, "NetworkAdapterList");
     TIpAddress oldAddress = (iCurrent==NULL ? kIpAddressV4AllAdapters : iCurrent->Address());
     DestroySubnetList(iNetworkAdapters);
     iNetworkAdapters = list;

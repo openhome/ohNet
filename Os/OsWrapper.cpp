@@ -201,10 +201,11 @@ void OpenHome::Os::NetworkSocketSetMulticastIf(THandle aHandle, TIpAddress aInte
 
 std::vector<NetworkAdapter*>* OpenHome::Os::NetworkListAdapters(Environment& aEnv,
                                                                 Environment::ELoopback aUseLoopback,
+                                                                TBool aIPv6Supported,
                                                                 const TChar* aCookie)
 {
     OsNetworkAdapter* cIfs = NULL;
-    int32_t err = OsNetworkListAdapters(aEnv.OsCtx(), &cIfs, (uint32_t)aUseLoopback);
+    int32_t err = OsNetworkListAdapters(aEnv.OsCtx(), &cIfs, (uint32_t)aUseLoopback, aIPv6Supported? IP_VERSION_ALL : IP_VERSION_4);
     if(err != 0) {
         LOG_ERROR(kNetwork, "Os::NetworkListAdapters RETURN VALUE = %d\n", err);
         THROW(NetworkError);

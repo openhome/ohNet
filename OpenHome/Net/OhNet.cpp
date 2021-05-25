@@ -356,6 +356,11 @@ void InitialisationParams::SetIncludeLoopbackNetworkAdapter()
     iUseLoopbackNetworkAdapter = Environment::ELoopbackInclude;
 }
 
+void InitialisationParams::SetIPv6Supported(TBool aSupported)
+{
+    iIPv6Supported = aSupported;
+}
+
 void InitialisationParams::SetDvMaxUpdateTime(uint32_t aSecs)
 {
     iDvMaxUpdateTimeSecs = aSecs;
@@ -579,6 +584,11 @@ Environment::ELoopback InitialisationParams::LoopbackNetworkAdapter() const
     return iUseLoopbackNetworkAdapter;
 }
 
+bool InitialisationParams::IPv6Supported() const
+{
+    return iIPv6Supported;
+}
+
 uint32_t InitialisationParams::DvMaxUpdateTimeSecs() const
 {
     return iDvMaxUpdateTimeSecs;
@@ -718,6 +728,7 @@ InitialisationParams::InitialisationParams()
     , iHostUdpLowQuality(HOST_UDP_LOW_QUALITY_DEFAULT)
     , iEnableBonjour(false)
     , iRequiresMdnsCache(false)
+    , iIPv6Supported(true)
     , iDvNumLpecThreads(0)
     , iDvLpecServerPort(0)
     , iDvAnnouncementIntervalByeByeMs(10)

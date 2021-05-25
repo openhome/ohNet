@@ -56,6 +56,7 @@ public class InitParams
 	private static native void OhNetInitParamsSetPendingSubscriptionTimeout(long aParams, int aTimeoutMs);
 	private static native void OhNetInitParamsSetUseLoopbackNetworkAdapter(long aParams);
 	private static native void OhNetInitParamsSetIncludeLoopbackNetworkAdapter(long aParams);
+	private static native void OhNetInitParamsSetIPv6Supported(boolean aSupported);
 	private static native void OhNetInitParamsSetDvMaxUpdateTime(long aParams, int aSecs);
 	private static native void OhNetInitParamsSetDvNumServerThreads(long aParams, int aNumThreads);
 	private static native void OhNetInitParamsSetDvNumPublisherThreads(long aParams, int aNumThreads);
@@ -490,6 +491,11 @@ public class InitParams
 	{
 		OhNetInitParamsSetIncludeLoopbackNetworkAdapter(iHandle);
 	}
+
+	public void setIPv6Supported(boolean aSupported)
+    {
+        OhNetInitParamsSetIPv6Supported(iHandle, aSupported);
+    }
 
 	/**
 	 * Set the maximum time in seconds between device announcements for the

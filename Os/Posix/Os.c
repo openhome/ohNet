@@ -1553,7 +1553,7 @@ static void append(OsNetworkAdapter* aAdapter, OsNetworkAdapter** aHead, OsNetwo
     *aTail = aAdapter;
 }
 
-int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters, uint32_t aUseLoopback)
+int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters, uint32_t aUseLoopback, uint32_t aIpVersion)
 {
     int32_t ret = -1;
     struct ifaddrs* networkIf;
@@ -1570,7 +1570,8 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
         while (iter != NULL) {
 
 #if !defined(PLATFORM_MACOSX_GNU)
-            const uint8_t familyIsValid = (iter->ifa_addr->sa_family == AF_INET || iter->ifa_addr->sa_family == AF_INET6);
+            const uint8_t familyIsValid = (iter->ifa_addr->sa_family == AF_INET ||
+                (iter->ifa_addr->sa_family == AF_INET6 && aIpVersion != IP_VERSION_4));
 #else
             // Omit IPv6 adapters on macOS platforms
             const uint8_t familyIsValid = (iter->ifa_addr->sa_family == AF_INET);
