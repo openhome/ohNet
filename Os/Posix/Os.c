@@ -873,6 +873,27 @@ static int32_t SocketInterrupted(const OsNetworkHandle* aHandle)
     return interrupted;
 }
 
+static int32_t TIpAddressesAreEqual(const TIpAddress* aAddr1, const TIpAddress* aAddr2)
+{
+    if (aAddr1->iFamily == aAddr2->iFamily) {
+
+        if (aAddr1->iFamily == kFamilyV6) {
+            uint8_t i = 0;
+            for (i = 0; i < 16; i++) {
+                if (aAddr1->iV6[i] != aAddr2->iV6[i]) {
+                    return 0;
+                }
+                return 1;
+            }
+        }
+        else if (aAddr1->iFamily == kFamilyV4) {
+            if (aAddr1->iV4 == aAddr2->iV4)
+            return 1;
+        }
+    }
+    return 0;
+}
+
 static TIpAddress TIpAddressFromSockAddr(const struct sockaddr* aAddr)
 {
     TIpAddress addr;
@@ -904,6 +925,16 @@ static void in6AddrFromTIpAddress(struct in6_addr* aAddr, const TIpAddress* aAdd
     for (i = 0; i < 16; i++) {
         aAddr->s6_addr[i] = aAddress->iV6[i];
     }
+}
+
+static int32_t ipv6AddressIsLinkLocal(const TIpAddress* aAddress)
+{
+    if (aAddress->iFamily == kFamilyV6) {
+        const uint16_t kLocalPrefix = 0xfe80;
+        const uint16_t thisPrefix = (aAddress->iV6[0] << 8) + aAddress->iV6[1];
+        return (thisPrefix == kLocalPrefix);
+    }
+    return 0;
 }
 
 uint32_t sockaddrFromEndpoint(struct sockaddr* aAddr, const TIpAddress* aAddress, uint16_t aPort)
@@ -1489,16 +1520,6 @@ static int32_t isWireless(const char* ifname, int domain)
 #endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_QNAP */
 }
 
-static int32_t TIpAddressesAreEqual(const TIpAddress* aAddr1, const TIpAddress* aAddr2)
-{
-    if ((aAddr1->iFamily == aAddr2->iFamily) &&
-       ((aAddr1->iFamily == kFamilyV6 && (aAddr1->iV6 == aAddr2->iV6)) ||
-        (aAddr1->iFamily == kFamilyV4 && (aAddr1->iV4 == aAddr2->iV4)))) {
-        return 1;
-    }
-    return 0;
-}
-
 static int32_t NetMasksAreEqual(const TIpAddress* aAddr1, const TIpAddress* aAddr2)
 {
     if (aAddr1->iFamily != aAddr2->iFamily) {
@@ -1613,12 +1634,6 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
             (iter->ifa_flags & IFF_RUNNING) == 0 ||
             (includeLoopback == 0 && ifaceIsLoopback == 1) ||
             (aUseLoopback == 1    && ifaceIsLoopback == 0)) {
-
-#if !defined(PLATFORM_MACOSX_GNU)
-            if (iter->ifa_addr->sa_family != AF_INET6) {
-                continue;
-            }
-#endif
             continue;
         }
 
@@ -1683,9 +1698,10 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
         OsNetworkAdapter* addrsIter = head;
         while (addrsIter != NULL) {
             // Helper functions distinguish between IPv4 and v6
-            if (addrsIter != ifaceIter &&
+            if ((addrsIter != ifaceIter &&
                 TIpAddressesAreEqual(&addrsIter->iAddress, &ifaceIter->iAddress) &&
-                NetMasksAreEqual(&addrsIter->iNetMask, &ifaceIter->iNetMask)) { // Order of arguments is important here
+                NetMasksAreEqual(&addrsIter->iNetMask, &ifaceIter->iNetMask)) ||
+                ipv6AddressIsLinkLocal(&ifaceIter->iAddress)) { // Order of arguments is important here
 
                 removeIface = 0; // true
                 break;
