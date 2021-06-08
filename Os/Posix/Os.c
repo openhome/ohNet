@@ -880,15 +880,14 @@ static int32_t TIpAddressesAreEqual(const TIpAddress* aAddr1, const TIpAddress* 
         if (aAddr1->iFamily == kFamilyV6) {
             uint8_t i = 0;
             for (i = 0; i < 16; i++) {
-                if (aAddr1->iV6[i] != aAddr2->iV6[i]) {
+                if (aAddr1->iV6[i] != aAddr2->iV6[i])
                     return 0;
-                }
-                return 1;
             }
+            return 1;
         }
         else if (aAddr1->iFamily == kFamilyV4) {
             if (aAddr1->iV4 == aAddr2->iV4)
-            return 1;
+                return 1;
         }
     }
     return 0;
