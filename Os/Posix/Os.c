@@ -1624,7 +1624,8 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
         const int ifaceIsLoopback = isLoopback(iter->ifa_addr);
 
 #if !defined(PLATFORM_MACOSX_GNU)
-        const uint8_t familyIsValid = (iter->ifa_addr->sa_family == AF_INET || iter->ifa_addr->sa_family == AF_INET6);
+        const uint8_t familyIsValid = (iter->ifa_addr->sa_family == AF_INET ||
+            (iter->ifa_addr->sa_family == AF_INET6 && aIpVersion != IP_VERSION_4));
 #else
         // Omit IPv6 adapters on macOS platforms
         const uint8_t familyIsValid = (iter->ifa_addr->sa_family == AF_INET);
