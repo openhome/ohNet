@@ -274,6 +274,7 @@ class JenkinsBuild():
         if os_platform == 'windows' and arch == 'x86':
             args.append('--js')
             args.append('--java')
+            args.append('--native-tests') # see #7609
         if os_platform == 'linux' and arch == 'x86':
             args.append('--java')
         if os_platform == 'macos':
