@@ -523,9 +523,10 @@ void OpenHome::Net::Invocation::OutputArgument(IAsyncOutput& aConsole, const TCh
         (void)sprintf(str, "%s (binary - size %lu)", paramName.Ptr(), (unsigned long)((const ArgumentBinary&)aArgument).Value().Bytes());
     }
     else if (paramType == OpenHome::Net::Parameter::eTypeString) {
-        char fmt[] = "%s (%s)";
+        static const char fmt[] = "%s (%s)";
+        static const TUint fmtLen = strlen(fmt);
         const ArgumentString& argString = (const ArgumentString&)aArgument;
-        const TUint len = paramName.Bytes() + argString.Value().Bytes() + sizeof(*fmt);
+        const TUint len = paramName.Bytes() + argString.Value().Bytes() + fmtLen + 1;
         if (len > kMaxStackBytes) {
             bigStr = new TChar[len];
             (void)sprintf(bigStr, fmt, paramName.Ptr(), argString.Value().Ptr());

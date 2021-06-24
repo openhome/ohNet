@@ -631,7 +631,7 @@ SocketTcpServer::SocketTcpServer(Environment& aEnv, const TChar* aName, TUint aP
     , iTerminating(false)
 {
     LOG_TRACE(kNetwork, "SocketTcpServer::SocketTcpServer\n");
-    iHandle = SocketCreate(aEnv, eSocketTypeStream, eSocketFamilyV4);
+    iHandle = SocketCreate(aEnv, eSocketTypeStream, aInterface.iFamily == kFamilyV4 ? eSocketFamilyV4 : eSocketFamilyV6);
     OpenHome::Os::NetworkSocketSetReuseAddress(iHandle);
     TryNetworkTcpSetNoDelay(iHandle);
     iInterface = aInterface;
