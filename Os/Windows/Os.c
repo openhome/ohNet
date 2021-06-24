@@ -1198,10 +1198,11 @@ failure:
 #else
 #define IF_TYPE_ETHERNET_CSMACD 6
 
-  int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aInterfaces, uint32_t aUseLoopback)
+  int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aInterfaces, uint32_t aUseLoopback, uint32_t aIpVersion)
   {
     UNUSED(aContext);
     UNUSED(aUseLoopback);
+    UNUSED(aIpVersion);
 
     OsNetworkAdapter* head = NULL;
 
