@@ -963,7 +963,7 @@ void MdnsPlatform::Unlock()
     if (next < 0) {
         LOG(kBonjour, "Bonjour             Ignore Impossible Event: %d\n", next);
     }
-    else if (iPrevTimerRequest == next) {
+    else if (iPrevTimerRequest == next && iMdns->timenow <= iMdns->NextScheduledEvent) {
         LOG(kBonjour, "Bonjour             Ignore Duplicate Event %d\n", next);
     }
     else {
