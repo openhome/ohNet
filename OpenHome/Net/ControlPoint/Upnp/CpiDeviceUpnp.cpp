@@ -432,13 +432,29 @@ void CpiDeviceUpnp::GetServiceUri(Uri& aUri, const TChar* aType, const ServiceTy
     // now create a uri using the scheme/host/port of the device xml location
     // plus the path we've just constructed
     Bws<40> base; // just need space for http://xxx.xxx.xxx.xxx:xxxxx
-    aUri.Replace(iLocation);
-    base.Append(aUri.Scheme());
-    base.Append("://");
-    base.Append(aUri.Host());
-    base.Append(':');
-    Ascii::AppendDec(base, aUri.Port());
-    aUri.Replace(base, path);
+
+    try 
+    {
+        aUri.Replace(iLocation);
+        base.Append(aUri.Scheme());
+        base.Append("://");
+        base.Append(aUri.Host());
+        base.Append(':');
+        Ascii::AppendDec(base, aUri.Port());      
+        aUri.Replace(base, path);
+    }
+    catch (UriError&)
+    {
+        LOG_ERROR(kDevice, 
+                  "Unable to construct URI: Location: '%.*s', Base: '%.*s', Path: '%.*s'\n",
+                  PBUF(iLocation),
+                  PBUF(base),
+                  PBUF(path));
+
+        throw;
+    }
+
+
 }
 
 TBool CpiDeviceUpnp::UdnMatches(const Brx& aFound, const Brx& aTarget)
