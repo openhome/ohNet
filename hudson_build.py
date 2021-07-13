@@ -268,7 +268,7 @@ class JenkinsBuild():
             args.append('--buildonly')
         elif arch == 'x64':
             if os_platform  == 'macos':
-                args.append('--buildonly') # see #7610 revert to --native-tests when this is fixed
+                args.append('--native-tests')
             elif os_platform not in ['windows', 'linux', 'iOs']:
                 args.append('--native-builds')
         if os_platform == 'windows' and arch == 'x86':
