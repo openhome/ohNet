@@ -2246,7 +2246,7 @@ static void SleepWakeDestroy(OsContext* aContext)
         if (sleepWake->iNotifyPortRef != NULL)
             break;
 
-        sleep(0.75);
+        sleep(2);
     }
 
     Debug("SleepWakeDestory [WARN]: iNotifyPortRef is still NULL after spinwait. Certain teardown operations wont be run.\n");
