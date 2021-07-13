@@ -447,7 +447,7 @@ THandle OsSemaphoreCreate(OsContext* aContext, const char* aName, uint32_t aCoun
 static void Debug(char* message, ...)
 {
     va_list args;
-    int enableDebug = 0; // 1 enables, 0 disables debug output
+    const int enableDebug = 0; // 1 enables, 0 disables debug output
     if (enableDebug) {
         WriteTimeStamp();
         va_start(args, message);
@@ -2249,7 +2249,9 @@ static void SleepWakeDestroy(OsContext* aContext)
         sleep(2);
     }
 
-    Debug("SleepWakeDestory [WARN]: iNotifyPortRef is still NULL after spinwait. Certain teardown operations wont be run.\n");
+    if (sleepWake->iNotifyPortRef == NULL) {
+        Debug("SleepWakeDestory [WARN]: iNotifyPortRef is still NULL after spinwait. Certain teardown operations wont be run.\n");
+    }
 
     if (sleepWake->iNotifyPortRef != NULL)
     {
