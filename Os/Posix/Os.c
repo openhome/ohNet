@@ -944,6 +944,8 @@ uint32_t sockaddrFromEndpoint(struct sockaddr* aAddr, const TIpAddress* aAddress
         struct sockaddr_in6 addr;
         addr.sin6_family = 10; // AF_INET6
         addr.sin6_port = htons(aPort);
+        addr.sin6_scope_id = 0;
+        addr.sin6_flowinfo = 0;
         in6AddrFromTIpAddress(&addr.sin6_addr, aAddress);
         memcpy(aAddr, &addr, sizeof(addr));
         return sizeof(addr);
