@@ -270,6 +270,7 @@ private:
     Timer* iTimer;
     Mutex iTimerLock;
     MulticastListeners iListeners;
+    TBool iIPv6Enabled;
     SocketUdp iClient;
     mDNS* iMdns;
     Mutex iInterfacesLock;
