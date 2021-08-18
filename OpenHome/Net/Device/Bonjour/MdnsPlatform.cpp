@@ -523,7 +523,7 @@ MdnsPlatform::MdnsPlatform(Environment& aEnv, const TChar* aHost, TBool aHasCach
     , iTimerLock("BNJ4")
     , iListeners(iEnv, *this)
     , iIPv6Enabled(iEnv.InitParams()->IPv6Supported())
-    , iClient(aEnv, 5353, iIPv6Enabled ? ESocketFamily::eSocketFamilyV6 : ESocketFamily::eSocketFamilyV4)
+    , iClient(aEnv, 5353, iIPv6Enabled ? eSocketFamilyV6 : eSocketFamilyV4)
     , iInterfacesLock("BNJ2")
     , iInterfaceIdAllocator()
     , iServicesLock("BNJ3")
