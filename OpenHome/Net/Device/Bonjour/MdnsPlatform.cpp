@@ -536,6 +536,7 @@ MdnsPlatform::MdnsPlatform(Environment& aEnv, const TChar* aHost, TBool aHasCach
     , iDiscoveryLock("BNJ6")
     , iPrevTimerRequest(0)
     , iMulticastReceiveLock("BNJ7")
+    , iCheckEventServiced(false)
 {
     LOG(kBonjour, "Bonjour             Constructor\n");
     iTimer = new Timer(iEnv, MakeFunctor(*this, &MdnsPlatform::TimerExpired), "MdnsPlatform");
@@ -964,10 +965,26 @@ void MdnsPlatform::Unlock()
     if (next < 0) {
         LOG(kBonjour, "Bonjour             Ignore Impossible Event: %d\n", next);
     }
-    else if (iPrevTimerRequest == next && iMdns->timenow <= iMdns->NextScheduledEvent) {
-        LOG(kBonjour, "Bonjour             Ignore Duplicate Event %d\n", next);
+    else if (iPrevTimerRequest == next) {
+        if (Time::IsInPastOrNow(iEnv, next)) {
+            if (iCheckEventServiced) {
+                Log::Print("MdnsPlatform::Unlock() - ERROR Unserviced Event %d\n", next);
+            }
+            iTimer->Cancel();
+            iTimer->FireIn(0);
+            iCheckEventServiced = true;
+            Log::Print("MdnsPlatform::Unlock() - Execute Unserviced Event %d\n", next);
+            // LOG(kBonjour, "Bonjour             Execute Unserviced Event %d\n", next);
+        }
+        else {
+            LOG(kBonjour, "Bonjour             Ignore Duplicate Event %d\n", next);
+        }
     }
     else {
+        if (iCheckEventServiced) {
+            Log::Print("MdnsPlatform::Unlock(): Event serviced successfully - iPrevTimerRequest: %d, next: %d\n", iPrevTimerRequest, next);
+            iCheckEventServiced = false;
+        }
         iPrevTimerRequest = next;
         if (!iTimerDisabled) {
             iTimer->FireAt(next);

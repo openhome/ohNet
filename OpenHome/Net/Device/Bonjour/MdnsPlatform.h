@@ -295,6 +295,7 @@ private:
     Mutex iDiscoveryLock;
     TInt iPrevTimerRequest;
     Mutex iMulticastReceiveLock;
+    TBool iCheckEventServiced;
 };
 
 } // namespace Net
