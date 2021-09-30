@@ -1,5 +1,5 @@
 diff --git a/thirdparty/mDNSResponder-1310.80.1/mDNSCore/mDNS.c b/thirdparty/mDNSResponder-1310.80.1/mDNSCore/mDNS.c
-index c32c9154..0e6f50db 100644
+index c32c9154..d673c7de 100644
 --- a/Build/mDNS/mDNS.c
 +++ b/Build/mDNS/mDNS.c
 @@ -26,6 +26,8 @@
@@ -197,9 +197,9 @@ index c32c9154..0e6f50db 100644
 +{
 +}
 +
-+mDNSexport mDNSs32 mDNS_Execute(mDNS *const /*m*/)
++mDNSexport mDNSBool mDNS_Execute(mDNS *const /*m*/)
 +{
-+    return mStatus_NoError;
++    return mDNStrue;
 +}
 +
 +mDNSexport mStatus mDNS_RegisterService(mDNS *const /*m*/, ServiceRecordSet * /*sr*/,
