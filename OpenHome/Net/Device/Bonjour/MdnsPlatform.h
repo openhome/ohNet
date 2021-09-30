@@ -18,6 +18,9 @@
 #include <vector>
 #include <map>
 
+EXCEPTION(MdnsImpossibleEvent);
+EXCEPTION(MdnsDuplicateEvent);
+
 namespace OpenHome {
 
 class Environment;
@@ -243,6 +246,28 @@ private:
         TUint iPort;
         Bws<2048> iInfo;
     };
+    class MdnsEventScheduler
+    {
+    // MdnsEventSchedulers public interface functions MUST be called with mDNS_Lock() held
+    private:
+        static const TInt kEventInvalid = 0;
+        static const TUint kEventRetryMs = 50;
+    public:
+        MdnsEventScheduler(Environment& aStack, mDNS* aMdns);
+        ~MdnsEventScheduler();
+        void TrySchedule(TInt aEvent); // can throw MdnsDuplicateEvent, or MdnsImpossibleEvent
+        TBool Enabled();
+        void SetEnabled(TBool aEnable);
+    private:
+        void TimerExpired();
+        void ScheduleNow();
+    private:
+        mDNS* iMdns;
+        Timer* iTimer;
+        TInt iNextEvent;
+        TBool iEnabled;
+        Mutex iLock;
+    };
     /*
      * Simple recursive mutex.
      *
@@ -267,8 +292,7 @@ private:
     Brhz iHost;
     TBool iHasCache;
     MutexRecursive iMutex;
-    Timer* iTimer;
-    Mutex iTimerLock;
+    MdnsEventScheduler* iEventScheduler;
     MulticastListeners iListeners;
     TBool iIPv6Enabled;
     SocketUdp iClient;
@@ -287,15 +311,12 @@ private:
     Map iServices;
     TUint iNextServiceIndex;
     TBool iStop;
-    TBool iTimerDisabled;
     std::vector<DNSServiceRef*> iSdRefs;
     std::vector<IMdnsDeviceListener*> iDeviceListeners;
     CacheEntity* iMdnsCache;
     std::vector<void*> iDynamicCache;
     Mutex iDiscoveryLock;
-    TInt iPrevTimerRequest;
     Mutex iMulticastReceiveLock;
-    TBool iCheckEventServiced;
 };
 
 } // namespace Net

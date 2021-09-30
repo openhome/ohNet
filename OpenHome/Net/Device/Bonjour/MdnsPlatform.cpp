@@ -220,6 +220,70 @@ TUint MdnsPlatform::MdnsService::RenameAndReregister()
 }
 
 
+// MdnsPlatform::MdnsEventScheduler
+
+MdnsPlatform::MdnsEventScheduler::MdnsEventScheduler(Environment& aStack, mDNS* aMdns)
+    : iMdns(aMdns)
+    , iNextEvent(kEventInvalid)
+    , iEnabled(true)
+    , iLock("MEVT")
+{
+    iTimer = new Timer(aStack, MakeFunctor(*this, &MdnsPlatform::MdnsEventScheduler::TimerExpired), "MdnsEventScheduler");
+}
+
+MdnsPlatform::MdnsEventScheduler::~MdnsEventScheduler()
+{
+    delete iTimer;
+}
+
+void MdnsPlatform::MdnsEventScheduler::TrySchedule(TInt aEvent)
+{
+    AutoMutex amx(iLock);
+    if (aEvent < kEventInvalid) {
+        THROW(MdnsImpossibleEvent);
+    }
+    else if (aEvent == iNextEvent) {
+        THROW(MdnsDuplicateEvent);
+    }
+    else {
+        iNextEvent = aEvent;
+        if (iEnabled) {
+            iTimer->FireAt(iNextEvent);
+        }
+    }
+}
+
+TBool MdnsPlatform::MdnsEventScheduler::Enabled()
+{
+    AutoMutex amx(iLock);
+    return iEnabled;
+}
+
+void MdnsPlatform::MdnsEventScheduler::SetEnabled(TBool aEnable)
+{
+    AutoMutex amx(iLock);
+    iEnabled = aEnable;
+}
+
+void MdnsPlatform::MdnsEventScheduler::TimerExpired()
+{
+    if (!mDNS_Execute(iMdns)) {
+        LOG_ERROR(kBonjour, "Bonjour             Call to mDNS_Execute() failed. Retrying...\n");
+        ScheduleNow();
+    }
+}
+
+void MdnsPlatform::MdnsEventScheduler::ScheduleNow()
+{
+    try {
+        TrySchedule(mDNSPlatformRawTime() + kEventRetryMs);
+    }
+    catch (...) {
+        Log::Print("MdnsPlatform::MdnsEventScheduler::ScheduleNow() FAILURE: Attempt to retry mDNS_Execute() failed\n");
+        throw;
+    }
+}
+
 // ReadWriteLock
 
 ReadWriteLock::ReadWriteLock(const TChar* aId) 
@@ -520,7 +584,6 @@ MdnsPlatform::MdnsPlatform(Environment& aEnv, const TChar* aHost, TBool aHasCach
     : iEnv(aEnv)
     , iHost(aHost)
     , iHasCache(aHasCache)
-    , iTimerLock("BNJ4")
     , iListeners(iEnv, *this)
     , iIPv6Enabled(iEnv.InitParams()->IPv6Supported())
     , iClient(aEnv, 5353, iIPv6Enabled ? eSocketFamilyV6 : eSocketFamilyV4)
@@ -531,17 +594,14 @@ MdnsPlatform::MdnsPlatform(Environment& aEnv, const TChar* aHost, TBool aHasCach
     , iFifoPending(kMaxQueueLength)
     , iSem("BNJS", 0)
     , iStop(false)
-    , iTimerDisabled(false)
     , iMdnsCache(NULL)
     , iDiscoveryLock("BNJ6")
-    , iPrevTimerRequest(0)
     , iMulticastReceiveLock("BNJ7")
-    , iCheckEventServiced(false)
 {
     LOG(kBonjour, "Bonjour             Constructor\n");
-    iTimer = new Timer(iEnv, MakeFunctor(*this, &MdnsPlatform::TimerExpired), "MdnsPlatform");
     iNextServiceIndex = 0;
     iMdns = &mDNSStorage;
+    iEventScheduler = new MdnsEventScheduler(iEnv, iMdns);
 
     Status status = mStatus_NoError;
     if (iHasCache) {
@@ -572,11 +632,7 @@ MdnsPlatform::~MdnsPlatform()
 {
     iEnv.NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
     iEnv.NetworkAdapterList().RemoveCurrentChangeListener(iCurrentAdapterChangeListenerId);
-    iTimerLock.Wait();
-    iTimerDisabled = true;
-    iTimerLock.Signal();
-    delete iTimer;
-    iTimer = NULL;
+    iEventScheduler->SetEnabled(false);
 #ifndef DEFINE_WINDOWS_UNIVERSAL
     for (TUint i=0; i<iSdRefs.size(); i++) {
         DNSServiceRefDeallocate(*iSdRefs[i]);
@@ -604,6 +660,7 @@ MdnsPlatform::~MdnsPlatform()
     while (iFifoPending.SlotsUsed() > 0) {
         delete iFifoPending.Read();
     }
+    delete iEventScheduler;
     free(iMdnsCache);
 }
 
@@ -961,37 +1018,16 @@ void MdnsPlatform::Lock()
 void MdnsPlatform::Unlock()
 {
     TInt next = iMdns->NextScheduledEvent - iMdns->timenow_adjust;
-    iTimerLock.Wait();
-    if (next < 0) {
-        LOG(kBonjour, "Bonjour             Ignore Impossible Event: %d\n", next);
-    }
-    else if (iPrevTimerRequest == next) {
-        if (Time::IsInPastOrNow(iEnv, next)) {
-            if (iCheckEventServiced) {
-                Log::Print("MdnsPlatform::Unlock() - ERROR Unserviced Event %d\n", next);
-            }
-            iTimer->Cancel();
-            iTimer->FireIn(0);
-            iCheckEventServiced = true;
-            Log::Print("MdnsPlatform::Unlock() - Execute Unserviced Event %d\n", next);
-            // LOG(kBonjour, "Bonjour             Execute Unserviced Event %d\n", next);
-        }
-        else {
-            LOG(kBonjour, "Bonjour             Ignore Duplicate Event %d\n", next);
-        }
-    }
-    else {
-        if (iCheckEventServiced) {
-            Log::Print("MdnsPlatform::Unlock(): Event serviced successfully - iPrevTimerRequest: %d, next: %d\n", iPrevTimerRequest, next);
-            iCheckEventServiced = false;
-        }
-        iPrevTimerRequest = next;
-        if (!iTimerDisabled) {
-            iTimer->FireAt(next);
-        }
+    try {
+        iEventScheduler->TrySchedule(next);
         LOG(kBonjour, "Bonjour             Next Scheduled Event %d\n", next);
     }
-    iTimerLock.Signal();
+    catch (MdnsImpossibleEvent&) {
+        LOG(kBonjour, "Bonjour             Ignore Impossible Event: %d\n", next);
+    }
+    catch (MdnsDuplicateEvent&) {
+        LOG(kBonjour, "Bonjour             Ignore Duplicate Event %d\n", next);
+    }
     LOG(kBonjour, "Bonjour             Unlock\n");
     iMutex.Unlock();
 }
@@ -1093,7 +1129,7 @@ MdnsPlatform::Status MdnsPlatform::SendUdp(const Brx& aBuffer, const Endpoint& a
 
 void MdnsPlatform::Close()
 {
-    ASSERT(iTimerDisabled);
+    ASSERT(!iEventScheduler->Enabled());
     iStop = true;
     iListeners.Stop();
 

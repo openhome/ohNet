@@ -1,5 +1,5 @@
 diff --git a/thirdparty/mDNSResponder-1310.80.1/mDNSCore/mDNS.c b/thirdparty/mDNSResponder-1310.80.1/mDNSCore/mDNS.c
-index c32c9154..a362410f 100644
+index c32c9154..0e6f50db 100644
 --- a/Build/mDNS/mDNS.c
 +++ b/Build/mDNS/mDNS.c
 @@ -26,6 +26,8 @@
@@ -69,7 +69,20 @@ index c32c9154..a362410f 100644
      checksum.NotAnInteger = ~IPv6CheckSum(spa, v6dst, 0x3A, &m->omsg.data[0x36], m->omsg.data[0x13]);
      m->omsg.data[0x38] = checksum.b[0];
      m->omsg.data[0x39] = checksum.b[1];
-@@ -5490,32 +5508,37 @@ mDNSexport mDNSs32 mDNS_Execute(mDNS *const m)
+@@ -5464,10 +5482,11 @@ mDNSlocal void mDNSCoreFreeProxyRR(mDNS *const m)
+     m->SPSRRSet = mDNSNULL;
+ }
+ 
+-mDNSexport mDNSs32 mDNS_Execute(mDNS *const m)
++mDNSexport mDNSBool mDNS_Execute(mDNS *const m)
+ {
+     mDNS_Lock(m);   // Must grab lock before trying to read m->timenow
+ 
++    mDNSBool ret = mDNStrue;
+     if (m->timenow - m->NextScheduledEvent >= 0)
+     {
+         int i;
+@@ -5490,32 +5509,37 @@ mDNSexport mDNSs32 mDNS_Execute(mDNS *const m)
          // 2. If it's been more than ten seconds since the last probe failure, we can clear the counter
          if (m->NumFailedProbes && m->timenow - m->ProbeFailTime >= mDNSPlatformOneSecond * 10) m->NumFailedProbes = 0;
  
@@ -125,7 +138,26 @@ index c32c9154..a362410f 100644
          }
  
          if (m->timenow - m->NextScheduledSPS >= 0)
-@@ -13887,7 +13910,7 @@ mDNSlocal mDNSBool mDNS_IdUsedInQuestionsList(mDNS * const m, mDNSOpaque16 id)
+@@ -5726,6 +5750,9 @@ mDNSexport mDNSs32 mDNS_Execute(mDNS *const m)
+         if (m->NextBLEServiceTime && (m->timenow - m->NextBLEServiceTime >= 0)) serviceBLE();
+ #endif // APPLE_OSX_mDNSResponder && ENABLE_BLE_TRIGGERED_BONJOUR
+     }
++    else {
++        ret = mDNSfalse;
++    }
+ 
+     // Note about multi-threaded systems:
+     // On a multi-threaded system, some other thread could run right after the mDNS_Unlock(),
+@@ -5748,7 +5775,7 @@ mDNSexport mDNSs32 mDNS_Execute(mDNS *const m)
+     // by the time it gets to the timer callback function).
+ 
+     mDNS_Unlock(m);     // Calling mDNS_Unlock is what gives m->NextScheduledEvent its new value
+-    return(m->NextScheduledEvent);
++    return ret;
+ }
+ 
+ #ifndef UNICAST_DISABLED
+@@ -13887,7 +13914,7 @@ mDNSlocal mDNSBool mDNS_IdUsedInQuestionsList(mDNS * const m, mDNSOpaque16 id)
  
  mDNSexport mDNSOpaque16 mDNS_NewMessageID(mDNS * const m)
  {
@@ -134,7 +166,7 @@ index c32c9154..a362410f 100644
      int i;
  
      for (i=0; i<10; i++)
-@@ -15183,7 +15206,7 @@ mDNSexport mStatus uDNS_SetupDNSConfig(mDNS *const m)
+@@ -15183,7 +15210,7 @@ mDNSexport mStatus uDNS_SetupDNSConfig(mDNS *const m)
      v4 = v6 = r = zeroAddr;
      v4.type = r.type = mDNSAddrType_IPv4;
  
@@ -143,7 +175,7 @@ index c32c9154..a362410f 100644
      {
          mDNS_SetPrimaryInterfaceInfo(m,
                                       !mDNSIPv4AddressIsZero(v4.ip.v4) ? &v4 : mDNSNULL,
-@@ -15392,3 +15415,68 @@ mDNSexport void mDNS_FinalExit(mDNS *const m)
+@@ -15392,3 +15419,68 @@ mDNSexport void mDNS_FinalExit(mDNS *const m)
  #ifdef UNIT_TEST
  #include "../unittests/mdns_ut.c"
  #endif
