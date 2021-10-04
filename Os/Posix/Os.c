@@ -873,6 +873,28 @@ static int32_t SocketInterrupted(const OsNetworkHandle* aHandle)
     return interrupted;
 }
 
+static int32_t isLoopback(struct sockaddr* aInterface)
+{
+#ifdef DEFINE_BIG_ENDIAN
+#define MakeIpAddress(aByte1, aByte2, aByte3, aByte4) \
+        (aByte4 | (aByte3<<8) | (aByte2<<16) | (aByte1<<24))
+#elif defined(DEFINE_LITTLE_ENDIAN)
+#define MakeIpAddress(aByte1, aByte2, aByte3, aByte4) \
+        (aByte1 | (aByte2<<8) | (aByte3<<16) | (aByte4<<24))
+#else
+#error "Endianness must be defined."
+#endif
+
+    uint32_t loopbackAddrV4 = MakeIpAddress(127, 0, 0, 1);
+
+    if (aInterface->sa_family == AF_INET6) {
+        return IN6_IS_ADDR_LOOPBACK(&((struct sockaddr_in6*)aInterface)->sin6_addr);
+    }
+    else {
+        return (((struct sockaddr_in*)aInterface)->sin_addr.s_addr == loopbackAddrV4);
+    }
+}
+
 static int32_t TIpAddressesAreEqual(const TIpAddress* aAddr1, const TIpAddress* aAddr2)
 {
     if (aAddr1->iFamily == aAddr2->iFamily) {
@@ -936,15 +958,45 @@ static int32_t ipv6AddressIsLinkLocal(const TIpAddress* aAddress)
     return 0;
 }
 
+static uint32_t getScopeId(const TIpAddress* aAddress)
+{
+    // Loop through our active interfaces for a match and return the scope_id
+    // Only applies to link-local IPv6 addresses
+
+    uint32_t id = 0;  // default scope_id to be used on all non-link-local IPv6 addresses
+
+    if (ipv6AddressIsLinkLocal(aAddress)) {
+        struct ifaddrs* networkIf;
+        if (TEMP_FAILURE_RETRY(getifaddrs(&networkIf)) == -1) {
+            return id;
+        }
+
+        while (networkIf != NULL) {
+            if (networkIf->ifa_addr != NULL &&
+                networkIf->ifa_addr->sa_family == AF_INET6 &&
+                (networkIf->ifa_flags & IFF_RUNNING) != 0 &&
+                !isLoopback(networkIf->ifa_addr)) {
+
+                const TIpAddress intf = TIpAddressFromSockAddr(networkIf->ifa_addr);
+                if (TIpAddressesAreEqual(aAddress, &intf)) {
+                    return ((struct sockaddr_in6*)networkIf->ifa_addr)->sin6_scope_id;
+                }
+            }
+            networkIf = networkIf->ifa_next;
+        }
+    }
+    return id;
+}
+
 uint32_t sockaddrFromEndpoint(struct sockaddr* aAddr, const TIpAddress* aAddress, uint16_t aPort)
 {
     memset(aAddr, 0, sizeof(struct sockaddr_in6));
     // Check for IPv6 default to IPv4
     if (aAddress->iFamily == kFamilyV6) {
         struct sockaddr_in6 addr;
-        addr.sin6_family = 10; // AF_INET6
+        addr.sin6_family = AF_INET6;
         addr.sin6_port = htons(aPort);
-        addr.sin6_scope_id = 0;
+        addr.sin6_scope_id = getScopeId(aAddress);
         addr.sin6_flowinfo = 0;
         in6AddrFromTIpAddress(&addr.sin6_addr, aAddress);
         memcpy(aAddr, &addr, sizeof(addr));
@@ -952,7 +1004,7 @@ uint32_t sockaddrFromEndpoint(struct sockaddr* aAddr, const TIpAddress* aAddress
     }
     else {
         struct sockaddr_in addr;
-        addr.sin_family = 2; // AF_INET
+        addr.sin_family = AF_INET;
         addr.sin_port = htons(aPort);
         addr.sin_addr.s_addr = aAddress->iV4;
         memcpy(aAddr, &addr, sizeof(addr));
@@ -1540,28 +1592,6 @@ static int32_t NetMasksAreEqual(const TIpAddress* aAddr1, const TIpAddress* aAdd
         return ((aAddr1->iV4 & aAddr2->iV4) == aAddr1->iV4);
     }
     return 0;
-}
-
-static int32_t isLoopback(struct sockaddr* aInterface)
-{
-#ifdef DEFINE_BIG_ENDIAN
-#define MakeIpAddress(aByte1, aByte2, aByte3, aByte4) \
-        (aByte4 | (aByte3<<8) | (aByte2<<16) | (aByte1<<24))
-#elif defined(DEFINE_LITTLE_ENDIAN)
-#define MakeIpAddress(aByte1, aByte2, aByte3, aByte4) \
-        (aByte1 | (aByte2<<8) | (aByte3<<16) | (aByte4<<24))
-#else
-#error "Endianness must be defined."
-#endif
-
-    uint32_t loopbackAddrV4 = MakeIpAddress(127, 0, 0, 1);
-
-    if (aInterface->sa_family == AF_INET6) {
-        return IN6_IS_ADDR_LOOPBACK(&((struct sockaddr_in6*)aInterface)->sin6_addr);
-    }
-    else {
-        return (((struct sockaddr_in*)aInterface)->sin_addr.s_addr == loopbackAddrV4);
-    }
 }
 
 static void append(OsNetworkAdapter* aAdapter, OsNetworkAdapter** aHead, OsNetworkAdapter** aTail)
