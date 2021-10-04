@@ -990,7 +990,7 @@ static uint32_t getScopeId(const TIpAddress* aAddress)
 
 uint32_t sockaddrFromEndpoint(struct sockaddr* aAddr, const TIpAddress* aAddress, uint16_t aPort)
 {
-    memset(aAddr, 0, sizeof(struct sockaddr_in6));
+    memset(aAddr, 0, sizeof(struct sockaddr_storage));
     // Check for IPv6 default to IPv4
     if (aAddress->iFamily == kFamilyV6) {
         struct sockaddr_in6 addr;
@@ -1056,9 +1056,7 @@ int32_t OsNetworkBind(THandle aHandle, TIpAddress aAddress, uint32_t aPort)
     int32_t err;
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
 
-    // Create storage for the larger of the two structs (sockaddr_in/sockaddr_in6)
-    // Helper function will setup sockaddr for IPv4/v6
-    struct sockaddr_in6 addr;
+    struct sockaddr_storage addr;
     int32_t len = sockaddrFromEndpoint((struct sockaddr*)&addr, &aAddress, (uint16_t)aPort);
 
     err = bind(handle->iSocket, (struct sockaddr*)&addr, len);
@@ -1102,9 +1100,7 @@ int32_t OsNetworkConnect(THandle aHandle, TIpAddress aAddress, uint16_t aPort, u
 
     SetFdNonBlocking(handle->iSocket);
 
-    // Create storage for the larger of the two structs (sockaddr_in/sockaddr_in6)
-    // Helper function will setup sockaddr for IPv4/v6
-    struct sockaddr_in6 addr;
+    struct sockaddr_storage addr;
     uint32_t len = sockaddrFromEndpoint((struct sockaddr*)&addr, &aAddress, aPort);
     /* ignore err as we expect this to fail due to EINPROGRESS */
     (void)connect(handle->iSocket, (struct sockaddr*)&addr, len);
@@ -1163,9 +1159,8 @@ int32_t OsNetworkSendTo(THandle aHandle, const uint8_t* aBuffer, uint32_t aBytes
     if (SocketInterrupted(handle)) {
         return -1;
     }
-    // Create storage for the larger of the two structs (sockaddr_in/sockaddr_in6)
-    // Helper function will setup sockaddr for IPv4/v6
-    struct sockaddr_in6 addr;
+
+    struct sockaddr_storage addr;
     uint32_t len = sockaddrFromEndpoint((struct sockaddr*)&addr, &aAddress, aPort);
 
     int32_t sent = 0;
