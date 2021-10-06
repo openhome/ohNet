@@ -278,7 +278,10 @@ void MdnsPlatform::MdnsEventScheduler::ScheduleNow()
     try {
         TrySchedule(mDNSPlatformRawTime() + kEventRetryMs);
     }
-    catch (...) {
+    catch (MdnsDuplicateEvent&) {
+        // Can occur in some scenarios. Indicates normal operation will resume on the following event.
+    }
+    catch (MdnsImpossibleEvent&) {
         Log::Print("MdnsPlatform::MdnsEventScheduler::ScheduleNow() FAILURE: Attempt to retry mDNS_Execute() failed\n");
         throw;
     }
