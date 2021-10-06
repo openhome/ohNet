@@ -1,6 +1,8 @@
 #include <OpenHome/Private/TIpAddressUtils.h>
 #include <OpenHome/Private/Ascii.h>
 
+#include <stdio.h>
+
 using namespace OpenHome;
 
 TBool TIpAddressUtils::Equals(const TIpAddress& aAddr1, const TIpAddress& aAddr2)
@@ -81,6 +83,38 @@ TBool TIpAddressUtils::IsLoopback(const TIpAddress& aAddr)
         }
     }
     return false;
+}
+
+TBool TIpAddressUtils::IsIPv6MappedIPv4Address(const TIpAddress& aAddr)
+{
+    if (aAddr.iFamily != kFamilyV6) {
+        return false;
+    }
+    TUint8 mappedIPv4Prefix[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xff, 0xff };
+    for (TUint i = 0; i < 12; i++) {
+        if (aAddr.iV6[i] != mappedIPv4Prefix[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+TIpAddress TIpAddressUtils::IPv4FromIPv6MappedIPv4Address(const TIpAddress& aAddr)
+{
+    ASSERT(IsIPv6MappedIPv4Address(aAddr));
+
+    TIpAddress addr;
+    addr.iFamily = kFamilyV4;
+    addr.iV4 = 0;
+#ifdef DEFINE_LITTLE_ENDIAN
+    TUint bitShifts[4] = { 0, 8, 16, 24 };
+#elif DEFINE_BIG_ENDIAN
+    TUint bitShifts[4] = { 24, 16, 8, 0 };
+#endif
+    for (TUint i = 0; i < 4; i++) {
+        addr.iV4 |= (TUint32)(aAddr.iV6[i + 12] << bitShifts[i]);
+    }
+    return addr;
 }
 
 void TIpAddressUtils::ToString(const TIpAddress& aAddr, Bwx& aAddressBuffer)

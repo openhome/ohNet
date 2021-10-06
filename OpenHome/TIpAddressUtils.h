@@ -17,6 +17,8 @@ public:
     static TIpAddress ApplyMask(const TIpAddress& aAddr, const TIpAddress& aMask);
     static TBool IsZero(const TIpAddress& aAddr);
     static TBool IsLoopback(const TIpAddress& aAddr);
+    static TBool IsIPv6MappedIPv4Address(const TIpAddress& aAddr);
+    static TIpAddress IPv4FromIPv6MappedIPv4Address(const TIpAddress& aAddr);
     static void ToString(const TIpAddress& aAddr, Bwx& aAddressBuffer);
 private:
     static void AddressToStringV4(Bwx& aAddressBuffer, const TIpAddress& aAddress);

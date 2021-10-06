@@ -66,6 +66,9 @@ void Endpoint::SetPort(const Endpoint& aEndpoint)
 void Endpoint::SetAddress(const Brx& aAddress)
 {
     iAddress = GetHostByName(aAddress);
+    if (TIpAddressUtils::IsIPv6MappedIPv4Address(iAddress)) {
+        iAddress = TIpAddressUtils::IPv4FromIPv6MappedIPv4Address(iAddress);
+    }
 }
 
 void Endpoint::SetAddress(TIpAddress aAddress)
