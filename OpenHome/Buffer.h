@@ -202,6 +202,16 @@ public:
     TBool operator()(const Brx& aStr1, const Brx& aStr2) const;
 };
 
+/*
+ * Custom comparison function for stl containers mapped on Brx pointers.
+ * Uses BufferCmp under the hood
+ */
+class BufferPtrCmp
+{
+public:
+    TBool operator()(const Brx* aStr1, const Brx* aStr2) const;
+}
+
 #include <OpenHome/Buffer.inl>
 
 } // namespace OpenHome

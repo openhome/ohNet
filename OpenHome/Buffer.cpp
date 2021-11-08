@@ -618,3 +618,13 @@ TBool BufferCmp::operator()(const Brx& aStr1, const Brx& aStr2) const
     return (bytes1 < bytes2);
 }
 
+
+// BufferPtrCmp
+
+TBool BufferPtrCmp::operator()(const Brx* aStr1,
+                               const Brx* aStr2) const
+{
+    BufferCmp cmp;
+    return cmp((*aStr1), (*aStr2));
+}
+
