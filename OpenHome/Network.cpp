@@ -636,14 +636,16 @@ void SocketTcpClient::Open(Environment& aEnv)
 {
     ASSERT(iHandle == kHandleNull);     // Ensure there isn't an open socket handle that's about to be leaked.
     LOG_TRACE(kNetwork, "SocketTcpClient::Open\n");
-    Create(aEnv, eSocketTypeStream, eSocketFamilyV4);
+    ESocketFamily sockFamily = aEnv.InitParams()->IPv6Supported() ? eSocketFamilyV6 : eSocketFamilyV4;
+    Create(aEnv, eSocketTypeStream, sockFamily);
     TryNetworkTcpSetNoDelay(iHandle);
 }
 
 void SocketTcpClient::Connect(const Endpoint& aEndpoint, TUint aTimeout)
 {
     LOG_TRACE(kNetwork, "SocketTcpClient::Connect\n");
-    OpenHome::Os::NetworkConnect(iHandle, aEndpoint, aTimeout);
+    Endpoint ep = GetEndpointForSocket(aEndpoint);
+    OpenHome::Os::NetworkConnect(iHandle, ep, aTimeout);
 }
 
 // Tcp Server
