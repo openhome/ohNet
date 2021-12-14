@@ -117,6 +117,50 @@ TIpAddress TIpAddressUtils::IPv4FromIPv6MappedIPv4Address(const TIpAddress& aAdd
     return addr;
 }
 
+TIpAddress TIpAddressUtils::MapIPv4ToIPv6Address(const TIpAddress& aAddr)
+{
+    TIpAddress addr;
+    addr.iFamily = kFamilyV6;
+
+    if (aAddr.iFamily == kFamilyV6) {
+        for (TUint i = 0; i < 16; i++) {
+            addr.iV6[i] = aAddr.iV6[i];
+        }
+        return addr;
+    }
+
+    if (Equals(aAddr, kIpAddressV4AllAdapters)) {
+        return AddressV6AllAdapters();
+    }
+
+    TUint8 mappedIPv4Prefix[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xff, 0xff };
+
+#ifdef DEFINE_LITTLE_ENDIAN
+    TUint bitShifts[4] = { 0, 8, 16, 24 };
+#elif DEFINE_BIG_ENDIAN
+    TUint bitShifts[4] = { 24, 16, 8, 0 };
+#endif
+
+    for (TUint i = 0; i < 12; i++) {
+        addr.iV6[i] = mappedIPv4Prefix[i];
+    }
+    for (TUint i = 0; i < 4; i++) {
+        addr.iV6[i + 12] = ((aAddr.iV4 >> bitShifts[i]) & 0xff);
+    }
+    return addr;
+}
+
+TIpAddress TIpAddressUtils::AddressV6AllAdapters()
+{
+    TIpAddress addr;
+    addr.iFamily = kFamilyV6;
+
+    for (TUint i = 0; i < 16; i++) {
+        addr.iV6[i] = 0x00;
+    }
+    return addr;
+}
+
 void TIpAddressUtils::ToString(const TIpAddress& aAddr, Bwx& aAddressBuffer)
 {
     (aAddr.iFamily == kFamilyV6) ? AddressToStringV6(aAddressBuffer, aAddr) : AddressToStringV4(aAddressBuffer, aAddr);

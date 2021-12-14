@@ -19,6 +19,8 @@ public:
     static TBool IsLoopback(const TIpAddress& aAddr);
     static TBool IsIPv6MappedIPv4Address(const TIpAddress& aAddr);
     static TIpAddress IPv4FromIPv6MappedIPv4Address(const TIpAddress& aAddr);
+    static TIpAddress MapIPv4ToIPv6Address(const TIpAddress& aAddr);
+    static TIpAddress AddressV6AllAdapters();
     static void ToString(const TIpAddress& aAddr, Bwx& aAddressBuffer);
 private:
     static void AddressToStringV4(Bwx& aAddressBuffer, const TIpAddress& aAddress);
