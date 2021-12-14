@@ -73,6 +73,7 @@ public:
     void Externalise(IWriter& aWriter);
     void Internalise(IReader& aReader);
     void InternaliseIPv6(IReader& aReader);
+    void ConvertToIPv6();
     static void AppendAddress(Bwx& aAddressBuffer, const TIpAddress& aAddress);
 private:
     TIpAddress iAddress;
@@ -108,10 +109,12 @@ protected:
     void Listen(TUint aSlots);
     THandle Accept(Endpoint& aClientEndpoint);
     TBool IsInterrupted() const;
+    Endpoint GetEndpointForSocket(const Endpoint& aEndpoint);
 private:
     void Log(const char* aPrefix, const Brx& aBuffer) const;
 protected:
     THandle iHandle;
+    ESocketFamily iSocketFamily;
 private:
     static const uint32_t kLogNone      = 0;
     static const uint32_t kLogPlainText = 1;
@@ -267,7 +270,6 @@ private:
     void Create(ESocketFamily aSocketFamily);
 protected:
     Environment& iEnv;
-    ESocketFamily iSocketFamily;
     TUint iPort;
 };
 

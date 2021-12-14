@@ -211,6 +211,11 @@ void Endpoint::InternaliseIPv6(IReader& aReader)
     iPort = (TUint16)rb.ReadUintBe(2);
 }
 
+void Endpoint::ConvertToIPv6()
+{
+    SetAddress(TIpAddressUtils::MapIPv4ToIPv6Address(iAddress));
+}
+
 // Replace the endpoint with the supplied endpoint
 void Endpoint::Replace(const Endpoint& aEndpoint)
 {
@@ -314,7 +319,8 @@ void Socket::LogVerbose(TBool aLog, TBool aHex)
 
 void Socket::Create(Environment& aEnv, ESocketType aSocketType, ESocketFamily aSocketFamily)
 {
-    THandle handle = SocketCreate(aEnv, aSocketType, aSocketFamily);
+    iSocketFamily = aSocketFamily;
+    THandle handle = SocketCreate(aEnv, aSocketType, iSocketFamily);
     iLock.Wait();
     iHandle = handle;
     iLock.Signal();
@@ -458,6 +464,22 @@ TBool Socket::IsInterrupted() const
 {
     AutoMutex _(iLock);
     return (iFlags & kInterrupted) != 0;
+}
+
+Endpoint Socket::GetEndpointForSocket(const Endpoint& aEndpoint)
+{
+    Endpoint ep;
+    ep.Replace(aEndpoint);
+
+    TUint epFamily = ep.Address().iFamily;
+    if (epFamily == kFamilyV4 && iSocketFamily == eSocketFamilyV6) {
+        ep.ConvertToIPv6();
+    }
+    else if (epFamily == kFamilyV6 && iSocketFamily == eSocketFamilyV4) {
+        LOG_ERROR(kNetwork, "Socket::GetEndpointForSocket, INVALID FAMILY\n");
+        THROW(NetworkError);
+    }
+    return ep;
 }
 
 void Socket::Log(const char* aPrefix, const Brx& aBuffer) const
@@ -634,7 +656,8 @@ SocketTcpServer::SocketTcpServer(Environment& aEnv, const TChar* aName, TUint aP
     , iTerminating(false)
 {
     LOG_TRACE(kNetwork, "SocketTcpServer::SocketTcpServer\n");
-    iHandle = SocketCreate(aEnv, eSocketTypeStream, aInterface.iFamily == kFamilyV4 ? eSocketFamilyV4 : eSocketFamilyV6);
+    iSocketFamily = aInterface.iFamily == kFamilyV6 ? eSocketFamilyV6 : eSocketFamilyV4;
+    iHandle = SocketCreate(aEnv, eSocketTypeStream, iSocketFamily);
     OpenHome::Os::NetworkSocketSetReuseAddress(iHandle);
     TryNetworkTcpSetNoDelay(iHandle);
     iInterface = aInterface;
@@ -796,7 +819,6 @@ SocketTcpSession::~SocketTcpSession()
 
 SocketUdpBase::SocketUdpBase(Environment& aEnv, ESocketFamily aSocketFamily)
     : iEnv(aEnv)
-    , iSocketFamily(aSocketFamily)
 {
     LOG_TRACE(kNetwork, "> SocketUdpBase::SocketUdpBase\n");
     Create(aSocketFamily);
@@ -871,17 +893,16 @@ SocketUdp::SocketUdp(Environment& aEnv, TUint aPort)
 SocketUdp::SocketUdp(Environment& aEnv, TUint aPort, ESocketFamily aSocketFamily)
     : SocketUdpBase(aEnv, aSocketFamily)
 {
+    LOG_TRACE(kNetwork, "> SocketUdp::SocketUdp P = %d, F = %d\n", aPort, aSocketFamily);
     if (aSocketFamily == eSocketFamilyV6) {
         TIpAddress addr;
-        addr.iFamily = kFamilyV6;
-        for (TUint i = 0; i < 16; i++) {
-            addr.iV6[i] = 0;
-        }
+        addr = TIpAddressUtils::AddressV6AllAdapters();
         Bind(aPort, addr);
     }
     else {
         Bind(aPort, kIpAddressV4AllAdapters);
     }
+    LOG_TRACE(kNetwork, "< SocketUdp::SocketUdp H = %d, P = %d, f = %d\n", iHandle, iPort, iSocketFamily);
 }
 
 SocketUdp::SocketUdp(Environment& aEnv, TUint aPort, const TIpAddress& aInterface)
@@ -915,7 +936,7 @@ void SocketUdp::Bind(TUint aPort, const TIpAddress& aInterface)
 // SocketUdpMulticast
 
 SocketUdpMulticast::SocketUdpMulticast(Environment& aEnv, const TIpAddress& aInterface, const Endpoint& aEndpoint)
-    : SocketUdpBase(aEnv, ((aInterface.iFamily == kFamilyV4) ? eSocketFamilyV4 : eSocketFamilyV6))
+    : SocketUdpBase(aEnv, (aInterface.iFamily == kFamilyV6 ? eSocketFamilyV6 : eSocketFamilyV4))
     , iInterface(aInterface)
     , iAddress(aEndpoint.Address())
 {
