@@ -958,37 +958,75 @@ static int32_t ipv6AddressIsLinkLocal(const TIpAddress* aAddress)
     return 0;
 }
 
-static uint32_t getScopeId(const TIpAddress* aAddress)
+static int32_t getScopeId(const TIpAddress* aAddress)
 {
     // Loop through our active interfaces for a match and return the scope_id
     // Only applies to link-local IPv6 addresses
 
-    uint32_t id = 0;  // default scope_id to be used on all non-link-local IPv6 addresses
+    int32_t id = -1;
+    struct ifaddrs* networkIf;
+    struct ifaddrs* iter;
 
-    if (ipv6AddressIsLinkLocal(aAddress)) {
-        struct ifaddrs* networkIf;
-        if (TEMP_FAILURE_RETRY(getifaddrs(&networkIf)) == -1) {
-            return id;
-        }
 
-        while (networkIf != NULL) {
-            if (networkIf->ifa_addr != NULL &&
-                networkIf->ifa_addr->sa_family == AF_INET6 &&
-                (networkIf->ifa_flags & IFF_RUNNING) != 0 &&
-                !isLoopback(networkIf->ifa_addr)) {
-
-                const TIpAddress intf = TIpAddressFromSockAddr(networkIf->ifa_addr);
-                if (TIpAddressesAreEqual(aAddress, &intf)) {
-                    return ((struct sockaddr_in6*)networkIf->ifa_addr)->sin6_scope_id;
-                }
-            }
-            networkIf = networkIf->ifa_next;
-        }
+    if (!ipv6AddressIsLinkLocal(aAddress)) {
+        return 0; // default scope_id to be used on all non-link-local IPv6 addresses
     }
+
+    if (TEMP_FAILURE_RETRY(getifaddrs(&networkIf)) == -1) {
+        goto exit;
+    }
+
+    iter = networkIf;
+    while (iter != NULL) {
+        if (iter->ifa_addr != NULL &&
+            iter->ifa_addr->sa_family == AF_INET6 &&
+            (iter->ifa_flags & IFF_RUNNING) != 0 &&
+            !isLoopback(iter->ifa_addr)) {
+
+            const TIpAddress intf = TIpAddressFromSockAddr(iter->ifa_addr);
+            if (TIpAddressesAreEqual(aAddress, &intf)) {
+                id = ((struct sockaddr_in6*)iter->ifa_addr)->sin6_scope_id;
+                goto exit;
+            }
+        }
+        iter = iter->ifa_next;
+    }
+
+exit:
+    freeifaddrs(networkIf);
     return id;
 }
 
-uint32_t sockaddrFromEndpoint(struct sockaddr* aAddr, const TIpAddress* aAddress, uint16_t aPort)
+static int32_t getInterfaceIndex(const TIpAddress* aAddress)
+{
+    int32_t index = 0;
+    int32_t ret = -1;
+    struct ifaddrs* networkIf;
+    struct ifaddrs* iter;
+
+    if (TEMP_FAILURE_RETRY(getifaddrs(&networkIf)) == -1) {
+        goto exit;
+    }
+
+    iter = networkIf;
+    while (iter != NULL) {
+        if (iter->ifa_addr != NULL) {
+            const TIpAddress thisIf = TIpAddressFromSockAddr(iter->ifa_addr);
+            if (TIpAddressesAreEqual(&thisIf, aAddress)) {
+                ret = index;
+                goto exit;
+            }
+        }
+        iter = iter->ifa_next;
+        index++;
+    }
+
+exit:
+    freeifaddrs(networkIf);
+    return ret;
+}
+
+int32_t sockaddrFromEndpoint(struct sockaddr* aAddr, const TIpAddress* aAddress, uint16_t aPort)
 {
     memset(aAddr, 0, sizeof(struct sockaddr_storage));
     // Check for IPv6 default to IPv4
@@ -996,7 +1034,13 @@ uint32_t sockaddrFromEndpoint(struct sockaddr* aAddr, const TIpAddress* aAddress
         struct sockaddr_in6 addr;
         addr.sin6_family = AF_INET6;
         addr.sin6_port = htons(aPort);
-        addr.sin6_scope_id = getScopeId(aAddress);
+
+        int32_t scopeId = getScopeId(aAddress);
+        if (scopeId == -1) {
+            return -1;
+        }
+        addr.sin6_scope_id = (uint32_t)scopeId;
+
         addr.sin6_flowinfo = 0;
         in6AddrFromTIpAddress(&addr.sin6_addr, aAddress);
         memcpy(aAddr, &addr, sizeof(addr));
@@ -1058,6 +1102,9 @@ int32_t OsNetworkBind(THandle aHandle, TIpAddress aAddress, uint32_t aPort)
 
     struct sockaddr_storage addr;
     int32_t len = sockaddrFromEndpoint((struct sockaddr*)&addr, &aAddress, (uint16_t)aPort);
+    if (len == -1) {
+        return -1;
+    }
 
     err = bind(handle->iSocket, (struct sockaddr*)&addr, len);
 
@@ -1101,7 +1148,11 @@ int32_t OsNetworkConnect(THandle aHandle, TIpAddress aAddress, uint16_t aPort, u
     SetFdNonBlocking(handle->iSocket);
 
     struct sockaddr_storage addr;
-    uint32_t len = sockaddrFromEndpoint((struct sockaddr*)&addr, &aAddress, aPort);
+    int32_t len = sockaddrFromEndpoint((struct sockaddr*)&addr, &aAddress, aPort);
+    if (len == -1) {
+        return -1;
+    }
+
     /* ignore err as we expect this to fail due to EINPROGRESS */
     (void)connect(handle->iSocket, (struct sockaddr*)&addr, len);
 
@@ -1161,7 +1212,10 @@ int32_t OsNetworkSendTo(THandle aHandle, const uint8_t* aBuffer, uint32_t aBytes
     }
 
     struct sockaddr_storage addr;
-    uint32_t len = sockaddrFromEndpoint((struct sockaddr*)&addr, &aAddress, aPort);
+    int32_t len = sockaddrFromEndpoint((struct sockaddr*)&addr, &aAddress, aPort);
+    if (len == -1) {
+        return -1;
+    }
 
     int32_t sent = 0;
     int32_t bytes = 0;
@@ -1487,7 +1541,11 @@ int32_t OsNetworkSocketMulticastAddMembership(THandle aHandle, TIpAddress aInter
     if (aInterface.iFamily == kFamilyV6) {
         struct ipv6_mreq mreq;
         in6AddrFromTIpAddress((struct in6_addr*)&mreq.ipv6mr_multiaddr, &aAddress);
-        in6AddrFromTIpAddress((struct in6_addr*)&mreq.ipv6mr_interface, &aInterface);
+        int32_t index = getInterfaceIndex(&aAddress);
+        if (index == -1) {
+            return -1;
+        }
+        mreq.ipv6mr_interface = (uint32_t)index;
         err = setsockopt(handle->iSocket, IPPROTO_IPV6, IP_ADD_MEMBERSHIP, (const char*)&mreq, sizeof(mreq));
     }
     else {
@@ -1500,7 +1558,7 @@ int32_t OsNetworkSocketMulticastAddMembership(THandle aHandle, TIpAddress aInter
     if (err != 0) {
         return err;
     }
-    
+
     loop = 0;
     int level = (aInterface.iFamily == kFamilyV6) ? IPPROTO_IPV6 : IPPROTO_IP;
     err = setsockopt(handle->iSocket, level, IP_MULTICAST_LOOP, &loop, sizeof(loop));
