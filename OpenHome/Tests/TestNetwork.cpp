@@ -740,7 +740,9 @@ void TestNetwork(const std::vector<Brn>& aArgs)
         return;
     }
 
-    std::vector<NetworkAdapter*>* ifs = Os::NetworkListAdapters(*gEnv, Environment::ELoopbackUse, false/* no ipv6*/, "TestNetwork");
+    TBool ipv6Supported = false;
+    gEnv->InitParams()->SetIPv6Supported(ipv6Supported);
+    std::vector<NetworkAdapter*>* ifs = Os::NetworkListAdapters(*gEnv, Environment::ELoopbackUse, ipv6Supported, "TestNetwork");
     ASSERT(ifs->size() > 0 && adapter.Value() < ifs->size());
     TIpAddress addr = (*ifs)[adapter.Value()]->Address();
     for (TUint i=0; i<ifs->size(); i++) {
