@@ -85,6 +85,16 @@ TBool TIpAddressUtils::IsLoopback(const TIpAddress& aAddr)
     return false;
 }
 
+TBool TIpAddressUtils::IsLinkLocalIPv6Address(const TIpAddress& aAddr)
+{
+    if (aAddr.iFamily != kFamilyV6) {
+        return false;
+    }
+
+    const TUint16 thisPrefix = (aAddr.iV6[0] << 8) + aAddr.iV6[1];
+    return (thisPrefix == kLinkLocalIPv6Prefix);
+}
+
 TBool TIpAddressUtils::IsIPv6MappedIPv4Address(const TIpAddress& aAddr)
 {
     if (aAddr.iFamily != kFamilyV6) {
