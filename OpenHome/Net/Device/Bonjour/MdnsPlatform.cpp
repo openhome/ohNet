@@ -330,9 +330,11 @@ void ReadWriteLock::ReleaseWriteLock()
 // MulticastListener
 
 const TUint MulticastListener::kMaxMessageBytes;
+const Brn MulticastListener::kAddressV4("224.0.0.251");
+const Brn MulticastListener::kAddressV6("ff02::fb");
 
 MulticastListener::MulticastListener(Environment& aEnv, IMdnsMulticastPacketReceiver& aReceiver)
-    : iMulticast(5353, Brn("224.0.0.251"))
+    : iMulticast()
     , iEnv(aEnv)
     , iReceiver(aReceiver)
     , iReader(NULL)
@@ -408,19 +410,18 @@ void MulticastListener::Clear()
 
 void MulticastListener::Bind(const TIpAddress& aAddress)
 {
-    if (aAddress.iFamily != iMulticast.Address().iFamily) {
-        return;
-    }
     // Throws NetworkError if unable to listen for multicast on aAddress.
-
     {
         AutoMutex amx(iLock);
         ASSERT(!iStop);
     }
 
-    const Endpoint epAddr(0, aAddress);
     Endpoint::AddressBuf addressBuf;
-    epAddr.AppendAddress(addressBuf);
+    TIpAddressUtils::ToString(aAddress, addressBuf);
+
+    const Brn bindAddr = (aAddress.iFamily == kFamilyV6) ? kAddressV6 : kAddressV4;
+    Endpoint epBind(kListenPort, bindAddr);
+    iMulticast.Replace(epBind);
 
     iMulticastLock.AcquireWriteLock();
 
@@ -548,31 +549,35 @@ void MulticastListeners::Rebind(std::vector<NetworkAdapter*>& aAdapters)
 
         LOG(kBonjour, "MulticastListeners::Rebind aAdapters.size(): %u, i: %u, addr: %.*s\n", aAdapters.size(), i, PBUF(addressBuf));
         if (!TIpAddressUtils::IsLoopback(epAddr.Address())) {
-            // Found a non-localhost adapter.
+            if (epAddr.Address().iFamily == kFamilyV4 ||
+                TIpAddressUtils::IsLinkLocalIPv6Address(epAddr.Address())) {
 
-            ASSERT(nextListenerIdx <= iListeners.size());   // Check no errors incrementing nextListenerIndex.
-            if (nextListenerIdx == iListeners.size()) {
-                LOG(kBonjour, "MulticastListeners::Rebind Creating new listener. nextListenerIdx: %u\n", nextListenerIdx);
-                // No listener available for use. Create a new one.
-                MulticastListener* listener = new MulticastListener(iEnv, iReceiver);
-                if (iStarted && !iStopped) {
-                    listener->Start();
-                }
-                iListeners.push_back(listener);
-            }
+                // Found a non-localhost adapter. If an IPv6 adapter it must be link-local
 
-            try {
-                // Throws NetworkError if unable to bind to any (non-localhost) adapter.
-                iListeners[nextListenerIdx]->Bind(aAdapters[i]->Address());
-                nextListenerIdx++;
-            }
-            catch (const NetworkError&) {
-                // Failed to create multicast socket on adapter. Clear all listeners and rethrow exception.
-                LOG(kBonjour, "MulticastListeners::Rebind NetworkError creating multicast socket on %.*s\n", PBUF(addressBuf));
-                for (TUint j=0; j<iListeners.size(); j++) {
-                    iListeners[j]->Clear();
+                ASSERT(nextListenerIdx <= iListeners.size());   // Check no errors incrementing nextListenerIndex.
+                if (nextListenerIdx == iListeners.size()) {
+                    LOG(kBonjour, "MulticastListeners::Rebind Creating new listener. nextListenerIdx: %u\n", nextListenerIdx);
+                    // No listener available for use. Create a new one.
+                    MulticastListener* listener = new MulticastListener(iEnv, iReceiver);
+                    if (iStarted && !iStopped) {
+                        listener->Start();
+                    }
+                    iListeners.push_back(listener);
                 }
-                throw;
+
+                try {
+                    // Throws NetworkError if unable to bind to any (non-localhost) adapter.
+                    iListeners[nextListenerIdx]->Bind(aAdapters[i]->Address());
+                    nextListenerIdx++;
+                }
+                catch (const NetworkError&) {
+                    // Failed to create multicast socket on adapter. Clear all listeners and rethrow exception.
+                    LOG(kBonjour, "MulticastListeners::Rebind NetworkError creating multicast socket on %.*s\n", PBUF(addressBuf));
+                    for (TUint j=0; j<iListeners.size(); j++) {
+                        iListeners[j]->Clear();
+                    }
+                    throw;
+                }
             }
         }
     }
@@ -721,10 +726,16 @@ void MdnsPlatform::UpdateInterfaceList()
 MdnsPlatform::Status MdnsPlatform::AddValidInterfaces(std::vector<NetworkAdapter*>& aSubnetList)
 {
     Status status = mStatus_NoError;
-    for (TUint i=0; i<(TUint)aSubnetList.size() && status==mStatus_NoError; i++) {
+    for (TUint i=0; i<(TUint)aSubnetList.size() && status==mStatus_NoError; i++)
+    {
         if ((InterfaceIndex(*(aSubnetList[i])) == -1) &&
-            !TIpAddressUtils::IsLoopback(aSubnetList[i]->Address())) {
-            status = AddInterface(aSubnetList[i]);
+            !TIpAddressUtils::IsLoopback(aSubnetList[i]->Address()))
+        {
+            if ((aSubnetList[i]->Address().iFamily == kFamilyV4) ||
+                (TIpAddressUtils::IsLinkLocalIPv6Address(aSubnetList[i]->Address())))
+            {
+                status = AddInterface(aSubnetList[i]);
+            }
         }
     }
     return status;
