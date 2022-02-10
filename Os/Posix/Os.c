@@ -997,33 +997,158 @@ exit:
     return id;
 }
 
-static int32_t getInterfaceIndex(const TIpAddress* aAddress)
+typedef struct InterfaceIndex
 {
-    int32_t index = 0;
-    int32_t ret = -1;
-    struct ifaddrs* networkIf;
-    struct ifaddrs* iter;
+    uint32_t iIndex;
+    char* iName;
+    struct InterfaceIndex* iNext;
 
-    if (TEMP_FAILURE_RETRY(getifaddrs(&networkIf)) == -1) {
+} InterfaceIndex;
+
+void FreeInterfaceIndexes(InterfaceIndex* aInterfaces)
+{
+    InterfaceIndex* tmp;
+    while (aInterfaces != NULL)
+    {
+        tmp = aInterfaces;
+        aInterfaces = aInterfaces->iNext;
+        free(tmp->iName);
+        free(tmp);
+    }
+}
+
+static int32_t CreateInterfaceIndexList(InterfaceIndex** aIntfIndexes)
+{
+    int32_t ret = 0;
+    int32_t index = 0;
+    struct ifaddrs* networkIntfHead = NULL;
+    struct ifaddrs* networkIntfIter = NULL;
+    InterfaceIndex* intfIndexHead = NULL;
+    InterfaceIndex* intfIndexTail = NULL;
+
+    // Get network interfaces from the OS
+    if (TEMP_FAILURE_RETRY(getifaddrs(&networkIntfHead)) == -1)
+    {
+        ret = -1; // error
+        goto exit;
+    }
+
+    // Loop through each interface
+    networkIntfIter = networkIntfHead;
+    while (networkIntfIter != NULL)
+    {
+        if (networkIntfIter->ifa_name == NULL)
+        {
+            networkIntfIter = networkIntfIter->ifa_next;
+            continue;
+        }
+
+        int32_t intfExistsInList = 0;
+        InterfaceIndex* intfIndexIter = intfIndexHead;
+
+        // Loop through our InterfaceIndex list, checking for a match
+        while(intfIndexIter != NULL)
+        {
+            if (strcmp(networkIntfIter->ifa_name, intfIndexIter->iName) == 0)
+            {
+                intfExistsInList = 1;
+                break;
+            }
+            intfIndexIter = intfIndexIter->iNext;
+        }
+
+        if (intfExistsInList)
+        {
+            networkIntfIter = networkIntfIter->ifa_next;
+            continue;
+        }
+
+        // Interface doesn't exist in our list, add it
+        InterfaceIndex* intfIndex = (InterfaceIndex*)calloc(1, sizeof(*intfIndex));
+        if (intfIndex != NULL)
+        {
+            intfIndex->iName = (char*)malloc(strlen(networkIntfIter->ifa_name) + 1);
+        }
+
+        if (intfIndex == NULL || intfIndex->iName == NULL)
+        {
+            goto exit;
+        }
+
+        (void)strcpy(intfIndex->iName, networkIntfIter->ifa_name);
+        intfIndex->iIndex = index;
+
+        if (intfIndexHead == NULL)
+        {
+            intfIndexHead = intfIndex;
+        }
+        else
+        {
+            intfIndexTail->iNext = intfIndex;
+        }
+        intfIndexTail = intfIndex;
+        index++;
+
+        networkIntfIter = networkIntfIter->ifa_next;
+    }
+
+    *aIntfIndexes = intfIndexHead;
+    ret = index; // return number of entries in the list
+
+exit:
+    freeifaddrs(networkIntfHead);
+    return ret;
+}
+
+static int32_t GetInterfaceIndex(const TIpAddress* aAddress)
+{
+    int32_t index = -1;
+    struct ifaddrs* networkIf = NULL;
+    struct ifaddrs* iter = NULL;
+    InterfaceIndex* intfIndex = NULL;
+    InterfaceIndex* intfIndexIter = NULL;
+
+    if (TEMP_FAILURE_RETRY(getifaddrs(&networkIf)) == -1)
+    {
+        goto exit;
+    }
+
+    int32_t indexes = CreateInterfaceIndexList(&intfIndex);
+    if (indexes < 1)
+    {
         goto exit;
     }
 
     iter = networkIf;
-    while (iter != NULL) {
-        if (iter->ifa_addr != NULL) {
-            const TIpAddress thisIf = TIpAddressFromSockAddr(iter->ifa_addr);
-            if (TIpAddressesAreEqual(&thisIf, aAddress)) {
-                ret = index;
-                goto exit;
+    while (iter != NULL)
+    {
+        if (iter->ifa_addr == NULL)
+        {
+            iter = iter->ifa_next;
+            continue;
+        }
+
+        const TIpAddress thisIf = TIpAddressFromSockAddr(iter->ifa_addr);
+        if (TIpAddressesAreEqual(&thisIf, aAddress))
+        {
+            intfIndexIter = intfIndex;
+            while (intfIndexIter != NULL)
+            {
+                if (strcmp(iter->ifa_name, intfIndexIter->iName) == 0)
+                {
+                    index = intfIndexIter->iIndex;
+                    goto exit;
+                }
+                intfIndexIter = intfIndexIter->iNext;
             }
         }
         iter = iter->ifa_next;
-        index++;
     }
 
 exit:
+    FreeInterfaceIndexes(intfIndex);
     freeifaddrs(networkIf);
-    return ret;
+    return index;
 }
 
 int32_t sockaddrFromEndpoint(struct sockaddr* aAddr, const TIpAddress* aAddress, uint16_t aPort)
@@ -1116,7 +1241,16 @@ int32_t OsNetworkBind(THandle aHandle, TIpAddress aAddress, uint32_t aPort)
 
 int32_t OsNetworkBindMulticast(THandle aHandle, TIpAddress aAdapter, TIpAddress aMulticast, uint32_t aPort)
 {
-    return OsNetworkBind(aHandle, aMulticast, aPort);
+    // Must bind to in6addr_any for IPv6 multicast
+    TIpAddress addr = aMulticast;
+    if (aAdapter.iFamily == kFamilyV6)
+    {
+        for (int i = 0; i < 16; i++)
+        {
+            addr.iV6[i] = in6addr_any.s6_addr[i];
+        }
+    }
+    return OsNetworkBind(aHandle, addr, aPort);
 }
 
 int32_t OsNetworkPort(THandle aHandle, uint32_t* aPort)
@@ -1534,35 +1668,49 @@ int32_t OsNetworkSocketSetMulticastTtl(THandle aHandle, uint8_t aTtl)
 int32_t OsNetworkSocketMulticastAddMembership(THandle aHandle, TIpAddress aInterface, TIpAddress aAddress)
 {
     int32_t err;
-    char loop;
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
 
-    // Check for IPv6, default to IPv4
-    if (aInterface.iFamily == kFamilyV6) {
+    if (aInterface.iFamily == kFamilyV6)
+    {
+        int32_t interfaceIndex = GetInterfaceIndex(&aInterface);
+        if (interfaceIndex == -1)
+        {
+            err = -1;
+            goto exit;
+        }
+
+        // IPV6_MULTICAST_LOOP
+        int32_t mcastLoop = 1;
+        err = setsockopt(handle->iSocket, IPPROTO_IPV6, IPV6_MULTICAST_LOOP, &mcastLoop, sizeof(mcastLoop));
+        if (err != 0)
+            goto exit;
+
+        // IPV6_ADD_MEMBERSHIP
         struct ipv6_mreq mreq;
         in6AddrFromTIpAddress((struct in6_addr*)&mreq.ipv6mr_multiaddr, &aAddress);
-        int32_t index = getInterfaceIndex(&aAddress);
-        if (index == -1) {
-            return -1;
-        }
-        mreq.ipv6mr_interface = (uint32_t)index;
-        err = setsockopt(handle->iSocket, IPPROTO_IPV6, IP_ADD_MEMBERSHIP, (const char*)&mreq, sizeof(mreq));
+        mreq.ipv6mr_interface = interfaceIndex;
+        err = setsockopt(handle->iSocket, IPPROTO_IPV6, IPV6_ADD_MEMBERSHIP, (const char*)&mreq, sizeof(mreq));
+        if (err != 0)
+            goto exit;
     }
-    else {
+    else
+    {
+        // IP_MULTICAST_LOOP
+        int32_t mcastLoop = 0;
+        err = setsockopt(handle->iSocket, IPPROTO_IP, IP_MULTICAST_LOOP, &mcastLoop, sizeof(mcastLoop));
+        if (err != 0)
+            goto exit;
+
+        // IP_ADD_MEMBERSHIP
         struct ip_mreq mreq;
         mreq.imr_multiaddr.s_addr = aAddress.iV4;
         mreq.imr_interface.s_addr = aInterface.iV4;
         err = setsockopt(handle->iSocket, IPPROTO_IP, IP_ADD_MEMBERSHIP, (const char*)&mreq, sizeof(mreq));
+        if (err != 0)
+            goto exit;
     }
 
-    if (err != 0) {
-        return err;
-    }
-
-    loop = 0;
-    int level = (aInterface.iFamily == kFamilyV6) ? IPPROTO_IPV6 : IPPROTO_IP;
-    err = setsockopt(handle->iSocket, level, IP_MULTICAST_LOOP, &loop, sizeof(loop));
-    
+exit:
     return err;
 }
 
@@ -1572,13 +1720,19 @@ int32_t OsNetworkSocketMulticastDropMembership(THandle aHandle, TIpAddress aInte
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
 
     // Check for IPv6, default to IPv4
-    if (aInterface.iFamily == kFamilyV6) {
+    if (aInterface.iFamily == kFamilyV6)
+    {
+        int32_t interfaceIndex = GetInterfaceIndex(&aInterface);
+        if (interfaceIndex == -1)
+            return -1;
+
         struct ipv6_mreq mreq;
         in6AddrFromTIpAddress((struct in6_addr*)&mreq.ipv6mr_multiaddr, &aAddress);
-        in6AddrFromTIpAddress((struct in6_addr*)&mreq.ipv6mr_interface, &aInterface);
-        err = setsockopt(handle->iSocket, IPPROTO_IPV6, IP_DROP_MEMBERSHIP, &mreq, sizeof(mreq));
+        mreq.ipv6mr_interface = interfaceIndex;
+        err = setsockopt(handle->iSocket, IPPROTO_IPV6, IPV6_DROP_MEMBERSHIP, &mreq, sizeof(mreq));
     }
-    else {
+    else
+    {
         struct ip_mreq mreq;
         mreq.imr_multiaddr.s_addr = aAddress.iV4;
         mreq.imr_interface.s_addr = aInterface.iV4;
@@ -1593,10 +1747,16 @@ int32_t OsNetworkSocketSetMulticastIf(THandle aHandle, TIpAddress aInterface)
     int err;
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
 
-    if (aInterface.iFamily == kFamilyV6) {
-        err = setsockopt(handle->iSocket, IPPROTO_IPV6, IP_MULTICAST_IF, &aInterface.iV6, sizeof(aInterface));
+    if (aInterface.iFamily == kFamilyV6)
+    {
+        int32_t interfaceIndex = GetInterfaceIndex(&aInterface);
+        if (interfaceIndex == -1)
+            return -1;
+
+        err = setsockopt(handle->iSocket, IPPROTO_IPV6, IPV6_MULTICAST_IF, &interfaceIndex, sizeof(interfaceIndex));
     }
-    else {
+    else
+    {
         err = setsockopt(handle->iSocket, IPPROTO_IP, IP_MULTICAST_IF, &aInterface.iV4, sizeof(aInterface));
     }
     return err;
@@ -1783,10 +1943,9 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
         OsNetworkAdapter* addrsIter = head;
         while (addrsIter != NULL) {
             // Helper functions distinguish between IPv4 and v6
-            if ((addrsIter != ifaceIter &&
+            if (addrsIter != ifaceIter &&
                 TIpAddressesAreEqual(&addrsIter->iAddress, &ifaceIter->iAddress) &&
-                NetMasksAreEqual(&addrsIter->iNetMask, &ifaceIter->iNetMask)) ||
-                ipv6AddressIsLinkLocal(&ifaceIter->iAddress)) { // Order of arguments is important here
+                NetMasksAreEqual(&addrsIter->iNetMask, &ifaceIter->iNetMask)) { // Order of arguments is important here
 
                 removeIface = 0; // true
                 break;
