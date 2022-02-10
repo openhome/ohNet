@@ -1689,7 +1689,7 @@ int32_t OsNetworkSocketMulticastAddMembership(THandle aHandle, TIpAddress aInter
         struct ipv6_mreq mreq;
         in6AddrFromTIpAddress((struct in6_addr*)&mreq.ipv6mr_multiaddr, &aAddress);
         mreq.ipv6mr_interface = interfaceIndex;
-        err = setsockopt(handle->iSocket, IPPROTO_IPV6, IPV6_ADD_MEMBERSHIP, (const char*)&mreq, sizeof(mreq));
+        err = setsockopt(handle->iSocket, IPPROTO_IPV6, IPV6_JOIN_GROUP, (const char*)&mreq, sizeof(mreq));
         if (err != 0)
             goto exit;
     }
@@ -1729,7 +1729,7 @@ int32_t OsNetworkSocketMulticastDropMembership(THandle aHandle, TIpAddress aInte
         struct ipv6_mreq mreq;
         in6AddrFromTIpAddress((struct in6_addr*)&mreq.ipv6mr_multiaddr, &aAddress);
         mreq.ipv6mr_interface = interfaceIndex;
-        err = setsockopt(handle->iSocket, IPPROTO_IPV6, IPV6_DROP_MEMBERSHIP, &mreq, sizeof(mreq));
+        err = setsockopt(handle->iSocket, IPPROTO_IPV6, IPV6_LEAVE_GROUP, &mreq, sizeof(mreq));
     }
     else
     {
