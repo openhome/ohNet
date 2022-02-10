@@ -897,8 +897,7 @@ SocketUdp::SocketUdp(Environment& aEnv, TUint aPort, ESocketFamily aSocketFamily
 {
     LOG_TRACE(kNetwork, "> SocketUdp::SocketUdp P = %d, F = %d\n", aPort, aSocketFamily);
     if (aSocketFamily == eSocketFamilyV6) {
-        TIpAddress addr;
-        addr = TIpAddressUtils::AddressV6AllAdapters();
+        TIpAddress addr = TIpAddressUtils::AddressV6AllAdapters();
         Bind(aPort, addr);
     }
     else {
@@ -943,7 +942,7 @@ SocketUdpMulticast::SocketUdpMulticast(Environment& aEnv, const TIpAddress& aInt
     , iAddress(aEndpoint.Address())
 {
     LOG_TRACE(kNetwork, "> SocketUdpMulticast::SocketUdpMulticast I = %x, E = %x:%d\n", iInterface, aEndpoint.Address(), aEndpoint.Port());
-    const TUint err = OpenHome::Os::NetworkBindMulticast(iHandle, aInterface, aEndpoint);
+    const TInt err = OpenHome::Os::NetworkBindMulticast(iHandle, aInterface, aEndpoint);
     if (err != 0) {
         LOG_ERROR(kNetwork, "NetworkBindMulticast for socket %u\n", iHandle);
         THROW(NetworkError);
