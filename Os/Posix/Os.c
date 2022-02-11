@@ -1245,7 +1245,8 @@ int32_t OsNetworkBindMulticast(THandle aHandle, TIpAddress aAdapter, TIpAddress 
     TIpAddress addr = aMulticast;
     if (aAdapter.iFamily == kFamilyV6)
     {
-        for (int i = 0; i < 16; i++)
+        uint8_t i;
+        for (i = 0; i < 16; i++)
         {
             addr.iV6[i] = in6addr_any.s6_addr[i];
         }
