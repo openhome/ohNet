@@ -52,22 +52,6 @@ public:
     virtual ~IMdnsDeviceListener() {}
 };
 
-class ReadWriteLock
-{
-public:
-    ReadWriteLock(const TChar* aId);
-public:
-    void AcquireReadLock();
-    void ReleaseReadLock();
-    void AcquireWriteLock();
-    void ReleaseWriteLock();
-private:
-    const TChar* iId;
-    TUint iReaderCount;
-    Mutex iLockReaders;
-    Mutex iLockWriter;
-};
-
 /*
  * Implementation must be thread-safe, as there may be multiple callers on different threads.
  */
@@ -100,6 +84,21 @@ public:
 private:
     void ThreadListen();
 private:
+    class ReadWriteLock
+    {
+    public:
+        ReadWriteLock();
+    public:
+        void AcquireReadLock();
+        void ReleaseReadLock();
+        void AcquireWriteLock();
+        void ReleaseWriteLock();
+    private:
+        TUint iReaderCount;
+        Mutex iLockReaders;
+        Mutex iLockWriter;
+    };
+private:
     Endpoint iMulticast;
     Environment& iEnv;
     IMdnsMulticastPacketReceiver& iReceiver;
@@ -118,8 +117,6 @@ private:
 
 class MulticastListeners : private INonCopyable
 {
-private:
-    static const TUint kPreAllocatedListenerCount = 0;
 public:
     MulticastListeners(Environment& aEnv, IMdnsMulticastPacketReceiver& aReceiver);
     ~MulticastListeners();
@@ -134,6 +131,10 @@ public:
      * and bind/unbind as appropriate to/from those adapters.
      */
     void Rebind(std::vector<NetworkAdapter*>& aAdapters);
+private:
+    void CreateListenerLocked();
+    void ClearListenersLocked();
+    TBool AdapterIsSuitableListener(const TIpAddress& aAdapter);
 private:
     Environment& iEnv;
     IMdnsMulticastPacketReceiver& iReceiver;
@@ -181,6 +182,7 @@ private:
     void CurrentAdapterChanged();
     void UpdateInterfaceList();
     Status AddValidInterfaces(std::vector<NetworkAdapter*>& aSubnetList);
+    TBool InterfaceIsValid(const TIpAddress& aAdapter);
     void DoSetHostName();
     Status AddInterface(NetworkAdapter* aNif);
     TInt InterfaceIndex(const NetworkAdapter& aNif);

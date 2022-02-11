@@ -287,17 +287,16 @@ void MdnsPlatform::MdnsEventScheduler::ScheduleNow()
     }
 }
 
-// ReadWriteLock
+// MulticastListener::ReadWriteLock
 
-ReadWriteLock::ReadWriteLock(const TChar* aId) 
-    : iId(aId)
-    , iReaderCount(0)
+MulticastListener::ReadWriteLock::ReadWriteLock() 
+    : iReaderCount(0)
     , iLockReaders("RWLR")
     , iLockWriter("RWLW")
 {
 }
 
-void ReadWriteLock::AcquireReadLock()
+void MulticastListener::ReadWriteLock::AcquireReadLock()
 {
     AutoMutex amx(iLockReaders);
     iReaderCount++;
@@ -306,7 +305,7 @@ void ReadWriteLock::AcquireReadLock()
     }
 }
 
-void ReadWriteLock::ReleaseReadLock()
+void MulticastListener::ReadWriteLock::ReleaseReadLock()
 {
     AutoMutex amx(iLockReaders);
     ASSERT(iReaderCount > 0);
@@ -316,12 +315,12 @@ void ReadWriteLock::ReleaseReadLock()
     }
 }
 
-void ReadWriteLock::AcquireWriteLock()
+void MulticastListener::ReadWriteLock::AcquireWriteLock()
 {
     iLockWriter.Wait();
 }
 
-void ReadWriteLock::ReleaseWriteLock()
+void MulticastListener::ReadWriteLock::ReleaseWriteLock()
 {
     iLockWriter.Signal();
 }
@@ -339,7 +338,7 @@ MulticastListener::MulticastListener(Environment& aEnv, IMdnsMulticastPacketRece
     , iReceiver(aReceiver)
     , iReader(NULL)
     , iReaderController(NULL)
-    , iMulticastLock("MulticastListener")
+    , iMulticastLock()
     , iSemReader("MLSR", 0)
     , iThreadListen(NULL)
     , iStop(false)
@@ -490,8 +489,6 @@ void MulticastListener::ThreadListen()
 
 // MulticastListeners
 
-const TUint MulticastListeners::kPreAllocatedListenerCount;
-
 MulticastListeners::MulticastListeners(Environment& aEnv, IMdnsMulticastPacketReceiver& aReceiver)
     : iEnv(aEnv)
     , iReceiver(aReceiver)
@@ -499,10 +496,6 @@ MulticastListeners::MulticastListeners(Environment& aEnv, IMdnsMulticastPacketRe
     , iStopped(false)
     , iLock("MULL")
 {
-    AutoMutex amx(iLock);
-    for (TUint i=0; i<kPreAllocatedListenerCount; i++) {
-        iListeners.push_back(new MulticastListener(iEnv, aReceiver));
-    }
 }
 
 MulticastListeners::~MulticastListeners()
@@ -536,51 +529,74 @@ void MulticastListeners::Rebind(std::vector<NetworkAdapter*>& aAdapters)
 {
     // For ease, clear all current listeners and rebind later, if appropriate.
     AutoMutex amx(iLock);
-    for (TUint i=0; i<iListeners.size(); i++) {
-        iListeners[i]->Clear();
-    }
+    ClearListenersLocked();
 
     TUint nextListenerIdx = 0;
-    for (TUint i=0; i<aAdapters.size(); i++) {
-        const TIpAddress addr = aAdapters[i]->Address();
-        const Endpoint epAddr(0, addr);
+    for (TUint i = 0; i < aAdapters.size(); i++)
+    {
+        const TIpAddress adapterAddress = aAdapters[i]->Address();
         Endpoint::AddressBuf addressBuf;
-        epAddr.AppendAddress(addressBuf);
+        TIpAddressUtils::ToString(adapterAddress, addressBuf);
 
         LOG(kBonjour, "MulticastListeners::Rebind aAdapters.size(): %u, i: %u, addr: %.*s\n", aAdapters.size(), i, PBUF(addressBuf));
-        if (!TIpAddressUtils::IsLoopback(epAddr.Address())) {
-            if (epAddr.Address().iFamily == kFamilyV4 ||
-                TIpAddressUtils::IsLinkLocalIPv6Address(epAddr.Address())) {
 
-                // Found a non-localhost adapter. If an IPv6 adapter it must be link-local
+        if (AdapterIsSuitableListener(adapterAddress))
+        {
+            ASSERT(nextListenerIdx <= iListeners.size());
+            if (nextListenerIdx == iListeners.size())
+            {
+                // We have a suitable adapter, but no Listeners to bind against, create a new one
+                LOG(kBonjour, "MulticastListeners::Rebind Creating new listener. nextListenerIdx: %u\n", nextListenerIdx);
+                CreateListenerLocked();
+            }
 
-                ASSERT(nextListenerIdx <= iListeners.size());   // Check no errors incrementing nextListenerIndex.
-                if (nextListenerIdx == iListeners.size()) {
-                    LOG(kBonjour, "MulticastListeners::Rebind Creating new listener. nextListenerIdx: %u\n", nextListenerIdx);
-                    // No listener available for use. Create a new one.
-                    MulticastListener* listener = new MulticastListener(iEnv, iReceiver);
-                    if (iStarted && !iStopped) {
-                        listener->Start();
-                    }
-                    iListeners.push_back(listener);
-                }
-
-                try {
-                    // Throws NetworkError if unable to bind to any (non-localhost) adapter.
-                    iListeners[nextListenerIdx]->Bind(aAdapters[i]->Address());
-                    nextListenerIdx++;
-                }
-                catch (const NetworkError&) {
-                    // Failed to create multicast socket on adapter. Clear all listeners and rethrow exception.
-                    LOG(kBonjour, "MulticastListeners::Rebind NetworkError creating multicast socket on %.*s\n", PBUF(addressBuf));
-                    for (TUint j=0; j<iListeners.size(); j++) {
-                        iListeners[j]->Clear();
-                    }
-                    throw;
-                }
+            try
+            {
+                // Attempt to bind using available listener    
+                iListeners[nextListenerIdx]->Bind(adapterAddress);
+                nextListenerIdx++;
+            }
+            catch (const NetworkError&)
+            {
+                LOG(kBonjour, "MulticastListeners::Rebind NetworkError creating multicast socket on %.*s\n", PBUF(addressBuf));
+                ClearListenersLocked();
+                throw;
             }
         }
     }
+}
+
+void MulticastListeners::CreateListenerLocked()
+{
+    MulticastListener* listener = new MulticastListener(iEnv, iReceiver);
+    if (iStarted && !iStopped) {
+        listener->Start();
+    }
+    iListeners.push_back(listener);
+}
+
+void MulticastListeners::ClearListenersLocked()
+{
+    for (TUint i=0; i<iListeners.size(); i++) {
+        iListeners[i]->Clear();
+    }
+}
+
+TBool MulticastListeners::AdapterIsSuitableListener(const TIpAddress& aAdapter)
+{
+    // Non-loopback adapter and if IPv6 then must be link-local
+    if (!TIpAddressUtils::IsLoopback(aAdapter))
+    {
+        if (aAdapter.iFamily == kFamilyV4)
+        {
+            return true;
+        }
+        else if (TIpAddressUtils::IsLinkLocalIPv6Address(aAdapter))
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 
@@ -726,19 +742,31 @@ void MdnsPlatform::UpdateInterfaceList()
 MdnsPlatform::Status MdnsPlatform::AddValidInterfaces(std::vector<NetworkAdapter*>& aSubnetList)
 {
     Status status = mStatus_NoError;
-    for (TUint i=0; i<(TUint)aSubnetList.size() && status==mStatus_NoError; i++)
+    for (TUint i = 0; i < (TUint)aSubnetList.size() && status == mStatus_NoError; i++)
     {
         if ((InterfaceIndex(*(aSubnetList[i])) == -1) &&
-            !TIpAddressUtils::IsLoopback(aSubnetList[i]->Address()))
+            InterfaceIsValid(aSubnetList[i]->Address()))
         {
-            if ((aSubnetList[i]->Address().iFamily == kFamilyV4) ||
-                (TIpAddressUtils::IsLinkLocalIPv6Address(aSubnetList[i]->Address())))
-            {
-                status = AddInterface(aSubnetList[i]);
-            }
+            status = AddInterface(aSubnetList[i]);
         }
     }
     return status;
+}
+
+TBool MdnsPlatform::InterfaceIsValid(const TIpAddress& aInterface)
+{
+    if (!TIpAddressUtils::IsLoopback(aInterface))
+    {
+        if (aInterface.iFamily == kFamilyV4)
+        {
+            return true;
+        }
+        else if (TIpAddressUtils::IsLinkLocalIPv6Address(aInterface))
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 MdnsPlatform::Status MdnsPlatform::AddInterface(NetworkAdapter* aNif)
