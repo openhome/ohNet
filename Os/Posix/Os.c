@@ -1673,6 +1673,7 @@ int32_t OsNetworkSocketMulticastAddMembership(THandle aHandle, TIpAddress aInter
 
     if (aInterface.iFamily == kFamilyV6)
     {
+#if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_IOS)
         int32_t interfaceIndex = GetInterfaceIndex(&aInterface);
         if (interfaceIndex == -1)
         {
@@ -1690,9 +1691,12 @@ int32_t OsNetworkSocketMulticastAddMembership(THandle aHandle, TIpAddress aInter
         struct ipv6_mreq mreq;
         in6AddrFromTIpAddress((struct in6_addr*)&mreq.ipv6mr_multiaddr, &aAddress);
         mreq.ipv6mr_interface = interfaceIndex;
-        err = setsockopt(handle->iSocket, IPPROTO_IPV6, IPV6_JOIN_GROUP, (const char*)&mreq, sizeof(mreq));
+        err = setsockopt(handle->iSocket, IPPROTO_IPV6, IPV6_ADD_MEMBERSHIP, (const char*)&mreq, sizeof(mreq));
         if (err != 0)
             goto exit;
+#else
+        return -1; // MacOS should not be attempting network ops with IPv6
+#endif
     }
     else
     {
@@ -1723,6 +1727,7 @@ int32_t OsNetworkSocketMulticastDropMembership(THandle aHandle, TIpAddress aInte
     // Check for IPv6, default to IPv4
     if (aInterface.iFamily == kFamilyV6)
     {
+#if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_IOS)
         int32_t interfaceIndex = GetInterfaceIndex(&aInterface);
         if (interfaceIndex == -1)
             return -1;
@@ -1730,7 +1735,10 @@ int32_t OsNetworkSocketMulticastDropMembership(THandle aHandle, TIpAddress aInte
         struct ipv6_mreq mreq;
         in6AddrFromTIpAddress((struct in6_addr*)&mreq.ipv6mr_multiaddr, &aAddress);
         mreq.ipv6mr_interface = interfaceIndex;
-        err = setsockopt(handle->iSocket, IPPROTO_IPV6, IPV6_LEAVE_GROUP, &mreq, sizeof(mreq));
+        err = setsockopt(handle->iSocket, IPPROTO_IPV6, IPV6_DROP_MEMBERSHIP, &mreq, sizeof(mreq));
+#else
+        return -1; // MacOS should not be attempting network ops with IPv6
+#endif
     }
     else
     {
@@ -1748,18 +1756,7 @@ int32_t OsNetworkSocketSetMulticastIf(THandle aHandle, TIpAddress aInterface)
     int err;
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
 
-    if (aInterface.iFamily == kFamilyV6)
-    {
-        int32_t interfaceIndex = GetInterfaceIndex(&aInterface);
-        if (interfaceIndex == -1)
-            return -1;
-
-        err = setsockopt(handle->iSocket, IPPROTO_IPV6, IPV6_MULTICAST_IF, &interfaceIndex, sizeof(interfaceIndex));
-    }
-    else
-    {
-        err = setsockopt(handle->iSocket, IPPROTO_IP, IP_MULTICAST_IF, &aInterface.iV4, sizeof(aInterface));
-    }
+    err = setsockopt(handle->iSocket, IPPROTO_IP, IP_MULTICAST_IF, &aInterface.iV4, sizeof(aInterface));
     return err;
 #else
     return 0;
