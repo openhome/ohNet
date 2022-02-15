@@ -111,7 +111,7 @@ Environment::Environment(FunctorMsg& aLogOutput,
 {
     Construct(aLogOutput, aSchedulerPolicy);
     iTimerManager = new OpenHome::TimerManager(*this, aTimerManagerPriority);
-    iNetworkAdapterList = new OpenHome::NetworkAdapterList(*this, aLoopbackPolicy, kIpAddressV4AllAdapters);
+    iNetworkAdapterList = new OpenHome::NetworkAdapterList(*this, aLoopbackPolicy, kIPv6SupportedDefault, kIpAddressV4AllAdapters);
 }
 
 Environment::Environment(InitialisationParams* aInitParams)
@@ -141,7 +141,7 @@ Environment::Environment(InitialisationParams* aInitParams)
     SetRandomSeed((TUint)(time(NULL) % UINT32_MAX));
 #endif // PLATFORM_MACOSX_GNU
     iTimerManager = new OpenHome::TimerManager(*this, aInitParams->TimerManagerPriority());
-    iNetworkAdapterList = new OpenHome::NetworkAdapterList(*this, aInitParams->LoopbackNetworkAdapter(), kIpAddressV4AllAdapters);
+    iNetworkAdapterList = new OpenHome::NetworkAdapterList(*this, aInitParams->LoopbackNetworkAdapter(), aInitParams->IPv6Supported(), kIpAddressV4AllAdapters);
 
     DoSetInitParams(aInitParams);
 }
@@ -486,6 +486,8 @@ void Environment::SetInitParams(InitialisationParams* aInitParams)
 void Environment::DoSetInitParams(InitialisationParams* aInitParams)
 {
     iInitParams = aInitParams;
+
+    iNetworkAdapterList->SetIPv6Supported(aInitParams->IPv6Supported());
 
     Functor& subnetListChangeListener = iInitParams->SubnetListChangedListener();
     if (subnetListChangeListener) {

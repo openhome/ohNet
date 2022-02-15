@@ -33,7 +33,7 @@ class NetworkAdapterList : private IStackObject, private INetworkAdapterChangeNo
 public:
     static const TUint kListenerIdNull = 0;
 public:
-    NetworkAdapterList(Environment& aEnv, Environment::ELoopback aLoopbackPolicy, const TIpAddress& aDefaultSubnet=kIpAddressV4AllAdapters);
+    NetworkAdapterList(Environment& aEnv, Environment::ELoopback aLoopbackPolicy, TBool aIPv6Supported, const TIpAddress& aDefaultSubnet=kIpAddressV4AllAdapters);
     virtual ~NetworkAdapterList();
     TBool SingleSubnetModeEnabled() const;
     Optional<NetworkAdapter> CurrentAdapter(const char* aCookie) const;
@@ -42,6 +42,7 @@ public:
     std::vector<NetworkAdapter*>* CreateNetworkAdapterList() const;
     static void DestroyNetworkAdapterList(std::vector<NetworkAdapter*>* aList);
     void SetCurrentSubnet(const TIpAddress& aSubnet);
+    void SetIPv6Supported(TBool aIPv6Supported);
     void Refresh();
     TUint AddCurrentChangeListener(Functor aFunctor, const TChar* aId, TBool aInternalClient = true); // internal clients are notified first
     void RemoveCurrentChangeListener(TUint aId);
@@ -130,7 +131,7 @@ private:
     TUint iNextListenerId;
     NetworkAdapterChangeNotifier* iNotifierThread;
     TBool iSingleSubnetMode;
-    TBool iIpv6Supported;
+    TBool iIPv6Supported;
 };
 
 class NetworkAdapterChangeNotifier : public Thread

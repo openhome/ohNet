@@ -73,6 +73,8 @@ public:
         EScheduleNice,
         EScheduleNone
     };
+private:
+    static const TBool kIPv6SupportedDefault = false;
 public:
     static Environment* Create(FunctorMsg& aLogOutput);
     static Environment* Create(FunctorMsg& aLogOutput,

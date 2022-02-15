@@ -16,7 +16,7 @@ using namespace OpenHome;
 
 // NetworkAdapterList
 
-NetworkAdapterList::NetworkAdapterList(Environment& aEnv, Environment::ELoopback aLoopbackPolicy, const TIpAddress& aDefaultSubnet)
+NetworkAdapterList::NetworkAdapterList(Environment& aEnv, Environment::ELoopback aLoopbackPolicy, TBool aIPv6Supported, const TIpAddress& aDefaultSubnet)
     : iEnv(aEnv)
     , iLoopbackPolicy(aLoopbackPolicy)
     , iListLock("MNIL")
@@ -24,17 +24,14 @@ NetworkAdapterList::NetworkAdapterList(Environment& aEnv, Environment::ELoopback
     , iCurrent(NULL)
     , iNextListenerId(1)
     , iSingleSubnetMode(false)
-    , iIpv6Supported(true)
+    , iIPv6Supported(aIPv6Supported)
 {
     iEnv.AddObject(this);
     iEnv.AddResumeObserver(*this);
     iDefaultSubnet = aDefaultSubnet;
-    if (iEnv.InitParams() != NULL) {
-        iIpv6Supported = iEnv.InitParams()->IPv6Supported();
-    }
     iNotifierThread = new NetworkAdapterChangeNotifier(*this);
     iNotifierThread->Start();
-    iNetworkAdapters = Os::NetworkListAdapters(iEnv, iLoopbackPolicy, iIpv6Supported, "NetworkAdapterList");
+    iNetworkAdapters = Os::NetworkListAdapters(iEnv, iLoopbackPolicy, iIPv6Supported, "NetworkAdapterList");
     iSubnets = CreateSubnetList();
     Os::NetworkSetInterfaceChangedObserver(iEnv.OsCtx(), &InterfaceListChanged, this);
     for (size_t i=0; i<iSubnets->size(); i++) {
@@ -117,6 +114,15 @@ void NetworkAdapterList::SetCurrentSubnet(const TIpAddress& aSubnet)
     const TBool started = (iEnv.CpiStack() != NULL || iEnv.DviStack() != NULL);
     if (started && !TIpAddressUtils::Equals(newAddress, oldAddress)) {
         iNotifierThread->QueueCurrentChanged();
+    }
+}
+
+void NetworkAdapterList::SetIPv6Supported(TBool aIPv6Supported)
+{
+    if (iIPv6Supported != aIPv6Supported)
+    {
+        iIPv6Supported = aIPv6Supported;
+        Refresh();
     }
 }
 
@@ -323,7 +329,7 @@ void NetworkAdapterList::HandleInterfaceListChanged()
 {
     static const char* kRemovedAdapterCookie = "RemovedAdapter";
     iListLock.Wait();
-    std::vector<NetworkAdapter*>* list = Os::NetworkListAdapters(iEnv, iLoopbackPolicy, iIpv6Supported, "NetworkAdapterList");
+    std::vector<NetworkAdapter*>* list = Os::NetworkListAdapters(iEnv, iLoopbackPolicy, iIPv6Supported, "NetworkAdapterList");
     TIpAddress oldAddress = (iCurrent==NULL ? kIpAddressV4AllAdapters : iCurrent->Address());
     DestroySubnetList(iNetworkAdapters);
     iNetworkAdapters = list;
