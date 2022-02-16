@@ -735,22 +735,52 @@ void TestNetwork(const std::vector<Brn>& aArgs)
 {
     OptionParser parser;
     OptionUint adapter("-i", "--interface", 0, "index of network adapter to use");
+    OptionInt adapterFamily("-f", "--interface-family", 4, "IP family of network adapter to use ('-f 4' for IPv4, '-f 6' for IPv6)");
     parser.AddOption(&adapter);
-    if (!parser.Parse(aArgs) || parser.HelpDisplayed()) {
+    parser.AddOption(&adapterFamily);
+    if (!parser.Parse(aArgs) || parser.HelpDisplayed())
         return;
+
+    // Setup the tests for IPv4 or IPv6 depending on args
+    TBool aUseIPv6 = (adapterFamily.Value() == 6);
+    if (aUseIPv6)
+    {
+        gEnv->InitParams()->SetIPv6Supported(true);
     }
 
-    std::vector<NetworkAdapter*>* ifs = Os::NetworkListAdapters(*gEnv, Environment::ELoopbackUse, false /*no ipv6*/, "TestNetwork");
+    // List network adapters
+    std::vector<NetworkAdapter*>* ifs = Os::NetworkListAdapters(*gEnv, Environment::ELoopbackUse, aUseIPv6, "TestNetwork");
     ASSERT(ifs->size() > 0 && adapter.Value() < ifs->size());
+
+    // Get approriate adapter (either specified with index or with family)
     TIpAddress addr = (*ifs)[adapter.Value()]->Address();
-    for (TUint i=0; i<ifs->size(); i++) {
+    if (aUseIPv6 && addr.iFamily != kFamilyV6)
+    {
+        Print("IPv6 specified but adapter at index (%u) is IPv4\n", adapter.Value());
+        Print("Selecting first available IPv6 adapter...\n");
+
+        for (TUint i = 0; i < ifs->size(); i++)
+        {
+            if ((*ifs)[i]->Address().iFamily == kFamilyV6)
+            {
+                addr = (*ifs)[i]->Address();
+                break;
+            }
+        }
+    }
+
+    for (TUint i = 0; i < ifs->size(); i++)
+    {
         (*ifs)[i]->RemoveRef("TestNetwork");
     }
     delete ifs;
-    Endpoint endpt(0, addr);
+
+    // Print interface to console
     Endpoint::AddressBuf buf;
-    endpt.AppendAddress(buf);
-    Print("Using network interface %s\n\n", buf.Ptr());
+    TIpAddressUtils::ToString(addr, buf);
+    Print("Using network interface %.*s\n\n", PBUF(buf));
+
+    // Begin the tests
     Thread* th = new MainNetworkTestThread(addr);
     th->Start();
     th->Wait();
