@@ -159,6 +159,7 @@ struct OsContext {
     DnsRefresher* iDnsRefresh; // linux only
 };
 
+uint32_t gIpVersion = IP_VERSION_ALL;
 
 static void DestroyInterfaceChangedObserver(OsContext* aContext);
 #if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD) && !defined(__ANDROID__)
@@ -1587,10 +1588,14 @@ THandle OsNetworkAccept(THandle aHandle, TIpAddress* aClientAddress, uint32_t* a
 int32_t OsNetworkGetHostByName(const char* aAddress, TIpAddress* aHost)
 {
     struct addrinfo *res;
-    if (getaddrinfo(aAddress, NULL, NULL, &res) == 0) {
+    struct addrinfo *hints = (struct addrinfo*)calloc(1, sizeof(struct addrinfo));
+    hints->ai_family = (gIpVersion == IP_VERSION_4) ? AF_INET : AF_UNSPEC;
+
+    if (getaddrinfo(aAddress, NULL, hints, &res) == 0) {
         // Helper function determines protocol family (IPv4/v6)
         *aHost = TIpAddressFromSockAddr(res->ai_addr);
         freeaddrinfo(res);
+        freeaddrinfo(hints);
         return 0;
     }
 
@@ -1599,10 +1604,11 @@ int32_t OsNetworkGetHostByName(const char* aAddress, TIpAddress* aHost)
     // Try re-read configuration files.
     if (res_init() == 0) {
         // Configuration files were re-read. Try getaddrinfo() again.
-        if (getaddrinfo(aAddress, NULL, NULL, &res) == 0) {
+        if (getaddrinfo(aAddress, NULL, hints, &res) == 0) {
             // Helper function determines protocol family (IPv4/v6)
             *aHost = TIpAddressFromSockAddr(res->ai_addr);
             freeaddrinfo(res);
+            freeaddrinfo(hints);
             return 0;
         }
     }
@@ -1818,6 +1824,8 @@ static void append(OsNetworkAdapter* aAdapter, OsNetworkAdapter** aHead, OsNetwo
 
 int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters, uint32_t aUseLoopback, uint32_t aIpVersion)
 {
+    gIpVersion = aIpVersion;
+
     int32_t ret = -1;
     struct ifaddrs* networkIf;
     struct ifaddrs* iter;
