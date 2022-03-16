@@ -959,6 +959,22 @@ static int32_t ipv6AddressIsLinkLocal(const TIpAddress* aAddress)
     return 0;
 }
 
+static int32_t isWirelessBaseAddress(const TIpAddress* aAddress)
+{
+    if (aAddress->iFamily == kFamilyV6) {
+        return 0;
+    }
+
+    uint32_t addr = aAddress->iV4;
+    const uint8_t kWirelessOctet = 172;
+#ifdef DEFINE_BIG_ENDIAN
+    const uint8_t thisOctet = (addr >> 24) & 0xff;
+#elif defined(DEFINE_LITTLE_ENDIAN)
+    const uint8_t thisOctet = addr & 0xff;
+#endif
+    return (thisOctet == kWirelessOctet);
+}
+
 static int32_t getScopeId(const TIpAddress* aAddress)
 {
     // Loop through our active interfaces for a match and return the scope_id
@@ -1917,7 +1933,10 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
         iface->iNetMask = TIpAddressFromSockAddr(iter->ifa_netmask);
         iface->iReserved = ifaceIsWireless;
 
-        if (!ifaceIsLoopback && !ipv6AddressIsLinkLocal(&iface->iAddress)) {
+        if (!ifaceIsLoopback &&
+            !isWirelessBaseAddress(&iface->iAddress) &&
+            !ipv6AddressIsLinkLocal(&iface->iAddress)) {
+
             nonLoopbackOrLinkLocalInterfaceExists = 1; // true
         }
     }
