@@ -896,6 +896,14 @@ static int32_t isLoopback(struct sockaddr* aInterface)
     }
 }
 
+static int32_t isLinkLocalIPv6(struct sockaddr* aInterface)
+{
+    if (aInterface->sa_family == AF_INET6) {
+        return IN6_IS_ADDR_LINKLOCAL(&((struct sockaddr_in6*)aInterface)->sin6_addr);
+    }
+    return 0;
+}
+
 static int32_t TIpAddressesAreEqual(const TIpAddress* aAddr1, const TIpAddress* aAddr2)
 {
     if (aAddr1->iFamily == aAddr2->iFamily) {
@@ -1879,6 +1887,8 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
     OsNetworkAdapter* wiredTail = NULL;
     OsNetworkAdapter* wirelessHead = NULL;
     OsNetworkAdapter* wirelessTail = NULL;
+    OsNetworkAdapter* linkLocalHead = NULL;
+    OsNetworkAdapter* linkLocalTail = NULL;
     OsNetworkAdapter* loopHead = NULL;      /* List of loopback adapters */
     OsNetworkAdapter* loopTail = NULL;
 
@@ -1891,6 +1901,7 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
         }
         const int ifaceIsWireless = isWireless(iter->ifa_name, iter->ifa_addr->sa_family);
         const int ifaceIsLoopback = isLoopback(iter->ifa_addr);
+        const int ifaceIsLinkLocal = isLinkLocalIPv6(iter->ifa_addr);
 
 #if !defined(PLATFORM_MACOSX_GNU)
         const uint8_t familyIsValid = (iter->ifa_addr->sa_family == AF_INET ||
@@ -1917,7 +1928,10 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
             goto exit;
         }
 
-        if (ifaceIsLoopback) {
+        if (ifaceIsLinkLocal) {
+            append(iface, &linkLocalHead, &linkLocalTail);
+        }
+        else if (ifaceIsLoopback) {
             append(iface, &loopHead, &loopTail);
         }
         else if (ifaceIsWireless) {
@@ -1934,14 +1948,14 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
         iface->iReserved = ifaceIsWireless;
 
         if (!ifaceIsLoopback &&
-            !isWirelessBaseAddress(&iface->iAddress) &&
-            !ipv6AddressIsLinkLocal(&iface->iAddress)) {
+            !ifaceIsLinkLocal &&
+            !isWirelessBaseAddress(&iface->iAddress)) {
 
             nonLoopbackOrLinkLocalInterfaceExists = 1; // true
         }
     }
 
-    // List wired before wireless, wireless before loopback
+    // List in order wired, wireless, link local, loopback
     OsNetworkAdapter* tail = NULL;
     head = wiredHead;
     tail = wiredTail;
@@ -1960,6 +1974,10 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
     else if (loopHead != NULL) {
         tail->iNext = loopHead;
         tail = loopTail;
+    }
+    if (head != NULL) {
+        tail->iNext = linkLocalHead;
+        tail = linkLocalTail;
     }
 
     // Only include link local IPv6 interfaces if we have a non-loopback interface present
