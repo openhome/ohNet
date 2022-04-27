@@ -13,16 +13,10 @@ def objPath():
     elif platform.system() == 'Darwin':
         if gMac64 == 1:
             plat = 'Mac-x64'
-        elif giOsArmv7 == 1:
-            plat = 'iOs-armv7'
         elif giOsArm64 == 1:
             plat = 'iOs-arm64'
-        elif giOsx86 == 1:
-            plat = 'iOs-x86'
         elif giOsx64 == 1:
             plat = 'iOs-x64'
-        else:
-            plat = 'Mac-x86'
     variant = 'Release'
     if gDebugBuild == 1:
         variant = 'Debug'
@@ -40,12 +34,8 @@ def buildArgs():
         buildArgs += ' windows_store_10=1'
     if gMac64 == 1:
         buildArgs += ' mac-64=1'
-    if giOsArmv7 == 1:
-        buildArgs += ' iOs-armv7=1'
     if giOsArm64 == 1:
         buildArgs += ' iOs-arm64=1'
-    if giOsx86 == 1:
-        buildArgs += ' iOs-x86=1'
     if giOsx64 == 1:
         buildArgs += ' iOs-x64=1'
     if gAndroid == 1:
@@ -210,9 +200,7 @@ gRunJavaTests = 0
 gJsTests = 0
 gDebugBuild = 0
 gMac64 = 0
-giOsArmv7 = 0
 giOsArm64 = 0
-giOsx86 = 0
 giOsx64 = 0
 gAndroid = 0
 gQnap = 0
@@ -264,20 +252,10 @@ for arg in sys.argv[1:]:
         if platform.system() != 'Darwin':
             print 'ERROR - --mac-64 only applicable on Darwin'
             sys.exit(1)
-    elif arg == '--iOs-armv7':
-        giOsArmv7 = 1
-        if platform.system() != 'Darwin':
-            print 'ERROR - --iOs-armv7 only applicable on Darwin'
-            sys.exit(1)
     elif arg == '--iOs-arm64':
         giOsArm64 = 1
         if platform.system() != 'Darwin':
             print 'ERROR - --iOs-arm64 only applicable on Darwin'
-            sys.exit(1)
-    elif arg == '--iOs-x86':
-        giOsx86 = 1
-        if platform.system() != 'Darwin':
-            print 'ERROR - --iOs-x86 only applicable on Darwin'
             sys.exit(1)
     elif arg == '--iOs-x64':
         giOsx64 = 1

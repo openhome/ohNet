@@ -36,18 +36,10 @@ $(info Machine reported by uname is: ${MACHINE})
 $(info PLATFORM: ${PLATFORM})
 
 ifeq ($(MACHINE),Darwin)
-  ifeq ($(iOs-armv7),1)
-    platform = iOS
-    detected_openhome_system = iOs
-    detected_openhome_architecture = armv7
-  else ifeq ($(iOs-arm64),1)
+  ifeq ($(iOs-arm64),1)
     platform = iOS
     detected_openhome_system = iOs
     detected_openhome_architecture = arm64
-  else ifeq ($(iOs-x86),1)
-    platform = iOS
-    detected_openhome_system = iOs
-    detected_openhome_architecture = x86
   else ifeq ($(iOs-x64),1)
     platform = iOS
     detected_openhome_system = iOs
@@ -162,11 +154,7 @@ ifeq ($(platform),iOS)
 	platform_prefix=iPhoneOS
 	platform_compiler=arm-apple-darwin10
 	platform_arch=$(detected_openhome_architecture)
-	ifeq ($(detected_openhome_architecture),x86)
-		platform_prefix=iPhoneSimulator
-		platform_compiler=i686-apple-darwin10
-		platform_arch=i386
-	else ifeq ($(detected_openhome_architecture),x64)
+	ifeq ($(detected_openhome_architecture),x64)
 		platform_prefix=iPhoneSimulator
 		platform_compiler=i686-apple-darwin10
 		platform_arch=x86_64
