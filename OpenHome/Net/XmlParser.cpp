@@ -111,6 +111,12 @@ void XmlParserBasic::NextTag(const Brx& aDocument, Brn& aName, Brn& aAttributes,
             }
             THROW(XmlError);
         }
+        if (item[1] == '!') {
+            if (bytes < 7) { // "<!---->" empty comment tag
+                THROW(XmlError);
+            }
+            continue;
+        }
 
         aRemaining.Set(parser.Remaining());
 
