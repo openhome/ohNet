@@ -87,7 +87,12 @@ class Device():
             (aService['domain'], aService['name'][0].upper() + aService['name'][1:], aService['version'])
 
         # generate the proxy from the service XML
-        serviceXml = urlopen( aService['url'] ).read()
+        serviceXml = urlopen( aService['url'] ).read()  # <<<<<<<<<==================================== This is failure point in discovery
+                                                        # we get list of services back from ohnet, but fail to open URL for FIRST service
+                                                        # so cannot create proxy (and everything eventually times out). No idea why - most
+                                                        # likely product doesn't respond for whatever reason. Pissing around with delays
+                                                        # doesn't seem to help much (adding prints did a bit, so some delays somewhere will
+                                                        # probably reduce this) 
         proxy = GenProxy.GenProxy( aService['type'], serviceXml )
 
         # 'import' the generated proxies
