@@ -46,6 +46,7 @@ objects_core = \
 	$(objdir)CpProxy.$(objext) \
 	$(objdir)CpProxyC.$(objext) \
 	$(objdir)CpServiceC.$(objext) \
+	$(objdir)Crc32.$(objext) \
 	$(objdir)DvDevice.$(objext) \
 	$(objdir)DvDeviceStd.$(objext) \
 	$(objdir)DvDeviceC.$(objext) \
@@ -147,6 +148,7 @@ headers = \
 	$(inc_build)/OpenHome/Private/Arch.h \
 	$(inc_build)/OpenHome/Private/Ascii.h \
 	$(inc_build)/OpenHome/Private/Converter.h \
+	$(inc_build)/OpenHome/Private/Crc32.h \
 	$(inc_build)/OpenHome/Private/Debug.h \
 	$(inc_build)/OpenHome/Private/Fifo.h \
 	$(inc_build)/OpenHome/Private/File.h \
@@ -251,6 +253,8 @@ $(objdir)Buffer.$(objext) : OpenHome/Buffer.cpp $(headers)
 	$(compiler)Buffer.$(objext) -c $(cppflags) $(includes) OpenHome/Buffer.cpp
 $(objdir)Converter.$(objext) : OpenHome/Converter.cpp $(headers)
 	$(compiler)Converter.$(objext) -c $(cppflags) $(includes) OpenHome/Converter.cpp
+$(objdir)Crc32.$(objext) : OpenHome/Crc32.cpp $(headers)
+	$(compiler)Crc32.$(objext) -c $(cppflags) $(includes) OpenHome/Crc32.cpp
 $(objdir)cencode.$(objext) : thirdparty/libb64/cencode.c $(headers)
 	$(compiler)cencode.$(objext) -c $(cflags_third_party) $(includes) thirdparty/libb64/cencode.c
 $(objdir)cdecode.$(objext) : thirdparty/libb64/cdecode.c $(headers)

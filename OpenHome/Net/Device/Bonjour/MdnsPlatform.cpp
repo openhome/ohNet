@@ -269,6 +269,7 @@ void MdnsPlatform::MdnsEventScheduler::TimerExpired()
 {
     if (!mDNS_Execute(iMdns)) {
         LOG_ERROR(kBonjour, "Bonjour             Call to mDNS_Execute() failed. Retrying...\n");
+        Log::Print("MdnsPlatform::MdnsEventScheduler::TimerExpired() Call to mDNS_Execute() failed. Retrying...\n");
         ScheduleNow();
     }
 }
@@ -280,6 +281,7 @@ void MdnsPlatform::MdnsEventScheduler::ScheduleNow()
     }
     catch (MdnsDuplicateEvent&) {
         // Can occur in some scenarios. Indicates normal operation will resume on the following event.
+        Log::Print("MdnsPlatform::MdnsEventScheduler::ScheduleNow() Caught MdnsDuplicateEvent\n");
     }
     catch (MdnsImpossibleEvent&) {
         Log::Print("MdnsPlatform::MdnsEventScheduler::ScheduleNow() FAILURE: Attempt to retry mDNS_Execute() failed\n");

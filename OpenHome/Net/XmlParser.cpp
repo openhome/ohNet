@@ -111,6 +111,12 @@ void XmlParserBasic::NextTag(const Brx& aDocument, Brn& aName, Brn& aAttributes,
             }
             THROW(XmlError);
         }
+        if (item[1] == '!') {
+            if (bytes < 7) { // "<!---->" empty comment tag
+                THROW(XmlError);
+            }
+            continue;
+        }
 
         aRemaining.Set(parser.Remaining());
 
@@ -274,4 +280,80 @@ Brn XmlParserBasic::Element(const Brx& aTag, const Brx& aDocument, Brn& aRemaini
         doc.Set(remaining);
     }
 }
+
+Brn XmlParserBasic::Next(const Brx& aDocument, Brn& aTag)
+{
+    Brn ignore;
+    return XmlParserBasic::Next(aDocument, aTag, ignore);
+}
+
+Brn XmlParserBasic::Next(const Brx& aDocument, Brn& aTag, Brn& aRemaining)
+{
+    EParserState state = eSearchOpen;
+    TInt ignoreClose = 0;
+    Brn namesp;
+    Brn name;
+    Brn tag;
+    Brn attributes;
+    Brn ns;
+    TUint index;
+    TUint startIndex = 0;
+    TUint endIndex = 0;
+    Brn docTrimmed(Ascii::Trim(aDocument));
+    Brn doc(docTrimmed);
+    Brn remaining(docTrimmed);
+    Brn retStart;
+    ETagType tagType;
+
+    for (;;) {
+        doc.Set(docTrimmed.Ptr() + endIndex, docTrimmed.Bytes() - endIndex);
+        startIndex = endIndex;
+        while (state == eSearchOpen) {
+            NextTag(doc, name, attributes, ns, index, remaining, tagType);
+            if (tagType == eTagOpen) {
+                tag.Set(name);
+                namesp.Set(ns);
+                retStart.Set(remaining);
+                state = eSearchClose;
+            }
+            else {
+                startIndex += (TUint)(remaining.Ptr() - doc.Ptr());
+            }
+            endIndex += (TUint)(remaining.Ptr() - doc.Ptr());
+            doc.Set(remaining);
+        }
+        while (state == eSearchClose) {
+            try {
+                NextTag(doc, name, attributes, ns, index, remaining, tagType);
+                if (Ascii::CaseInsensitiveEquals(name, tag)) {
+                    if (tagType == eTagOpen) {
+                        ++ignoreClose;
+                    }
+                    else if (tagType == eTagClose) {
+                        if (ignoreClose == 0) {
+                            if (namesp != ns) {
+                                THROW(XmlError);
+                            }
+                            aTag.Set(name);
+                            aRemaining.Set(remaining);
+                            const TUint retBytes = (TUint)(aRemaining.Ptr() - docTrimmed.Ptr()) - startIndex;
+                            Brn ret(docTrimmed.Split(startIndex, retBytes));
+                            return ret;
+                        }
+                        ignoreClose--;
+                    }
+                }
+                if (remaining.Bytes() == 0) {
+                    THROW(XmlError);
+                }
+                doc.Set(remaining);
+            }
+            catch (XmlError&) {
+                state = eSearchOpen;
+                continue;
+            }
+        }
+    }
+}
+
 

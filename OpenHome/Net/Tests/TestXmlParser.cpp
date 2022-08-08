@@ -84,6 +84,32 @@ void SuiteXmlParserBasic::Test()
     TEST(XmlParserBasic::Element(Brn("thing"), xmlBuffer, remaining) == Brn("<thing>hidden goodies</thing>"));
     TEST(XmlParserBasic::Element(Brn("inner"), xmlBuffer, remaining) == innerTag);
     TEST(XmlParserBasic::Element(Brn("inner"), xmlBuffer) == innerTag);
+
+
+    // Test iterating through XML/ getting Next() tag
+
+    // When taking full xmlBuffer as input, we should get the full xml returned
+    Brn tag;
+    Brn next = XmlParserBasic::Next(xmlBuffer, tag, remaining);
+    TEST(tag == Brn("outer"));
+    TEST(next == xmlBuffer);
+    TEST(remaining.Bytes() == 0);
+
+
+    // When we're missing a closing tag, we should get the next complete block of xml
+    Brn innerTagWithoutClose(
+            "<inner>"                                       \
+                "<person name=\"alpha\" age=\"21\">"        \
+                    "<thing>"                               \
+                        "hidden goodies"                    \
+                    "</thing>"                              \
+                "</person>");
+    
+    next = XmlParserBasic::Next(innerTagWithoutClose, tag, remaining);
+
+    TEST(tag == Brn("person"));
+    TEST(next == personTag);
+    TEST(remaining.Bytes() == 0);
 }
 
 void TestXmlParser()

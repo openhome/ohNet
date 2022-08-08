@@ -1887,25 +1887,23 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
     OsNetworkAdapter* wiredTail = NULL;
     OsNetworkAdapter* wirelessHead = NULL;
     OsNetworkAdapter* wirelessTail = NULL;
-    OsNetworkAdapter* linkLocalHead = NULL;
-    OsNetworkAdapter* linkLocalTail = NULL;
     OsNetworkAdapter* loopHead = NULL;      /* List of loopback adapters */
     OsNetworkAdapter* loopTail = NULL;
-
-    uint8_t nonLoopbackOrLinkLocalInterfaceExists = 0;
+    OsNetworkAdapter* ipv6Head = NULL;
+    OsNetworkAdapter* ipv6Tail = NULL;
 
     for (iter = networkIf; iter != NULL; iter = iter->ifa_next) {
 
         if (iter->ifa_addr == NULL) {
             continue;
         }
+        const int ifaceIsIPv6 = (iter->ifa_addr->sa_family == AF_INET6);
         const int ifaceIsWireless = isWireless(iter->ifa_name, iter->ifa_addr->sa_family);
         const int ifaceIsLoopback = isLoopback(iter->ifa_addr);
-        const int ifaceIsLinkLocal = isLinkLocalIPv6(iter->ifa_addr);
 
 #if !defined(PLATFORM_MACOSX_GNU)
         const uint8_t familyIsValid = (iter->ifa_addr->sa_family == AF_INET ||
-            (iter->ifa_addr->sa_family == AF_INET6 && aIpVersion != IP_VERSION_4));
+            (ifaceIsIPv6 && aIpVersion != IP_VERSION_4));
 #else
         // Omit IPv6 adapters on macOS platforms
         const uint8_t familyIsValid = (iter->ifa_addr->sa_family == AF_INET);
@@ -1928,34 +1926,27 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
             goto exit;
         }
 
-        if (ifaceIsLinkLocal) {
-            append(iface, &linkLocalHead, &linkLocalTail);
-        }
-        else if (ifaceIsLoopback) {
+        if (ifaceIsLoopback) {
             append(iface, &loopHead, &loopTail);
         }
         else if (ifaceIsWireless) {
             append(iface, &wirelessHead, &wirelessTail);
         }
-        else { // wired, non-loopback
+        else if(ifaceIsIPv6) {
+            append(iface, &ipv6Head, &ipv6Tail);
+        }
+        else { // wired, IPv4, non-loopback
             append(iface, &wiredHead, &wiredTail);
         }
 
         (void)strcpy(iface->iName, iter->ifa_name);
-        // Helper functions handle Ipv4 and v6 addresses
+        // Helper functions handle IPv4 and v6 addresses
         iface->iAddress = TIpAddressFromSockAddr(iter->ifa_addr);
         iface->iNetMask = TIpAddressFromSockAddr(iter->ifa_netmask);
         iface->iReserved = ifaceIsWireless;
-
-        if (!ifaceIsLoopback &&
-            !ifaceIsLinkLocal &&
-            !isWirelessBaseAddress(&iface->iAddress)) {
-
-            nonLoopbackOrLinkLocalInterfaceExists = 1; // true
-        }
     }
 
-    // List in order wired, wireless, link local, loopback
+    // List in order wired, wireless, loopback, IPv6
     OsNetworkAdapter* tail = NULL;
     head = wiredHead;
     tail = wiredTail;
@@ -1976,12 +1967,9 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
         tail = loopTail;
     }
     if (head != NULL) {
-        tail->iNext = linkLocalHead;
-        tail = linkLocalTail;
+        tail->iNext = ipv6Head;
+        tail = ipv6Tail;
     }
-
-    // Only include link local IPv6 interfaces if we have a non-loopback interface present
-    uint8_t includeLinkLocal = nonLoopbackOrLinkLocalInterfaceExists;
 
     // Check for multiple entries with same address and different netmasks and
     // remove all these except for the least specific (largest superset) netmask.
@@ -1992,26 +1980,18 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
     while (ifaceIter != NULL) {
         int removeIface = 1; // false
 
-        if (!includeLinkLocal && ipv6AddressIsLinkLocal(&ifaceIter->iAddress)) {
-            removeIface = 0; // true
-        }
-        
-        // continue to inner loop only if we haven't already marked the interface for removal
-        if (removeIface != 0) {
+        // inner loop: check other adapters (not ifaceIter) for priority
+        OsNetworkAdapter* addrsIter = head;
+        while (addrsIter != NULL) {
+            // Helper functions distinguish between IPv4 and v6
+            if (addrsIter != ifaceIter &&
+                TIpAddressesAreEqual(&addrsIter->iAddress, &ifaceIter->iAddress) &&
+                NetMasksAreEqual(&addrsIter->iNetMask, &ifaceIter->iNetMask)) { // Order of arguments is important here
 
-            // inner loop: check other adapters (not ifaceIter) for priority
-            OsNetworkAdapter* addrsIter = head;
-            while (addrsIter != NULL) {
-                // Helper functions distinguish between IPv4 and v6
-                if (addrsIter != ifaceIter &&
-                    TIpAddressesAreEqual(&addrsIter->iAddress, &ifaceIter->iAddress) &&
-                    NetMasksAreEqual(&addrsIter->iNetMask, &ifaceIter->iNetMask)) { // Order of arguments is important here
-
-                    removeIface = 0; // true
-                    break;
-                }
-                addrsIter = addrsIter->iNext;
+                removeIface = 0; // true
+                break;
             }
+            addrsIter = addrsIter->iNext;
         }
 
         if (removeIface == 0) {

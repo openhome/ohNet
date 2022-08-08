@@ -16,6 +16,7 @@ namespace Net {
  * Find returns the data inside a given tag and (optionally) the data remaining after the tag
  * Attribute returns the value of a given attribute within an element
  * Element returns a full element (including its start and end tags) and (optionally) the data remaining after the element
+ * Next returns the next full element in the buffer along with its tag and (optionally) the data remaining after the element
  */
 class XmlParserBasic
 {
@@ -30,6 +31,8 @@ public:
     static Brn Element(const Brx& aTag, const Brx& aDocument);
     static Brn Element(const TChar* aTag, const Brx& aDocument, Brn& aRemaining);
     static Brn Element(const Brx& aTag, const Brx& aDocument, Brn& aRemaining);
+    static Brn Next(const Brx& aDocument, Brn& aTag);
+    static Brn Next(const Brx& aDocument, Brn& aTag, Brn& aRemaining);
 
 private:
     enum ETagType
