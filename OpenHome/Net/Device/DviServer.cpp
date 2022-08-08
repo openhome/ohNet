@@ -106,7 +106,8 @@ void DviServer::SubnetListChangedLocked()
         DviServer::Server* server = iServers[i];
         if (FindInterface(server->Interface(), *nifList) == -1
             || (adapterList.SingleSubnetModeEnabled()
-            && (current == NULL || !TIpAddressUtils::Equals(server->Interface(), current->Address())))) {
+            && (current == NULL || !TIpAddressUtils::Equals(server->Interface(), current->Address()))
+            && !TIpAddressUtils::Equals(server->Interface(), kLoopbackAddr))) {
             NotifyServerDeleted(server->Interface());
             delete server;
             iServers.erase(iServers.begin() + i);
