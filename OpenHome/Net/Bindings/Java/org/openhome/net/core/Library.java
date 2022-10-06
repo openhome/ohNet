@@ -13,6 +13,7 @@ public class Library
     private static native int OhNetLibraryStartCombined(int aSubnet);
     private static native void OhNetLibraryClose();
     private static native void OhNetSetCurrentSubnet(long aSubnet);
+    private static native void OhNetRemoveCurrentSubnet();
     private static native long OhNetCurrentSubnetAdapter();
     private static native void OhNetRefreshNetworkAdapterList();
     private static native void OhNetLibraryNotifySuspended();
@@ -160,6 +161,16 @@ public class Library
     public void setCurrentSubnet(NetworkAdapter aSubnet)
     {
     	OhNetSetCurrentSubnet(aSubnet.getHandle());
+    }
+    
+    /**
+     * Remove the current subnet setting.
+     * 
+     * <p>Device lists and subscriptions will be automatically updated.
+     */
+    public void removeCurrentSubnet()
+    {
+        OhNetRemoveCurrentSubnet();
     }
     
     /**

@@ -49,9 +49,13 @@ ifeq ($(MACHINE),Darwin)
       detected_openhome_system = Linux
       detected_openhome_architecture = rpi
   else
-    platform = IntelMac
+    platform = Mac
     detected_openhome_system = Mac
-    detected_openhome_architecture = x64
+    ifeq ($(Mac-arm64),1)
+        detected_openhome_architecture = arm64
+    else
+        detected_openhome_architecture = x64
+    endif
   endif
 else ifneq (, $(findstring powerpc, $(gcc_machine)))
     platform = Linux-ppc32
@@ -177,14 +181,21 @@ ifeq ($(platform),iOS)
 	no_shared_objects = yes
 endif
 
-ifeq ($(platform),IntelMac)
-	# Darwin, not ARM -> Intel Mac
-	platform ?= IntelMac
+ifeq ($(platform),Mac)
+	# Darwin, not iOS or Linux-rpi -> Mac
 	linkopts_ohNet = -Wl,-install_name,@loader_path/libohNet.dylib
-	platform_cflags = -DPLATFORM_MACOSX_GNU -arch x86_64 -mmacosx-version-min=10.7
-	platform_linkflags = -arch x86_64 -framework CoreFoundation -framework SystemConfiguration -framework IOKit
-	osbuilddir = Mac-x64
-	openhome_architecture = x64
+    ifeq ($(detected_openhome_architecture),x64)
+		platform_cflags = -DPLATFORM_MACOSX_GNU -arch x86_64 -mmacosx-version-min=10.7
+		platform_linkflags = -arch x86_64 -framework CoreFoundation -framework SystemConfiguration -framework IOKit
+		osbuilddir = Mac-x64
+		openhome_architecture = x64
+	else
+		# building for arm64
+		platform_cflags = -DPLATFORM_MACOSX_GNU -arch arm64 -mmacosx-version-min=11
+		platform_linkflags = -arch arm64 -framework CoreFoundation -framework SystemConfiguration -framework IOKit
+		osbuilddir = Mac-arm64
+		openhome_architecture = arm64
+	endif
 
 	objdir = Build/Obj/$(osbuilddir)/$(build_dir)/
 	compiler = clang -fPIC -stdlib=libc++ -o $(objdir)
@@ -329,7 +340,7 @@ cflags_base = $(CFLAGS) -fexceptions -Wall $(version_specific_cflags_third_party
 cflags_third_party = $(cflags_base) -Wno-int-to-pointer-cast
 ifeq ($(nocpp11), yes)
     cppflags = $(cflags_base) -Werror
-else ifeq ($(platform),IntelMac)
+else ifeq ($(platform),Mac)
     cppflags = $(cflags_base) -std=c++11 -Werror
 else
     cppflags = $(cflags_base) -std=c++0x -Werror
@@ -368,10 +379,16 @@ csharp = mcs /nologo $(debug_csharp)
 csharpdefines ?=
 publicjavadir = OpenHome/Net/Bindings/Java/
 
-ifeq ($(platform), IntelMac)
+ifeq ($(platform), Mac)
 	platform_java_cflags = -Wno-self-assign
-	includes_jni = -I${MACOSX_SDK}/System/Library/Frameworks/JavaVM.framework/Headers -I${MACOSX_SDK}/usr/include/malloc
-	link_jvm = ${MACOSX-SDK}/System/Library/Frameworks/JavaVM.framework/JavaVM
+	# arm64 builds need JAVA_HOME to be set because the Mac SDK for arm64 doesn't contain Java includes or dylibs
+	ifneq (${JAVA_HOME},)
+		includes_jni = -I${JAVA_HOME}/include -I${JAVA_HOME}/include/darwin -I${MACOSX_SDK}/usr/include/malloc
+		link_jvm = ${JAVA_HOME}/lib/server/libjvm.dylib
+	else
+		includes_jni = -I${MACOSX_SDK}/System/Library/Frameworks/JavaVM.framework/Headers -I${MACOSX_SDK}/usr/include/malloc
+		link_jvm = ${MACOSX_SDK}/System/Library/Frameworks/JavaVM.framework/JavaVM
+	endif
 	javac = /usr/bin/javac
 	jar = /usr/bin/jar
 else

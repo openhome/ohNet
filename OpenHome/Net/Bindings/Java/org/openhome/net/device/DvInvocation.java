@@ -101,6 +101,7 @@ public class DvInvocation implements IDvInvocation
     private static native String DvInvocationGetResourceUriPrefix(long aInvocation);
     private static native int DvInvocationGetClientAddress(long aInvocation);
     private static native int DvInvocationGetClientPort(long aInvocation);
+    private static native String DvInvocationGetClientUserAgent(long aInvocation);
 	private static native int DvInvocationReadStart(long aInvocation);
 	private native InvocationStatusInt DvInvocationReadInt(long aInvocation, String aName);
 	private native InvocationStatusUint DvInvocationReadUint(long aInvocation, String aName);
@@ -198,6 +199,16 @@ public class DvInvocation implements IDvInvocation
    }
 	
 	/**
+     * Get the client user agent string for this invocation.
+     *
+     * @return  The user agent string sent by the client, or null if no user agent string was sent.
+     */
+    public String getClientUserAgent()
+    {
+        return DvInvocationGetClientUserAgent(iHandle);
+    }
+    
+    /**
 	 * Begin reading (input arguments for) an invocation.
 	 * 
 	 * <p>Must be called before the values of any input arguments are read.

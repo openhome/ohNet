@@ -41,10 +41,17 @@ typedef const char* (STDCALL *DvInvocationResourceUriPrefix)(void* aPtr);
  * @param[in]  aPtr  aInvocationPtr passed to the action
  * @param[out] aClientAddress  IPv4 address of client; 0 if this cannot be determined.
  * @param[out] aClientPort     Port [1..65535] of client; 0 if this cannot be determined.
- *
- * @return  The prefix to resource uris.
  */
 typedef void (STDCALL *DvInvocationClientEndpoint)(void* aPtr, TIpAddress* aClientAddress, uint32_t* aClientPort);
+
+/**
+ * Read the client user agent string for this invocation.
+ *
+ * @param[in] aPtr  aInvocationPtr passed to the action
+ * @param[out] aUserAgent   The value of the User-Agent HTTP header for this invocation (if present).
+ * @param[out] aLen         Length (in bytes) of aUserAgent.
+ */
+typedef void (STDCALL *DvInvocationClientUserAgent)(void* aPtr, const char** aUserAgent, uint32_t* aLen);
 
 /**
  * Table of function pointers passed to invoked actions.
@@ -55,6 +62,7 @@ typedef struct IDvInvocationC
     DvInvocationAdapter iAdapter;
     DvInvocationResourceUriPrefix iResourceUriPrefix;
     DvInvocationClientEndpoint iClientEndpoint;
+    DvInvocationClientUserAgent iClientUserAgent;
 }
 IDvInvocationC;
 

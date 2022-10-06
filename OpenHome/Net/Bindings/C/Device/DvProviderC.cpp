@@ -307,6 +307,37 @@ void STDCALL DvInvocationGetClientEndpoint(DvInvocationC aInvocation, TIpAddress
     }
 }
 
+void STDCALL DvInvocationGetClientUserAgent(DvInvocationC aInvocation, const char** aUserAgent, uint32_t* aLen)
+{
+    try {
+        IDviInvocation * invocation = InvocationFromHandle(aInvocation);
+        const Brx& userAgent = invocation->ClientUserAgent();
+        *aUserAgent = (const char*)userAgent.Ptr();
+        if (*aUserAgent == NULL) {
+            *aLen = 0;
+        }
+        else {
+            *aLen = (uint32_t)userAgent.Bytes();
+        }
+    }
+    catch (Exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
+    catch (std::exception& ex) {
+        UnhandledExceptionHandler(ex);
+    }
+}
+
+/**
+ * Get client invocation user agent string.
+ *
+ * @param[in]  aInvocation  Invocation handle.  Passed to OhNetCallbackDvInvocation.
+ * @param[out] aUserAgent   The value of the HTTP User-Agent header for this invocation (if present).
+ * @param[out] aLen         Length (in bytes) of aUserAgent.
+ */
+DllExport void STDCALL DvInvocationGetClientUserAgent(DvInvocationC aInvocation, const char** aUserAgent, uint32_t* aLen);
+
+
 int32_t STDCALL DvInvocationReadStart(DvInvocationC aInvocation)
 {
     IDviInvocation* invocation = InvocationFromHandle(aInvocation);

@@ -47,3 +47,15 @@ void DvInvocationCPrivate::ClientEndpoint(void* aPtr, TIpAddress* aClientAddress
     *aClientAddress = ep.Address();
     *aClientPort = ep.Port();
 }
+
+void DvInvocationCPrivate::ClientUserAgent(void* aPtr, const char** aUserAgent, uint32_t* aLen)
+{
+    const Brx& userAgent = DvInvocationCPrivate::Invocation(aPtr).ClientUserAgent();
+    *aUserAgent = (const char*)userAgent.Ptr();
+    if (*aUserAgent == NULL) {
+        *aLen = 0;
+    }
+    else {
+        *aLen = (uint32_t)userAgent.Bytes();
+    }
+}

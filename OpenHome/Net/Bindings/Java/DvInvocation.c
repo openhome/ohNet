@@ -2,6 +2,7 @@
 #include <malloc.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <OpenHome/Os.h>
 #include "DvInvocation.h"
 #include "OpenHome/Net/C/DvProvider.h"
@@ -111,13 +112,43 @@ JNIEXPORT jint JNICALL Java_org_openhome_net_device_DvInvocation_DvInvocationGet
     uint32_t port;
     aEnv = aEnv;
     aClass = aClass;
-    
+
     DvInvocationGetClientEndpoint(invocation, &adapter, &port);
     return (jint) port;
 }
 
 /*
-<  * Class:     org_openhome_net_device_DvInvocation
+ * Class:     org_openhome_net_device_DvInvocation
+ * Method:    DvInvocationGetClientUserAgent
+ * Signature: (J)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_org_openhome_net_device_DvInvocation_DvInvocationGetClientUserAgent
+ (JNIEnv *aEnv, jclass aClass, jlong aInvocation)
+{
+    DvInvocationC invocation = (DvInvocationC)(size_t)aInvocation;
+    const char* userAgent;
+    uint32_t len;
+    char* userAgentUTF;
+    jstring utf8;
+    aEnv = aEnv;
+    aClass = aClass;
+    
+    DvInvocationGetClientUserAgent(invocation, &userAgent, &len);
+    if (len > 0) {
+        userAgentUTF = malloc(len + 1);
+        (void)strncpy(userAgentUTF, userAgent, len);
+        (void)strncat(userAgentUTF, "\0", len);
+        utf8 = (*aEnv)->NewStringUTF(aEnv, userAgentUTF);
+        free(userAgentUTF);
+        return utf8;
+    }
+    else {
+        return NULL;
+    }
+}
+
+/*
+ * Class:     org_openhome_net_device_DvInvocation
  * Method:    DvInvocationReadStart
  * Signature: (J)I
  */

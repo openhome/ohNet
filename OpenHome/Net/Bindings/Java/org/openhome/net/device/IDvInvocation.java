@@ -36,4 +36,11 @@ public interface IDvInvocation
      * @return  The client port that invoked this action.
      */
     public int getClientPort();
+    
+    /**
+     * Get the client user agent string for this invocation.
+     *
+     * @return  The user agent string sent by the client, or null if no user agent string was sent.
+     */
+    public String getClientUserAgent();
 }
