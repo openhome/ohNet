@@ -520,7 +520,7 @@ void OpenHome::Net::Invocation::OutputArgument(IAsyncOutput& aConsole, const TCh
     }
     const Brx& paramName = aArgument.Parameter().Name();
     if (paramType == OpenHome::Net::Parameter::eTypeBinary) {
-        (void)sprintf(str, "%s (binary - size %lu)", paramName.Ptr(), (unsigned long)((const ArgumentBinary&)aArgument).Value().Bytes());
+        (void)snprintf(str, kMaxStackBytes, "%s (binary - size %lu)", paramName.Ptr(), (unsigned long)((const ArgumentBinary&)aArgument).Value().Bytes());
     }
     else if (paramType == OpenHome::Net::Parameter::eTypeString) {
         static const char fmt[] = "%s (%s)";
@@ -529,23 +529,23 @@ void OpenHome::Net::Invocation::OutputArgument(IAsyncOutput& aConsole, const TCh
         const TUint len = paramName.Bytes() + argString.Value().Bytes() + fmtLen + 1;
         if (len > kMaxStackBytes) {
             bigStr = new TChar[len];
-            (void)sprintf(bigStr, fmt, paramName.Ptr(), argString.Value().Ptr());
+            (void)snprintf(bigStr, kMaxStackBytes, fmt, paramName.Ptr(), argString.Value().Ptr());
         }
         else {
-            (void)sprintf(str, fmt, paramName.Ptr(), argString.Value().Ptr());
+            (void)snprintf(str, kMaxStackBytes, fmt, paramName.Ptr(), argString.Value().Ptr());
         }
     }
     else {
         switch (paramType)
         {
         case OpenHome::Net::Parameter::eTypeBool:
-            (void)sprintf(str, "%s (%d)", paramName.Ptr(), ((const ArgumentBool&)aArgument).Value());
+            (void)snprintf(str, kMaxStackBytes, "%s (%d)", paramName.Ptr(), ((const ArgumentBool&)aArgument).Value());
             break;
         case OpenHome::Net::Parameter::eTypeInt:
-            (void)sprintf(str, "%s (%lu)", paramName.Ptr(), (unsigned long)((const ArgumentInt&)aArgument).Value());
+            (void)snprintf(str, kMaxStackBytes, "%s (%lu)", paramName.Ptr(), (unsigned long)((const ArgumentInt&)aArgument).Value());
             break;
         case OpenHome::Net::Parameter::eTypeUint:
-            (void)sprintf(str, "%s (%lu)", paramName.Ptr(), (unsigned long)((const ArgumentUint&)aArgument).Value());
+            (void)snprintf(str, kMaxStackBytes, "%s (%lu)", paramName.Ptr(), (unsigned long)((const ArgumentUint&)aArgument).Value());
             break;
         default:
             ASSERTS();
