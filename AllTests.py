@@ -349,8 +349,8 @@ class js_test:
     def get_env(self,objpath):
         self.objpath = objpath
         program_files = os.environ.get('ProgramFiles')
-        self.browser_location = os.path.join(program_files, 'Safari\Safari.exe')
-        self.test_dir = os.path.join(os.getcwd(), 'Build\Include\OpenHome\Net\Private\Js\Tests')
+        self.browser_location = os.path.join(program_files, 'Safari\\Safari.exe')
+        self.test_dir = os.path.join(os.getcwd(), 'Build\\Include\\OpenHome\\Net\\Private\\Js\\Tests')
 
     def find_device(self):
         self.test_testbasic = subprocess.Popen([os.path.join(self.objpath, 'TestDvTestBasic.exe'), '-l', '-c', self.test_dir])
