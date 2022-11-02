@@ -204,54 +204,52 @@ void CpiDeviceUpnp::CheckStillAvailable()
 
 TBool CpiDeviceUpnp::GetAttribute(const char* aKey, Brh& aValue) const
 {
-    Brn key(aKey);   
+    Brn key(aKey);
+    
     Parser parser(key);
     
-    if (parser.Next('.') != Brn("Upnp")) {
-        return false;
-    }
+    if (parser.Next('.') == Brn("Upnp")) {
+        Brn property = parser.Remaining();
 
-    Brn property = parser.Remaining();
-
-    if (property == Brn("Location")) {
-        aValue.Set(iLocation);
-        return (true);
-    }
-
-    if (property == Brn("DeviceXml")) {
-        aValue.Set(iXml);
-        return (true);
-    }
-
-    const DeviceXml* device = iDeviceXml; 
-    if (parser.Next('.') == Brn("Root")) {
-        device = &iDeviceXmlDocument->Root();
-        property.Set(parser.Remaining());
-    }
-
-    try {
-        if (property == Brn("FriendlyName")) {
-            device->GetFriendlyName(aValue);
+        if (property == Brn("Location")) {
+            aValue.Set(iLocation);
+            return (true);
+        }
+        if (property == Brn("DeviceXml")) {
+            aValue.Set(iXml);
             return (true);
         }
 
-        if (property == Brn("PresentationUrl")) {
-            device->GetPresentationUrl(aValue);
-            return (true);
+        const DeviceXml* device = iDeviceXml;
+        
+        if (parser.Next('.') == Brn("Root")) {
+            device = &iDeviceXmlDocument->Root();
+            property.Set(parser.Remaining());
         }
+        
+        try {
+            if (property == Brn("FriendlyName")) {
+                device->GetFriendlyName(aValue);
+                return (true);
+            }
+            if (property == Brn("PresentationUrl")) {
+                device->GetPresentationUrl(aValue);
+                return (true);
+            }
+            
+            Parser parser2(property);
+            
+            Brn token = parser2.Next('.');
+            
+            if (token == Brn("Service")) {
+                aValue.Set(device->ServiceVersion(parser2.Remaining()));
+                return (true);
+            }
+        }
+        catch (XmlError&) {
+        }
+    }
 
-        Parser parser2(property);
-        
-        Brn token = parser2.Next('.');
-        
-        if (token == Brn("Service")) {
-            aValue.Set(device->ServiceVersion(parser2.Remaining()));
-            return (true);
-        }
-    }
-    catch (XmlError&) {
-    }
-        
     return (false);
 }
 

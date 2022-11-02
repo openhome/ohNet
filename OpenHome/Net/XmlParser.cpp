@@ -8,15 +8,6 @@
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
-
-TBool XmlParserBasic::Find(const TChar* aTag, const Brx& aDocument, Brx& aResult)
-{
-    Brn tag(aTag);
-    Brn ignore;
-}
-
-
-
 Brn XmlParserBasic::Find(const TChar* aTag, const Brx& aDocument)
 {
     Brn tag(aTag);

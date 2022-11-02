@@ -21,9 +21,6 @@ namespace Net {
 class XmlParserBasic
 {
 public:
-    static TBool Find(const TChar* aTag, const Brx& aDocument, Brx& aResult);
-
-
     static Brn Find(const TChar* aTag, const Brx& aDocument);
     static Brn Find(const Brx& aTag, const Brx& aDocument);
     static Brn Find(const TChar* aTag, const Brx& aDocument, Brn& aRemaining);

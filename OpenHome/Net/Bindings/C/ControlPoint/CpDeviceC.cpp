@@ -1,6 +1,5 @@
 #include <OpenHome/Net/C/CpDevice.h>
 #include <OpenHome/Net/Private/CpiDevice.h>
-#include <OpenHome/Net/Private/XmlParser.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -49,19 +48,14 @@ int32_t STDCALL CpDeviceCGetAttribute(CpDeviceC aDevice, const char* aKey, char*
     CpiDevice* device = reinterpret_cast<CpiDevice*>(aDevice);
     Brh val;
     ASSERT(device != NULL);
-    try {
-        if (device->GetAttribute(aKey, val)) {
-            TUint len = val.Bytes();
-            *aValue = (char*)malloc(len+1);
-            (void)memcpy(*aValue, val.Ptr(), len);
-            (*aValue)[len] = '\0';
-            return 1;
-        }
-    }
-    catch (XmlError&) {
+    if (device->GetAttribute(aKey, val)) {
+        TUint len = val.Bytes();
+        *aValue = (char*)malloc(len+1);
+        (void)memcpy(*aValue, val.Ptr(), len);
+        (*aValue)[len] = '\0';
+        return 1;
     }
     return 0;
-
 }
 
 void STDCALL CpDeviceListDestroy(HandleCpDeviceList aListHandle)
