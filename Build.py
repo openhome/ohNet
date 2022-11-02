@@ -17,7 +17,7 @@ def rssh(username,host,cmd):
 
     def get_thread(pipe):
         for line in pipe.readlines():
-            print line
+            print(line)
 
     stdout_thread = threading.Thread(target=get_thread, args=(stdout,))
     stderr_thread = threading.Thread(target=get_thread, args=(stderr,))
@@ -49,16 +49,16 @@ def getEnvironment():
     Label = os.environ.get('label')
 
     if Label == None:
-        print '\'label\' not set in environment!'
-        print 'Your options are:'
-        print '     arm'
-        print '     linux-x86'
-        print '     linux-x64'
-        print '     windows-x86'
-        print '     windows-x64'
-        print ''
-        print 'ps: we are aware that \'label\' is a terrible name for this parameter.'
-        print ''
+        print('\'label\' not set in environment!')
+        print('Your options are:')
+        print('     arm')
+        print('     linux-x86')
+        print('     linux-x64')
+        print('     windows-x86')
+        print('     windows-x64')
+        print('')
+        print('ps: we are aware that \'label\' is a terrible name for this parameter.')
+        print('')
         sys.exit(1)
 
     if Label == 'arm':
@@ -120,10 +120,10 @@ def getModule():
     Module = os.environ.get('module')
 
     if Module == None:
-        print '\'module\' not set in environment!'
-        print 'Your options are:'
-        print '     upnp'
-        print '     zappSpyGUI'
+        print('\'module\' not set in environment!')
+        print('Your options are:')
+        print('     upnp')
+        print('     zappSpyGUI')
         sys.exit(1)
 
     if Module == 'upnp':
@@ -158,11 +158,11 @@ def getArguments(module,nightly,arch,valgrind,os):
 
 def Build(tool, cmd, args):
 
-    print "Build args are "	+args
+    print("Build args are "	+ args)
 
     ret = subprocess.check_call(tool + '&&' + cmd + args, shell=True)
     if ret != 0:
-        print ret        
+        print(ret)
         sys.exit(10)
 
 def DummyXML():
@@ -253,7 +253,7 @@ def ParseDir():
     dirList=os.listdir(vgpath)
     for fname in dirList:
         if fname != "ParseValgrind.py":
-            print fname
+            print(fname)
             ParseValgrind(fname)
 
 
@@ -270,13 +270,13 @@ def GenDocs(module, os, nightly, arch, tool):
         ret = rsync('hudson-zapp','ohnet.linn.co.uk','Build/Docs/','~/doc','')
 
         if ret != 0:
-            print ret
+            print(ret)
             sys.exit(10)
 
         ret = rsync('hudson-rsync','openhome.org','Build/Docs/','~/build/nightly/docs','')
 
         if ret != 0:
-            print ret
+            print(ret)
             sys.exit(10)
         
 def ArmTests(module, arch, nightly):
@@ -288,7 +288,7 @@ def ArmTests(module, arch, nightly):
         ret = rsync('root','sheeva010.linn.co.uk','AllTests.py','~/',excludes)
 
         if ret != 0:
-            print ret
+            print(ret)
             sys.exit(10)
 
         if nightly == "1":
@@ -296,14 +296,14 @@ def ArmTests(module, arch, nightly):
             ret = rssh('root','sheeva010.linn.co.uk','python AllTests.py -f -t')
 
             if ret != 0:
-            	print ret
+            	print(ret)
              	sys.exit(10)
 
         else:
             ret = rssh('root','sheeva010.linn.co.uk','python AllTests.py -t')
 
             if ret != 0:
-            	print ret
+            	print(ret)
             	sys.exit(10)
 
 
@@ -313,7 +313,7 @@ def publish_release(ostype, arch, release_name, tool, build_type):
 
     target_name = "%s-%s" % (ostype, "ARM" if arch=="arm" else arch)
     if ostype == "MacOS":
-        print "No ability to publish releases for MacOS. Skip."
+        print("No ability to publish releases for MacOS. Skip.")
         return
     if ostype == "Windows":
         artifacts = '\\\\ohnet.linn.co.uk\\artifacts\\'

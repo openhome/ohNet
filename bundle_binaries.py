@@ -121,22 +121,22 @@ def main():
     parser.add_option("-m", "--managed-only", default=False, action="store_true", help="Package only the managed assembly.")
     options, args = parser.parse_args()
     if len(args)>0:
-        print "Too many arguments."
+        print("Too many arguments.")
         sys.exit(1)
     if options.system not in ALL_SYSTEMS:
-        print "Please specify --system from one of {0}.".format(", ".join(sorted(ALL_SYSTEMS)))
+        print("Please specify --system from one of {0}.".format(", ".join(sorted(ALL_SYSTEMS))))
         sys.exit(1)
     if options.architecture not in ALL_ARCHITECTURES:
-        print "Please specify --architecture from one of {0}.".format(", ".join(sorted(set(tgt.architecture for tgt in ALL_TARGETS.keys() if tgt.system == options.system))))
+        print("Please specify --architecture from one of {0}.".format(", ".join(sorted(set(tgt.architecture for tgt in ALL_TARGETS.keys() if tgt.system == options.system)))))
         sys.exit(1)
     if options.configuration not in ALL_CONFIGURATIONS:
-        print "Please specify --configuration from one of {0}.".format(", ".join(sorted(ALL_CONFIGURATIONS)))
+        print("Please specify --configuration from one of {0}.".format(", ".join(sorted(ALL_CONFIGURATIONS))))
         sys.exit(1)
     target = BuildTarget(options.system, options.architecture, options.configuration)
     if target not in ALL_TARGETS:
-        print "Unrecognized target combination. Valid combinations are:"
+        print("Unrecognized target combination. Valid combinations are:")
         for valid_target in sorted(ALL_TARGETS.keys()):
-            print "    " + get_target_as_option_string(valid_target)
+            print("    " + get_target_as_option_string(valid_target))
         sys.exit(1)
 
     buildinfo = ALL_TARGETS[target]

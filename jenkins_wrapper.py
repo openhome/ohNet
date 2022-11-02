@@ -14,5 +14,5 @@ else:
 
 ret = subprocess.check_call(cmd)
 if ret != 0:
-    print ret
+    print(ret)
     sys.exit(10)

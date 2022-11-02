@@ -61,7 +61,7 @@ def build(aTarget, aParallel=False):
     buildCmd += buildArgs()
     ret = os.system(buildCmd)
     if (0 != ret):
-        print '\nBuild for ' + aTarget + ' failed, aborting'
+        print('\nBuild for ' + aTarget + ' failed, aborting')
         sys.exit(1)
 
 def runBuilds():
@@ -83,7 +83,7 @@ def runBuilds():
         build('all', gParallel)
     if (gRunJavaTests == 1):
         build('ohNetJavaAll', False)
-    print '\nBuilds complete'
+    print('\nBuilds complete')
 
 def runTests():
     testsToRun = list(gAllTests)
@@ -94,14 +94,14 @@ def runTests():
         # Suppress non-native tests
         testsToRun = [test for test in testsToRun if test.native]
     for test in testsToRun:
-        print '\nTest: ' + test.name
+        print('\nTest: ' + test.name)
         cmdLine = test.args
         cmdLine.insert(0, test.Path())
         if (not test.native and os.name != 'nt'):
             cmdLine.insert(0, 'mono')
         ret = subprocess.call(cmdLine)
         if ret != 0:
-            print '\nTest ' + test.name + ' failed, aborting'
+            print('\nTest ' + test.name + ' failed, aborting')
             sys.exit(1)
     if (gRunJavaTests == 1):
         testsToRun = list(gJavaTests)
@@ -109,9 +109,9 @@ def runTests():
             # Suppress non-quick tests
             testsToRun = [test for test in testsToRun if test.quick]
         for test in testsToRun:
-            print '\nTest: ' + test.name
+            print ('\nTest: ' + test.name)
             cmdLine = []
-            print "AllTests.py JAVA_HOME: ", os.environ['JAVA_HOME']
+            print("AllTests.py JAVA_HOME: ", os.environ['JAVA_HOME'])
             cmdLine.append(os.path.join(os.environ['JAVA_HOME'], 'bin', 'java'))
             cmdLine.append('-Djava.library.path=' + objPath())
             cmdLine.append('-classpath')
@@ -120,7 +120,7 @@ def runTests():
             cmdLine.append(test.name)
             ret = subprocess.call(cmdLine)
             if ret != 0:
-                print '\nTest ' + test.name + ' failed, aborting'
+                print('\nTest ' + test.name + ' failed, aborting')
                 sys.exit(1)
 
 def runTestsValgrind():
@@ -135,7 +135,7 @@ def runTestsValgrind():
         testsToRun = [test for test in gAllTests if test.native]
     os.system('export GLIBCXX_FORCE_NEW')
     for test in testsToRun:
-        print '\nTest: ' + test.name
+        print('\nTest: ' + test.name)
         cmdLine = []
         cmdLine.append('valgrind')
         cmdLine.append('--leak-check=yes')
@@ -149,9 +149,9 @@ def runTestsValgrind():
         if ret != 0:
             failed.append(test.name)
     if len(failed) > 0:
-        print '\nERROR, the following tests failed:'
+        print('\nERROR, the following tests failed:')
         for fail in failed:
-            print '\t' + fail
+            print('\t' + fail)
         sys.exit(-1)
 
 def runTestsHelgrind():
@@ -166,7 +166,7 @@ def runTestsHelgrind():
         testsToRun = [test for test in gAllTests if test.native]
     os.system('export GLIBCXX_FORCE_NEW')
     for test in testsToRun:
-        print '\nTest: ' + test.name
+        print('\nTest: ' + test.name)
         cmdLine = []
         cmdLine.append('valgrind')
         cmdLine.append('--tool=helgrind')
@@ -180,9 +180,9 @@ def runTestsHelgrind():
         if ret != 0:
             failed.append(test.name)
     if len(failed) > 0:
-        print '\nERROR, the following tests failed:'
+        print('\nERROR, the following tests failed:')
         for fail in failed:
-            print '\t' + fail
+            print('\t' + fail)
         sys.exit(-1)
 
 gStartTime = time.strftime('%H:%M:%S')
@@ -240,27 +240,27 @@ for arg in sys.argv[1:]:
     elif arg == '-vg' or arg == '--valgrind':
         gValgrind = 1
         if os.name == 'nt':
-            print 'ERROR - valgrind is only supported on linux'
+            print('ERROR - valgrind is only supported on linux')
             sys.exit(1)
     elif arg == '-hg' or arg == '--helgrind':
         gHelgrind = 1
         if os.name == 'nt':
-            print 'ERROR - helgrind is only supported on linux'
+            print('ERROR - helgrind is only supported on linux')
             sys.exit(1)
     elif arg == '--mac-64':
         gMac64 = 1
         if platform.system() != 'Darwin':
-            print 'ERROR - --mac-64 only applicable on Darwin'
+            print('ERROR - --mac-64 only applicable on Darwin')
             sys.exit(1)
     elif arg == '--iOs-arm64':
         giOsArm64 = 1
         if platform.system() != 'Darwin':
-            print 'ERROR - --iOs-arm64 only applicable on Darwin'
+            print('ERROR - --iOs-arm64 only applicable on Darwin')
             sys.exit(1)
     elif arg == '--iOs-x64':
         giOsx64 = 1
         if platform.system() != 'Darwin':
-            print 'ERROR - --iOs-x64 only applicable on Darwin'
+            print('ERROR - --iOs-x64 only applicable on Darwin')
             sys.exit(1)
     elif arg == '--parallel':
         gParallel = True
@@ -271,7 +271,7 @@ for arg in sys.argv[1:]:
     elif arg == '--qnap':
         gQnap = 1;
     else:
-        print 'Unrecognised argument - ' + arg
+        print('Unrecognised argument - ' + arg)
         sys.exit(1)
     os.environ["ABORT_ON_FAILURE"] = "1"
     if gSilent != 0:
@@ -357,7 +357,7 @@ class js_test:
         time.sleep(5)
         test_devfinder = subprocess.Popen([os.path.join(self.objpath, 'TestDeviceFinder.exe'), '-l', '-s', 'openhome.org:service:TestBasic:1'],stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         self.launch_url = test_devfinder.communicate()[1].rstrip()
-        print 'found device at ' + self.launch_url
+        print('found device at ' + self.launch_url)
 
     def run_browser(self):
         subprocess.call(["%s" %(self.browser_location), "%s" %(self.launch_url)])
@@ -394,7 +394,7 @@ if gBuildOnly == 0:
         runTests()
     if gJsTests == 1:
         JsTests()
-    print '\nFinished.  All tests passed'
-print 'Start time: ' + gStartTime
-print 'Builds complete: ' + gBuildsCompleteTime
-print 'End time: ' + time.strftime('%H:%M:%S')
+    print('\nFinished.  All tests passed')
+print('Start time: ' + gStartTime)
+print('Builds complete: ' + gBuildsCompleteTime)
+print('End time: ' + time.strftime('%H:%M:%S'))

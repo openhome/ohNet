@@ -236,13 +236,13 @@ class JenkinsBuild():
         # Just check if the arch of the target platform is 32-bit or 64-bit, and see if the respective JAVA_HOME_XX environment variable is set.
         # If JAVA_HOME_XX is not set, assume that only one JDK/JRE is installed and use JAVA_HOME as set on build machine.
 
-        print "arch: ", arch
+        print("arch: ", arch)
         if 'JAVA_HOME_64' in os.environ:
-            print 'JAVA_HOME_64: ', os.environ['JAVA_HOME_64']
+            print('JAVA_HOME_64: ', os.environ['JAVA_HOME_64'])
         if 'JAVA_HOME_32' in os.environ:
-            print 'JAVA_HOME_32: ', os.environ['JAVA_HOME_32']
+            print('JAVA_HOME_32: ', os.environ['JAVA_HOME_32'])
         if 'JAVA_HOME' in os.environ:
-            print 'JAVA_HOME: ', os.environ['JAVA_HOME']
+            print('JAVA_HOME: ', os.environ['JAVA_HOME'])
 
         if arch == 'x64' and 'JAVA_HOME_64' in os.environ:
             os.environ['JAVA_HOME'] = os.environ['JAVA_HOME_64']
