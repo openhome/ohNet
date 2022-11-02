@@ -56,7 +56,7 @@ def build(aTarget, aParallel=False):
     if platform.system() == 'Darwin':
         # No C++11 support on standard Mac build slaves
         buildCmd += ' nocpp11=yes'
-    if os.environ.has_key('CS_PLATFORM'):
+    if 'CS_PLATFORM' in os.environ:
         buildCmd += ' csplatform=' + os.environ['CS_PLATFORM']
     buildCmd += buildArgs()
     ret = os.system(buildCmd)
