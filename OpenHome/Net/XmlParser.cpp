@@ -41,16 +41,7 @@ Brn XmlParserBasic::Find(const Brx& aTag, const Brx& aDocument, Brn& aRemaining)
     Brn retStart;
     ETagType tagType;
     for (;;) {
-#ifdef PLATFORM_IOS
-        try {
-#endif
         NextTag(doc, name, attributes, ns, index, remaining, tagType);
-#ifdef PLATFORM_IOS
-        }
-        catch (XmlError&) {
-            throw;
-        }
-#endif
         if (Ascii::CaseInsensitiveEquals(name, aTag)) {
             if (state == eSearchOpen) {
                 if (tagType == eTagClose) {
@@ -187,16 +178,7 @@ Brn XmlParserBasic::FindAttribute(const Brx& aTag, const Brx& aAttribute, const 
     Brn retStart;
     ETagType tagType;
     for (;;) {
-#ifdef PLATFORM_IOS
-        try {
-#endif
         NextTag(doc, name, attributes, ns, index, remaining, tagType);
-#ifdef PLATFORM_IOS
-        }
-        catch (XmlError&) {
-            throw;
-        }
-#endif
         if (Ascii::CaseInsensitiveEquals(name, aTag)) {
             if (tagType != eTagClose) {
                 Parser parser(attributes);
@@ -255,16 +237,7 @@ Brn XmlParserBasic::Element(const Brx& aTag, const Brx& aDocument, Brn& aRemaini
     Brn retStart;
     ETagType tagType;
     for (;;) {
-#ifdef PLATFORM_IOS
-        try {
-#endif
         NextTag(doc, name, attributes, ns, index, remaining, tagType);
-#ifdef PLATFORM_IOS
-        }
-        catch (XmlError&) {
-            throw;
-        }
-#endif
         if (Ascii::CaseInsensitiveEquals(name, aTag)) {
             if (state == eSearchOpen) {
                 if (tagType == eTagClose) {
@@ -336,16 +309,7 @@ Brn XmlParserBasic::Next(const Brx& aDocument, Brn& aTag, Brn& aRemaining)
         doc.Set(docTrimmed.Ptr() + endIndex, docTrimmed.Bytes() - endIndex);
         startIndex = endIndex;
         while (state == eSearchOpen) {
-#ifdef PLATFORM_IOS
-            try {
-#endif
-                NextTag(doc, name, attributes, ns, index, remaining, tagType);
-#ifdef PLATFORM_IOS
-            }
-            catch (XmlError&) {
-                throw;
-            }
-#endif
+            NextTag(doc, name, attributes, ns, index, remaining, tagType);
             if (tagType == eTagOpen) {
                 tag.Set(name);
                 namesp.Set(ns);
