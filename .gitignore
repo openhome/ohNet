@@ -49,3 +49,4 @@ Build.stripped/
 OpenHome/Net/Bindings/Android/obj/
 OpenHome/Net/Bindings/Android/libs/
 
+*.DS_STORE*
