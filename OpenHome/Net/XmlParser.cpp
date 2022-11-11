@@ -29,6 +29,36 @@ Brn XmlParserBasic::Find(const TChar* aTag, const Brx& aDocument, Brn& aRemainin
 
 Brn XmlParserBasic::Find(const Brx& aTag, const Brx& aDocument, Brn& aRemaining)
 {
+    Brn result;
+    if (TryFind(aTag, aDocument, aRemaining, result)) {
+        return result;
+    }
+    else {
+        THROW(XmlError);
+    }
+}
+
+TBool XmlParserBasic::TryFind(const TChar* aTag, const Brx& aDocument, Brn& aResult)
+{
+    Brn tag(aTag);
+    Brn ignore;
+    return TryFind(tag, aDocument, ignore, aResult);
+}
+
+TBool XmlParserBasic::TryFind(const Brx& aTag, const Brx& aDocument, Brn& aResult)
+{
+    Brn ignore;
+    return TryFind(aTag, aDocument, ignore, aResult);
+}
+
+TBool XmlParserBasic::TryFind(const TChar* aTag, const Brx& aDocument, Brn& aRemaining, Brn& aResult)
+{
+    Brn tag(aTag);
+    return TryFind(tag, aDocument, aRemaining, aResult);
+}
+
+TBool XmlParserBasic::TryFind(const Brx& aTag, const Brx& aDocument, Brn& aRemaining, Brn& aResult)
+{
     EParserState state = eSearchOpen;
     TInt ignoreClose = 0;
     Brn namesp;
@@ -41,15 +71,18 @@ Brn XmlParserBasic::Find(const Brx& aTag, const Brx& aDocument, Brn& aRemaining)
     Brn retStart;
     ETagType tagType;
     for (;;) {
-        NextTag(doc, name, attributes, ns, index, remaining, tagType);
+        if (!TryNextTag(doc, name, attributes, ns, index, remaining, tagType)) {
+            return false;
+        }
         if (Ascii::CaseInsensitiveEquals(name, aTag)) {
             if (state == eSearchOpen) {
                 if (tagType == eTagClose) {
                     if (--ignoreClose < 0)
-                        THROW(XmlError);
+                        return false;
                 }
                 else if (tagType == eTagOpenClose) {
-                    return Brn(Brx::Empty());
+                    aResult.Set(Brx::Empty());
+                    return true;
                 }
                 namesp.Set(ns);
                 retStart.Set(remaining);
@@ -62,25 +95,25 @@ Brn XmlParserBasic::Find(const Brx& aTag, const Brx& aDocument, Brn& aRemaining)
                 else if (tagType == eTagClose) {
                     if (ignoreClose == 0) {
                         if (namesp != ns) {
-                            THROW(XmlError);
+                            return false;
                         }
                         aRemaining.Set(remaining);
                         const TUint retBytes = (TUint)(doc.Ptr() - retStart.Ptr()) + index;
-                        Brn ret(retStart.Ptr(), retBytes);
-                        return ret;
+                        aResult.Set(retStart.Ptr(), retBytes);
+                        return true;
                     }
                     ignoreClose--;
                 }
             }
         }
         if (remaining.Bytes() == 0) {
-            THROW(XmlError);
+            return false;
         }
         doc.Set(remaining);
     }
 }
 
-void XmlParserBasic::NextTag(const Brx& aDocument, Brn& aName, Brn& aAttributes, Brn& aNamespace, TUint& aIndex, Brn& aRemaining, ETagType& aType)
+TBool XmlParserBasic::TryNextTag(const Brx& aDocument, Brn& aName, Brn& aAttributes, Brn& aNamespace, TUint& aIndex, Brn& aRemaining, ETagType& aType)
 {
     aName.Set(Brx::Empty());
     aAttributes.Set(Brx::Empty());
@@ -99,21 +132,21 @@ void XmlParserBasic::NextTag(const Brx& aDocument, Brn& aName, Brn& aAttributes,
             bytes = item.Bytes();
         }
         if (bytes < 2 || item[0] != '<') {
-            THROW(XmlError);
+            return false;
         }
         aIndex = (TUint)(item.Ptr() - aDocument.Ptr());
         if (item[1] == '?') {
             if (bytes < 3) { // catch special case of <?>
-                THROW(XmlError);
+                return false;
             }
             if (item[bytes - 1] == '?') { // processing instruction
                 continue;
             }
-            THROW(XmlError);
+            return false;
         }
         if (item[1] == '!') {
             if (bytes < 7) { // "<!---->" empty comment tag
-                THROW(XmlError);
+                return false;
             }
             continue;
         }
@@ -143,7 +176,7 @@ void XmlParserBasic::NextTag(const Brx& aDocument, Brn& aName, Brn& aAttributes,
             parser.Set(aName);
             aNamespace.Set(parser.Next(':'));
             if (!aNamespace.Bytes()) {
-                THROW(XmlError);
+                return false;
             }
             aName.Set(parser.Remaining());
         }
@@ -152,10 +185,10 @@ void XmlParserBasic::NextTag(const Brx& aDocument, Brn& aName, Brn& aAttributes,
         }
 
         if (!aName.Bytes()) {
-            THROW(XmlError);
+            return false;
         }
 
-        return;
+        return true;
     }
 }
 
@@ -168,6 +201,24 @@ Brn XmlParserBasic::FindAttribute(const TChar* aTag, const TChar* aAttribute, co
 
 Brn XmlParserBasic::FindAttribute(const Brx& aTag, const Brx& aAttribute, const Brx& aDocument)
 {
+    Brn result;
+    if (TryFindAttribute(aTag, aAttribute, aDocument, result)) {
+        return result;
+    }
+    else {
+        THROW(XmlError);
+    }
+}
+
+TBool XmlParserBasic::TryFindAttribute(const TChar* aTag, const TChar* aAttribute, const Brx& aDocument, Brn& aResult)
+{
+    Brn tag(aTag);
+    Brn attribute(aAttribute);
+    return TryFindAttribute(tag, attribute, aDocument, aResult);
+}
+
+TBool XmlParserBasic::TryFindAttribute(const Brx& aTag, const Brx& aAttribute, const Brx& aDocument, Brn& aResult)
+{
     Brn namesp;
     Brn name;
     Brn attributes;
@@ -178,7 +229,9 @@ Brn XmlParserBasic::FindAttribute(const Brx& aTag, const Brx& aAttribute, const 
     Brn retStart;
     ETagType tagType;
     for (;;) {
-        NextTag(doc, name, attributes, ns, index, remaining, tagType);
+        if (!TryNextTag(doc, name, attributes, ns, index, remaining, tagType)) {
+            return false;
+        }
         if (Ascii::CaseInsensitiveEquals(name, aTag)) {
             if (tagType != eTagClose) {
                 Parser parser(attributes);
@@ -187,13 +240,14 @@ Brn XmlParserBasic::FindAttribute(const Brx& aTag, const Brx& aAttribute, const 
                     Brn ws = parser.Next('\"');
                     Brn value = parser.Next('\"');
                     if (att == aAttribute) {
-                        return (value);
+                        aResult.Set(value);
+                        return true;
                     }
                 }
             }
         }
         if (remaining.Bytes() == 0) {
-            THROW(XmlError);
+            return false;
         }
         doc.Set(remaining);
     }
@@ -223,6 +277,36 @@ Brn XmlParserBasic::Element(const Brx& aTag, const Brx& aDocument)
 
 Brn XmlParserBasic::Element(const Brx& aTag, const Brx& aDocument, Brn& aRemaining)
 {
+    Brn result;
+    if (TryGetElement(aTag, aDocument, aRemaining, result)) {
+        return result;
+    }
+    else {
+        THROW(XmlError);
+    }
+}
+
+TBool XmlParserBasic::TryGetElement(const TChar* aTag, const Brx& aDocument, Brn& aResult)
+{
+    Brn tag(aTag);
+    Brn ignore;
+    return TryGetElement(tag, aDocument, ignore, aResult);
+}
+
+TBool XmlParserBasic::TryGetElement(const TChar* aTag, const Brx& aDocument, Brn& aRemaining, Brn& aResult)
+{
+    Brn tag(aTag);
+    return TryGetElement(tag, aDocument, aRemaining, aResult);
+}
+
+TBool XmlParserBasic::TryGetElement(const Brx& aTag, const Brx& aDocument, Brn& aResult)
+{
+    Brn ignore;
+    return TryGetElement(aTag, aDocument, ignore, aResult);
+}
+
+TBool XmlParserBasic::TryGetElement(const Brx& aTag, const Brx& aDocument, Brn& aRemaining, Brn& aResult)
+{
     EParserState state = eSearchOpen;
     TInt ignoreClose = 0;
     Brn namesp;
@@ -237,15 +321,18 @@ Brn XmlParserBasic::Element(const Brx& aTag, const Brx& aDocument, Brn& aRemaini
     Brn retStart;
     ETagType tagType;
     for (;;) {
-        NextTag(doc, name, attributes, ns, index, remaining, tagType);
+        if (!TryNextTag(doc, name, attributes, ns, index, remaining, tagType)) {
+            return false;
+        }
         if (Ascii::CaseInsensitiveEquals(name, aTag)) {
             if (state == eSearchOpen) {
                 if (tagType == eTagClose) {
                     if (--ignoreClose < 0)
-                        THROW(XmlError);
+                        return false;
                 }
                 else if (tagType == eTagOpenClose) {
-                    return Brn(Brx::Empty());
+                    aResult.Set(Brx::Empty());
+                    return true;
                 }
                 namesp.Set(ns);
                 retStart.Set(remaining);
@@ -258,20 +345,20 @@ Brn XmlParserBasic::Element(const Brx& aTag, const Brx& aDocument, Brn& aRemaini
                 else if (tagType == eTagClose) {
                     if (ignoreClose == 0) {
                         if (namesp != ns) {
-                            THROW(XmlError);
+                            return false;
                         }
                         aRemaining.Set(remaining);
 
                         const TUint retBytes = (TUint)(aRemaining.Ptr() - docTrimmed.Ptr()) - startIndex;
-                        Brn ret(docTrimmed.Split(startIndex, retBytes));
-                        return ret;
+                        aResult.Set(docTrimmed.Split(startIndex, retBytes));
+                        return true;
                     }
                     ignoreClose--;
                 }
             }
         }
         if (remaining.Bytes() == 0) {
-            THROW(XmlError);
+            return false;
         }
         if (state != eSearchClose)
         {
@@ -288,6 +375,23 @@ Brn XmlParserBasic::Next(const Brx& aDocument, Brn& aTag)
 }
 
 Brn XmlParserBasic::Next(const Brx& aDocument, Brn& aTag, Brn& aRemaining)
+{ 
+    Brn result;
+    if (TryNext(aDocument, aTag, aRemaining, result)) {
+        return result;
+    }
+    else {
+        THROW(XmlError);
+    }
+}
+
+TBool XmlParserBasic::TryNext(const Brx& aDocument, Brn& aTag, Brn& aResult)
+{
+    Brn ignore;
+    return XmlParserBasic::TryNext(aDocument, aTag, ignore, aResult);
+}
+
+TBool XmlParserBasic::TryNext(const Brx& aDocument, Brn& aTag, Brn& aRemaining, Brn& aResult)
 {
     EParserState state = eSearchOpen;
     TInt ignoreClose = 0;
@@ -309,7 +413,8 @@ Brn XmlParserBasic::Next(const Brx& aDocument, Brn& aTag, Brn& aRemaining)
         doc.Set(docTrimmed.Ptr() + endIndex, docTrimmed.Bytes() - endIndex);
         startIndex = endIndex;
         while (state == eSearchOpen) {
-            NextTag(doc, name, attributes, ns, index, remaining, tagType);
+            if (!TryNextTag(doc, name, attributes, ns, index, remaining, tagType)) {
+                return false;
             if (tagType == eTagOpen) {
                 tag.Set(name);
                 namesp.Set(ns);
@@ -323,35 +428,33 @@ Brn XmlParserBasic::Next(const Brx& aDocument, Brn& aTag, Brn& aRemaining)
             doc.Set(remaining);
         }
         while (state == eSearchClose) {
-            try {
-                NextTag(doc, name, attributes, ns, index, remaining, tagType);
-                if (Ascii::CaseInsensitiveEquals(name, tag)) {
-                    if (tagType == eTagOpen) {
-                        ++ignoreClose;
-                    }
-                    else if (tagType == eTagClose) {
-                        if (ignoreClose == 0) {
-                            if (namesp != ns) {
-                                THROW(XmlError);
-                            }
-                            aTag.Set(name);
-                            aRemaining.Set(remaining);
-                            const TUint retBytes = (TUint)(aRemaining.Ptr() - docTrimmed.Ptr()) - startIndex;
-                            Brn ret(docTrimmed.Split(startIndex, retBytes));
-                            return ret;
-                        }
-                        ignoreClose--;
-                    }
-                }
-                if (remaining.Bytes() == 0) {
-                    THROW(XmlError);
-                }
-                doc.Set(remaining);
-            }
-            catch (XmlError&) {
+            if (!TryNextTag(doc, name, attributes, ns, index, remaining, tagType)) {
                 state = eSearchOpen;
                 continue;
             }
+            if (Ascii::CaseInsensitiveEquals(name, tag)) {
+                if (tagType == eTagOpen) {
+                    ++ignoreClose;
+                }
+                else if (tagType == eTagClose) {
+                    if (ignoreClose == 0) {
+                        if (namesp != ns) {
+                            return false;
+                        }
+                        aTag.Set(name);
+                        aRemaining.Set(remaining);
+                        const TUint retBytes = (TUint)(aRemaining.Ptr() - docTrimmed.Ptr()) - startIndex;
+                        aResult.Set(docTrimmed.Split(startIndex, retBytes));
+                        return true;
+                    }
+                    ignoreClose--;
+                }
+            }
+            if (remaining.Bytes() == 0) {
+                state = eSearchOpen;
+                continue;
+            }
+            doc.Set(remaining);
         }
     }
 }
