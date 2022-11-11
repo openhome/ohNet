@@ -415,6 +415,7 @@ TBool XmlParserBasic::TryNext(const Brx& aDocument, Brn& aTag, Brn& aRemaining, 
         while (state == eSearchOpen) {
             if (!TryNextTag(doc, name, attributes, ns, index, remaining, tagType)) {
                 return false;
+            }
             if (tagType == eTagOpen) {
                 tag.Set(name);
                 namesp.Set(ns);
