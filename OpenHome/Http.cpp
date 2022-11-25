@@ -134,7 +134,7 @@ const Brx& Http::Version(Http::EVersion aVersion)
     return Brx::Empty();
 }
 
-void Http::WriteHeaderRangeFirstOnly(WriterHttpHeader& aWriter, TUint64 aFirst)
+void Http::WriteHeaderRangeFirstOnly(IWriterHttpHeader& aWriter, TUint64 aFirst)
 {
     Bws<6+20+1> buf;
     buf.Append(Http::kRangeBytes);
@@ -144,7 +144,7 @@ void Http::WriteHeaderRangeFirstOnly(WriterHttpHeader& aWriter, TUint64 aFirst)
     aWriter.WriteHeader(Http::kHeaderRange, buf);
 }
 
-void Http::WriteHeaderRange(WriterHttpHeader& aWriter, TUint64 aFirst, TUint64 aLast)
+void Http::WriteHeaderRange(IWriterHttpHeader& aWriter, TUint64 aFirst, TUint64 aLast)
 {
     Bws<6+20+1+20> buf;
     buf.Append(Http::kRangeBytes);
@@ -155,7 +155,7 @@ void Http::WriteHeaderRange(WriterHttpHeader& aWriter, TUint64 aFirst, TUint64 a
     aWriter.WriteHeader(Http::kHeaderRange, buf);
 }
 
-void Http::WriteHeaderHostAndPort(WriterHttpHeader& aWriter, const Brx& aHost, TUint aPort)
+void Http::WriteHeaderHostAndPort(IWriterHttpHeader& aWriter, const Brx& aHost, TUint aPort)
 {
     IWriterAscii& writer = aWriter.WriteHeaderField(Http::kHeaderHost);
     writer.Write(aHost);
@@ -166,24 +166,24 @@ void Http::WriteHeaderHostAndPort(WriterHttpHeader& aWriter, const Brx& aHost, T
     writer.WriteNewline();
 }
 
-void Http::WriteHeaderContentLength(WriterHttpHeader& aWriter, TUint aLength)
+void Http::WriteHeaderContentLength(IWriterHttpHeader& aWriter, TUint aLength)
 {
     Bws<Ascii::kMaxUintStringBytes> len;
     (void)Ascii::AppendDec(len, aLength);
     aWriter.WriteHeader(Http::kHeaderContentLength, len);
 }
 
-void Http::WriteHeaderContentType(WriterHttpHeader& aWriter, const Brx& aType)
+void Http::WriteHeaderContentType(IWriterHttpHeader& aWriter, const Brx& aType)
 {
     aWriter.WriteHeader(Http::kHeaderContentType, aType);
 }
 
-void Http::WriteHeaderConnectionClose(WriterHttpHeader& aWriter)
+void Http::WriteHeaderConnectionClose(IWriterHttpHeader& aWriter)
 {
     aWriter.WriteHeader(Http::kHeaderConnection, Http::kConnectionClose);
 }
 
-void Http::WriteHeaderUserAgent(WriterHttpHeader& aWriter, Environment& aEnv)
+void Http::WriteHeaderUserAgent(IWriterHttpHeader& aWriter, Environment& aEnv)
 {
     if (aEnv.HasHttpUserAgent()) {
         IWriterAscii& writer = aWriter.WriteHeaderField(Http::kHeaderUserAgent);

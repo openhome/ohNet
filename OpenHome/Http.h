@@ -15,7 +15,7 @@ EXCEPTION(HttpError)
 
 namespace OpenHome {
 
-class WriterHttpHeader;
+class IWriterHttpHeader;
 
 class Http
 {
@@ -110,13 +110,13 @@ public:
 public:
     static EVersion Version(const Brx& aBuffer);
     static const Brx& Version(EVersion aVersion);
-    static void WriteHeaderRangeFirstOnly(WriterHttpHeader& aWriter, TUint64 aFirst); //bytes=<aFirst>-
-    static void WriteHeaderRange(WriterHttpHeader& aWriter, TUint64 aFirst, TUint64 aLast); //bytes=<aFirst>-<aLast>
-    static void WriteHeaderHostAndPort(WriterHttpHeader& aWriter, const Brx& aHost, TUint aPort);
-    static void WriteHeaderContentLength(WriterHttpHeader& aWriter, TUint aLength);
-    static void WriteHeaderContentType(WriterHttpHeader& aWriter, const Brx& aType);
-    static void WriteHeaderConnectionClose(WriterHttpHeader& aWriter);
-    static void WriteHeaderUserAgent(WriterHttpHeader& aWriter, Environment& aEnv);
+    static void WriteHeaderRangeFirstOnly(IWriterHttpHeader& aWriter, TUint64 aFirst); //bytes=<aFirst>-
+    static void WriteHeaderRange(IWriterHttpHeader& aWriter, TUint64 aFirst, TUint64 aLast); //bytes=<aFirst>-<aLast>
+    static void WriteHeaderHostAndPort(IWriterHttpHeader& aWriter, const Brx& aHost, TUint aPort);
+    static void WriteHeaderContentLength(IWriterHttpHeader& aWriter, TUint aLength);
+    static void WriteHeaderContentType(IWriterHttpHeader& aWriter, const Brx& aType);
+    static void WriteHeaderConnectionClose(IWriterHttpHeader& aWriter);
+    static void WriteHeaderUserAgent(IWriterHttpHeader& aWriter, Environment& aEnv);
     static TBool IsSuccessStatusCode(TUint aCode);
 };
 
