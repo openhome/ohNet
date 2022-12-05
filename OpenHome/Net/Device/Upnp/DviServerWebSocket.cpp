@@ -771,16 +771,11 @@ WsProtocol* DviSessionWebSocket::Handshake80()
     iWriterResponse->WriteStatus(HttpStatus::kSwitchingProtocols, Http::eHttp11);
     iWriterResponse->WriteHeader(Brn("Upgrade"), Brn("websocket"));
     iWriterResponse->WriteHeader(Brn("Connection"), Brn("Upgrade"));
-    SHA1Context* sha1ctx = (SHA1Context*)malloc(sizeof(*sha1ctx));
-    (void)SHA1Reset(sha1ctx);
-    const Brx& key = iHeadverKeyV8.Key();
-    (void)SHA1Input(sha1ctx, key.Ptr(), key.Bytes());
-    uint8_t digest[SHA1HashSize];
-    (void)SHA1Result(sha1ctx, digest);
-    free(sha1ctx);
+
+    Bws<SHA1::kBlockSize> hash;
+    SHA1::Compute(iHeadverKeyV8.Key(), hash);
     IWriterAscii& stream = iWriterResponse->WriteHeaderField(Brn("Sec-WebSocket-Accept"));
-    Brn digestBuf(&digest[0], SHA1HashSize);
-    Converter::ToBase64(stream, digestBuf);
+    Converter::ToBase64(stream, hash);
     stream.WriteFlush();
     stream = iWriterResponse->WriteHeaderField(Brn("Sec-WebSocket-Protocol"));
     stream.Write(iHeaderProtocol.Protocol());

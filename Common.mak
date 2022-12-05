@@ -99,7 +99,9 @@ objects_core = \
 	$(objdir)Queue.$(objext) \
 	$(objdir)Service.$(objext) \
 	$(objdir)ServiceC.$(objext) \
+	$(objdir)sha.$(objext) \
 	$(objdir)sha1.$(objext) \
+	$(objdir)sha256.$(objext) \
 	$(objdir)Ssdp.$(objext) \
 	$(objdir)SsdpDv.$(objext) \
 	$(objdir)Env.$(objext) \
@@ -160,6 +162,7 @@ headers = \
 	$(inc_build)/OpenHome/Private/Parser.h \
 	$(inc_build)/OpenHome/Private/Printer.h \
 	$(inc_build)/OpenHome/Private/Queue.h \
+	$(inc_build)/OpenHome/Private/sha.h \
 	$(inc_build)/OpenHome/Private/Standard.h \
 	$(inc_build)/OpenHome/Private/Stream.h \
 	$(inc_build)/OpenHome/Private/Terminal.h \
@@ -409,8 +412,12 @@ $(objdir)Service.$(objext) : OpenHome/Net/Service.cpp $(headers)
 	$(compiler)Service.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Service.cpp
 $(objdir)ServiceC.$(objext) : OpenHome/Net/Bindings/C/ServiceC.cpp $(headers)
 	$(compiler)ServiceC.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Bindings/C/ServiceC.cpp
-$(objdir)sha1.$(objext) : OpenHome/sha1.c $(headers)
-	$(compiler)sha1.$(objext) -c $(cflags_third_party) $(includes) OpenHome/sha1.c
+$(objdir)sha.$(objext) : OpenHome/sha.cpp $(headers)
+	$(compiler)sha.$(objext) -c $(cppflags) $(includes) OpenHome/sha.cpp
+$(objdir)sha1.$(objext) : thirdparty/sha/sha1.c $(headers)
+	$(compiler)sha1.$(objext) -c $(cflags_third_party) $(includes) thirdparty/sha/sha1.c
+$(objdir)sha256.$(objext) : thirdparty/sha/sha256.c $(headers)
+	$(compiler)sha256.$(objext) -c $(cflags_third_party) $(includes) thirdparty/sha/sha256.c
 $(objdir)Ssdp.$(objext) : OpenHome/Net/Ssdp.cpp $(headers)
 	$(compiler)Ssdp.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Ssdp.cpp
 $(objdir)SsdpDv.$(objext) : OpenHome/Net/SsdpDv.cpp $(headers)
