@@ -80,6 +80,7 @@ LOCAL_SRC_FILES := $(ohroot)OpenHome/Ascii.cpp \
                    $(ohroot)OpenHome/Net/Device/Bonjour/MdnsPlatform.cpp \
                    $(ohroot)OpenHome/Net/Device/Bonjour/MdnsProvider.cpp \
                    $(ohroot)OpenHome/md5.c \
+                   $(ohroot)OpenHome/Crc32.cpp \
                    $(ohroot)OpenHome/NetworkAdapterList.cpp \
                    $(ohroot)OpenHome/Network.cpp \
                    $(ohroot)OpenHome/Parser.cpp \

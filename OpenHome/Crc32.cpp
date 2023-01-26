@@ -92,8 +92,10 @@ Crc32Generator::Crc32Generator(TUint aSeed)
 }
 
 Crc32Generator::Crc32Generator(const Brx& aBuffer, TUint aSeed)
-    : Crc32Generator(aSeed)
+    : iCrc32(aSeed)
+    , iFinished(false)
 {
+    iTable = Crc32TableInitialiser::InitialiseTable(Crc32::kDefaultPolynomial);
     Append(aBuffer);
 }
 
