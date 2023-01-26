@@ -16,20 +16,20 @@
 #define SHA1_BLOCK_SIZE 20              // SHA1 outputs a 20 byte digest
 
 /**************************** DATA TYPES ****************************/
-typedef unsigned char BYTE;             // 8-bit byte
-typedef unsigned int  WORD;             // 32-bit word, change to "long" for 16-bit machines
+typedef unsigned char BYTE_SHA;             // 8-bit byte
+typedef unsigned int  WORD_SHA;             // 32-bit word, change to "long" for 16-bit machines
 
 typedef struct {
-	BYTE data[64];
-	WORD datalen;
+	BYTE_SHA data[64];
+	WORD_SHA datalen;
 	unsigned long long bitlen;
-	WORD state[5];
-	WORD k[4];
+	WORD_SHA state[5];
+	WORD_SHA k[4];
 } SHA1_CTX;
 
 /*********************** FUNCTION DECLARATIONS **********************/
 void sha1_init(SHA1_CTX *ctx);
-void sha1_update(SHA1_CTX *ctx, const BYTE data[], size_t len);
-void sha1_final(SHA1_CTX *ctx, BYTE hash[]);
+void sha1_update(SHA1_CTX *ctx, const BYTE_SHA data[], size_t len);
+void sha1_final(SHA1_CTX *ctx, BYTE_SHA hash[]);
 
 #endif   // SHA1_H

@@ -17,6 +17,8 @@ LOCAL_SRC_FILES := $(ohroot)OpenHome/Ascii.cpp \
                    $(ohroot)OpenHome/Converter.cpp \
                    $(ohroot)thirdparty/libb64/cencode.c \
                    $(ohroot)thirdparty/libb64/cdecode.c \
+                   $(ohroot)thirdparty/sha/sha1.c \
+                   $(ohroot)thirdparty/sha/sha256.c \
                    $(ohroot)OpenHome/Net/Discovery.cpp \
                    $(ohroot)OpenHome/Debug.cpp \
                    $(ohroot)OpenHome/DnsChangeNotifier.cpp \
@@ -88,7 +90,7 @@ LOCAL_SRC_FILES := $(ohroot)OpenHome/Ascii.cpp \
                    $(ohroot)OpenHome/Queue.cpp \
                    $(ohroot)OpenHome/Net/Service.cpp \
                    $(ohroot)OpenHome/Net/Bindings/C/ServiceC.cpp \
-                   $(ohroot)OpenHome/sha1.c \
+                   $(ohroot)OpenHome/sha.c \
                    $(ohroot)OpenHome/Net/Ssdp.cpp \
                    $(ohroot)OpenHome/Net/SsdpDv.cpp \
                    $(ohroot)OpenHome/Env.cpp \
