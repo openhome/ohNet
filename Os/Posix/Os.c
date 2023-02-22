@@ -1638,6 +1638,7 @@ int32_t OsNetworkGetHostByName(const char* aAddress, TIpAddress* aHost)
     }
 #endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD && !defined(__ANDROID__) */
 
+    freeaddrinfo(hints);
     *aHost = kIpAddressV4AllAdapters;
     return -1;
 }
