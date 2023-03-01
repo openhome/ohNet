@@ -19,6 +19,7 @@ public:
     Brn Find(const Brx& aUdn);
     void GetFriendlyName(Brh& aValue) const;
     void GetPresentationUrl(Brh& aValue) const;
+    void GetModelName(Brh& aValue) const;
     Brn ServiceVersion(const Brx& aService) const; // e.g "upnp.org.ContentDirectory"
 private:
     Brn iXml;

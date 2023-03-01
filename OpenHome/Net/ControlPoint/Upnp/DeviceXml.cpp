@@ -95,6 +95,13 @@ void DeviceXml::GetPresentationUrl(Brh& aValue) const
     friendlyName.TransferTo(aValue);
 }
 
+void DeviceXml::GetModelName(Brh& aValue) const
+{
+    Bwh modelName(XmlParserBasic::Find("modelName", iXml));
+    Converter::FromXmlEscaped(modelName);
+    modelName.TransferTo(aValue);
+}
+
 Brn DeviceXml::ServiceVersion(const Brx& aServiceType) const
 {
     const TUint kMaxDomainBytes = 64;

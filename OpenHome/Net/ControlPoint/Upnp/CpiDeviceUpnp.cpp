@@ -236,7 +236,11 @@ TBool CpiDeviceUpnp::GetAttribute(const char* aKey, Brh& aValue) const
                 device->GetPresentationUrl(aValue);
                 return (true);
             }
-            
+            if (property == Brn("ModelName")) {
+                device->GetModelName(aValue);
+                return (true);
+            }
+
             Parser parser2(property);
             
             Brn token = parser2.Next('.');
