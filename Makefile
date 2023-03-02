@@ -58,8 +58,8 @@ ifeq ($(MACHINE),Darwin)
     endif
   endif
 else ifneq (, $(findstring powerpc, $(gcc_machine)))
-    platform = Linux-ppc32
-    detected_openhome_system = Linux
+    platform = Core-ppc32
+    detected_openhome_system = Core
     detected_openhome_architecture = ppc32
 else ifeq ($(Android-anycpu), 1)
     platform = Android
