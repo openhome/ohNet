@@ -39,7 +39,7 @@ private:
     void SendNextMsg();
     void ScheduleNextTimer(TUint aRemainingMsgs) const;
 protected:
-    void LogNotifierStart(const TChar* aType);
+    void LogNotifierStart(const TChar* aType, TIpAddress aAddress);
     const TChar* iType;
     const TChar* iId;
 private:

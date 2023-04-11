@@ -111,9 +111,12 @@ void SsdpNotifierScheduler::ScheduleNextTimer(TUint aRemainingMsgs) const
     iTimer->FireIn(interval);
 }
 
-void SsdpNotifierScheduler::LogNotifierStart(const TChar* aType)
+void SsdpNotifierScheduler::LogNotifierStart(const TChar* aType, TIpAddress address)
 {
-    LOG(kDvSsdpNotifier, "SsdpNotifier starting - %s (%p) %s %.*s\n", aType, this, iId, PBUF(iUdn));
+    Bws<128> ipAddr;
+    TIpAddressUtils::ToString(address, ipAddr);
+
+    LOG(kDvSsdpNotifier, "SsdpNotifier starting - %s (%p) %s %.*s (on %.*s)\n", aType, this, iId, PBUF(iUdn), PBUF(ipAddr));
 }
 
 
@@ -138,7 +141,7 @@ MsearchResponse::~MsearchResponse()
 
 void MsearchResponse::StartAll(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId, TIpAddress aAdapter)
 {
-    LogNotifierStart("StartAll");
+    LogNotifierStart("StartAll", aRemote.Address());
     TUint nextMsgIndex = NEXT_MSG_ROOT;
     TUint msgCount = 3 + aAnnouncementData.ServiceCount();
     if (!aAnnouncementData.IsRoot()) {
@@ -150,25 +153,25 @@ void MsearchResponse::StartAll(IUpnpAnnouncementData& aAnnouncementData, const E
 
 void MsearchResponse::StartRoot(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId, TIpAddress aAdapter)
 {
-    LogNotifierStart("StartRoot");
+    LogNotifierStart("StartRoot", aRemote.Address());
     Start(aAnnouncementData, 1, NEXT_MSG_ROOT, aRemote, aMx, aUri, aConfigId, aAdapter);
 }
 
 void MsearchResponse::StartUuid(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId, TIpAddress aAdapter)
 {
-    LogNotifierStart("StartUuid");
+    LogNotifierStart("StartUuid", aRemote.Address());
     Start(aAnnouncementData, 1, NEXT_MSG_UUID, aRemote, aMx, aUri, aConfigId, aAdapter);
 }
 
 void MsearchResponse::StartDeviceType(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId, TIpAddress aAdapter)
 {
-    LogNotifierStart("StartDeviceType");
+    LogNotifierStart("StartDeviceType", aRemote.Address());
     Start(aAnnouncementData, 1, NEXT_MSG_DEVICE_TYPE, aRemote, aMx, aUri, aConfigId, aAdapter);
 }
 
 void MsearchResponse::StartServiceType(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const OpenHome::Net::ServiceType& aServiceType, const Brx& aUri, TUint aConfigId, TIpAddress aAdapter)
 {
-    LogNotifierStart("StartServiceType");
+    LogNotifierStart("StartServiceType", aRemote.Address());
     TUint index = 0;
     for (;;) {
         const OpenHome::Net::ServiceType& st = aAnnouncementData.Service(index).ServiceType();
@@ -236,21 +239,21 @@ DeviceAnnouncement::DeviceAnnouncement(DvStack& aDvStack, ISsdpNotifyListener& a
 
 void DeviceAnnouncement::StartAlive(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId)
 {
-    LogNotifierStart("StartAlive");
+    LogNotifierStart("StartAlive", aAdapter);
     iCompleted = FunctorGeneric<TBool>();
     Start(iNotifierAlive, aAnnouncementData, aAdapter, aUri, aConfigId, iMsgIntervalAlive);
 }
 
 void DeviceAnnouncement::StartByeBye(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId, FunctorGeneric<TBool>& aCompleted)
 {
-    LogNotifierStart("StartByeBye");
+    LogNotifierStart("StartByeBye", aAdapter);
     iCompleted = aCompleted;
     Start(iNotifierByeBye, aAnnouncementData, aAdapter, aUri, aConfigId, iMsgIntervalByeBye);
 }
 
 void DeviceAnnouncement::StartUpdate(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId, FunctorGeneric<TBool>& aCompleted)
 {
-    LogNotifierStart("StartUpdate");
+    LogNotifierStart("StartUpdate", aAdapter);
     iCompleted = aCompleted;
     Start(iNotifierUpdate, aAnnouncementData, aAdapter, aUri, aConfigId, kMsgIntervalMsUpdate);
 }
