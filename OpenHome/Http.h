@@ -467,6 +467,22 @@ private:
     Bws<kMaxUserAgentBytes> iUserAgent;
 };
 
+class HttpHeaderRange : public HttpHeader
+{
+public:
+    static const TUint kEndUnspecified = 0;
+    static const TUint kTotalUnknown = 0;
+public:
+    TUint Start() const;
+    TUint End() const;
+private:
+    virtual TBool Recognise(const Brx& aHeader);
+    virtual void Process(const Brx& aValue);
+private:
+    TUint iStart;
+    TUint iEnd;
+};
+
 class ReaderHttpChunked : public IReader
 {
     static const TUint kChunkSizeBufBytes = 10;

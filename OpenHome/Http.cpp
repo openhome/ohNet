@@ -976,6 +976,70 @@ void HttpHeaderUserAgent::Process(const Brx& aValue)
 }
 
 
+// HttpHeaderRange
+
+const TUint HttpHeaderRange::kEndUnspecified;
+const TUint HttpHeaderRange::kTotalUnknown;
+
+TUint HttpHeaderRange::Start() const
+{
+    return (Received()? iStart : 0);
+}
+
+TUint HttpHeaderRange::End() const
+{
+    return (Received()? iEnd : kEndUnspecified);
+}
+
+TBool HttpHeaderRange::Recognise(const Brx& aHeader)
+{
+    TBool recognised = Ascii::CaseInsensitiveEquals(aHeader, Http::kHeaderRange);
+    return recognised;
+}
+
+void HttpHeaderRange::Process(const Brx& aValue)
+{
+    iStart = 0;
+    iEnd = kEndUnspecified;
+    TUint indEquals;
+    TUint indHyphen;
+    Brn range;
+    Brn start;
+    Brn end;
+
+    SetReceived();
+    try {
+        indEquals = Ascii::IndexOf(aValue, '=');
+        if (indEquals == aValue.Bytes()) {  // An equals sign does not exist.
+            THROW(HttpError);
+        }
+
+        indEquals++; // Shift index so we skip over separator.
+        range = aValue.Split(indEquals, aValue.Bytes()-indEquals);
+
+        indHyphen = Ascii::IndexOf(range, '-');
+        if (indHyphen == range.Bytes()) {   // A hyphen does not exist, so range points are not specified.
+            THROW(HttpError);
+        }
+
+        start.Set(range.Ptr(), indHyphen);      // Get the start value.
+        indHyphen++; // Shift index so we skip over separator.
+        end = range.Split(indHyphen, range.Bytes()-indHyphen);  // Get the end value.
+
+        iStart = Ascii::Uint(start);
+        if (end.Bytes() == 0) { // End range may be empty.
+            iEnd = 0;
+        }
+        else {
+            iEnd = Ascii::Uint(end);
+        }
+    }
+    catch (AsciiError&) {
+        THROW(HttpError);
+    }
+}
+
+
 // ReaderHttpChunked
 
 ReaderHttpChunked::ReaderHttpChunked(IReader& aReader)
