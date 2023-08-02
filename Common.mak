@@ -889,7 +889,8 @@ TestsCs: TestProxyCs TestDvDeviceCs TestCpDeviceDvCs TestPerformanceDv TestPerfo
 Tests: TestsNative TestsCs
 
 ifeq ($(platform),iOS)
-	dotnet build --project $(csShared)ohNet.net-ios.csproj -o $(objdir)
+	$(objdir)ohNet.net.dll: make_obj_dir \
+		dotnet build --project $(csShared)ohNet.net-ios.csproj -o $(objdir)
 else
 	$(objdir)ohNet.net.dll: make_obj_dir \
 		$(csCp)CpDevice.cs \
