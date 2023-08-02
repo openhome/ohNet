@@ -889,38 +889,38 @@ TestsCs: TestProxyCs TestDvDeviceCs TestCpDeviceDvCs TestPerformanceDv TestPerfo
 Tests: TestsNative TestsCs
 
 ifeq ($(platform),iOS)
-$(objdir)ohNet.net.dll: make_obj_dir \
-	dotnet build --project $(csShared)ohNet.net-ios.csproj -o $(objdir)
+	$(objdir)ohNet.net.dll: make_obj_dir \
+		dotnet build --project $(csShared)ohNet.net-ios.csproj -o $(objdir)
 else
-$(objdir)ohNet.net.dll: make_obj_dir \
-	$(csCp)CpDevice.cs \
-	$(csCp)CpDeviceUpnp.cs \
-	$(csCp)CpProxy.cs \
-	$(csCp)CpService.cs \
-	$(csShared)Service.cs \
-	$(csDv)DvDevice.cs \
-	$(csDv)DvProvider.cs \
-	$(csDv)DvProviderErrors.cs \
-	$(csDv)DvServerUpnp.cs \
-	$(csShared)OhNet.cs \
-	$(csShared)SubnetList.cs \
-	$(csCp)CpDeviceDv.cs \
-	$(csShared)AssemblyAttributes.cs
-	$(csharp) /t:library $(debug_csharp) $(csharpdefines) /warnaserror+\
-		/out:$(objdir)ohNet.net.dll \
+	$(objdir)ohNet.net.dll: make_obj_dir \
 		$(csCp)CpDevice.cs \
 		$(csCp)CpDeviceUpnp.cs \
 		$(csCp)CpProxy.cs \
 		$(csCp)CpService.cs \
+		$(csShared)Service.cs \
 		$(csDv)DvDevice.cs \
 		$(csDv)DvProvider.cs \
 		$(csDv)DvProviderErrors.cs \
 		$(csDv)DvServerUpnp.cs \
-		$(csShared)Service.cs \
 		$(csShared)OhNet.cs \
 		$(csShared)SubnetList.cs \
 		$(csCp)CpDeviceDv.cs \
-		$(csShared)AssemblyAttributes.cs 
+		$(csShared)AssemblyAttributes.cs
+		$(csharp) /t:library $(debug_csharp) $(csharpdefines) /warnaserror+\
+			/out:$(objdir)ohNet.net.dll \
+			$(csCp)CpDevice.cs \
+			$(csCp)CpDeviceUpnp.cs \
+			$(csCp)CpProxy.cs \
+			$(csCp)CpService.cs \
+			$(csDv)DvDevice.cs \
+			$(csDv)DvProvider.cs \
+			$(csDv)DvProviderErrors.cs \
+			$(csDv)DvServerUpnp.cs \
+			$(csShared)Service.cs \
+			$(csShared)OhNet.cs \
+			$(csShared)SubnetList.cs \
+			$(csCp)CpDeviceDv.cs \
+			$(csShared)AssemblyAttributes.cs 
 endif
 
 TestProxyCs: $(objdir)TestProxyCs.exe
