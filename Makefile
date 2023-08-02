@@ -176,6 +176,7 @@ ifeq ($(platform),iOS)
 	# link = $(devroot)/usr/bin/llvm-gcc-4.2  -pthread -Wl $(platform_linkflags)
 	# link = $(toolroot)/clang++ -pthread -stdlib=libc++ $(platform_linkflags)
 	ar = $(toolroot)/ar rc $(objdir)
+	csharpdefines = /define:IOS
 	no_shared_objects = yes
 endif
 
