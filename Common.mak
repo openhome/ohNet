@@ -888,54 +888,20 @@ TestsCs: TestProxyCs TestDvDeviceCs TestCpDeviceDvCs TestPerformanceDv TestPerfo
 
 Tests: TestsNative TestsCs
 
-ifeq ($(platform),iOS)
-	$(objdir)ohNet.net.dll: make_obj_dir \
-		dotnet build --project $(csShared)ohNet.net-ios.csproj -o $(objdir)
-else
-	$(objdir)ohNet.net.dll: make_obj_dir \
-		$(csCp)CpDevice.cs \
-		$(csCp)CpDeviceUpnp.cs \
-		$(csCp)CpProxy.cs \
-		$(csCp)CpService.cs \
-		$(csShared)Service.cs \
-		$(csDv)DvDevice.cs \
-		$(csDv)DvProvider.cs \
-		$(csDv)DvProviderErrors.cs \
-		$(csDv)DvServerUpnp.cs \
-		$(csShared)OhNet.cs \
-		$(csShared)SubnetList.cs \
-		$(csCp)CpDeviceDv.cs \
-		$(csShared)AssemblyAttributes.cs
-		$(csharp) /t:library $(debug_csharp) $(csharpdefines) /warnaserror+\
-			/out:$(objdir)ohNet.net.dll \
-			$(csCp)CpDevice.cs \
-			$(csCp)CpDeviceUpnp.cs \
-			$(csCp)CpProxy.cs \
-			$(csCp)CpService.cs \
-			$(csDv)DvDevice.cs \
-			$(csDv)DvProvider.cs \
-			$(csDv)DvProviderErrors.cs \
-			$(csDv)DvServerUpnp.cs \
-			$(csShared)Service.cs \
-			$(csShared)OhNet.cs \
-			$(csShared)SubnetList.cs \
-			$(csCp)CpDeviceDv.cs \
-			$(csShared)AssemblyAttributes.cs 
-endif
+$(objdir)ohNet.net.dll: make_obj_dir
+	$(dotnetsdk) build $(csShared)ohNet.net.csproj --framework $(dotnetFramework) --output $(objdir)
 
 TestProxyCs: $(objdir)TestProxyCs.exe
 
+# iOS currently doesn't build the test projects as these will require their own csprojs which bring in the iOS SDKs
+# now that ohNet.Net is built that way....
 $(objdir)TestProxyCs.exe: \
 	ohNetDll \
 	$(objdir)ohNet.net.dll \
 	$(csCpTests)TestProxy.cs \
 	$(objdir)CpUpnpOrgConnectionManager1.net.dll \
 
-	$(csharp) /t:exe $(debug_csharp) /warnaserror+\
-		/out:$(objdir)TestProxyCs.exe \
-		/reference:$(objdir)ohNet.net.dll \
-		/reference:$(objdir)CpUpnpOrgConnectionManager1.net.dll \
-		$(csCpTests)TestProxy.cs \
+	$(dotnetsdk) build $(csCpTests)TestProxy.csproj --framework $(dotnetFramework) --output $(objdir)
 
 TestDvDeviceCs: $(objdir)TestDvDeviceCs.exe
 
@@ -947,15 +913,7 @@ $(objdir)TestDvDeviceCs.exe: \
 	$(csDvTests)TestBasicDv.cs \
 	$(csCpTests)TestBasicCp.cs \
 	$(csDvTests)TestDvDevice.cs
-	$(csharp) \
-		$(debug_csharp) /warnaserror+ /t:exe \
-		/out:$(objdir)TestDvDeviceCs.exe \
-		/reference:$(objdir)ohNet.net.dll \
-		/reference:$(objdir)DvOpenhomeOrgTestBasic1.net.dll \
-		/reference:$(objdir)CpOpenhomeOrgTestBasic1.net.dll \
-		$(csDvTests)TestBasicDv.cs \
-		$(csCpTests)TestBasicCp.cs \
-		$(csDvTests)TestDvDevice.cs
+	$(dotnetsdk) build $(csShared)TestDvDeviceCs.csproj --framework $(dotnetFramework) --output $(objdir)
 
 TestDvLightsCs: $(objdir)TestDvLightsCs.exe
 
@@ -969,15 +927,8 @@ $(objdir)TestCpDeviceDvCs.exe: \
 	$(csDvTests)TestBasicDv.cs \
 	$(csCpTests)TestBasicCp.cs \
 	$(csCpTests)TestCpDeviceDv.cs
-	$(csharp) \
-		$(debug_csharp) /warnaserror+ /t:exe \
-		/out:$(objdir)TestCpDeviceDvCs.exe \
-		/reference:$(objdir)ohNet.net.dll \
-		/reference:$(objdir)DvOpenhomeOrgTestBasic1.net.dll \
-		/reference:$(objdir)CpOpenhomeOrgTestBasic1.net.dll \
-		$(csDvTests)TestBasicDv.cs \
-		$(csCpTests)TestBasicCp.cs \
-		$(csCpTests)TestCpDeviceDv.cs
+	$(dotnetsdk) build $(csShared)TestCpDeviceDvCs.csproj --framework $(dotnetFramework) --output $(objdir)
+
 
 TestPerformanceDvCs: $(objdir)TestPerformanceDvCs.exe
 
@@ -987,13 +938,8 @@ $(objdir)TestPerformanceDvCs.exe: \
 	$(objdir)DvOpenhomeOrgTestBasic1.net.dll \
 	$(csDvTests)TestBasicDv.cs \
 	$(csDvTests)TestPerformanceDv.cs
-	$(csharp) \
-		$(debug_csharp) /warnaserror+ /t:exe \
-		/out:$(objdir)TestPerformanceDvCs.exe \
-		/reference:$(objdir)ohNet.net.dll \
-		/reference:$(objdir)DvOpenhomeOrgTestBasic1.net.dll \
-		$(csDvTests)TestBasicDv.cs \
-		$(csDvTests)TestPerformanceDv.cs
+	$(dotnetsdk) build $(csDvTests)TestPerformanceDvCs.csproj --framework $(dotnetFramework) --output $(objdir)
+
 
 TestPerformanceCpCs: $(objdir)TestPerformanceCpCs.exe
 
@@ -1002,12 +948,8 @@ $(objdir)TestPerformanceCpCs.exe: \
 	$(objdir)ohNet.net.dll \
 	$(objdir)CpOpenhomeOrgTestBasic1.net.dll \
 	$(csCpTests)TestPerformanceCp.cs
-	$(csharp) \
-		$(debug_csharp) /warnaserror+ /t:exe \
-		/out:$(objdir)TestPerformanceCpCs.exe \
-		/reference:$(objdir)ohNet.net.dll \
-		/reference:$(objdir)CpOpenhomeOrgTestBasic1.net.dll \
-		$(csCpTests)TestPerformanceCp.cs
+	$(dotnetsdk) build $(csCpTests)TestPerformanceCpCs.csproj --framework $(dotnetFramework) --output $(objdir)
+
 
 ohNetJavaAll : ohNetJni ohNetJava CpProxyJavaClasses DvDeviceJavaClasses ohNetJavaSrc
 
