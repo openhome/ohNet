@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>ohNet.net</AssemblyName>
+    <RootNamespace>OpenHome.Net</RootNamespace>
+    <TargetFrameworks>net6.0;net6.0-ios</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove=".\ControlPoint\Tests\**" />
+    <Compile Remove=".\Device\Tests\**" />
+    <Compile Remove=".\ControlPoint\Proxies\**" />
+    <Compile Remove=".\Device\Providers\**" />
+  </ItemGroup>
+
+</Project>

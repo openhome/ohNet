@@ -4,7 +4,7 @@
 <#@ import namespace="OpenHome.Net.Xml.UpnpServiceXml" #>
 <#@ template language="C#" #>
 <#
-    Document u = new Document(TemplateArgument("xml"));
+	Document u = new Document(TemplateArgument("xml"));
 #>
 # Auto-generated file.  DO NOT EDIT DIRECTLY
 # Update CpUpnpMakeProxies.tt and run
@@ -14,40 +14,40 @@
 objects_proxies = \
 <#  foreach (Service s in u.iServices) #>
 <#  { #>
-                  $(objdir)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext) \
-                  $(objdir)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.$(objext) \
-                  $(objdir)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.$(objext) \
+				  $(objdir)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext) \
+				  $(objdir)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.$(objext) \
+				  $(objdir)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.$(objext) \
 <#  } #>
 
 # Service proxies have well controlled dependencies so we can document a more limited set of headers
 headers_proxy = $(inc_build)/OpenHome/Buffer.h \
-                $(inc_build)/OpenHome/Buffer.inl \
-                $(inc_build)/OpenHome/Exception.h \
-                $(inc_build)/OpenHome/Functor.h \
-                $(inc_build)/OpenHome/Net/Core/FunctorAsync.h \
-                $(inc_build)/OpenHome/Types.h \
-                $(inc_build)/OpenHome/Net/Core/CpProxy.h \
-                $(inc_build)/OpenHome/Net/Private/CpiService.h \
-                $(inc_build)/OpenHome/Net/Private/Service.h \
-                $(inc_build)/OpenHome/Private/Thread.h \
-                $(inc_build)/OpenHome/Net/Private/AsyncPrivate.h
+				$(inc_build)/OpenHome/Buffer.inl \
+				$(inc_build)/OpenHome/Exception.h \
+				$(inc_build)/OpenHome/Functor.h \
+				$(inc_build)/OpenHome/Net/Core/FunctorAsync.h \
+				$(inc_build)/OpenHome/Types.h \
+				$(inc_build)/OpenHome/Net/Core/CpProxy.h \
+				$(inc_build)/OpenHome/Net/Private/CpiService.h \
+				$(inc_build)/OpenHome/Net/Private/Service.h \
+				$(inc_build)/OpenHome/Private/Thread.h \
+				$(inc_build)/OpenHome/Net/Private/AsyncPrivate.h
 
 proxy_dotnet_assemblies = \
 <#  foreach (Service s in u.iServices) #>
 <#  { #>
-        Cp<#=FilePrefixTypeAndVersion(s)#>.net.dll \
+		Cp<#=FilePrefixTypeAndVersion(s)#>.net.dll \
 <#  } #>
 
 proxy_dotnet_assemblies_with_path = \
 <#  foreach (Service s in u.iServices) #>
 <#  { #>
-        $(objdir)Cp<#=FilePrefixTypeAndVersion(s)#>.net.dll \
+		$(objdir)Cp<#=FilePrefixTypeAndVersion(s)#>.net.dll \
 <#  } #>
 
 proxy_java_classes_with_path = \
 <#  foreach (Service s in u.iServices) #>
 <#  { #>
-        $(objdir)org/openhome/net/controlpoint/proxies/CpProxy<#=FilePrefixTypeAndVersion(s)#>.class \
+		$(objdir)org/openhome/net/controlpoint/proxies/CpProxy<#=FilePrefixTypeAndVersion(s)#>.class \
 <#  } #>
 
 
@@ -66,7 +66,7 @@ $(objdir)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.$(objext) : $(proxyC
 proxy_dlls = \
 <#  foreach (Service s in u.iServices) #>
 <#  { #>
-             Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Dll \
+			 Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Dll \
 <#  } #>
 
 CpProxyDlls: $(proxy_dlls)
@@ -85,10 +85,7 @@ CpProxyDotNetAssemblies: $(proxy_dotnet_assemblies_with_path)
 <# foreach (Service s in u.iServices) #>
 <# { #>
 $(objdir)Cp<#=FilePrefixTypeAndVersion(s)#>.net.dll: $(objdir)ohNet.net.dll $(proxyCs)Cp<#=FilePrefixTypeAndVersion(s)#>.cs
-	$(csharp) /t:library \
-        /out:$(objdir)Cp<#=FilePrefixTypeAndVersion(s)#>.net.dll \
-        /reference:$(objdir)ohNet.net.dll \
-        $(proxyCs)Cp<#=FilePrefixTypeAndVersion(s)#>.cs
+	$(dotnetsdk) build $(proxyCs)Cp<#=FilePrefixTypeAndVersion(s)#>.csproj --framework $(dotnetFramework) --output $(objdir)
 <# } #>
 
 # Proxy classes for Java:
@@ -105,54 +102,54 @@ $(objdir)org/openhome/net/controlpoint/proxies/CpProxy<#=FilePrefixTypeAndVersio
 <#+
 string FilePrefixTypeAndVersion(Service s)
 {
-    return FilePrefix(s) + s.iType.ToString() + s.iVersion.ToString();
+	return FilePrefix(s) + s.iType.ToString() + s.iVersion.ToString();
 }
 string FilePrefix(Service s)
 {
-    string prefix = "";
-    char[] charSeparators = new char[] {'.'};
-    string[] res = s.iDomain.Split(charSeparators, StringSplitOptions.None);
-    foreach (string str in res)
-    {
-        prefix += str.Substring(0, 1).ToUpper();
-        if (str.Length > 1)
-        {
-            prefix += str.Substring(1, str.Length-1);
-        }
-    }
-    return prefix;
+	string prefix = "";
+	char[] charSeparators = new char[] {'.'};
+	string[] res = s.iDomain.Split(charSeparators, StringSplitOptions.None);
+	foreach (string str in res)
+	{
+		prefix += str.Substring(0, 1).ToUpper();
+		if (str.Length > 1)
+		{
+			prefix += str.Substring(1, str.Length-1);
+		}
+	}
+	return prefix;
 }
 
 string TemplateArgument(string aName)
 {
-    string[] args =  System.Environment.GetCommandLineArgs();
-        
-    bool isarg = false;
-    
-    foreach (string arg in args)
-    {
-        if (isarg)
-        {
-            string[] parts = arg.Split(new char[] {':'});
-            
-            if (parts.Length == 2)
-            {
-                if (parts[0] == aName)
-                {
-                    return (parts[1]);
-                }
-            }
-            
-            isarg = false;
-            continue;
-        }
-        
-        if (arg == "-a")
-        {
-            isarg = true;
-        }
-    }
-    
-    throw (new ArgumentException(aName + " not specified"));
+	string[] args =  System.Environment.GetCommandLineArgs();
+		
+	bool isarg = false;
+	
+	foreach (string arg in args)
+	{
+		if (isarg)
+		{
+			string[] parts = arg.Split(new char[] {':'});
+			
+			if (parts.Length == 2)
+			{
+				if (parts[0] == aName)
+				{
+					return (parts[1]);
+				}
+			}
+			
+			isarg = false;
+			continue;
+		}
+		
+		if (arg == "-a")
+		{
+			isarg = true;
+		}
+	}
+	
+	throw (new ArgumentException(aName + " not specified"));
 }
 #>
