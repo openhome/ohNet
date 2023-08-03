@@ -4,55 +4,55 @@
 # to apply any updates
 
 objects_proxies = \
-                  $(objdir)CpUpnpOrgConnectionManager1.$(objext) \
-                  $(objdir)CpUpnpOrgConnectionManager1C.$(objext) \
-                  $(objdir)CpUpnpOrgConnectionManager1Std.$(objext) \
-                  $(objdir)CpAvOpenhomeOrgProduct1.$(objext) \
-                  $(objdir)CpAvOpenhomeOrgProduct1C.$(objext) \
-                  $(objdir)CpAvOpenhomeOrgProduct1Std.$(objext) \
-                  $(objdir)CpAvOpenhomeOrgSender1.$(objext) \
-                  $(objdir)CpAvOpenhomeOrgSender1C.$(objext) \
-                  $(objdir)CpAvOpenhomeOrgSender1Std.$(objext) \
-                  $(objdir)CpOpenhomeOrgTestBasic1.$(objext) \
-                  $(objdir)CpOpenhomeOrgTestBasic1C.$(objext) \
-                  $(objdir)CpOpenhomeOrgTestBasic1Std.$(objext) \
-                  $(objdir)CpOpenhomeOrgSubscriptionLongPoll1.$(objext) \
-                  $(objdir)CpOpenhomeOrgSubscriptionLongPoll1C.$(objext) \
-                  $(objdir)CpOpenhomeOrgSubscriptionLongPoll1Std.$(objext) \
+				  $(objdir)CpUpnpOrgConnectionManager1.$(objext) \
+				  $(objdir)CpUpnpOrgConnectionManager1C.$(objext) \
+				  $(objdir)CpUpnpOrgConnectionManager1Std.$(objext) \
+				  $(objdir)CpAvOpenhomeOrgProduct1.$(objext) \
+				  $(objdir)CpAvOpenhomeOrgProduct1C.$(objext) \
+				  $(objdir)CpAvOpenhomeOrgProduct1Std.$(objext) \
+				  $(objdir)CpAvOpenhomeOrgSender1.$(objext) \
+				  $(objdir)CpAvOpenhomeOrgSender1C.$(objext) \
+				  $(objdir)CpAvOpenhomeOrgSender1Std.$(objext) \
+				  $(objdir)CpOpenhomeOrgTestBasic1.$(objext) \
+				  $(objdir)CpOpenhomeOrgTestBasic1C.$(objext) \
+				  $(objdir)CpOpenhomeOrgTestBasic1Std.$(objext) \
+				  $(objdir)CpOpenhomeOrgSubscriptionLongPoll1.$(objext) \
+				  $(objdir)CpOpenhomeOrgSubscriptionLongPoll1C.$(objext) \
+				  $(objdir)CpOpenhomeOrgSubscriptionLongPoll1Std.$(objext) \
 
 # Service proxies have well controlled dependencies so we can document a more limited set of headers
 headers_proxy = $(inc_build)/OpenHome/Buffer.h \
-                $(inc_build)/OpenHome/Buffer.inl \
-                $(inc_build)/OpenHome/Exception.h \
-                $(inc_build)/OpenHome/Functor.h \
-                $(inc_build)/OpenHome/Net/Core/FunctorAsync.h \
-                $(inc_build)/OpenHome/Types.h \
-                $(inc_build)/OpenHome/Net/Core/CpProxy.h \
-                $(inc_build)/OpenHome/Net/Private/CpiService.h \
-                $(inc_build)/OpenHome/Net/Private/Service.h \
-                $(inc_build)/OpenHome/Private/Thread.h \
-                $(inc_build)/OpenHome/Net/Private/AsyncPrivate.h
+				$(inc_build)/OpenHome/Buffer.inl \
+				$(inc_build)/OpenHome/Exception.h \
+				$(inc_build)/OpenHome/Functor.h \
+				$(inc_build)/OpenHome/Net/Core/FunctorAsync.h \
+				$(inc_build)/OpenHome/Types.h \
+				$(inc_build)/OpenHome/Net/Core/CpProxy.h \
+				$(inc_build)/OpenHome/Net/Private/CpiService.h \
+				$(inc_build)/OpenHome/Net/Private/Service.h \
+				$(inc_build)/OpenHome/Private/Thread.h \
+				$(inc_build)/OpenHome/Net/Private/AsyncPrivate.h
 
 proxy_dotnet_assemblies = \
-        CpUpnpOrgConnectionManager1.net.dll \
-        CpAvOpenhomeOrgProduct1.net.dll \
-        CpAvOpenhomeOrgSender1.net.dll \
-        CpOpenhomeOrgTestBasic1.net.dll \
-        CpOpenhomeOrgSubscriptionLongPoll1.net.dll \
+		CpUpnpOrgConnectionManager1.net.dll \
+		CpAvOpenhomeOrgProduct1.net.dll \
+		CpAvOpenhomeOrgSender1.net.dll \
+		CpOpenhomeOrgTestBasic1.net.dll \
+		CpOpenhomeOrgSubscriptionLongPoll1.net.dll \
 
 proxy_dotnet_assemblies_with_path = \
-        $(objdir)CpUpnpOrgConnectionManager1.net.dll \
-        $(objdir)CpAvOpenhomeOrgProduct1.net.dll \
-        $(objdir)CpAvOpenhomeOrgSender1.net.dll \
-        $(objdir)CpOpenhomeOrgTestBasic1.net.dll \
-        $(objdir)CpOpenhomeOrgSubscriptionLongPoll1.net.dll \
+		$(objdir)CpUpnpOrgConnectionManager1.net.dll \
+		$(objdir)CpAvOpenhomeOrgProduct1.net.dll \
+		$(objdir)CpAvOpenhomeOrgSender1.net.dll \
+		$(objdir)CpOpenhomeOrgTestBasic1.net.dll \
+		$(objdir)CpOpenhomeOrgSubscriptionLongPoll1.net.dll \
 
 proxy_java_classes_with_path = \
-        $(objdir)org/openhome/net/controlpoint/proxies/CpProxyUpnpOrgConnectionManager1.class \
-        $(objdir)org/openhome/net/controlpoint/proxies/CpProxyAvOpenhomeOrgProduct1.class \
-        $(objdir)org/openhome/net/controlpoint/proxies/CpProxyAvOpenhomeOrgSender1.class \
-        $(objdir)org/openhome/net/controlpoint/proxies/CpProxyOpenhomeOrgTestBasic1.class \
-        $(objdir)org/openhome/net/controlpoint/proxies/CpProxyOpenhomeOrgSubscriptionLongPoll1.class \
+		$(objdir)org/openhome/net/controlpoint/proxies/CpProxyUpnpOrgConnectionManager1.class \
+		$(objdir)org/openhome/net/controlpoint/proxies/CpProxyAvOpenhomeOrgProduct1.class \
+		$(objdir)org/openhome/net/controlpoint/proxies/CpProxyAvOpenhomeOrgSender1.class \
+		$(objdir)org/openhome/net/controlpoint/proxies/CpProxyOpenhomeOrgTestBasic1.class \
+		$(objdir)org/openhome/net/controlpoint/proxies/CpProxyOpenhomeOrgSubscriptionLongPoll1.class \
 
 
 proxies : ohNetCore $(objects_proxies)
@@ -89,11 +89,11 @@ $(objdir)CpOpenhomeOrgSubscriptionLongPoll1Std.$(objext) : $(proxyCppStd)CpOpenh
 	$(compiler)CpOpenhomeOrgSubscriptionLongPoll1Std.$(objext) -c $(cppflags) $(includes) $(proxyCppStd)CpOpenhomeOrgSubscriptionLongPoll1Std.cpp
 
 proxy_dlls = \
-             CpUpnpOrgConnectionManager1Dll \
-             CpAvOpenhomeOrgProduct1Dll \
-             CpAvOpenhomeOrgSender1Dll \
-             CpOpenhomeOrgTestBasic1Dll \
-             CpOpenhomeOrgSubscriptionLongPoll1Dll \
+			 CpUpnpOrgConnectionManager1Dll \
+			 CpAvOpenhomeOrgProduct1Dll \
+			 CpAvOpenhomeOrgSender1Dll \
+			 CpOpenhomeOrgTestBasic1Dll \
+			 CpOpenhomeOrgSubscriptionLongPoll1Dll \
 
 CpProxyDlls: $(proxy_dlls)
 
@@ -118,30 +118,15 @@ $(objdir)$(dllprefix)CpOpenhomeOrgSubscriptionLongPoll1.$(dllext) : ZappUpnpDll 
 CpProxyDotNetAssemblies: $(proxy_dotnet_assemblies_with_path)
 
 $(objdir)CpUpnpOrgConnectionManager1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpUpnpOrgConnectionManager1.cs
-	$(csharp) /t:library \
-        /out:$(objdir)CpUpnpOrgConnectionManager1.net.dll \
-        /reference:$(objdir)ohNet.net.dll \
-        $(proxyCs)CpUpnpOrgConnectionManager1.cs
+	$(dotnetsdk) build $(proxyCs)CpUpnpOrgConnectionManager1.csproj --framework $(dotnetFramework) --output $(objdir)
 $(objdir)CpAvOpenhomeOrgProduct1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpAvOpenhomeOrgProduct1.cs
-	$(csharp) /t:library \
-        /out:$(objdir)CpAvOpenhomeOrgProduct1.net.dll \
-        /reference:$(objdir)ohNet.net.dll \
-        $(proxyCs)CpAvOpenhomeOrgProduct1.cs
+	$(dotnetsdk) build $(proxyCs)CpAvOpenhomeOrgProduct1.csproj --framework $(dotnetFramework) --output $(objdir)
 $(objdir)CpAvOpenhomeOrgSender1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpAvOpenhomeOrgSender1.cs
-	$(csharp) /t:library \
-        /out:$(objdir)CpAvOpenhomeOrgSender1.net.dll \
-        /reference:$(objdir)ohNet.net.dll \
-        $(proxyCs)CpAvOpenhomeOrgSender1.cs
+	$(dotnetsdk) build $(proxyCs)CpAvOpenhomeOrgSender1.csproj --framework $(dotnetFramework) --output $(objdir)
 $(objdir)CpOpenhomeOrgTestBasic1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpOpenhomeOrgTestBasic1.cs
-	$(csharp) /t:library \
-        /out:$(objdir)CpOpenhomeOrgTestBasic1.net.dll \
-        /reference:$(objdir)ohNet.net.dll \
-        $(proxyCs)CpOpenhomeOrgTestBasic1.cs
+	$(dotnetsdk) build $(proxyCs)CpOpenhomeOrgTestBasic1.csproj --framework $(dotnetFramework) --output $(objdir)
 $(objdir)CpOpenhomeOrgSubscriptionLongPoll1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpOpenhomeOrgSubscriptionLongPoll1.cs
-	$(csharp) /t:library \
-        /out:$(objdir)CpOpenhomeOrgSubscriptionLongPoll1.net.dll \
-        /reference:$(objdir)ohNet.net.dll \
-        $(proxyCs)CpOpenhomeOrgSubscriptionLongPoll1.cs
+	$(dotnetsdk) build $(proxyCs)CpOpenhomeOrgSubscriptionLongPoll1.csproj --framework $(dotnetFramework) --output $(objdir)
 
 # Proxy classes for Java:
 
