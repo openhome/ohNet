@@ -187,7 +187,15 @@ class JenkinsBuild():
 
         dotnet_install_cmd = []
         
-        if os_platform == 'windows' or os_platform == 'macos' or os_platform == 'iOs':
+        pre_installed_platforms = [
+            'windows',
+            'macos',
+            'iOs',
+            'Windows81',
+            'Windows10',
+        ]
+
+        if os_platform in pre_installed_platforms:
             print ('dotent SDK should be preinstalled on for this platform ')
             return
 
