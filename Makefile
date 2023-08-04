@@ -146,6 +146,10 @@ openhome_architecture = ${detected_openhome_architecture}
 
 dotnetsdk = dotnet
 
+ifeq ($(openhome_system),Linux)
+	dotnetsdk = ~/.dotnet/dotnet
+endif
+
 # NOTE: If you change this, you MUST go through an edit any of the csproj (or csproj generation code) to ensure that the correct defines
 #       are included for iOS builds. 
 dotnetFramework = net6.0
