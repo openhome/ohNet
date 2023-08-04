@@ -180,6 +180,31 @@ class JenkinsBuild():
         }
         current_platform = self.options.platform
         self.platform = platforms[current_platform]
+        
+    def install_dotnet(self):
+    
+        ret = subprocess.check_call('dotnet --version')
+        if ret == 0:
+            print('dotnet already installed!')
+            return
+    
+        os_platform = self.platform['os']
+        arch = self.platform['arch']
+        dotnet_install_cmd = ''
+        
+        if os_platform == 'windows':
+            print ('dotnet should be preinstalled on the Windows build machines and so the build should not reach this point')
+            sys.exit(10)
+        else:
+            dotnet_install_cmd = 'echo dotnet not installed for this platform / arch combo'
+            
+        print( 'running instal_dotnet with %s' % (dotnet_install_cmd,))
+
+        ret = subprocess.check_call(dotnet_install_cmd)
+        if ret != 0:
+            print('Failed to install dotnet:')
+            print( ret )
+            sys.exit(10)
 
     def set_platform_args(self):
         os_platform = self.platform['os']
@@ -462,6 +487,7 @@ def main():
     Build.get_options()
     Build.get_platform()
     Build.set_platform_args()
+    Build.install_dotnet()
     Build.get_build_args()
     Build.do_build()
     Build.do_postAction()

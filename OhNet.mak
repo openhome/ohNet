@@ -75,6 +75,10 @@ static_or_dynamic = /MT
 force_cpp = 
 !endif
 
+dotnetsdk = dotnet
+
+dotnetFramework = net6.0
+
 csharp_pcl_profile = PCLProfileNone
 !if "$(windows_store_10)"=="1"
 csharp_pcl_profile = PCLProfile259
