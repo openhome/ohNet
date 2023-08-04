@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <AssemblyName>DvOpenhomeOrgTestBasic1.net.dll</AssemblyName>    
+        <AssemblyName>DvOpenhomeOrgTestBasic1.net</AssemblyName>    
 
         <TargetFrameworks>net6.0</TargetFrameworks>
         <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('OSX'))">$(TargetFrameworks);net6.0-ios</TargetFrameworks>

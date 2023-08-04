@@ -50,7 +50,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <AssemblyName><#=prefix#><#=fileName#>.net.dll</AssemblyName>    
+        <AssemblyName><#=prefix#><#=fileName#>.net</AssemblyName>    
 
         <TargetFrameworks>net6.0</TargetFrameworks>
         <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('OSX'))">$(TargetFrameworks);net6.0-ios</TargetFrameworks>
