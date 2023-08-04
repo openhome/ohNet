@@ -901,7 +901,7 @@ $(objdir)TestProxyCs.exe: \
 	$(csCpTests)TestProxy.cs \
 	$(objdir)CpUpnpOrgConnectionManager1.net.dll \
 
-	$(dotnetsdk) build $(csCpTests)TestProxy.csproj --framework $(dotnetFramework) --output $(objdir)
+	$(dotnetsdk) build $(csCpTests)TestProxy.csproj --framework $(dotnetFramework) --output $(objdir) --self-contained --runtime $(dotnetRuntime)
 
 TestDvDeviceCs: $(objdir)TestDvDeviceCs.exe
 
@@ -913,7 +913,7 @@ $(objdir)TestDvDeviceCs.exe: \
 	$(csDvTests)TestBasicDv.cs \
 	$(csCpTests)TestBasicCp.cs \
 	$(csDvTests)TestDvDevice.cs
-	$(dotnetsdk) build $(csShared)TestDvDeviceCs.csproj --framework $(dotnetFramework) --output $(objdir)
+	$(dotnetsdk) build $(csShared)TestDvDeviceCs.csproj --framework $(dotnetFramework) --output $(objdir) --self-contained --runtime $(dotnetRuntime)
 
 TestDvLightsCs: $(objdir)TestDvLightsCs.exe
 
@@ -927,7 +927,7 @@ $(objdir)TestCpDeviceDvCs.exe: \
 	$(csDvTests)TestBasicDv.cs \
 	$(csCpTests)TestBasicCp.cs \
 	$(csCpTests)TestCpDeviceDv.cs
-	$(dotnetsdk) build $(csShared)TestCpDeviceDvCs.csproj --framework $(dotnetFramework) --output $(objdir)
+	$(dotnetsdk) build $(csShared)TestCpDeviceDvCs.csproj --framework $(dotnetFramework) --output $(objdir) --self-contained --runtime $(dotnetRuntime)
 
 
 TestPerformanceDvCs: $(objdir)TestPerformanceDvCs.exe
@@ -938,7 +938,7 @@ $(objdir)TestPerformanceDvCs.exe: \
 	$(objdir)DvOpenhomeOrgTestBasic1.net.dll \
 	$(csDvTests)TestBasicDv.cs \
 	$(csDvTests)TestPerformanceDv.cs
-	$(dotnetsdk) build $(csDvTests)TestPerformanceDvCs.csproj --framework $(dotnetFramework) --output $(objdir)
+	$(dotnetsdk) build $(csDvTests)TestPerformanceDvCs.csproj --framework $(dotnetFramework) --output $(objdir) --self-contained --runtime $(dotnetRuntime)
 
 
 TestPerformanceCpCs: $(objdir)TestPerformanceCpCs.exe
@@ -948,7 +948,7 @@ $(objdir)TestPerformanceCpCs.exe: \
 	$(objdir)ohNet.net.dll \
 	$(objdir)CpOpenhomeOrgTestBasic1.net.dll \
 	$(csCpTests)TestPerformanceCp.cs
-	$(dotnetsdk) build $(csCpTests)TestPerformanceCpCs.csproj --framework $(dotnetFramework) --output $(objdir)
+	$(dotnetsdk) build $(csCpTests)TestPerformanceCpCs.csproj --framework $(dotnetFramework) --output $(objdir) --self-contained --runtime $(dotnetRuntime)
 
 
 ohNetJavaAll : ohNetJni ohNetJava CpProxyJavaClasses DvDeviceJavaClasses ohNetJavaSrc

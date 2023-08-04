@@ -145,9 +145,11 @@ openhome_system = ${detected_openhome_system}
 openhome_architecture = ${detected_openhome_architecture}
 
 dotnetsdk = dotnet
+dotnetRuntime = win-x64
 
 ifeq ($(openhome_system),Linux)
 	dotnetsdk = ~/.dotnet/dotnet
+	dotnetRuntime = linux-x64
 endif
 
 # NOTE: If you change this, you MUST go through an edit any of the csproj (or csproj generation code) to ensure that the correct defines
@@ -186,7 +188,9 @@ ifeq ($(platform),iOS)
 	# link = $(toolroot)/clang++ -pthread -stdlib=libc++ $(platform_linkflags)
 	ar = $(toolroot)/ar rc $(objdir)
 	no_shared_objects = yes
+
     dotnetFramework = net6.0-ios
+    dotnetRuntime = osx-x64
 endif
 
 ifeq ($(platform),Mac)
@@ -210,6 +214,8 @@ ifeq ($(platform),Mac)
 	link = clang++ -pthread -stdlib=libc++ $(platform_linkflags)
 	ar = ar rc $(objdir)
 	openhome_system = Mac
+
+	dotnetRuntime = osx-x64
 endif
 
 ifeq ($(platform), Core-ppc32)
