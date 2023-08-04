@@ -187,13 +187,13 @@ class JenkinsBuild():
 
         dotnet_install_cmd = []
         
-        if os_platform == 'windows' or os_platform == 'macos':
-            print ('dotnet should be preinstalled on these build machines and so the build should not reach this point')
+        if os_platform == 'windows' or os_platform == 'macos' or os_platform == 'iOs':
+            print ('dotent SDK should be preinstalled on for this platform ')
             return
-        if os_platform == 'linux':
-            dotnet_install_cmd.append('./dotnet-install.sh')
-            dotnet_install_cmd.append('--channel')
-            dotnet_install_cmd.append('LTS')
+
+        dotnet_install_cmd.append('./dotnet-install.sh')
+        dotnet_install_cmd.append('--channel')
+        dotnet_install_cmd.append('LTS')
 
         print( 'running install_dotnet with %s' % (dotnet_install_cmd,))
 
