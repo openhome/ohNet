@@ -3,7 +3,8 @@
   <PropertyGroup>
     <AssemblyName>ohNet.net</AssemblyName>
     <RootNamespace>OpenHome.Net</RootNamespace>
-    <TargetFrameworks>net6.0;net6.0-ios</TargetFrameworks>
+    <TargetFrameworks>net6.0</TargetFrameworks>
+    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('OSX'))">$(TargetFrameworks);net6.0-ios</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
