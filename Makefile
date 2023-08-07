@@ -145,22 +145,24 @@ openhome_system = ${detected_openhome_system}
 openhome_architecture = ${detected_openhome_architecture}
 
 dotnetsdk = dotnet
-dotnetRuntime = win-x64
-
-ifeq ($(openhome_system),Linux)
-	dotnetsdk = ~/.dotnet/dotnet
-	dotnetRuntime = linux-x64
-endif
+dotnetRuntime = linux-x64
 
 # NOTE: If you change this, you MUST go through an edit any of the csproj (or csproj generation code) to ensure that the correct defines
 #       are included for iOS builds. 
 dotnetFramework = net6.0
+
+ifeq ($(openhome_system),Linux)
+	dotnetsdk = ~/.dotnet/dotnet
+endif
+
 
 ifeq ($(platform),Android)
     osbuilddir = $(platform)-$(detected_openhome_architecture)
     objdir = Build/Obj/$(osbuilddir)/$(build_dir)/
     android_build_dir = OpenHome/Net/Bindings/Android/libs/
     managed_only = yes
+
+    dotnetsdk = ~/.dotnet/dotnet
 endif
 
 ifeq ($(platform),iOS)
