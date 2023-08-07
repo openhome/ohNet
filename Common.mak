@@ -893,8 +893,11 @@ $(objdir)ohNet.net.dll: make_obj_dir
 
 TestProxyCs: $(objdir)TestProxyCs.exe
 
-# iOS currently doesn't build the test projects as these will require their own csprojs which bring in the iOS SDKs
-# now that ohNet.Net is built that way....
+# NOTE: The dotnet SDK will only provide a 'self-contained' single file executable when running the "publish" command. However,
+#       it only allows to publish one project at a time to a directory and so specifying the --output argument results in all .NET code being deleted
+#       from Build/Obj/... before the code is copied. Therefore, we build to the standard .NET ouptut directory then copy the output files into
+#       Build/Obj/... as required
+
 $(objdir)TestProxyCs.exe: \
 	ohNetDll \
 	$(objdir)ohNet.net.dll \

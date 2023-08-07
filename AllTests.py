@@ -97,8 +97,7 @@ def runTests():
         print('\nTest: ' + test.name)
         cmdLine = test.args
         cmdLine.insert(0, test.Path())
-        if (not test.native and os.name != 'nt'):
-            cmdLine.insert(0, 'mono')
+        print("Running: %s" % cmdLine)    
         ret = subprocess.call(cmdLine)
         if ret != 0:
             print('\nTest ' + test.name + ' failed, aborting')
@@ -289,7 +288,7 @@ class TestCase(object):
             path += '.exe'
         elif not self.native:
             os.environ['LD_LIBRARY_PATH'] = objPath()
-            path += '.exe'
+            #NOTE: newer dotnet SDKs create self-contained executables without a prefix
         else:
             path += '.elf'
         return path
