@@ -209,7 +209,7 @@ except KeyError:
 gCore = 0
 gParallel = False
 for arg in sys.argv[1:]:
-    elif arg == '--Windows10':
+    if arg == '--Windows10':
         gWindows10 = 1
     elif arg == '-b' or arg == '--buildonly':
         gBuildOnly = 1

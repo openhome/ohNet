@@ -298,7 +298,7 @@ class JenkinsBuild():
             args.append('--mac-64')
             self.platform_make_args.append('mac-64=1')
         if os_platform == 'iOs':
-            elif arch == 'x64':
+            if arch == 'x64':
                 args.append('--iOs-x64')
                 self.platform_make_args.append('iOs-x64=1')
             elif arch == 'arm64':
