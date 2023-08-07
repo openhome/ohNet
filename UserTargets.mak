@@ -12,21 +12,20 @@ clean :
 	$(rmdir) Build/Docs
 	$(rmdir) $(mDNSdir)
 
-	# dotnet litters stuff everywhere and doesn't always respect the 'Clean' argument...
-	$(rmdir) OpenHome/Net/Bindings/Cs/bin
-	$(rmdir) OpenHome/Net/Bindings/Cs/obj
+	$(rmdir) "OpenHome/Net/Bindings/Cs/bin"
+	$(rmdir) "OpenHome/Net/Bindings/Cs/obj"
 
-	$(rmdir) OpenHome/Net/Bindings/Cs/ControlPoint/Proxies/bin
-	$(rmdir) OpenHome/Net/Bindings/Cs/ControlPoint/Proxies/obj
+	$(rmdir) "OpenHome/Net/Bindings/Cs/ControlPoint/Proxies/bin"
+	$(rmdir) "OpenHome/Net/Bindings/Cs/ControlPoint/Proxies/obj"
 
-	$(rmdir) OpenHome/Net/Bindings/Cs/ControlPoint/Tests/bin
-	$(rmdir) OpenHome/Net/Bindings/Cs/ControlPoint/Tests/obj
+	$(rmdir) "OpenHome/Net/Bindings/Cs/ControlPoint/Tests/bin"
+	$(rmdir) "OpenHome/Net/Bindings/Cs/ControlPoint/Tests/obj"
 
-	$(rmdir) OpenHome/Net/Bindings/Cs/Device/Providers/bin
-	$(rmdir) OpenHome/Net/Bindings/Cs/Device/Providers/obj
+	$(rmdir) "OpenHome/Net/Bindings/Cs/Device/Providers/bin"
+	$(rmdir) "OpenHome/Net/Bindings/Cs/Device/Providers/obj"
 
-	$(rmdir) OpenHome/Net/Bindings/Cs/Device/Tests/bin
-	$(rmdir) OpenHome/Net/Bindings/Cs/Device/Tests/obj
+	$(rmdir) "OpenHome/Net/Bindings/Cs/Device/Tests/bin"
+	$(rmdir) "OpenHome/Net/Bindings/Cs/Device/Tests/obj"
 
 mostlyclean : clean clean-t4
 	$(rmdir) Generated
