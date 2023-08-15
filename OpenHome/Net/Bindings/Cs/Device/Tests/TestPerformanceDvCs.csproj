@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>TestPerformanceDvCs</AssemblyName>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>OpenHome.Net</RootNamespace>
+    
+    <TargetFrameworks>net6.0</TargetFrameworks>
+    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('OSX'))">$(TargetFrameworks);net6.0-ios</TargetFrameworks>
+
+    <EnableDefaultItems>False</EnableDefaultItems>
+
+    <IntermediateOutputPath>../../obj</IntermediateOutputPath>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <Compile Include="TestBasicDv.cs" />
+    <Compile Include="TestPerformanceDv.cs" />
+
+    <ProjectReference Include="../../ohNet.net.csproj" />
+    <ProjectReference Include="../Providers/DvOpenhomeOrgTestBasic1.csproj" />
+  </ItemGroup>
+
+</Project>

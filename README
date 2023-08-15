@@ -9,12 +9,16 @@ On Windows:
     Microsoft Visual Studio
     (Express versions are okay. Versions earlier than 2010 will have to edit Types.h to
     include content equivalent to stdint.h.)
-    Microsoft .NET 4.0 SDK (optional, required for C# bindings and all changes to service descriptions)
+    .NET 6.0+ (optional, required for C# bindings and all changes to service descriptions)
     Java (optional, required for building Java bindings)
 
 On Linux:
-    Mono (optional, required for changes to service descriptions)
+    .NET 6.0+ (optional, required for changes to service descriptions)
     Java (optional, required for building Java bindings)
+
+On Mac:
+    XCode
+    .NET 6.0+ (optional, required for changes to service descriptions)
 
 Building
 --------
@@ -22,6 +26,8 @@ Building
 
 Note: On Windows, ensure you are in a visual studio command prompt or have otherwise set Visual
 Studio's environment variables.
+
+Note: Windows & Mac assumes that 'dotnet' is in your PATH. Linux assumes it's at '~/.dotnet/'
 
 If you have a .NET runtime available and want to regenerate makefiles, proxies or providers, run
     make generate-makefiles uset4=yes

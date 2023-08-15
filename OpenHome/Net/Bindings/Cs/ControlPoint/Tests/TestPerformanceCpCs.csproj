@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>TestPerformanceCpCs</AssemblyName>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>OpenHome.Net</RootNamespace>
+    <TargetFrameworks>net6.0</TargetFrameworks>
+    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('OSX'))">$(TargetFrameworks);net6.0-ios</TargetFrameworks>
+    <EnableDefaultItems>False</EnableDefaultItems>
+
+    <IntermediateOutputPath>../../obj</IntermediateOutputPath>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <Compile Include="TestBasicCp.cs" />
+    <Compile Include="TestPerformanceCp.cs" />
+
+    <ProjectReference Include="../../ohNet.net.csproj" />
+    <ProjectReference Include="../Proxies/CpOpenhomeOrgTestBasic1.csproj" />
+  </ItemGroup>
+
+</Project>

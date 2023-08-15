@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>TestProxyCs</AssemblyName>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>OpenHome.Net</RootNamespace>
+    
+    <TargetFrameworks>net6.0</TargetFrameworks>
+    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('OSX'))">$(TargetFrameworks);net6.0-ios</TargetFrameworks>
+
+    <IntermediateOutputPath>../../obj</IntermediateOutputPath>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <Compile Remove="*" />
+    <Compile Include="TestProxy.cs" />
+
+    <ProjectReference Include="../../ohNet.net.csproj" />
+    <ProjectReference Include="../Proxies/CpUpnpOrgConnectionManager1.csproj" />
+  </ItemGroup>
+
+</Project>

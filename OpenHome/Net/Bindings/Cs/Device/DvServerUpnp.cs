@@ -15,19 +15,19 @@ namespace OpenHome.Net.Device
     /// calls to a proxy.</remarks>
     public class DvServerUpnp : IDisposable
     {
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern IntPtr DvServerUpnpCreate();
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void DvServerUpnpDestroy(IntPtr aServer);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]

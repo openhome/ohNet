@@ -1,0 +1,105 @@
+<#@ assembly name="UpnpServiceXml.dll" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="OpenHome.Net.Xml.UpnpServiceXml" #>
+<#@ template language="C#" #>
+<#
+    string domain = TemplateArgument("domain");
+    string type = TemplateArgument("type");
+
+    string prefix = TemplateArgument("prefix");
+
+    uint version = 1;
+
+    try
+    {
+       version = Convert.ToUInt32(TemplateArgument("version"));
+    }
+    catch (FormatException)
+    {
+        throw (new ArgumentException("Invalid version number specified"));
+    }
+    catch (OverflowException)
+    {
+        throw (new ArgumentException("Invalid version number specified"));
+    }
+
+    string upnpdomain = domain.Replace(".", "-");
+
+    if (upnpdomain.StartsWith("upnp-"))
+    {
+        upnpdomain = "schemas-" + upnpdomain;
+    }
+
+    string fileName = "";
+    char[] charSeparators = new char[] {'.'};
+    string[] res = domain.Split(charSeparators, StringSplitOptions.None);
+    foreach (string str in res)
+    {
+        fileName += str.Substring(0, 1).ToUpper();
+        if (str.Length > 1)
+        {
+            fileName += str.Substring(1, str.Length-1);
+        }
+    }
+    fileName += type;
+    fileName += version;
+
+    Document u = new Document(TemplateArgument("xml"));
+#>
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <AssemblyName><#=prefix#><#=fileName#>.net</AssemblyName>    
+
+        <TargetFrameworks>net6.0</TargetFrameworks>
+        <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('OSX'))">$(TargetFrameworks);net6.0-ios</TargetFrameworks>
+
+        <EnableDefaultItems>False</EnableDefaultItems>
+ 
+        <!-- NOTE: This needs to be the same output path as the ohNet.net csproj as some versions of the .NET SDK can't handle nested projects -->
+        <IntermediateOutputPath>../../obj</IntermediateOutputPath>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Compile Include="<#=prefix#><#=fileName#>.cs" />
+
+        <ProjectReference Include="../../ohNet.net.csproj"/>
+    </ItemGroup>
+
+</Project>
+
+<#+
+string TemplateArgument(string aName)
+{
+    string[] args =  System.Environment.GetCommandLineArgs();
+        
+    bool isarg = false;
+    
+    foreach (string arg in args)
+    {
+        if (isarg)
+        {
+            string[] parts = arg.Split(new char[] {':'});
+            
+            if (parts.Length == 2)
+            {
+                if (parts[0] == aName)
+                {
+                    return (parts[1]);
+                }
+            }
+            
+            isarg = false;
+            continue;
+        }
+        
+        if (arg == "-a")
+        {
+            isarg = true;
+        }
+    }
+    
+    throw (new ArgumentException(aName + " not specified"));
+}
+#>

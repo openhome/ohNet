@@ -147,13 +147,26 @@ endif
 openhome_system = ${detected_openhome_system}
 openhome_architecture = ${detected_openhome_architecture}
 
+dotnetsdk = dotnet
+dotnetRuntime = linux-x64
+
+# NOTE: If you change this, you MUST go through an edit any of the csproj (or csproj generation code) to ensure that the correct defines
+#       are included for iOS builds. 
+dotnetFramework = net6.0
+
+ifeq ($(openhome_system),Linux)
+	dotnetsdk = ~/.dotnet/dotnet
+endif
+
+
 ifeq ($(platform),Android)
     osbuilddir = $(platform)-$(detected_openhome_architecture)
     objdir = Build/Obj/$(osbuilddir)/$(build_dir)/
     android_build_dir = OpenHome/Net/Bindings/Android/libs/
     managed_only = yes
-endif
 
+    dotnetsdk = ~/.dotnet/dotnet
+endif
 
 ifeq ($(platform),iOS)
 	nocpp11=yes
@@ -179,9 +192,10 @@ ifeq ($(platform),iOS)
 	# link = $(devroot)/usr/bin/llvm-gcc-4.2  -pthread -Wl $(platform_linkflags)
 	# link = $(toolroot)/clang++ -pthread -stdlib=libc++ $(platform_linkflags)
 	ar = $(toolroot)/ar rc $(objdir)
-    mono_lib_dir=/Library/Frameworks/Xamarin.iOS.framework/Versions/Current/lib/mono/Xamarin.iOS
-	csharpdefines = /define:IOS /r:$(mono_lib_dir)/Xamarin.iOS.dll
 	no_shared_objects = yes
+
+    dotnetFramework = net6.0-ios
+    dotnetRuntime = osx-x64
 endif
 
 ifeq ($(platform),Mac)
@@ -205,6 +219,8 @@ ifeq ($(platform),Mac)
 	link = clang++ -pthread -stdlib=libc++ $(platform_linkflags)
 	ar = ar rc $(objdir)
 	openhome_system = Mac
+
+	dotnetRuntime = osx-x64
 endif
 
 ifeq ($(platform), Core-ppc32)

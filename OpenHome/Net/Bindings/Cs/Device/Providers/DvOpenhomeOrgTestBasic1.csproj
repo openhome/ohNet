@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <AssemblyName>DvOpenhomeOrgTestBasic1.net</AssemblyName>    
+
+        <TargetFrameworks>net6.0</TargetFrameworks>
+        <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('OSX'))">$(TargetFrameworks);net6.0-ios</TargetFrameworks>
+
+        <EnableDefaultItems>False</EnableDefaultItems>
+ 
+        <!-- NOTE: This needs to be the same output path as the ohNet.net csproj as some versions of the .NET SDK can't handle nested projects -->
+        <IntermediateOutputPath>../../obj</IntermediateOutputPath>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Compile Include="DvOpenhomeOrgTestBasic1.cs" />
+
+        <ProjectReference Include="../../ohNet.net.csproj"/>
+    </ItemGroup>
+
+</Project>
+
