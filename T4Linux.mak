@@ -31,7 +31,7 @@ dllsources =	OpenHome/Net/T4/TextTemplating/Mono.TextTemplating/AssemblyInfo.cs 
                 OpenHome/Net/T4/TextTemplating/Mono.TextTemplating/Mono.TextTemplating/CompiledTemplate.cs
 
 $(toolsDir)Mono.TextTemplating.dll : $(dllsources)
-	$(mkdir) $(toolsDir)
+	$(mkdir -p) $(toolsDir)
 	mcs /t:library -out:$(toolsDir)Mono.TextTemplating.dll $(dllsources)
 
  
@@ -40,33 +40,33 @@ exesources =	OpenHome/Net/T4/TextTemplating/TextTransform/AssemblyInfo.cs \
                	OpenHome/Net/T4/TextTemplating/TextTransform/TextTransform.cs
 
 $(toolsDir)OhNetGen.exe : $(toolsDir)TextTransform.exe OpenHome/Net/T4/OhNetGen.cs
-	$(mkdir) $(toolsDir)
+	$(mkdir -p) $(toolsDir)
 	dmcs /t:exe /out:$(toolsDir)OhNetGen.exe OpenHome/Net/T4/OhNetGen.cs OpenHome/Net/T4/AssemblyInfo.cs
 
 $(toolsDir)TextTransform.exe : $(toolsDir)Mono.TextTemplating.dll $(exesources)
-	$(mkdir) $(toolsDir)
+	$(mkdir -p) $(toolsDir)
 	dmcs /t:exe -out:$(toolsDir)TextTransform.exe /r:$(toolsDir)Mono.TextTemplating.dll $(exesources)
 
 $(toolsDir)UpnpServiceDescription.xsd : OpenHome/Net/T4/UpnpServiceXml/UpnpServiceDescription.xsd
-	$(mkdir) $(toolsDir)
+	$(mkdir -p) $(toolsDir)
 	rsync OpenHome/Net/T4/UpnpServiceXml/UpnpServiceDescription.xsd $(toolsDir)
 
 $(toolsDir)UpnpServiceTemplate.xsd : OpenHome/Net/T4/UpnpServiceXml/UpnpServiceTemplate.xsd
-	$(mkdir) $(toolsDir)
+	$(mkdir -p) $(toolsDir)
 	rsync OpenHome/Net/T4/UpnpServiceXml/UpnpServiceTemplate.xsd $(toolsDir)
 
 xmlsources = 	OpenHome/Net/T4/UpnpServiceXml/AssemblyInfo.cs \
                	OpenHome/Net/T4/UpnpServiceXml/UpnpServiceXml.cs
 
 $(toolsDir)UpnpServiceXml.dll: $(toolsDir)UpnpServiceDescription.xsd $(toolsDir)UpnpServiceTemplate.xsd $(xmlsources)
-	$(mkdir) $(toolsDir)
+	$(mkdir -p) $(toolsDir)
 	dmcs -target:library -out:$(upnpServiceXml) $(xmlsources)
 	
 upnpservicemake.sources =   OpenHome/Net/T4/UpnpServiceMake/AssemblyInfo.cs \
                             OpenHome/Net/T4/UpnpServiceMake/UpnpServiceMake.cs
 
 $(toolsDir)UpnpServiceMake.dll : $(upnpservicemake.sources)
-	$(mkdir) $(toolsDir)
+	$(mkdir -p) $(toolsDir)
 	dmcs -target:library -out:$(upnpServiceMake) $(upnpservicemake.sources)
 
 clean-t4:

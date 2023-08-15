@@ -155,10 +155,12 @@ QueueSortedEntryTail::QueueSortedEntryTail(QueueSortedEntry& aHead)
 }
 
 // QueueSorted
-
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuninitialized"
 QueueSortedBase::QueueSortedBase() : iMutex("QSBM"), iHead(iTail), iTail(iHead)
 {
 }
+#pragma GCC diagnostic pop
 
 TBool QueueSortedBase::IsEmpty()
 {

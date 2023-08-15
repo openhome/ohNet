@@ -124,6 +124,9 @@ else
     ifneq (,$(findstring aarch64,$(gcc_machine)))
       detected_openhome_architecture = arm64
     endif
+    ifneq (,$(findstring riscv64,$(gcc_machine)))
+      detected_openhome_architecture = riscv64
+    endif
 endif
 
 detected_openhome_system ?= Unknown
