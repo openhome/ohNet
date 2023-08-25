@@ -59,6 +59,8 @@
  
         <!-- NOTE: This needs to be the same output path as the ohNet.net csproj as some versions of the .NET SDK can't handle nested projects -->
         <IntermediateOutputPath>../../obj</IntermediateOutputPath>
+
+        <Platform>AnyCPU</Platform>
     </PropertyGroup>
 
     <ItemGroup>
