@@ -38,7 +38,7 @@ void DviDeviceC::WriteResource(const Brx& aUriTail, const TIpAddress& aInterface
 {
     ASSERT(iResourceManager != NULL);
     Brhz uriTail(aUriTail);
-    int32_t err = iResourceManager(iCallbackArg, uriTail.CString(), aInterface, &aLanguageList, &aResourceWriter, WriteResourceBegin, WriteResource, WriteResourceEnd);
+    int32_t err = iResourceManager(iCallbackArg, uriTail.CString(), aInterface.iV4, &aLanguageList, &aResourceWriter, WriteResourceBegin, WriteResource, WriteResourceEnd);
     if (err != 0) {
         THROW(WriterError);
     }
