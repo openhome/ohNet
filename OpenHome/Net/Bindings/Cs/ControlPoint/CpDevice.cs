@@ -2,7 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using OpenHome.Net.Core;
-#if IOS
+#if __IOS__
 using ObjCRuntime;
 #endif
 
@@ -25,31 +25,31 @@ namespace OpenHome.Net.ControlPoint
     /// All references to class instances must have been removed before Core.Library.Close() is called.</remarks>
     public class CpDevice : ICpDevice
     {
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void CpDeviceCGetUdn(IntPtr aDevice, out IntPtr aUdn, out uint aLen);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void CpDeviceCAddRef(IntPtr aDevice);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void CpDeviceCRemoveRef(IntPtr aDevice);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern int CpDeviceCGetAttribute(IntPtr aDevice, IntPtr aKey, out IntPtr aValue);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
@@ -153,13 +153,13 @@ namespace OpenHome.Net.ControlPoint
     /// Dispose() must be called before Core.Library.Close().</remarks>
     public class CpDeviceList : ICpDeviceList, IDisposable
     {
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void CpDeviceListDestroy(IntPtr aListHandle);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
@@ -218,7 +218,7 @@ namespace OpenHome.Net.ControlPoint
             iFnRemoved = new CallbackDevice(Removed);
         }
 
-#if IOS
+#if __IOS__
         [MonoPInvokeCallback (typeof (CallbackDevice))]
 #endif
         protected static void Added(IntPtr aPtr, IntPtr aHandle)
@@ -231,7 +231,7 @@ namespace OpenHome.Net.ControlPoint
             }
         }
 
-#if IOS
+#if __IOS__
         [MonoPInvokeCallback (typeof (CallbackDevice))]
 #endif
         protected static void Removed(IntPtr aPtr, IntPtr aHandle)

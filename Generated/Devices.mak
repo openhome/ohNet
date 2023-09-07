@@ -4,49 +4,49 @@
 # to apply any updates
 
 objects_devices = \
-                  $(objdir)DvUpnpOrgConnectionManager1.$(objext) \
-                  $(objdir)DvUpnpOrgConnectionManager1Std.$(objext) \
-                  $(objdir)DvUpnpOrgConnectionManager1C.$(objext) \
-                  $(objdir)DvAvOpenhomeOrgProduct1.$(objext) \
-                  $(objdir)DvAvOpenhomeOrgProduct1Std.$(objext) \
-                  $(objdir)DvAvOpenhomeOrgProduct1C.$(objext) \
-                  $(objdir)DvAvOpenhomeOrgSender1.$(objext) \
-                  $(objdir)DvAvOpenhomeOrgSender1Std.$(objext) \
-                  $(objdir)DvAvOpenhomeOrgSender1C.$(objext) \
-                  $(objdir)DvOpenhomeOrgTestBasic1.$(objext) \
-                  $(objdir)DvOpenhomeOrgTestBasic1Std.$(objext) \
-                  $(objdir)DvOpenhomeOrgTestBasic1C.$(objext) \
-                  $(objdir)DvOpenhomeOrgSubscriptionLongPoll1.$(objext) \
-                  $(objdir)DvOpenhomeOrgSubscriptionLongPoll1Std.$(objext) \
-                  $(objdir)DvOpenhomeOrgSubscriptionLongPoll1C.$(objext) \
+				  $(objdir)DvUpnpOrgConnectionManager1.$(objext) \
+				  $(objdir)DvUpnpOrgConnectionManager1Std.$(objext) \
+				  $(objdir)DvUpnpOrgConnectionManager1C.$(objext) \
+				  $(objdir)DvAvOpenhomeOrgProduct1.$(objext) \
+				  $(objdir)DvAvOpenhomeOrgProduct1Std.$(objext) \
+				  $(objdir)DvAvOpenhomeOrgProduct1C.$(objext) \
+				  $(objdir)DvAvOpenhomeOrgSender1.$(objext) \
+				  $(objdir)DvAvOpenhomeOrgSender1Std.$(objext) \
+				  $(objdir)DvAvOpenhomeOrgSender1C.$(objext) \
+				  $(objdir)DvOpenhomeOrgTestBasic1.$(objext) \
+				  $(objdir)DvOpenhomeOrgTestBasic1Std.$(objext) \
+				  $(objdir)DvOpenhomeOrgTestBasic1C.$(objext) \
+				  $(objdir)DvOpenhomeOrgSubscriptionLongPoll1.$(objext) \
+				  $(objdir)DvOpenhomeOrgSubscriptionLongPoll1Std.$(objext) \
+				  $(objdir)DvOpenhomeOrgSubscriptionLongPoll1C.$(objext) \
 
 # Devices have well controlled dependencies so we can document a more limited set of headers
 headers_device = $(inc_build)/OpenHome/Types.h \
-                 $(inc_build)/OpenHome/Net/Private/DviService.h \
-                 $(inc_build)/OpenHome/Functor.h \
-                 $(inc_build)/OpenHome/Net/Private/Service.h \
-                 $(inc_build)/OpenHome/Net/Private/FunctorDviInvocation.h
+				 $(inc_build)/OpenHome/Net/Private/DviService.h \
+				 $(inc_build)/OpenHome/Functor.h \
+				 $(inc_build)/OpenHome/Net/Private/Service.h \
+				 $(inc_build)/OpenHome/Net/Private/FunctorDviInvocation.h
 
 device_dotnet_assemblies = \
-        DvUpnpOrgConnectionManager1.net.dll \
-        DvAvOpenhomeOrgProduct1.net.dll \
-        DvAvOpenhomeOrgSender1.net.dll \
-        DvOpenhomeOrgTestBasic1.net.dll \
-        DvOpenhomeOrgSubscriptionLongPoll1.net.dll \
+		DvUpnpOrgConnectionManager1.net.dll \
+		DvAvOpenhomeOrgProduct1.net.dll \
+		DvAvOpenhomeOrgSender1.net.dll \
+		DvOpenhomeOrgTestBasic1.net.dll \
+		DvOpenhomeOrgSubscriptionLongPoll1.net.dll \
 
 device_dotnet_assemblies_with_path = \
-        $(objdir)DvUpnpOrgConnectionManager1.net.dll \
-        $(objdir)DvAvOpenhomeOrgProduct1.net.dll \
-        $(objdir)DvAvOpenhomeOrgSender1.net.dll \
-        $(objdir)DvOpenhomeOrgTestBasic1.net.dll \
-        $(objdir)DvOpenhomeOrgSubscriptionLongPoll1.net.dll \
+		$(objdir)DvUpnpOrgConnectionManager1.net.dll \
+		$(objdir)DvAvOpenhomeOrgProduct1.net.dll \
+		$(objdir)DvAvOpenhomeOrgSender1.net.dll \
+		$(objdir)DvOpenhomeOrgTestBasic1.net.dll \
+		$(objdir)DvOpenhomeOrgSubscriptionLongPoll1.net.dll \
 
 device_java_classes_with_path = \
-        $(objdir)org/openhome/net/device/providers/DvProviderUpnpOrgConnectionManager1.class \
-        $(objdir)org/openhome/net/device/providers/DvProviderAvOpenhomeOrgProduct1.class \
-        $(objdir)org/openhome/net/device/providers/DvProviderAvOpenhomeOrgSender1.class \
-        $(objdir)org/openhome/net/device/providers/DvProviderOpenhomeOrgTestBasic1.class \
-        $(objdir)org/openhome/net/device/providers/DvProviderOpenhomeOrgSubscriptionLongPoll1.class \
+		$(objdir)org/openhome/net/device/providers/DvProviderUpnpOrgConnectionManager1.class \
+		$(objdir)org/openhome/net/device/providers/DvProviderAvOpenhomeOrgProduct1.class \
+		$(objdir)org/openhome/net/device/providers/DvProviderAvOpenhomeOrgSender1.class \
+		$(objdir)org/openhome/net/device/providers/DvProviderOpenhomeOrgTestBasic1.class \
+		$(objdir)org/openhome/net/device/providers/DvProviderOpenhomeOrgSubscriptionLongPoll1.class \
 
 devices : ohNetCore $(objects_devices)
 	$(ar)$(libprefix)ohNetDevices.$(libext) $(objects_devices)
@@ -82,11 +82,11 @@ $(objdir)DvOpenhomeOrgSubscriptionLongPoll1C.$(objext) : $(deviceC)DvOpenhomeOrg
 	$(compiler)DvOpenhomeOrgSubscriptionLongPoll1C.$(objext) -c $(cppflags) $(includes) $(deviceC)DvOpenhomeOrgSubscriptionLongPoll1C.cpp
 
 device_dlls = \
-             DvUpnpOrgConnectionManager1Dll \
-             DvAvOpenhomeOrgProduct1Dll \
-             DvAvOpenhomeOrgSender1Dll \
-             DvOpenhomeOrgTestBasic1Dll \
-             DvOpenhomeOrgSubscriptionLongPoll1Dll \
+			 DvUpnpOrgConnectionManager1Dll \
+			 DvAvOpenhomeOrgProduct1Dll \
+			 DvAvOpenhomeOrgSender1Dll \
+			 DvOpenhomeOrgTestBasic1Dll \
+			 DvOpenhomeOrgSubscriptionLongPoll1Dll \
 
 DvDeviceDlls: $(device_dlls)
 DvUpnpOrgConnectionManager1Dll: $(objdir)$(dllprefix)DvUpnpOrgConnectionManager1.$(dllext) 
@@ -111,30 +111,15 @@ $(objdir)$(dllprefix)DvOpenhomeOrgSubscriptionLongPoll1.$(dllext) : ZappUpnpDll 
 DvDeviceDotNetAssemblies: $(device_dotnet_assemblies_with_path)
 
 $(objdir)DvUpnpOrgConnectionManager1.net.dll: $(objdir)ohNet.net.dll $(deviceCs)DvUpnpOrgConnectionManager1.cs
-	$(csharp) /t:library \
-        /out:$(objdir)DvUpnpOrgConnectionManager1.net.dll \
-        /reference:$(objdir)ohNet.net.dll \
-        $(deviceCs)DvUpnpOrgConnectionManager1.cs
+	$(dotnetsdk) build $(proxyCs)CpUpnpOrgConnectionManager1.csproj --framework $(dotnetFramework) --output $(objdir)
 $(objdir)DvAvOpenhomeOrgProduct1.net.dll: $(objdir)ohNet.net.dll $(deviceCs)DvAvOpenhomeOrgProduct1.cs
-	$(csharp) /t:library \
-        /out:$(objdir)DvAvOpenhomeOrgProduct1.net.dll \
-        /reference:$(objdir)ohNet.net.dll \
-        $(deviceCs)DvAvOpenhomeOrgProduct1.cs
+	$(dotnetsdk) build $(proxyCs)CpAvOpenhomeOrgProduct1.csproj --framework $(dotnetFramework) --output $(objdir)
 $(objdir)DvAvOpenhomeOrgSender1.net.dll: $(objdir)ohNet.net.dll $(deviceCs)DvAvOpenhomeOrgSender1.cs
-	$(csharp) /t:library \
-        /out:$(objdir)DvAvOpenhomeOrgSender1.net.dll \
-        /reference:$(objdir)ohNet.net.dll \
-        $(deviceCs)DvAvOpenhomeOrgSender1.cs
+	$(dotnetsdk) build $(proxyCs)CpAvOpenhomeOrgSender1.csproj --framework $(dotnetFramework) --output $(objdir)
 $(objdir)DvOpenhomeOrgTestBasic1.net.dll: $(objdir)ohNet.net.dll $(deviceCs)DvOpenhomeOrgTestBasic1.cs
-	$(csharp) /t:library \
-        /out:$(objdir)DvOpenhomeOrgTestBasic1.net.dll \
-        /reference:$(objdir)ohNet.net.dll \
-        $(deviceCs)DvOpenhomeOrgTestBasic1.cs
+	$(dotnetsdk) build $(proxyCs)CpOpenhomeOrgTestBasic1.csproj --framework $(dotnetFramework) --output $(objdir)
 $(objdir)DvOpenhomeOrgSubscriptionLongPoll1.net.dll: $(objdir)ohNet.net.dll $(deviceCs)DvOpenhomeOrgSubscriptionLongPoll1.cs
-	$(csharp) /t:library \
-        /out:$(objdir)DvOpenhomeOrgSubscriptionLongPoll1.net.dll \
-        /reference:$(objdir)ohNet.net.dll \
-        $(deviceCs)DvOpenhomeOrgSubscriptionLongPoll1.cs
+	$(dotnetsdk) build $(proxyCs)CpOpenhomeOrgSubscriptionLongPoll1.csproj --framework $(dotnetFramework) --output $(objdir)
 
 # Device classes for Java:
 

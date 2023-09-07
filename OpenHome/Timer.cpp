@@ -308,7 +308,7 @@ TimerManager::CallbackList::CallbackList()
     : iHead(0)
     , iTail(0)
 {
-    (void)memset(iList, 0, sizeof(iList));
+    (void)memset((void*)iList, 0, sizeof(iList));
 }
 
 void TimerManager::CallbackList::Add(Timer& aTimer)

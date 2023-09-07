@@ -13,67 +13,67 @@ namespace OpenHome.Net.Device
     /// offer 0..n actions and 0..n properties.</remarks>
     public class DvProvider
     {
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern IntPtr DvProviderCreate(IntPtr aDevice, IntPtr aDomain, IntPtr aType, uint aVersion);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void DvProviderDestroy(IntPtr aProvider);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void DvProviderAddAction(IntPtr aProvider, IntPtr aAction, ActionDelegate aCallback, IntPtr aPtr);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void DvProviderPropertiesLock(IntPtr aHandle);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void DvProviderPropertiesUnlock(IntPtr aHandle);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void DvProviderAddProperty(IntPtr aProvider, IntPtr aProperty);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern int DvProviderSetPropertyInt(IntPtr aProvider, IntPtr aProperty, int aValue, out uint aChanged);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern int DvProviderSetPropertyUint(IntPtr aProvider, IntPtr aProperty, uint aValue, out uint aChanged);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern int DvProviderSetPropertyBool(IntPtr aProvider, IntPtr aProperty, uint aValue, out uint aChanged);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern int DvProviderSetPropertyString(IntPtr aProvider, IntPtr aProperty, IntPtr aValue, out uint aChanged);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
@@ -312,145 +312,145 @@ namespace OpenHome.Net.Device
     /// <remarks>Only intended for use by auto-generated providers</remarks>
     public class DvInvocation : IDvInvocation
     {
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void DvInvocationGetVersion(IntPtr aInvocation, out uint aVersion);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void DvInvocationGetAdapter(IntPtr aInvocation, out uint aAdapter);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void DvInvocationGetResourceUriPrefix(IntPtr aInvocation, out IntPtr aPrefix, out uint aLen);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void DvInvocationGetClientEndpoint(IntPtr aInvocation, out uint aAddress, out uint aPort);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern int DvInvocationReadStart(IntPtr aInvocation);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern int DvInvocationReadInt(IntPtr aInvocation, IntPtr aName, out int aValue);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern int DvInvocationReadUint(IntPtr aInvocation, IntPtr aName, out uint aValue);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern int DvInvocationReadBool(IntPtr aInvocation, IntPtr aName, out uint aValue);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern int DvInvocationReadStringAsBuffer(IntPtr aInvocation, IntPtr aName, out IntPtr aValue, out uint aLen);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern int DvInvocationReadBinary(IntPtr aInvocation, IntPtr aName, out IntPtr aData, out uint aLen);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern int DvInvocationReadEnd(IntPtr aInvocation);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern int DvInvocationReportError(IntPtr aInvocation, uint aCode, IntPtr aDescription);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern int DvInvocationWriteStart(IntPtr aInvocation);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern int DvInvocationWriteInt(IntPtr aInvocation, IntPtr aName, int aValue);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern int DvInvocationWriteUint(IntPtr aInvocation, IntPtr aName, uint aValue);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern int DvInvocationWriteBool(IntPtr aInvocation, IntPtr aName, uint aValue);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern int DvInvocationWriteStringStart(IntPtr aInvocation, IntPtr aName);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern int DvInvocationWriteString(IntPtr aInvocation, IntPtr aValue);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern int DvInvocationWriteStringEnd(IntPtr aInvocation, IntPtr aName);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern int DvInvocationWriteBinaryStart(IntPtr aInvocation, IntPtr aName);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern int DvInvocationWriteBinary(IntPtr aInvocation, IntPtr aData, uint aLen);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern int DvInvocationWriteBinaryEnd(IntPtr aInvocation, IntPtr aName);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern int DvInvocationWriteEnd(IntPtr aInvocation);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]

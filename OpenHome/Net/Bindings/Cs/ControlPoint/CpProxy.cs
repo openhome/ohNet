@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using OpenHome.Net.Core;
 using System.Threading;
-#if IOS
+#if __IOS__
 using ObjCRuntime;
 #endif
 
@@ -66,67 +66,67 @@ namespace OpenHome.Net.ControlPoint
     /// </summary>
     public class CpProxy : ICpProxy
     {
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern IntPtr CpProxyCreate(IntPtr aDomain, IntPtr aName, uint aVersion, IntPtr aDevice);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void CpProxyDestroy(IntPtr Proxy);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern IntPtr CpProxyService(IntPtr aProxy);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern int CpProxySubscribe(IntPtr aHandle);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void CpProxyUnsubscribe(IntPtr aHandle);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void CpProxySetPropertyChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void CpProxySetPropertyInitialEvent(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern uint CpProxyVersion(IntPtr aHandle);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void CpProxyPropertyReadLock(IntPtr aHandle);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void CpProxyPropertyReadUnlock(IntPtr aHandle);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
@@ -240,7 +240,7 @@ namespace OpenHome.Net.ControlPoint
             CpProxyAddProperty(iHandle, aProperty.Handle());
         }
 
-#if IOS
+#if __IOS__
         [MonoPInvokeCallback (typeof (Callback))]
 #endif
         private static void PropertyChanged(IntPtr aPtr)
@@ -250,7 +250,7 @@ namespace OpenHome.Net.ControlPoint
             Property.CallPropertyChangedDelegate(self.iPropertyChanged);
         }
 
-#if IOS
+#if __IOS__
         [MonoPInvokeCallback (typeof (Callback))]
 #endif
         private static void InitialEvent(IntPtr aPtr)

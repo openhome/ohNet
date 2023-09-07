@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>ohNet.net</AssemblyName>
+    <RootNamespace>OpenHome.Net</RootNamespace>
+    <TargetFrameworks>net6.0</TargetFrameworks>
+    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('OSX'))">$(TargetFrameworks);net6.0-ios</TargetFrameworks>
+    <Platform>AnyCPU</Platform>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove=".\ControlPoint\Tests\**" />
+    <Compile Remove=".\Device\Tests\**" />
+    <Compile Remove=".\ControlPoint\Proxies\**" />
+    <Compile Remove=".\Device\Providers\**" />
+  </ItemGroup>
+
+</Project>

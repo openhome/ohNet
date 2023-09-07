@@ -553,7 +553,7 @@ void OpenHome::Net::Invocation::OutputArgument(IAsyncOutput& aConsole, const TCh
     }
 
     aConsole.Output(aKey, (bigStr==NULL? str : bigStr));
-    delete bigStr;
+    delete[] bigStr;
 }
 
 const OpenHome::Net::Invocation::VectorArguments& OpenHome::Net::Invocation::InputArguments() const
