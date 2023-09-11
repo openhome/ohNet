@@ -161,6 +161,7 @@ ifeq ($(openhome_system),Linux)
 
     ifeq ($(openhome_architecture),arm64)
         dotnetFramework = net45
+    endif
 endif
 
 
