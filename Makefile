@@ -154,8 +154,13 @@ dotnetRuntime = linux-x64
 #       are included for iOS builds. 
 dotnetFramework = net6.0
 
+# NOTE: QNAP builds don't support .NETCore and therefore rely on the bindings built against .NETFramework. Due to the multi-targetting
+#       bugs inside .NET SDK we can't currently support building both bindings on the same machine
 ifeq ($(openhome_system),Linux)
 	dotnetsdk = ~/.dotnet/dotnet
+
+    ifeq ($(openhome_architecture),arm64)
+        dotnetFramework = net45
 endif
 
 
