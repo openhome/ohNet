@@ -9,7 +9,7 @@ namespace OpenHome.Net.ControlPoint
     /// </summary>
     public class CpDeviceDv : CpDevice
     {
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]

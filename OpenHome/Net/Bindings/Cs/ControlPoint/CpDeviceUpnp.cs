@@ -213,7 +213,7 @@ namespace OpenHome.Net.ControlPoint
 
     public class CpDeviceListUpnp : CpDeviceList
     {
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
@@ -239,7 +239,7 @@ namespace OpenHome.Net.ControlPoint
     /// </summary>
     public class CpDeviceListUpnpAll : CpDeviceListUpnp
     {
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
@@ -270,7 +270,7 @@ namespace OpenHome.Net.ControlPoint
     /// </summary>
     public class CpDeviceListUpnpRoot : CpDeviceListUpnp
     {
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
@@ -301,7 +301,7 @@ namespace OpenHome.Net.ControlPoint
     /// </summary>
     public class CpDeviceListUpnpUuid : CpDeviceListUpnp
     {
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
@@ -336,7 +336,7 @@ namespace OpenHome.Net.ControlPoint
     /// </summary>
     public class CpDeviceListUpnpDeviceType : CpDeviceListUpnp
     {
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
@@ -376,7 +376,7 @@ namespace OpenHome.Net.ControlPoint
     /// </summary>
     public class CpDeviceListUpnpServiceType : CpDeviceListUpnp
     {
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]

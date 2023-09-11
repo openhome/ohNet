@@ -888,23 +888,49 @@ TestsCs: TestProxyCs TestDvDeviceCs TestCpDeviceDvCs TestPerformanceDv TestPerfo
 
 Tests: TestsNative TestsCs
 
-$(objdir)ohNet.net.dll: make_obj_dir
-	$(dotnetsdk) build $(csShared)ohNet.net.csproj --framework $(dotnetFramework) --output $(objdir)
+$(objdir)ohNet.net.dll: make_obj_dir \
+	$(csCp)CpDevice.cs \
+	$(csCp)CpDeviceUpnp.cs \
+	$(csCp)CpProxy.cs \
+	$(csCp)CpService.cs \
+	$(csShared)Service.cs \
+	$(csDv)DvDevice.cs \
+	$(csDv)DvProvider.cs \
+	$(csDv)DvProviderErrors.cs \
+	$(csDv)DvServerUpnp.cs \
+	$(csShared)OhNet.cs \
+	$(csShared)SubnetList.cs \
+	$(csCp)CpDeviceDv.cs \
+	$(csShared)AssemblyAttributes.cs
+	$(csharp) /t:library $(debug_csharp) $(csharpdefines) /warnaserror+\
+		/out:$(objdir)ohNet.net.dll \
+		$(csCp)CpDevice.cs \
+		$(csCp)CpDeviceUpnp.cs \
+		$(csCp)CpProxy.cs \
+		$(csCp)CpService.cs \
+		$(csDv)DvDevice.cs \
+		$(csDv)DvProvider.cs \
+		$(csDv)DvProviderErrors.cs \
+		$(csDv)DvServerUpnp.cs \
+		$(csShared)Service.cs \
+		$(csShared)OhNet.cs \
+		$(csShared)SubnetList.cs \
+		$(csCp)CpDeviceDv.cs \
+		$(csShared)AssemblyAttributes.cs 
 
 TestProxyCs: $(objdir)TestProxyCs.exe
-
-# NOTE: The dotnet SDK will only provide a 'self-contained' single file executable when running the "publish" command. However,
-#       it only allows to publish one project at a time to a directory and so specifying the --output argument results in all .NET code being deleted
-#       from Build/Obj/... before the code is copied. Therefore, we build to the standard .NET ouptut directory then copy the output files into
-#       Build/Obj/... as required
 
 $(objdir)TestProxyCs.exe: \
 	ohNetDll \
 	$(objdir)ohNet.net.dll \
 	$(csCpTests)TestProxy.cs \
-	$(objdir)CpUpnpOrgConnectionManager1.net.dll
-	$(dotnetsdk) publish $(csCpTests)TestProxy.csproj --framework $(dotnetFramework) --runtime $(dotnetRuntime) --self-contained /p:PublishSingleFile=true --output $(csShared)bin/TestProxy
-	cp -r $(csShared)bin/TestProxy/* $(objdir)
+	$(objdir)CpUpnpOrgConnectionManager1.net.dll \
+
+	$(csharp) /t:exe $(debug_csharp) /warnaserror+\
+		/out:$(objdir)TestProxyCs.exe \
+		/reference:$(objdir)ohNet.net.dll \
+		/reference:$(objdir)CpUpnpOrgConnectionManager1.net.dll \
+		$(csCpTests)TestProxy.cs \
 
 TestDvDeviceCs: $(objdir)TestDvDeviceCs.exe
 
@@ -916,8 +942,15 @@ $(objdir)TestDvDeviceCs.exe: \
 	$(csDvTests)TestBasicDv.cs \
 	$(csCpTests)TestBasicCp.cs \
 	$(csDvTests)TestDvDevice.cs
-	$(dotnetsdk) publish $(csShared)TestDvDeviceCs.csproj --framework $(dotnetFramework) --runtime $(dotnetRuntime) --self-contained /p:PublishSingleFile=true --output $(csShared)bin/TestDvDeviceCs
-	cp -r $(csShared)bin/TestDvDeviceCs/* $(objdir)
+	$(csharp) \
+		$(debug_csharp) /warnaserror+ /t:exe \
+		/out:$(objdir)TestDvDeviceCs.exe \
+		/reference:$(objdir)ohNet.net.dll \
+		/reference:$(objdir)DvOpenhomeOrgTestBasic1.net.dll \
+		/reference:$(objdir)CpOpenhomeOrgTestBasic1.net.dll \
+		$(csDvTests)TestBasicDv.cs \
+		$(csCpTests)TestBasicCp.cs \
+		$(csDvTests)TestDvDevice.cs
 
 TestDvLightsCs: $(objdir)TestDvLightsCs.exe
 
@@ -931,9 +964,15 @@ $(objdir)TestCpDeviceDvCs.exe: \
 	$(csDvTests)TestBasicDv.cs \
 	$(csCpTests)TestBasicCp.cs \
 	$(csCpTests)TestCpDeviceDv.cs
-	$(dotnetsdk) publish $(csShared)TestCpDeviceDvCs.csproj --framework $(dotnetFramework) --runtime $(dotnetRuntime) --self-contained /p:PublishSingleFile=true --output $(csShared)bin/TestCpDeviceDvCs
-	cp -r $(csShared)bin/TestCpDeviceDvCs/* $(objdir)
-
+	$(csharp) \
+		$(debug_csharp) /warnaserror+ /t:exe \
+		/out:$(objdir)TestCpDeviceDvCs.exe \
+		/reference:$(objdir)ohNet.net.dll \
+		/reference:$(objdir)DvOpenhomeOrgTestBasic1.net.dll \
+		/reference:$(objdir)CpOpenhomeOrgTestBasic1.net.dll \
+		$(csDvTests)TestBasicDv.cs \
+		$(csCpTests)TestBasicCp.cs \
+		$(csCpTests)TestCpDeviceDv.cs
 
 TestPerformanceDvCs: $(objdir)TestPerformanceDvCs.exe
 
@@ -943,9 +982,13 @@ $(objdir)TestPerformanceDvCs.exe: \
 	$(objdir)DvOpenhomeOrgTestBasic1.net.dll \
 	$(csDvTests)TestBasicDv.cs \
 	$(csDvTests)TestPerformanceDv.cs
-	$(dotnetsdk) publish $(csDvTests)TestPerformanceDvCs.csproj --framework $(dotnetFramework) --runtime $(dotnetRuntime) --self-contained /p:PublishSingleFile=true --output $(csShared)bin/TestPerformanceDvCs
-	cp -r $(csShared)bin/TestPerformanceDvCs/* $(objdir)
-
+	$(csharp) \
+		$(debug_csharp) /warnaserror+ /t:exe \
+		/out:$(objdir)TestPerformanceDvCs.exe \
+		/reference:$(objdir)ohNet.net.dll \
+		/reference:$(objdir)DvOpenhomeOrgTestBasic1.net.dll \
+		$(csDvTests)TestBasicDv.cs \
+		$(csDvTests)TestPerformanceDv.cs
 
 TestPerformanceCpCs: $(objdir)TestPerformanceCpCs.exe
 
@@ -954,9 +997,12 @@ $(objdir)TestPerformanceCpCs.exe: \
 	$(objdir)ohNet.net.dll \
 	$(objdir)CpOpenhomeOrgTestBasic1.net.dll \
 	$(csCpTests)TestPerformanceCp.cs
-	$(dotnetsdk) publish $(csCpTests)TestPerformanceCpCs.csproj --framework $(dotnetFramework) --runtime $(dotnetRuntime) --self-contained /p:PublishSingleFile=true --output $(csShared)bin/TestPerformanceCpCs
-	cp -r $(csShared)bin/TestPerformanceCpCs/* $(objdir)
-
+	$(csharp) \
+		$(debug_csharp) /warnaserror+ /t:exe \
+		/out:$(objdir)TestPerformanceCpCs.exe \
+		/reference:$(objdir)ohNet.net.dll \
+		/reference:$(objdir)CpOpenhomeOrgTestBasic1.net.dll \
+		$(csCpTests)TestPerformanceCp.cs
 
 ohNetJavaAll : ohNetJni ohNetJava CpProxyJavaClasses DvDeviceJavaClasses ohNetJavaSrc
 

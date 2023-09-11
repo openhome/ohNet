@@ -28,6 +28,8 @@ def buildArgs():
     buildArgs = ''
     if gDebugBuild == 1:
         buildArgs += ' debug=1'
+    if gWindows81 == 1:
+        buildArgs += ' windows_store_81=1'
     if gWindows10 == 1:
         buildArgs += ' windows_store_10=1'
     if gMac64 == 1:
@@ -75,7 +77,7 @@ def runBuilds():
         build('copy_build_includes')
     if gCore == 1:
         build('ohNet TestFramework', gParallel)
-    elif gWindows10 == 1:
+    elif gWindows81 == 1 or gWindows10 == 1:
         build('ohNet.net.dll', gParallel)
     else:
         build('all', gParallel)
@@ -95,7 +97,8 @@ def runTests():
         print('\nTest: ' + test.name)
         cmdLine = test.args
         cmdLine.insert(0, test.Path())
-        print("Running: %s" % cmdLine)    
+        if (not test.native and os.name != 'nt'):
+            cmdLine.insert(0, 'mono')
         ret = subprocess.call(cmdLine)
         if ret != 0:
             print('\nTest ' + test.name + ' failed, aborting')
@@ -201,6 +204,7 @@ giOsArm64 = 0
 giOsx64 = 0
 gAndroid = 0
 gQnap = 0
+gWindows81 = 0
 gWindows10 = 0
 try:
     gPlatform = os.environ['PLATFORM']
@@ -209,7 +213,9 @@ except KeyError:
 gCore = 0
 gParallel = False
 for arg in sys.argv[1:]:
-    if arg == '--Windows10':
+    if arg == '--Windows81':
+        gWindows81 = 1
+    elif arg == '--Windows10':
         gWindows10 = 1
     elif arg == '-b' or arg == '--buildonly':
         gBuildOnly = 1
@@ -283,7 +289,7 @@ class TestCase(object):
             path += '.exe'
         elif not self.native:
             os.environ['LD_LIBRARY_PATH'] = objPath()
-            #NOTE: newer dotnet SDKs create self-contained executables without a prefix
+            path += '.exe'
         else:
             path += '.elf'
         return path

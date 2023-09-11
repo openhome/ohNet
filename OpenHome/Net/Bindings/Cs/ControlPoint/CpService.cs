@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using OpenHome.Net.Core;
 using System.Collections.Generic;
-#if __IOS__
+#if IOS
 using ObjCRuntime;
 #endif
 
@@ -35,19 +35,19 @@ namespace OpenHome.Net.ControlPoint
     /// </summary>
     public class ArgumentInt : Argument
     {
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern IntPtr ActionArgumentCreateIntInput(IntPtr aParameter, int aValue);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern IntPtr ActionArgumentCreateIntOutput(IntPtr aParameter);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
@@ -94,19 +94,19 @@ namespace OpenHome.Net.ControlPoint
     /// </summary>
     public class ArgumentUint : Argument
     {
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern IntPtr ActionArgumentCreateUintInput(IntPtr aParameter, uint aValue);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern IntPtr ActionArgumentCreateUintOutput(IntPtr aParameter);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
@@ -153,19 +153,19 @@ namespace OpenHome.Net.ControlPoint
     /// </summary>
     public class ArgumentBool : Argument
     {
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern IntPtr ActionArgumentCreateBoolInput(IntPtr aParameter, uint aValue);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern IntPtr ActionArgumentCreateBoolOutput(IntPtr aParameter);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
@@ -213,25 +213,25 @@ namespace OpenHome.Net.ControlPoint
     /// </summary>
     public class ArgumentString : Argument
     {
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern IntPtr ActionArgumentCreateStringInput(IntPtr aParameter, IntPtr aValue);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern IntPtr ActionArgumentCreateStringOutput(IntPtr aParameter);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void ActionArgumentGetValueString(IntPtr aHandle, out IntPtr aData, out uint aLen);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
@@ -286,25 +286,25 @@ namespace OpenHome.Net.ControlPoint
     /// </summary>
     public class ArgumentBinary : Argument
     {
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern IntPtr ActionArgumentCreateBinaryInput(IntPtr aParameter, IntPtr aData, int aLength);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern IntPtr ActionArgumentCreateBinaryOutput(IntPtr aParameter);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void ActionArgumentGetValueBinary(IntPtr aHandle, out IntPtr aData, out uint aLen);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
@@ -360,61 +360,61 @@ namespace OpenHome.Net.ControlPoint
     /// </summary>
     public class Invocation
     {
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern IntPtr CpServiceInvocation(IntPtr aService, IntPtr aAction, CpProxy.CallbackActionComplete aCallback, IntPtr aPtr);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void CpInvocationAddInput(IntPtr aInvocation, IntPtr aArgument);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void CpInvocationAddOutput(IntPtr aInvocation, IntPtr aArgument);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern uint CpInvocationError(IntPtr aInvocation, out uint aErrorCode, out IntPtr aErrorDesc);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetFree(IntPtr aPtr);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern int CpInvocationOutputInt(IntPtr aInvocation, uint aIndex);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern uint CpInvocationOutputUint(IntPtr aInvocation, uint aIndex);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern uint CpInvocationOutputBool(IntPtr aInvocation, uint aIndex);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void CpInvocationGetOutputString(IntPtr aInvocation, uint aIndex, out IntPtr aData, out uint aLen);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
@@ -569,7 +569,7 @@ namespace OpenHome.Net.ControlPoint
             return iHandle;
         }
 
-#if __IOS__
+#if IOS
         [MonoPInvokeCallback (typeof (CpProxy.CallbackActionComplete))]
 #endif
         private static void AsyncComplete(IntPtr aPtr, IntPtr aAsyncHandle)
@@ -598,19 +598,19 @@ namespace OpenHome.Net.ControlPoint
     /// </summary>
     public class CpService
     {
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern IntPtr CpServiceCreate(IntPtr aDomain, IntPtr aName, uint aVersion, IntPtr aDevice);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void CpServiceDestroy(IntPtr aService);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]

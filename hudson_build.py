@@ -154,6 +154,9 @@ class JenkinsBuild():
             'Linux-ppc32': { 'os': 'linux', 'arch': 'ppc32', 'publish': True, 'system': 'Linux'},
             'Windows-x86': { 'os': 'windows', 'arch': 'x86', 'publish': True, 'system': 'Windows'},
             'Windows-x64': { 'os': 'windows', 'arch': 'x64', 'publish': True, 'system': 'Windows'},
+            'Windows81-x86': { 'os': 'Windows81', 'arch': 'x86', 'publish': True, 'system': 'Windows81'},
+            'Windows81-x64': { 'os': 'Windows81', 'arch': 'x64', 'publish': True, 'system': 'Windows81'},
+            'Windows81-arm': { 'os': 'Windows81', 'arch': 'arm', 'publish': True, 'system': 'Windows81'},
             'Windows10-x86': { 'os': 'Windows10', 'arch': 'x86', 'publish': True, 'system': 'Windows10'},
             'Windows10-x64': { 'os': 'Windows10', 'arch': 'x64', 'publish': True, 'system': 'Windows10'},
             'Windows10-arm': { 'os': 'Windows10', 'arch': 'arm', 'publish': True, 'system': 'Windows10'},
@@ -164,7 +167,10 @@ class JenkinsBuild():
             'Linux-rpi': { 'os': 'linux', 'arch': 'rpi', 'publish': True, 'system': 'Linux'},
             'Linux-mipsel': { 'os': 'linux', 'arch': 'mipsel', 'publish': True, 'system': 'Linux'},
             'Linux-arm64': { 'os': 'linux', 'arch': 'arm64', 'publish': True, 'system': 'Linux'},
+            'iOs-ARM': { 'os': 'iOs', 'arch': 'armv7', 'publish': True, 'system': 'iOs'},  # Old Jenkins label
+            'iOs-x86': { 'os': 'iOs', 'arch': 'x86', 'publish': True, 'system': 'iOs'},
             'iOs-x64': { 'os': 'iOs', 'arch': 'x64', 'publish': True, 'system': 'iOs'},
+            'iOs-armv7': { 'os': 'iOs', 'arch': 'armv7', 'publish': True, 'system': 'iOs'},
             'iOs-arm64': { 'os': 'iOs', 'arch': 'arm64', 'publish': True, 'system': 'iOs'},
             'Core-ppc32': { 'os': 'Core', 'arch': 'ppc32', 'publish': True, 'system': 'Core'},
             'Core-armv6': { 'os': 'Core', 'arch': 'armv6', 'publish': True, 'system': 'Core'},
@@ -174,38 +180,6 @@ class JenkinsBuild():
         }
         current_platform = self.options.platform
         self.platform = platforms[current_platform]
-        
-    def install_dotnet(self):
-        os_platform = self.platform['os']
-        arch = self.platform['arch']
-
-        dotnet_install_cmd = []
-        
-        pre_installed_platforms = [
-            'windows',
-            'macos',
-            'iOs',
-            'Windows81',
-            'Windows10',
-        ]
-
-        if os_platform in pre_installed_platforms:
-            print ('dotent SDK should be preinstalled on for this platform ')
-            return
-
-        dotnet_install_cmd.append('./dotnet-install.sh')
-        dotnet_install_cmd.append('--channel')
-        dotnet_install_cmd.append('LTS')
-
-        print( 'running install_dotnet with %s' % (dotnet_install_cmd,))
-
-        ret = subprocess.check_call(dotnet_install_cmd)
-        if ret != 0:
-            print('Failed to install dotnet: %s' % ret)
-            sys.exit(10)
-
-        #NOTE: The script doesn't set up any PATH entries for dotnet. No point setting them here as the env isn't
-        #      provided to the makefile so we configure the paths there
 
     def set_platform_args(self):
         os_platform = self.platform['os']
@@ -219,6 +193,15 @@ class JenkinsBuild():
             args.append('C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\BuildTools\\VC\\Auxiliary\\Build\\vcvarsall.bat')
             args.append('amd64')
             os.environ['CS_PLATFORM'] = 'x64'
+        if os_platform == 'Windows81' and arch == 'x86':
+            args.append('C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\\vcvarsall.bat')
+            args.append('amd64_x86')
+        if os_platform == 'Windows81' and arch == 'x64':
+            args.append('C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\\vcvarsall.bat')
+            args.append('amd64')
+        if os_platform == 'Windows81' and arch == 'arm':
+            args.append('C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\\vcvarsall.bat')
+            args.append('amd64_arm')
         if os_platform == 'Windows10' and arch == 'x86':
             args.append('C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\\vcvarsall.bat')
             args.append('amd64_x86')
@@ -298,9 +281,15 @@ class JenkinsBuild():
             args.append('--mac-64')
             self.platform_make_args.append('mac-64=1')
         if os_platform == 'iOs':
-            if arch == 'x64':
+            if arch == 'x86':
+                args.append('--iOs-x86')
+                self.platform_make_args.append('iOs-x86=1')
+            elif arch == 'x64':
                 args.append('--iOs-x64')
                 self.platform_make_args.append('iOs-x64=1')
+            elif arch == 'armv7':
+                args.append('--iOs-armv7')
+                self.platform_make_args.append('iOs-armv7=1')
             elif arch == 'arm64':
                 args.append('--iOs-arm64')
                 self.platform_make_args.append('iOs-arm64=1')
@@ -319,6 +308,8 @@ class JenkinsBuild():
             args.extend(['--qnap', '--buildonly'])
         if os_platform == 'Core':
             args.append('--core')
+        if os_platform == 'Windows81':
+            args.append('--Windows81')
         if os_platform == 'Windows10':
             args.append('--Windows10')
         if os_platform == 'linux' and arch == 'x86':
@@ -471,7 +462,6 @@ def main():
     Build.get_options()
     Build.get_platform()
     Build.set_platform_args()
-    Build.install_dotnet()
     Build.get_build_args()
     Build.do_build()
     Build.do_postAction()

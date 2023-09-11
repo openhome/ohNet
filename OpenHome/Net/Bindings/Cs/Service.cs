@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-#if __IOS__
+#if IOS
 using ObjCRuntime;
 #endif
 
@@ -40,7 +40,7 @@ namespace OpenHome.Net.Core
     /// </summary>
     public class ParameterInt : Parameter
     {
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
@@ -67,7 +67,7 @@ namespace OpenHome.Net.Core
     /// </summary>
     public class ParameterUint : Parameter
     {
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
@@ -94,7 +94,7 @@ namespace OpenHome.Net.Core
     /// </summary>
     public class ParameterBool : Parameter
     {
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
@@ -118,7 +118,7 @@ namespace OpenHome.Net.Core
     /// </summary>
     public class ParameterString : Parameter
     {
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
@@ -148,7 +148,7 @@ namespace OpenHome.Net.Core
     /// </summary>
     public class ParameterBinary : Parameter
     {
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
@@ -169,7 +169,7 @@ namespace OpenHome.Net.Core
 
     public class ParameterRelated : Parameter
     {
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
@@ -190,7 +190,7 @@ namespace OpenHome.Net.Core
     /// <remarks>One Property will be created per Property (state variable) for the Service</remarks>
     public class Property : IDisposable
     {
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
@@ -249,7 +249,7 @@ namespace OpenHome.Net.Core
             iCallbackValueChanged = new Callback(ValueChanged);
         }
 
-#if __IOS__
+#if IOS
         [MonoPInvokeCallback (typeof (Callback))]
 #endif
         private static void ValueChanged(IntPtr aPtr)
@@ -265,25 +265,25 @@ namespace OpenHome.Net.Core
     /// </summary>
     public class PropertyInt : Property
     {
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern IntPtr ServicePropertyCreateIntCp(IntPtr aName, Callback aCallback, IntPtr aPtr);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern IntPtr ServicePropertyCreateIntDv(IntPtr aParameterHandle);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern int ServicePropertyValueInt(IntPtr aHandle, out int aValue);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
@@ -344,25 +344,25 @@ namespace OpenHome.Net.Core
     /// </summary>
     public class PropertyUint : Property
     {
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern IntPtr ServicePropertyCreateUintCp(IntPtr aName, Callback aCallback, IntPtr aPtr);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern IntPtr ServicePropertyCreateUintDv(IntPtr aParameterHandle);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern int ServicePropertyValueUint(IntPtr aHandle, out uint aValue);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
@@ -423,25 +423,25 @@ namespace OpenHome.Net.Core
     /// </summary>
     public class PropertyBool : Property
     {
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern IntPtr ServicePropertyCreateBoolCp(IntPtr aName, Callback aCallback, IntPtr aPtr);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern IntPtr ServicePropertyCreateBoolDv(IntPtr aParameterHandle);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern int ServicePropertyValueBool(IntPtr aHandle, out uint aValue);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
@@ -503,31 +503,31 @@ namespace OpenHome.Net.Core
     /// </summary>
     public class PropertyString : Property
     {
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern IntPtr ServicePropertyCreateStringCp(IntPtr aName, Callback aCallback, IntPtr aPtr);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern IntPtr ServicePropertyCreateStringDv(IntPtr aParameterHandle);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern int ServicePropertyGetValueString(IntPtr aHandle, out IntPtr aData, out uint aLen);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetFree(IntPtr aPtr);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
@@ -593,31 +593,31 @@ namespace OpenHome.Net.Core
     /// </summary>
     public class PropertyBinary : Property
     {
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern IntPtr ServicePropertyCreateBinaryCp(IntPtr aName, Callback aCallback, IntPtr aPtr);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern IntPtr ServicePropertyCreateBinaryDv(IntPtr aParameterHandle);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern int ServicePropertyGetValueBinary(IntPtr aHandle, out IntPtr aData, out uint aLen);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern uint ServicePropertySetValueBinary(IntPtr aHandle, IntPtr aData, uint aLen);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
@@ -687,31 +687,31 @@ namespace OpenHome.Net.Core
     /// 0..m output parameters.  Each parameter must be either input or output.</remarks>
     public class Action : IDisposable
     {
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern IntPtr ServiceActionCreate(IntPtr aName);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void ServiceActionDestroy(IntPtr aAction);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void ServiceActionAddInputParameter(IntPtr aAction, IntPtr aParameter);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void ServiceActionAddOutputParameter(IntPtr aAction, IntPtr aParameter);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]

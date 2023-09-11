@@ -233,55 +233,55 @@ namespace OpenHome.Net.Device
 
     public class DvDevice : IDvDevice
     {
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern IntPtr DvDeviceCreate(IntPtr aUdn);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void DvDeviceDestroy(IntPtr aDevice);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void DvDeviceGetUdn(IntPtr aDevice, out IntPtr aUdn, out uint aLen);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern int DvDeviceEnabled(IntPtr aDevice);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void DvDeviceSetEnabled(IntPtr aDevice);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void DvDeviceSetDisabled(IntPtr aDevice, DisabledCallback aCompleted, IntPtr aPtr);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void DvDeviceGetAttribute(IntPtr aDevice, IntPtr aKey, out IntPtr aValue);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void DvDeviceSetAttribute(IntPtr aDevice, IntPtr aKey, IntPtr aValue);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
@@ -434,37 +434,37 @@ namespace OpenHome.Net.Device
 
     public class DvDeviceStandard : DvDevice
     {
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern IntPtr DvDeviceStandardCreateNoResources(IntPtr aUdn);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern IntPtr DvDeviceStandardCreate(IntPtr aUdn, CallbackResourceManager aResourceManager, IntPtr aPtr);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void DvDeviceStandardGetResourceManagerUri(IntPtr aDevice, IntPtr aAdapter, out IntPtr aUri, out uint aLen);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern uint DvResourceWriterLanguageCount(IntPtr aHandle);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern IntPtr DvResourceWriterLanguage(IntPtr aHandle, uint aIndex);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]

@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
-#if __IOS__
+#if IOS
 using ObjCRuntime;
 #endif
 
@@ -58,43 +58,43 @@ namespace OpenHome.Net.Core
             }
         }
 
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern uint OhNetNetworkAdapterAddress(IntPtr aNif);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern uint OhNetNetworkAdapterSubnet(IntPtr aNif);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern uint OhNetNetworkAdapterMask(IntPtr aNif);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern IntPtr OhNetNetworkAdapterName(IntPtr aNif);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern IntPtr OhNetNetworkAdapterFullName(IntPtr aNif);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetNetworkAdapterAddRef(IntPtr aNif, IntPtr aCookie);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
@@ -252,7 +252,7 @@ namespace OpenHome.Net.Core
 
         public InitParams.OhNetCallback Callback { get; private set; }
 
-#if __IOS__
+#if IOS
         [MonoPInvokeCallback (typeof (InitParams.OhNetCallback))]
 #endif
         public static void Changed(IntPtr aPtr)
@@ -278,7 +278,7 @@ namespace OpenHome.Net.Core
 
         public InitParams.OhNetCallbackMsg Callback { get; private set; }
 
-#if __IOS__
+#if IOS
         [MonoPInvokeCallback (typeof (InitParams.OhNetCallbackMsg))]
 #endif
         public static void Message(IntPtr aPtr, string aMessage)
@@ -304,7 +304,7 @@ namespace OpenHome.Net.Core
 
         public InitParams.OhNetCallbackNetworkAdapter Callback { get; private set; }
 
-#if __IOS__
+#if IOS
         [MonoPInvokeCallback (typeof (InitParams.OhNetCallbackNetworkAdapter))]
 #endif
         public static void NetworkAdapter(IntPtr aPtr, IntPtr aAdapter)
@@ -331,7 +331,7 @@ namespace OpenHome.Net.Core
 
         public InitParams.OhNetCallbackAsync Callback { get; private set; }
 
-#if __IOS__
+#if IOS
         [MonoPInvokeCallback (typeof (InitParams.OhNetCallbackAsync))]
 #endif
         public static void AsyncListenerCallback(IntPtr aPtr, IntPtr aAsyncHandle)
@@ -547,313 +547,313 @@ namespace OpenHome.Net.Core
 
         private uint iDvUpnpWebServerPort;
 
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern IntPtr OhNetInitParamsCreate();
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetInitParamsDestroy(IntPtr aParams);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetInitParamsSetLogOutput(IntPtr aParams, OhNetCallbackMsg aCallback, IntPtr aPtr);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetInitParamsSetFatalErrorHandler(IntPtr aParams, OhNetCallbackMsg aCallback, IntPtr aPtr);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetInitParamsSetAsyncBeginHandler(IntPtr aParams, OhNetCallbackAsync aCallback, IntPtr aPtr);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetInitParamsSetAsyncEndHandler(IntPtr aParams, OhNetCallbackAsync aCallback, IntPtr aPtr);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetInitParamsSetAsyncErrorHandler(IntPtr aParams, OhNetCallbackAsync aCallback, IntPtr aPtr);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetInitParamsSetSubnetListChangedListener(IntPtr aParams, OhNetCallback aCallback, IntPtr aPtr);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetInitParamsSetSubnetAddedListener(IntPtr aParams, OhNetCallbackNetworkAdapter aCallback, IntPtr aPtr);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetInitParamsSetSubnetRemovedListener(IntPtr aParams, OhNetCallbackNetworkAdapter aCallback, IntPtr aPtr);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetInitParamsSetNetworkAdapterChangedListener(IntPtr aParams, OhNetCallbackNetworkAdapter aCallback, IntPtr aPtr);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetInitParamsSetTcpConnectTimeout(IntPtr aParams, uint aTimeoutMs);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetInitParamsSetMsearchTime(IntPtr aParams, uint aSecs);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetInitParamsSetMsearchTtl(IntPtr aParams, uint aTtl);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetInitParamsSetNumEventSessionThreads(IntPtr aParams, uint aNumThreads);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetInitParamsSetNumXmlFetcherThreads(IntPtr aParams, uint aNumThreads);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetInitParamsSetNumActionInvokerThreads(IntPtr aParams, uint aNumThreads);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetInitParamsSetNumInvocations(IntPtr aParams, uint aNumInvocations);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetInitParamsSetNumSubscriberThreads(IntPtr aParams, uint aNumThreads);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetInitParamsSetSubscriptionDuration(IntPtr aParams, uint aDurationSecs);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetInitParamsSetPendingSubscriptionTimeout(IntPtr aParams, uint aTimeoutMs);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetInitParamsSetDvMaxUpdateTime(IntPtr aParams, uint aSecs);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetInitParamsSetDvNumServerThreads(IntPtr aParams, uint aNumThreads);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetInitParamsSetDvNumPublisherThreads(IntPtr aParams, uint aNumThreads);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetInitParamsSetDvNumWebSocketThreads(IntPtr aParams, uint aNumThreads);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetInitParamsSetCpUpnpEventServerPort(IntPtr aParams, uint aPort);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetInitParamsSetDvUpnpServerPort(IntPtr aParams, uint aPort);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetInitParamsSetDvWebSocketPort(IntPtr aParams, uint aPort);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetInitParamsSetDvEnableBonjour(IntPtr aParams, IntPtr aHostName, bool aRequiresMdnsCache);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetInitParamsSetUseLoopbackNetworkAdapter(IntPtr aParams);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetInitParamsSetIncludeLoopbackNetworkAdapter(IntPtr aParams);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetInitParamsSetHttpUserAgent(IntPtr aParams, IntPtr aHostName);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetInitParamsSetHostUdpIsLowQuality(IntPtr aParams, int aHostName);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern uint OhNetInitParamsTcpConnectTimeoutMs(IntPtr aParams);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern uint OhNetInitParamsMsearchTimeSecs(IntPtr aParams);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern uint OhNetInitParamsMsearchTtl(IntPtr aParams);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern uint OhNetInitParamsNumEventSessionThreads(IntPtr aParams);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern uint OhNetInitParamsNumXmlFetcherThreads(IntPtr aParams);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern uint OhNetInitParamsNumActionInvokerThreads(IntPtr aParams);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern uint OhNetInitParamsNumInvocations(IntPtr aParams);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern uint OhNetInitParamsNumSubscriberThreads(IntPtr aParams);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern uint OhNetInitParamsSubscriptionDurationSecs(IntPtr aParams);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern uint OhNetInitParamsPendingSubscriptionTimeoutMs(IntPtr aParams);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern uint OhNetInitParamsDvMaxUpdateTimeSecs(IntPtr aParams);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern uint OhNetInitParamsDvNumServerThreads(IntPtr aParams);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern uint OhNetInitParamsDvNumPublisherThreads(IntPtr aParams);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern uint OhNetInitParamsDvNumWebSocketThreads(IntPtr aParams);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern uint OhNetInitParamsCpUpnpEventServerPort(IntPtr aParams);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern uint OhNetInitParamsDvUpnpServerPort(IntPtr aParams);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern uint OhNetInitParamsDvWebSocketPort(IntPtr aParams);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern uint OhNetInitParamsDvIsBonjourEnabled(IntPtr aParams);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
@@ -1049,97 +1049,97 @@ namespace OpenHome.Net.Core
     /// </summary>
     public class Library : IDisposable
     {
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern int OhNetLibraryInitialise(IntPtr aInitParams);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern int OhNetLibraryInitialiseMinimal(IntPtr aInitParams);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern uint OhNetLibraryStartCp(uint aSubnet);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern uint OhNetLibraryStartDv();
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern uint OhNetLibraryStartCombined(uint aSubnet);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetLibraryClose();
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetLibraryNotifySuspended();
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetLibraryNotifyResumed();
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetLibrarySetHttpUserAgent(IntPtr aPtr);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetFree(IntPtr aPtr);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetSetCurrentSubnet(uint aSubnet);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetRefreshNetworkAdapterList();
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetDebugSetLevel(ulong aLevel);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetDebugSetSeverity(uint aLevel);
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern void OhNetAbortProcess();
-#if __IOS__
+#if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
@@ -1387,7 +1387,7 @@ namespace OpenHome.Net.Core
             OhNetAbortProcess();
         }
 
-#if __IOS__
+#if IOS
         [MonoPInvokeCallback (typeof (CallbackFreeMemory))]
 #endif
         private static void FreeMemory(IntPtr aPtr)
