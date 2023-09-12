@@ -709,7 +709,6 @@ void MdnsPlatform::CurrentAdapterChanged()
 void MdnsPlatform::UpdateInterfaceList()
 {
     iInterfacesLock.Wait();
-    NetworkAdapter* current = iEnv.NetworkAdapterList().CurrentAdapter(kNifCookie).Ptr();
     NetworkAdapterList& nifList = iEnv.NetworkAdapterList();
     std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
 
@@ -723,18 +722,8 @@ void MdnsPlatform::UpdateInterfaceList()
         }
     }
 
-    TBool addInterfaces = false;
-    if (current != NULL) {
-        if (iInterfaces.size() == 0) { // current adapter is on a newly added subnet
-            addInterfaces = true;
-        }
-        current->RemoveRef(kNifCookie);
-    }
-
-    if (current == NULL || addInterfaces) { // add new subnets
-        AddValidInterfaces(*subnetList);
-    }
-
+    // Add any new interfaces
+    AddValidInterfaces(*subnetList);
     iInterfacesLock.Signal();
 
     iListeners.Rebind(*subnetList);     // May throw NetworkError.
