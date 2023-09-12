@@ -8,31 +8,31 @@ namespace OpenHome.Net.Core
     /// </summary>
     public class SubnetList : IDisposable
     {
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern IntPtr OhNetSubnetListCreate();
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern uint OhNetSubnetListSize(IntPtr aList);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern IntPtr OhNetSubnetAt(IntPtr aList, uint aIndex);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern IntPtr OhNetCurrentSubnetAdapter(IntPtr aCookie);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
@@ -106,25 +106,25 @@ namespace OpenHome.Net.Core
     /// </summary>
     public class NetworkAdapterList : IDisposable
     {
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern IntPtr OhNetNetworkAdapterListCreate();
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern uint OhNetNetworkAdapterListSize(IntPtr aList);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
         static extern IntPtr OhNetNetworkAdapterAt(IntPtr aList, uint aIndex);
-#if IOS
+#if __IOS__
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
