@@ -213,10 +213,10 @@ class JenkinsBuild():
         args = []
 
         if os_platform == 'windows' and arch == 'x86':
-            args.append('C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\BuildTools\\VC\\Auxiliary\\Build\\vcvarsall.bat')
+            args.append('C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Auxiliary\\Build\\vcvarsall.bat')
             args.append('x86')
         if os_platform == 'windows' and arch == 'x64':
-            args.append('C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\BuildTools\\VC\\Auxiliary\\Build\\vcvarsall.bat')
+            args.append('C:\\Program Files\\Microsoft Visual Studio\\2022\\Professionlal\\VC\\Auxiliary\\Build\\vcvarsall.bat')
             args.append('amd64')
             os.environ['CS_PLATFORM'] = 'x64'
         if os_platform == 'Windows10' and arch == 'x86':
