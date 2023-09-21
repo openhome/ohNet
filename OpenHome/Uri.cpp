@@ -404,6 +404,41 @@ void Uri::Escape(IWriter& aDst, const Brx& aSrc)
     }
 }
 
+void Uri::EscapeDataString(Bwx& aDst, const Brx& aSrc)
+{ // static
+    WriterBuffer writer(aDst);
+    EscapeDataString(writer, aSrc);
+}
+
+void Uri::EscapeDataString(IWriter& aDst, const Brx& aSrc)
+{ // static
+    TUint i=0;
+    while (i<aSrc.Bytes()) {
+        if (IsEscaped(aSrc, i)) {
+            // An already escaped substring - copy as is
+            aDst.Write(aSrc[i]);
+            aDst.Write(aSrc[i+1]);
+            aDst.Write(aSrc[i+2]);
+            i += 3;
+            continue;
+        }
+
+        if (!Uri::IsUnreserved(aSrc[i])) {
+            // According to RFC 2396 characters must be escaped
+            aDst.Write('%');
+            WriterAscii writerAscii(aDst);
+            writerAscii.WriteHex(aSrc[i]);
+            i++;
+            continue;
+        }
+
+        // No escaping required
+        aDst.Write(aSrc[i]);
+        i++;
+    }
+}
+
+
 void Uri::Unescape(Bwx& aDst, const Brx& aSrc)
 { // static
     TUint i=0;

@@ -37,6 +37,13 @@ public:
 
     static void Escape(Bwx& aDst, const Brx& aSrc);
     static void Escape(IWriter& aWriter, const Brx& aSrc);
+
+    // These methods are designed to escape values forming part of the path & query values of a URI.
+    // The implementation is copied from the .NET & JDK implementations which state:
+    // 'All RFC 2396 unreserved characters are converted to their hexadecimal representation'
+    static void EscapeDataString(Bwx& aDst, const Brx& aSrc);
+    static void EscapeDataString(IWriter& aWriter, const Brx& aSrc);
+
     static void Unescape(Bwx& aDst, const Brx& aSrc); // supports in-place unescaping
 
 public:
