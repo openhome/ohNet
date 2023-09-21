@@ -115,7 +115,7 @@ class JenkinsBuild():
 
         parser = OptionParser()
         parser.add_option("-p", "--platform", dest="platform",
-            help="Linux-x86, Linux-x64, Windows-x86, Windows-x64, Linux-ARM, Linux-armhf, Linux-mipsel, Linux-ppc32, Linux-rpi, Mac-x64, Core-ppc32, Core-armv6, iOs-armv7, iOs-arm64, iOs-x86, iOs-x64, Qnap-x86, Qnap-x19")
+            help="Linux-x86, Linux-x64, Windows-x86, Windows-x64, Linux-ARM, Linux-armhf, Linux-mipsel, Linux-ppc32, Linux-rpi, Mac-x64, Core-ppc32, Core-armv6, iOs-arm64, iOs-x64, Qnap-x86, Qnap-x19")
         parser.add_option("-n", "--nightly",
                   action="store_true", dest="nightly", default=False,
                   help="Perform a nightly build")
@@ -220,15 +220,15 @@ class JenkinsBuild():
             args.append('amd64')
             os.environ['CS_PLATFORM'] = 'x64'
         if os_platform == 'Windows10' and arch == 'x86':
-            args.append('C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\\vcvarsall.bat')
+            args.append('C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Auxiliary\\Build\\vcvarsall.bat')
             args.append('amd64_x86')
             args.append('store')
         if os_platform == 'Windows10' and arch == 'x64':
-            args.append('C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\\vcvarsall.bat')
+            args.append('C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Auxiliary\\Build\\vcvarsall.bat')
             args.append('amd64')
             args.append('store')
         if os_platform == 'Windows10' and arch == 'arm':
-            args.append('C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\\vcvarsall.bat')
+            args.append('C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Auxiliary\\Build\\vcvarsall.bat')
             args.append('amd64_arm')
             args.append('store')
         if os_platform == 'linux' and arch == 'armel':
@@ -280,7 +280,7 @@ class JenkinsBuild():
         self.platform_make_args = []
 
         if    arch in ['armel', 'armhf', 'armv7', 'arm64', 'armv5', 'armv6', 'mipsel', 'ppc32', 'rpi', 'arm64'] \
-           or os_platform in ['iOs', 'Android', 'Windows81', 'Windows10']                                       \
+           or os_platform in ['iOs', 'Android', 'Windows10']                                       \
            or self.options.release == '1':
             args.append('--buildonly')
         elif arch == 'x64':

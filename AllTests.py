@@ -179,7 +179,7 @@ def runTestsHelgrind():
     if len(failed) > 0:
         print('\nERROR, the following tests failed:')
         for fail in failed:
-            print('\t' + fail)
+            print('\t', fail)
         sys.exit(-1)
 
 gStartTime = time.strftime('%H:%M:%S')
@@ -265,7 +265,7 @@ for arg in sys.argv[1:]:
     elif arg == '--qnap':
         gQnap = 1;
     else:
-        print('Unrecognised argument - ' + arg)
+        print('Unrecognised argument - ', arg)
         sys.exit(1)
     os.environ["ABORT_ON_FAILURE"] = "1"
     if gSilent != 0:
@@ -351,7 +351,7 @@ class js_test:
         time.sleep(5)
         test_devfinder = subprocess.Popen([os.path.join(self.objpath, 'TestDeviceFinder.exe'), '-l', '-s', 'openhome.org:service:TestBasic:1'],stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         self.launch_url = test_devfinder.communicate()[1].rstrip()
-        print('found device at ' + self.launch_url)
+        print('found device at ', self.launch_url)
 
     def run_browser(self):
         subprocess.call(["%s" %(self.browser_location), "%s" %(self.launch_url)])
@@ -390,6 +390,6 @@ if gBuildOnly == 0:
     #if gJsTests == 1:
     #    JsTests()
     print('\nFinished.  All tests passed')
-print('Start time: ' + gStartTime)
-print('Builds complete: ' + gBuildsCompleteTime)
-print('End time: ' + time.strftime('%H:%M:%S'))
+print('Start time: ', gStartTime)
+print('Builds complete: ', gBuildsCompleteTime)
+print('End time: ', time.strftime('%H:%M:%S'))
