@@ -2,14 +2,12 @@
 #
 
 openhome_system=Windows
-!if "$(windows_store_81)"=="1"
-windows_universal=1
-openhome_system=Windows81
-!endif
 !if "$(windows_store_10)"=="1"
 windows_universal=1
 openhome_system=Windows10
 !endif
+
+windows_10_ver=10.0.17763.0
 
 !if [cl 2>&1 | find "for x64" > nul] == 0
 !message Detected 64-bit compiler.
@@ -27,21 +25,12 @@ openhome_architecture=arm
 !endif
 
 !if "$(windows_universal)"=="1"
-!if "$(openhome_system)"=="Windows81"
-defines_universal = -DDEFINE_WINDOWS_UNIVERSAL -D_CRT_SECURE_NO_WARNINGS /D "_WINDLL" /D "_UNICODE" /D "UNICODE" 
-!else
 defines_universal = -DDEFINE_WINDOWS_UNIVERSAL -D_CRT_SECURE_NO_WARNINGS /D "_UNICODE" /D "UNICODE" 
-!endif
 error_handling = /EHsc
-!if "$(openhome_system)"=="Windows81"
-additional_includes = /FU"C:\Program Files (x86)\Microsoft SDKs\Windows\v8.1\ExtensionSDKs\Microsoft.VCLibs\12.0\References\CommonConfiguration\neutral\platform.winmd" /FU"C:\Program Files (x86)\Windows Kits\8.1\References\CommonConfiguration\Neutral\Windows.winmd" /FU"C:\Program Files (x86)\Windows Kits\8.1\References\CommonConfiguration\Neutral\Windows.winmd" 
-universal_cppflags = /ZW /ZW:nostdlib /D "WINAPI_FAMILY=WINAPI_FAMILY_APP" /D "__WRL_NO_DEFAULT_LIB__" /Gy /Zc:inline /Zc:wchar_t 
-link_libs = Ws2_32.lib kernel32.lib 
-!else
-additional_includes = /AI "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\lib\store\references" /FU Platform.winmd /FU Windows.winmd
+# Windows UWP SDKs are now part of the WinRT runtime. They've left some UWP shims all over the place but it's just expected we move forward
+additional_includes = /AI "C:\Program Files\Microsoft Visual Studio\2022\Professional\VC\Tools\MSVC\14.37.32822\lib\x86\store\references" /AI "C:\Program Files (x86)\Windows Kits\10\UnionMetadata\$(windows_10_ver)" /FU Platform.winmd /FU windows.winmd
 universal_cppflags = /ZW /ZW:nostdlib /D "WINAPI_FAMILY=WINAPI_FAMILY_PC_APP" /D "__WRL_NO_DEFAULT_LIB__" /Gy /Zc:inline /Zc:wchar_t 
 link_libs = Ws2_32.lib WindowsApp.lib
-!endif
 machine = X86
 lib_path_root = 
 store_lib_path = store
@@ -52,16 +41,11 @@ store_lib_path = $(store_lib_path)\amd64
 machine = ARM
 store_lib_path = $(store_lib_path)\arm
 !endif
-additional_lib_path = "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\lib\$(store_lib_path)"
 safeseh =
 !if "$(openhome_architecture)"=="x86"
 safeseh = /SAFESEH
 !endif
-!if "$(openhome_system)"=="Windows81"
-link_opts = /APPCONTAINER $(SAFESEH) /DYNAMICBASE /NXCOMPAT /MACHINE:$(machine) /SUBSYSTEM:WINDOWS /LIBPATH:$(additional_lib_path)
-!else
 link_opts = /APPCONTAINER $(SAFESEH) /DYNAMICBASE /NXCOMPAT /MACHINE:$(machine) /SUBSYSTEM:WINDOWS
-!endif
 static_or_dynamic = /MD
 force_cpp = /TP
 !else
@@ -74,6 +58,8 @@ link_opts =
 static_or_dynamic = /MT
 force_cpp = 
 !endif
+
+!message E $(additional_includes)
 
 dotnetsdk = dotnet
 dotnetFramework = net6.0
