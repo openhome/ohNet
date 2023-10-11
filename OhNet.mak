@@ -2,12 +2,6 @@
 #
 
 openhome_system=Windows
-!if "$(windows_store_10)"=="1"
-windows_universal=1
-openhome_system=Windows10
-!endif
-
-windows_10_ver=10.0.17763.0
 
 !if [cl 2>&1 | find "for x64" > nul] == 0
 !message Detected 64-bit compiler.
@@ -18,48 +12,15 @@ openhome_architecture=x86
 !elseif [cl 2>&1 | find "for x86" > nul] == 0
 !message Detected 32-bit compiler.
 openhome_architecture=x86
-!elseif [cl 2>&1 | find "for ARM" > nul] == 0
-openhome_architecture=arm
 !else
 !message Cannot tell if compiler is 32-bit or 64-bit. Please specify openhome_architecture=x64 or openhome_architecture=x86.
 !endif
 
-!if "$(windows_universal)"=="1"
-defines_universal = -DDEFINE_WINDOWS_UNIVERSAL -D_CRT_SECURE_NO_WARNINGS /D "_UNICODE" /D "UNICODE" 
-error_handling = /EHsc
-# Windows UWP SDKs are now part of the WinRT runtime. They've left some UWP shims all over the place but it's just expected we move forward
-additional_includes = /AI "C:\Program Files\Microsoft Visual Studio\2022\Professional\VC\Tools\MSVC\14.37.32822\lib\x86\store\references" /AI "C:\Program Files (x86)\Windows Kits\10\UnionMetadata\$(windows_10_ver)" /FU Platform.winmd /FU windows.winmd
-universal_cppflags = /ZW /ZW:nostdlib /D "WINAPI_FAMILY=WINAPI_FAMILY_PC_APP" /D "__WRL_NO_DEFAULT_LIB__" /Gy /Zc:inline /Zc:wchar_t 
-link_libs = Ws2_32.lib WindowsApp.lib
-machine = X86
-lib_path_root = 
-store_lib_path = store
-!if "$(openhome_architecture)"=="x64"
-machine = X64
-store_lib_path = $(store_lib_path)\amd64
-!elseif "$(openhome_architecture)"=="arm"
-machine = ARM
-store_lib_path = $(store_lib_path)\arm
-!endif
-safeseh =
-!if "$(openhome_architecture)"=="x86"
-safeseh = /SAFESEH
-!endif
-link_opts = /APPCONTAINER $(SAFESEH) /DYNAMICBASE /NXCOMPAT /MACHINE:$(machine) /SUBSYSTEM:WINDOWS
-static_or_dynamic = /MD
-force_cpp = /TP
-!else
 defines_universal = -D_CRT_SECURE_NO_WARNINGS
 error_handling = /EHa
-additional_includes =
-universal_cppflags =
-link_libs = Ws2_32.lib Iphlpapi.lib Dbghelp.lib
-link_opts =
-static_or_dynamic = /MT
-force_cpp = 
-!endif
 
-!message E $(additional_includes)
+link_libs = Ws2_32.lib Iphlpapi.lib Dbghelp.lib
+static_or_dynamic = /MT
 
 dotnetsdk = dotnet
 dotnetFramework = net6.0
@@ -70,9 +31,6 @@ dotnetRuntime = win-x86
 !endif
 
 csharp_pcl_profile = PCLProfileNone
-!if "$(windows_store_10)"=="1"
-csharp_pcl_profile = PCLProfile259
-!endif
 
 !if "$(debug)"=="1"
 link_flag_debug = /debug
@@ -97,15 +55,10 @@ android_ndk_debug = 0
 # Macros used by Common.mak
 ar = lib /nologo /out:$(objdir)
 cflags_tp = $(debug_specific_cflags) /c /w $(error_handling) /FR$(objdir) -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE $(defines_universal)
-cflags = $(cflags_tp) $(additional_includes) /WX
-cppflags = $(cflags) $(universal_cppflags) $(force_cpp) 
+cflags = $(cflags_tp) /WX
+cppflags = $(cflags)
 
-# force everything through cpp compiler if building winrt
-!if "$(windows_universal)"=="1"
-cflags_third_party = $(cppflags)
-!else
 cflags_third_party = $(cflags_tp)
-!endif
 
 objdirbare = Build\Obj\Windows\$(build_dir)
 objdir = $(objdirbare)^\
@@ -121,12 +74,12 @@ sharedlibprefix =
 sharedlibext = lib
 exeext = exe
 compiler = cl /nologo /Fo$(objdir)
-link = link /nologo $(link_flag_debug) /SUBSYSTEM:CONSOLE /map $(link_libs) $(link_opts) /incremental:no
+link = link /nologo $(link_flag_debug) /SUBSYSTEM:CONSOLE /map $(link_libs) /incremental:no
 linkoutput = /out:
 dllprefix =
 dllext = dll
 linkopts_ohNet =
-link_dll = link /nologo $(link_flag_debug_dll) /map $(link_libs) $(link_opts) /dll 
+link_dll = link /nologo $(link_flag_debug_dll) /map $(link_libs) /dll 
 csharp = csc /nologo /platform:anycpu
 csharpdefines =
 !if "$(windows_store_10)"=="1"

@@ -28,8 +28,6 @@ def buildArgs():
     buildArgs = ''
     if gDebugBuild == 1:
         buildArgs += ' debug=1'
-    if gWindows10 == 1:
-        buildArgs += ' windows_store_10=1'
     if gMac64 == 1:
         buildArgs += ' mac-64=1'
     if giOsArm64 == 1:
@@ -75,8 +73,6 @@ def runBuilds():
         build('copy_build_includes')
     if gCore == 1:
         build('ohNet TestFramework', gParallel)
-    elif gWindows10 == 1:
-        build('ohNet.net.dll', gParallel)
     else:
         build('all', gParallel)
     if (gRunJavaTests == 1):
@@ -201,7 +197,6 @@ giOsArm64 = 0
 giOsx64 = 0
 gAndroid = 0
 gQnap = 0
-gWindows10 = 0
 try:
     gPlatform = os.environ['PLATFORM']
 except KeyError:
@@ -209,9 +204,7 @@ except KeyError:
 gCore = 0
 gParallel = False
 for arg in sys.argv[1:]:
-    if arg == '--Windows10':
-        gWindows10 = 1
-    elif arg == '-b' or arg == '--buildonly':
+    if arg == '-b' or arg == '--buildonly':
         gBuildOnly = 1
     elif arg == '--debug':
         gDebugBuild = 1
