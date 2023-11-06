@@ -108,6 +108,7 @@ objects_core = \
 	$(objdir)Terminal.$(objext) \
 	$(objdir)TerminalOs.$(objext) \
 	$(objdir)Thread.$(objext) \
+	$(objdir)Time.$(objext) \
 	$(objdir)Timer.$(objext) \
 	$(objdir)TIpAddressUtils.$(objext) \
 	$(objdir)Uri.$(objext) \
@@ -164,6 +165,7 @@ headers = \
 	$(inc_build)/OpenHome/Private/Stream.h \
 	$(inc_build)/OpenHome/Private/Terminal.h \
 	$(inc_build)/OpenHome/Private/Thread.h \
+	$(inc_build)/OpenHome/Private/Time.h \
 	$(inc_build)/OpenHome/Private/Timer.h \
 	$(inc_build)/OpenHome/Private/TIpAddressUtils.h \
 	$(inc_build)/OpenHome/Private/Uri.h \
@@ -425,6 +427,8 @@ $(objdir)Terminal.$(objext) : OpenHome/Terminal.cpp $(headers)
 	$(compiler)Terminal.$(objext) -c $(cppflags) $(includes) OpenHome/Terminal.cpp
 $(objdir)Thread.$(objext) : OpenHome/Thread.cpp $(headers)
 	$(compiler)Thread.$(objext) -c $(cppflags) $(includes) OpenHome/Thread.cpp
+$(objdir)Time.$(objext) : OpenHome/Time.cpp $(headers)
+	$(compiler)Time.$(objext) -c $(cppflags) $(includes) OpenHome/Time.cpp
 $(objdir)Timer.$(objext) : OpenHome/Timer.cpp $(headers)
 	$(compiler)Timer.$(objext) -c $(cppflags) $(includes) OpenHome/Timer.cpp
 $(objdir)TIpAddressUtils.$(objext) : OpenHome/TIpAddressUtils.cpp $(headers)
