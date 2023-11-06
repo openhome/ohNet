@@ -1040,6 +1040,123 @@ void HttpHeaderRange::Process(const Brx& aValue)
 }
 
 
+// HttpHeaderDate
+const Brx& HttpHeaderDate::Key() const 
+{
+    return Http::kHeaderDate;
+}
+
+PointInTime HttpHeaderDate::ValueAsPointInTime() const
+{
+    Parser p(iValue);
+
+    // day-name (Ignored, we don't care)
+    p.Next(',');
+
+    // day...
+   TUint day = Ascii::Uint(p.Next(' '));
+
+    // month...
+    Brn monthStr = p.Next(' ');
+    TUint month = 0;
+    for(month = 0; month < 12; ++month) {
+        Brn compVal = Brn(reinterpret_cast<const TByte *>(Time::kMonthsInYear[month]), 3);
+        if (monthStr == compVal) {
+            break;
+        }
+    }
+
+    if (month > 11) {
+        // Invalid month, we've failed to parse
+        THROW(ReaderError);
+    }
+
+    
+    ++month; // Our months start at
+
+    // year...
+    TUint year = Ascii::Uint(p.Next(' '));
+
+
+    // time...
+    TUint hour = Ascii::Uint(p.Next(':'));
+    TUint min  = Ascii::Uint(p.Next(':'));
+    TUint sec  = Ascii::Uint(p.Next(' '));
+
+    return PointInTime(day, month, year, hour, min, sec);
+}
+
+// HTTP Header date requires us to format time as RFC1123
+// <day-name>, <day> <month> <year> <hour>:<minute>:<second> GMT
+// day-name: First 3 chars of English day names
+// month   : First 3 chars of English month names
+// For details: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Date
+void HttpHeaderDate::WriteDateTimeValue(IWriter& aWriter, TUint aUnixTimestamp)
+{
+    PointInTime p;
+    if (!p.TryParseFromUnixTimestamp(aUnixTimestamp)) {
+        THROW(WriterError);
+    }
+
+    WriteDateTimeValue(aWriter, p.Day(), p.Month(), p.Year(), p.Hours(), p.Minutes(), p.Seconds());
+}
+
+void HttpHeaderDate::WriteDateTimeValue(IWriter& aWriter, PointInTime& aPointInTime)
+{
+    WriteDateTimeValue(aWriter, aPointInTime.Day(), aPointInTime.Month(), aPointInTime.Year(), aPointInTime.Hours(), aPointInTime.Minutes(), aPointInTime.Seconds());
+}
+
+void HttpHeaderDate::WriteDateTimeValue(IWriter& aWriter, TByte aDay, TByte aMonth, TUint aYear, TByte aHour, TByte aMinute, TByte aSecond)
+{
+    const Brx& dayName = Time::GetDayOfWeek(aDay, aMonth, aYear);
+    const Brx& truncatedDayName = Brn(dayName.Ptr(), 3); // We only want the first 3 chars of the day
+
+    const Brx& monthName = Brn(Time::kMonthsInYear[aMonth - 1]);
+    const Brx& truncatedMonthName = Brn(monthName.Ptr(), 3); // We only want the first 3 chars of the month.
+
+    WriterAscii w(aWriter);
+
+    w.Write(truncatedDayName);
+    w.Write(',');
+    w.WriteSpace();
+
+    if (aDay < 10) {
+        w.WriteUint(0);
+    }
+    w.WriteUint(aDay);
+    w.WriteSpace();
+
+    w.Write(truncatedMonthName);
+    w.WriteSpace();
+
+    w.WriteUint(aYear);
+    w.WriteSpace();
+
+
+    if (aHour < 10) {
+        w.WriteUint(0);
+    }
+    w.WriteUint(aHour);
+    w.Write(':');
+
+    if (aMinute < 10) {
+        w.WriteUint(0);
+    }
+    w.WriteUint(aMinute);
+    w.Write(':');
+
+    if (aSecond < 10) {
+        w.WriteUint(0);
+    }
+    w.WriteUint(aSecond);
+    w.WriteSpace();
+
+    w.Write(Brn("GMT"));
+
+    w.WriteFlush();
+}
+
+
 
 // ReaderHttpChunked
 

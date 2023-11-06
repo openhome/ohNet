@@ -3,6 +3,7 @@
 
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Private/Thread.h>
+#include <OpenHome/Private/Time.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Network.h>
 #include <OpenHome/Private/Ascii.h>
@@ -502,6 +503,20 @@ private:
     }
 protected:
     Bws<S> iValue;
+};
+
+class HttpHeaderDate : public HttpHeaderString<512>
+{
+public: // HttpHeaderString
+    const Brx& Key() const override;
+
+public:
+    PointInTime ValueAsPointInTime() const;
+
+public:
+    static void WriteDateTimeValue(IWriter &aWriter, TUint aUnixTimestamp);
+    static void WriteDateTimeValue(IWriter &aWriter, PointInTime& aPointInTime);
+    static void WriteDateTimeValue(IWriter &aWriter, TByte aDay, TByte aMonth, TUint aYear, TByte aHour, TByte aMinute, TByte aSecond);
 };
 
 
