@@ -37,6 +37,19 @@ private:
     void TestIsValid() const;
 };
 
+class SuiteHttpHeaderDate : public Suite
+{
+public:
+    SuiteHttpHeaderDate();
+
+public: // Suite
+    void Test() override;
+
+private:
+    void TestParse() const;
+    void TestWrite() const;
+};
+
 
 
 // SuiteTimeHelpers
@@ -336,6 +349,124 @@ void SuitePointInTime::TestIsValid() const
 }
 
 
+// SuiteHttpheaderDate
+SuiteHttpHeaderDate::SuiteHttpHeaderDate()
+    : Suite("SuiteHttpHeaderDate")
+{ }
+
+void SuiteHttpHeaderDate::Test()
+{
+    TestParse();
+    TestWrite();
+}
+
+void SuiteHttpHeaderDate::TestParse() const
+{
+    HttpHeaderDate subject;
+
+    {
+        const TChar* value = "Mon, 28 Dec 2009 13:41:15 GMT";
+        static_cast<IHttpHeader&>(subject).Process(Brn(value));
+
+        PointInTime p = subject.ValueAsPointInTime();
+        TEST(p.Year()    == 2009);
+        TEST(p.Month()   == 12);
+        TEST(p.Day()     == 28);
+        TEST(p.Hours()   == 13);
+        TEST(p.Minutes() == 41);
+        TEST(p.Seconds() == 15);
+    }
+
+    {
+        const TChar* value = "Thu, 02 Nov 2023 14:54:11 GMT";
+        static_cast<IHttpHeader&>(subject).Process(Brn(value));
+
+        PointInTime p = subject.ValueAsPointInTime();
+        TEST(p.Year()    == 2023);
+        TEST(p.Month()   == 11);
+        TEST(p.Day()     == 2);
+        TEST(p.Hours()   == 14);
+        TEST(p.Minutes() == 54);
+        TEST(p.Seconds() == 11);
+    }
+
+    {
+        // Checks we ignore everything before the first , value
+        const TChar* value = "Rubbish, 02 Nov 2023 01:12:23 GMT";
+        static_cast<IHttpHeader&>(subject).Process(Brn(value));
+
+        PointInTime p = subject.ValueAsPointInTime();
+        TEST(p.Year()    == 2023);
+        TEST(p.Month()   == 11);
+        TEST(p.Day()     == 2);
+        TEST(p.Hours()   == 1);
+        TEST(p.Minutes() == 12);
+        TEST(p.Seconds() == 23);
+    }
+
+    {
+        // Checks we handle unknown month values
+        const TChar* value = "Nov, 02 ALongMonthName 2023 01:12:23 GMT";
+        static_cast<IHttpHeader&>(subject).Process(Brn(value));
+
+        TEST_THROWS(subject.ValueAsPointInTime(), ReaderError);
+    }
+
+    // Check we can handle unknown day, year & time values
+    {
+        const TChar* value = "Nov, InvalidDay Nov 2023 01:12:23 GMT";
+        static_cast<IHttpHeader&>(subject).Process(Brn(value));
+
+        TEST_THROWS(subject.ValueAsPointInTime(), AsciiError);
+    }
+
+    {
+        const TChar* value = "Nov, 02 Nov InvalidYear 01:12:23 GMT";
+        static_cast<IHttpHeader&>(subject).Process(Brn(value));
+
+        TEST_THROWS(subject.ValueAsPointInTime(), AsciiError);
+    }
+
+    {
+        const TChar* value = "Nov, 02 Nov 2023 InvalidHour:12:23 GMT";
+        static_cast<IHttpHeader&>(subject).Process(Brn(value));
+
+        TEST_THROWS(subject.ValueAsPointInTime(), AsciiError);
+    }
+
+    {
+        const TChar* value = "Nov, 02 Nov 2023 01:12:InvalidSeconds GMT";
+        static_cast<IHttpHeader&>(subject).Process(Brn(value));
+
+        TEST_THROWS(subject.ValueAsPointInTime(), AsciiError);
+    }
+
+    {
+        // Check we can handle an invalid / missing time value
+        const TChar* value = "Nov, 02 Nov 2023 022345 GMT";
+        static_cast<IHttpHeader&>(subject).Process(Brn(value));
+
+        TEST_THROWS(subject.ValueAsPointInTime(), AsciiError);
+    }
+}
+
+void SuiteHttpHeaderDate::TestWrite() const
+{
+    Bwh buf(1024);
+    WriterBuffer w(buf);
+
+    PointInTime p1(2, 2, 1996, 1, 10, 9);
+    HttpHeaderDate::WriteDateTimeValue(w, p1);
+
+    buf.SetBytes(0);
+
+    HttpHeaderDate::WriteDateTimeValue(w, 23, 12, 2032, 12, 34, 56);
+    TEST(buf == Brn("Thu, 23 Dec 2032 12:34:56 GMT"));
+    buf.SetBytes(0);
+
+    HttpHeaderDate::WriteDateTimeValue(w, 1699280475);
+    TEST(buf == Brn("Mon, 06 Nov 2023 14:21:15 GMT"));
+}
 
 
 void TestTime(Environment& aEnv)
@@ -345,5 +476,6 @@ void TestTime(Environment& aEnv)
     Runner runner("File testing.");
     runner.Add(new SuiteTimeHelpers);
     runner.Add(new SuitePointInTime);
+    runner.Add(new SuiteHttpHeaderDate);
     runner.Run();
 }
