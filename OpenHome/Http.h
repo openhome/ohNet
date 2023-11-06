@@ -483,6 +483,28 @@ private:
     TUint iEnd;
 };
 
+template<TUint S>
+class HttpHeaderString : public HttpHeader
+{
+public:
+    virtual const Brx& Key() const = 0;
+    const Brx& Value() const { return iValue; }
+private:
+    TBool Recognise(const Brx& aHeader) { return Ascii::CaseInsensitiveEquals(aHeader, Key()); }
+    void Process(const Brx& aValue)
+    {
+        try {
+            iValue.ReplaceThrow(aValue);
+            SetReceived();
+        }
+        catch (BufferOverflow&) {
+        }
+    }
+protected:
+    Bws<S> iValue;
+};
+
+
 class ReaderHttpChunked : public IReader
 {
     static const TUint kChunkSizeBufBytes = 10;
