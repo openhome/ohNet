@@ -508,7 +508,7 @@ protected:
 class HttpHeaderDate : public HttpHeaderString<512>
 {
 public: // HttpHeaderString
-    const Brx& Key() const override;
+    const Brx& Key() const;
 
 public:
     PointInTime ValueAsPointInTime() const;
