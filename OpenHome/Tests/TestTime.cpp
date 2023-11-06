@@ -1,6 +1,6 @@
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Private/Time.h>
-#include <openHome/Private/Http.h>
+#include <OpenHome/Private/Http.h>
 #include <OpenHome/Private/TestFramework.h>
 
 using namespace OpenHome;
