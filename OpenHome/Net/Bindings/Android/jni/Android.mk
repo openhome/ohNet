@@ -97,6 +97,7 @@ LOCAL_SRC_FILES := $(ohroot)OpenHome/Ascii.cpp \
                    $(ohroot)OpenHome/Net/Subscription.cpp \
                    $(ohroot)OpenHome/Terminal.cpp \
                    $(ohroot)OpenHome/Thread.cpp \
+                   $(ohroot)OpenHome/Time.cpp \
                    $(ohroot)OpenHome/Timer.cpp \
                    $(ohroot)OpenHome/TIpAddressUtils.cpp \
                    $(ohroot)OpenHome/Uri.cpp \
