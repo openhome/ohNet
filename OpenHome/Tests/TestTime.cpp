@@ -12,7 +12,7 @@ public:
     SuiteTimeHelpers();
 
 public: // Suite
-    void Test() override;
+    void Test();
 
 private:
     void TestIsLeapYear() const;
@@ -28,7 +28,7 @@ public:
     SuitePointInTime();
 
 public: // Suite
-    void Test() override;
+    void Test();
 
 private:
     void TestConstruction() const;
@@ -43,7 +43,7 @@ public:
     SuiteHttpHeaderDate();
 
 public: // Suite
-    void Test() override;
+    void Test();
 
 private:
     void TestParse() const;
@@ -69,7 +69,7 @@ void SuiteTimeHelpers::TestIsLeapYear() const
 {
     const TInt kTestSize = 21;
 
-    TUint years[kTestSize] {
+    TUint years[kTestSize] = {
         1984,
         1985,
         1986,
@@ -93,7 +93,7 @@ void SuiteTimeHelpers::TestIsLeapYear() const
         2224,
     };
 
-    TBool expected[kTestSize] {
+    TBool expected[kTestSize] = {
         true,
         false,
         false,
@@ -185,8 +185,8 @@ void SuiteTimeHelpers::TestDaysInMonth() const
     const TUint leapYear = 2000;
     TEST(Time::IsYearALeapYear(leapYear));
 
-    const TUint MonthsWith31Days[7] { 1, 3, 5, 7, 8, 10, 12 };
-    const TUint MonthsWith30Days[4] { 4, 6, 9, 11 };
+    const TUint MonthsWith31Days[7] = { 1, 3, 5, 7, 8, 10, 12 };
+    const TUint MonthsWith30Days[4] = { 4, 6, 9, 11 };
 
     for(TUint i = 0; i < 7; ++i) {
         // Doesn't matter if we're a leap year or not, the value is always the same
