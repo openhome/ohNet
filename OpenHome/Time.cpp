@@ -8,12 +8,12 @@ using namespace OpenHome;
 // Time
 const TUint Time::kUnixEpochYear = 1970;
 
-const TChar* Time::kDaysInWeek[7] { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
+const TChar* Time::kDaysInWeek[7] = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
 
-const TByte Time::kDaysInMonth[12] { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+const TByte Time::kDaysInMonth[12] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
-const TChar* Time::kMonthsInYear[12] { "January", "February", "March", "April", "May", "June", 
-                                       "July", "August", "September", "October", "November", "December" };
+const TChar* Time::kMonthsInYear[12] = { "January", "February", "March", "April", "May", "June", 
+                                         "July", "August", "September", "October", "November", "December" };
 
 const TUint Time::kSecondsPerMinute = 60;
 const TUint Time::kSecondsPerHour   = 3600;   // 60 * 60
@@ -27,7 +27,7 @@ const TUint Time::kSecondsIn29DayMonth = 2505600; // kSecondsPerDay * 29
 const TUint Time::kSecondsIn30DayMonth = 2592000; // kSecondsPerDay * 30
 const TUint Time::kSecondsIn31DayMonth = 2678400; // kSecondsPerDay * 31
 
-const TUint Time::kSecondsInMonth[4] {
+const TUint Time::kSecondsInMonth[4] = {
     kSecondsIn28DayMonth,
     kSecondsIn29DayMonth,
     kSecondsIn30DayMonth,
@@ -147,8 +147,9 @@ static const TUint kDayShift     = 24;
 static const TUint kMonthShift   = 16;
 
 PointInTime::PointInTime()
-    : PointInTime(0, 0, 0, 0, 0, 0)
-{ }
+{ 
+    Set(0, 0, 0, 0, 0, 0);
+}
 
 PointInTime::PointInTime(TByte aDay, TByte aMonth, TUint aYear, TByte aHour, TByte aMinute, TByte aSecond)
 {
