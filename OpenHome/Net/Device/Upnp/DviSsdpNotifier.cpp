@@ -126,10 +126,12 @@ void SsdpNotifierScheduler::LogNotifierStart(const TChar* aType, TIpAddress addr
 #define NEXT_MSG_UUID         (1)
 #define NEXT_MSG_DEVICE_TYPE  (2)
 #define NEXT_MSG_SERVICE_TYPE (3)
+const TUint MsearchResponse::kServiceVersionOverrideDisabled = 0;
 
 MsearchResponse::MsearchResponse(DvStack& aDvStack, ISsdpNotifyListener& aListener)
     : SsdpNotifierScheduler(aDvStack, aListener, "MSearchResponse")
     , iAnnouncementData(NULL)
+    , iServiceVersionOverride(kServiceVersionOverrideDisabled)
 {
     iNotifier = new SsdpMsearchResponder(aDvStack);
 }
@@ -169,13 +171,17 @@ void MsearchResponse::StartDeviceType(IUpnpAnnouncementData& aAnnouncementData, 
     Start(aAnnouncementData, 1, NEXT_MSG_DEVICE_TYPE, aRemote, aMx, aUri, aConfigId, aAdapter);
 }
 
-void MsearchResponse::StartServiceType(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const OpenHome::Net::ServiceType& aServiceType, const Brx& aUri, TUint aConfigId, TIpAddress aAdapter)
+void MsearchResponse::StartServiceType(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const OpenHome::Net::ServiceType& aServiceType, const Brx& aUri, TUint aConfigId, TIpAddress aAdapter, TUint aServiceVersionOverride)
 {
     LogNotifierStart("StartServiceType", aRemote.Address());
     TUint index = 0;
     for (;;) {
         const OpenHome::Net::ServiceType& st = aAnnouncementData.Service(index).ServiceType();
-        if (st.Domain() == aServiceType.Domain() && st.Name() == aServiceType.Name() && st.Version() == aServiceType.Version()) {
+        if (st.Domain() == aServiceType.Domain() && st.Name() == aServiceType.Name()) {
+            if (aServiceVersionOverride != kServiceVersionOverrideDisabled) {
+                ASSERT(aServiceVersionOverride <= st.Version()); // can report a lower service version but must not claim support for a more recent version
+                iServiceVersionOverride = aServiceVersionOverride;
+            }
             break;
         }
         index++;
@@ -215,7 +221,12 @@ TUint MsearchResponse::NextMsg()
     default:
         DviService& service = iAnnouncementData->Service(iNextMsgIndex - 3);
         const OpenHome::Net::ServiceType& serviceType = service.ServiceType();
-        iNotifier->SsdpNotifyServiceType(serviceType.Domain(), serviceType.Name(), serviceType.Version(), iAnnouncementData->Udn(), iUri);
+        TUint version = serviceType.Version();
+        if (iServiceVersionOverride != kServiceVersionOverrideDisabled) {
+            version = iServiceVersionOverride;
+            iServiceVersionOverride = kServiceVersionOverrideDisabled;
+        }
+        iNotifier->SsdpNotifyServiceType(serviceType.Domain(), serviceType.Name(), version, iAnnouncementData->Udn(), iUri);
         break;
     }
     iNextMsgIndex++;
@@ -412,12 +423,12 @@ void DviSsdpNotifierManager::MsearchResponseDeviceType(IUpnpAnnouncementData& aA
     catch (MsearchResponseLimit&) {}
 }
 
-void DviSsdpNotifierManager::MsearchResponseServiceType(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const OpenHome::Net::ServiceType& aServiceType, const Brx& aUri, TUint aConfigId, TIpAddress aAdapter)
+void DviSsdpNotifierManager::MsearchResponseServiceType(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const OpenHome::Net::ServiceType& aServiceType, const Brx& aUri, TUint aConfigId, TIpAddress aAdapter, TUint aServiceVersionOverride)
 {
     try {
         AutoMutex a(iLock);
         Responder* responder = GetResponder(aAnnouncementData, aRemote);
-        responder->Response().StartServiceType(aAnnouncementData, aRemote, aMx, aServiceType, aUri, aConfigId, aAdapter);
+        responder->Response().StartServiceType(aAnnouncementData, aRemote, aMx, aServiceType, aUri, aConfigId, aAdapter, aServiceVersionOverride);
     }
     catch (MsearchResponseLimit&) {}
 }
