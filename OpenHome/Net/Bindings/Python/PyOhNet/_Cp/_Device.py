@@ -51,7 +51,7 @@ class Device():
     def _GetServices( self ):
         """Returns list of services reported by device"""
         result   = []
-        baseUrl  = re.match('^(.+)(//)([\w\.:]+)', self.location ).group()
+        baseUrl  = re.match(r'^(.+)(//)([\w\.:]+)', self.location ).group()
         xml      = re.sub( ' xmlns="[^"]+"', '', self.deviceXml )    # remove namespace
         root     = ET.fromstring( xml )
 
@@ -62,7 +62,7 @@ class Device():
             for service in services:
                 svType = service.find( 'serviceType' ).text
                 url  = urljoin( baseUrl, service.find( 'SCPDURL' ).text )
-                m = re.match('urn:([\w\-\.]+):service:([\w\-\.]+):(\d+)', svType )
+                m = re.match(r'urn:([\w\-\.]+):service:([\w\-\.]+):(\d+)', svType )
                 domain, name, version = m.groups()
                 domainName = ''
                 fields = domain.replace( '.', '-' ).split( '-' )
