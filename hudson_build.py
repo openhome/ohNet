@@ -223,14 +223,14 @@ class JenkinsBuild():
             print("running as " + os.getlogin())
             resource = boto3.resource('s3')
             bucket = resource.Bucket("linn-artifacts-private")
-            with open("/tmp/yocto_sdk.sh", "wb") as sdk_file:
+            with open("/home/hudson-smarties/yocto_sdk.sh", "wb") as sdk_file:
                 bucket.download_fileobj("yocto_core4_sdk/linn-fb-glibc-x86_64-linn-image-core-cortexa9t2hf-neon-linn-imx6dl-toolchain-5.15-kirkstone-0.0.23.sh", sdk_file)
-            os.chmod("/tmp/yocto_sdk.sh", stat.S_IXUSR)
+            os.chmod("/home/hudson-smarties/yocto_sdk.sh", stat.S_IXUSR)
             
-            subprocess.check_output(["/tmp/yocto_sdk.sh", "-y", "-d", "/tmp/linn-fb/5.15-kirkstone"])
+            subprocess.check_output(["/home/hudson-smarties/yocto_sdk.sh", "-y", "-d", "/home/hudson-smarties/linn-fb/5.15-kirkstone"])
 
             # Parse yocto environment file, set up for build
-            env_string = subprocess.check_output(". /tmp/linn-fb/5.15-kirkstone/environment-setup-cortexa9t2hf-neon-poky-linux-gnueabi && env", shell=True)
+            env_string = subprocess.check_output(". /home/hudson-smarties/linn-fb/5.15-kirkstone/environment-setup-cortexa9t2hf-neon-poky-linux-gnueabi && env", shell=True)
             for el in env_string.decode("utf-8").split("\n"):
                 if "=" in el:
                     os.environ[el.split("=")[0]] = el.split("=")[1]
