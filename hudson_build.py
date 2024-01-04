@@ -233,7 +233,7 @@ class JenkinsBuild():
             env_string = subprocess.check_output(". /opt/linn-fb/5.15-kirkstone/environment-setup-cortexa9t2hf-neon-poky-linux-gnueabi && env", shell=True)
             for el in env_string.decode("utf-8").split("\n"):
                 if "=" in el:
-                    os.environ[el.split("=")[0]] = el.split("=")[1]
+                    os.environ[el.split("=")[0]] = el.split("=", 1)[1]
             if os.environ.get("CC", None):
                 os.environ["CFLAGS"] = " ".join(os.environ["CC"].split(" ")[1:])
             if os.environ.get("CXX", None):
