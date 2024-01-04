@@ -221,11 +221,11 @@ class JenkinsBuild():
             # get built SDK from our AWS storage
             resource = boto3.resource('s3')
             bucket = resource.Bucket("linn-artifacts-private")
-            with open("yocto_sdk.sh", "wb") as sdk_file:
+            with open("~/yocto_sdk.sh", "wb") as sdk_file:
                 bucket.download_fileobj("yocto_core4_sdk/linn-fb-glibc-x86_64-linn-image-core-cortexa9t2hf-neon-linn-imx6dl-toolchain-5.15-kirkstone-0.0.23.sh", sdk_file)
-            os.chmod("yocto_sdk.sh", stat.S_IXUSR)
+            os.chmod("~/yocto_sdk.sh", stat.S_IXUSR)
             
-            subprocess.check_output(["yocto_sdk.sh", "-y", "-d", "/opt/linn-fb/5.15-kirkstone"])
+            subprocess.check_output(["~/yocto_sdk.sh", "-y", "-d", "~/linn-fb/5.15-kirkstone"])
 
             # Parse yocto environment file, set up for build
             env_string = subprocess.check_output(". /opt/linn-fb/5.15-kirkstone/environment-setup-cortexa9t2hf-neon-poky-linux-gnueabi && env", shell=True)
