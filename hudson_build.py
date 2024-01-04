@@ -185,7 +185,7 @@ class JenkinsBuild():
         ]
 
         if os_platform in pre_installed_platforms:
-            print ('dotent SDK should be preinstalled on for this platform ')
+            print ('dotnet SDK should be preinstalled on for this platform ')
             return
 
         dotnet_install_cmd.append('./dotnet-install.sh')
@@ -216,8 +216,15 @@ class JenkinsBuild():
             os.environ['CS_PLATFORM'] = 'x64'
         if os_platform == 'linux' and arch == 'armel':
             os.environ['CROSS_COMPILE'] = '/usr/local/arm-2011.09/bin/arm-none-linux-gnueabi-'
-        if os_platform == 'linux' and arch == 'armhf':
-            os.environ['CROSS_COMPILE'] = '/opt/gcc-linaro-5.3.1-2016.05-i686_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-'
+        if os_platform == 'linux' and arch == 'armhf':            
+            env_string = subprocess.check_output(". /opt/linn-fb/5.15-kirkstone/environment-setup-cortexa9t2hf-neon-poky-linux-gnueabi && env", shell=True)
+            for el in env_string.decode("utf-8").split("\n"):
+                if "=" in el:
+                    os.environ[el.split("=")[0]] = el.split("=")[1]
+            if os.environ.get("CC", None):
+                os.environ["CFLAGS"] = os.environ["CC"].split(" ")[1:]
+            if os.environ.get("CXX", None):
+                os.environ["CXXFLAGS"] = os.environ["CXX"].split(" ")[1:]  
         if os_platform == 'linux' and arch == 'rpi':
             os.environ['CROSS_COMPILE'] = '/opt/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin/arm-linux-gnueabihf-'
         if os_platform == 'linux' and arch == 'mipsel':
