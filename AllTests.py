@@ -55,7 +55,7 @@ def build(aTarget, aParallel=False):
     if 'CS_PLATFORM' in os.environ:
         buildCmd += ' csplatform=' + os.environ['CS_PLATFORM']
     buildCmd += buildArgs()
-    ret = subprocess.check_call(buildCmd, shell=True, env=os.environ)
+    ret = os.system(buildCmd)
     if (0 != ret):
         print('\nBuild for ' + aTarget + ' failed, aborting')
         sys.exit(1)
