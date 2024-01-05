@@ -238,7 +238,7 @@ class JenkinsBuild():
                 os.environ["CFLAGS"] = " ".join(os.environ["CC"].split(" ")[1:]).replace("-D_FORTIFY_SOURCE=2", "").replace("-O2", "")
             if os.environ.get("CXX", None):
                 os.environ["CXXFLAGS"] = " ".join(os.environ["CXX"].split(" ")[1:]).replace("-D_FORTIFY_SOURCE=2", "").replace("-O2", "")
-            os.environ["LDFLAGS"] = f'--sysroot={os.environ["SDKTARGETSYSROOT"]}'
+            os.environ["LDFLAGS"] = '--sysroot=' + os.environ["SDKTARGETSYSROOT"]
         if os_platform == 'linux' and arch == 'rpi':
             os.environ['CROSS_COMPILE'] = '/opt/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin/arm-linux-gnueabihf-'
         if os_platform == 'linux' and arch == 'mipsel':
