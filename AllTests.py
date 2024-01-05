@@ -55,7 +55,7 @@ def build(aTarget, aParallel=False):
     if 'CS_PLATFORM' in os.environ:
         buildCmd += ' csplatform=' + os.environ['CS_PLATFORM']
     buildCmd += buildArgs()
-    ret = subprocess.check_call(buildCmd, shell=True)
+    ret = subprocess.check_call(buildCmd, shell=True, env=os.environ)
     if (0 != ret):
         print('\nBuild for ' + aTarget + ' failed, aborting')
         sys.exit(1)
@@ -68,7 +68,7 @@ def runBuilds():
         else:
             cleanCmd = 'make clean'
         cleanCmd += buildArgs()
-        subprocess.check_call(cleanCmd)
+        os.system(cleanCmd)
     if gParallel:
         build('copy_build_includes')
     if gCore == 1:
