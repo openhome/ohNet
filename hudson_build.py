@@ -223,11 +223,13 @@ class JenkinsBuild():
             # print("running as " + os.getlogin())
             # resource = boto3.resource('s3')
             # bucket = resource.Bucket("linn-artifacts-private")
-            # with open("/home/hudson-smarties/yocto_sdk.sh", "wb") as sdk_file:
-            #     bucket.download_fileobj("yocto_core4_sdk/linn-fb-glibc-x86_64-linn-image-core-cortexa9t2hf-neon-linn-imx6dl-toolchain-5.15-kirkstone-0.0.23.sh", sdk_file)
-            # os.chmod("/home/hudson-smarties/yocto_sdk.sh", stat.S_IXUSR)
+            # fetched_path = "/home/hudson-smarties/yocto_sdk.sh"
+            # with open(fetched_path, "wb") as sdk_file:
+            #     bucket.download_fileobj("yocto_core4_sdk/linn-fb-glibc-x86_64-linn-image-core-cortexa9t2hf-neon-linn-imx6dl-toolchain-5.15-kirkstone-0.0.24.sh", sdk_file)
+            # st = os.stat(fetched_path)
+            # os.chmod(fetched_path, st.st_mode | stat.S_IXUSR)
             
-            # subprocess.check_output("/home/hudson-smarties/yocto_sdk.sh -y -d /home/hudson-smarties/linn-fb/5.15-kirkstone", shell=True)
+            # subprocess.check_output(fetched_path + " -y -d /home/hudson-smarties/linn-fb/5.15-kirkstone", shell=True)
 
             # Parse yocto environment file, set up for build
             env_string = subprocess.check_output(". /opt/linn-fb/5.15-kirkstone/environment-setup-cortexa9t2hf-neon-poky-linux-gnueabi && env", shell=True)
@@ -238,7 +240,7 @@ class JenkinsBuild():
                 os.environ["CFLAGS"] = " ".join(os.environ["CC"].split(" ")[1:]).replace("-D_FORTIFY_SOURCE=2", "").replace("-O2", "")
             if os.environ.get("CXX", None):
                 os.environ["CXXFLAGS"] = " ".join(os.environ["CXX"].split(" ")[1:]).replace("-D_FORTIFY_SOURCE=2", "").replace("-O2", "")
-            os.environ["LDFLAGS"] = '--sysroot=' + os.environ["SDKTARGETSYSROOT"]
+            os.environ["LDFLAGS"] = '--sysroot=%s' % os.environ["SDKTARGETSYSROOT"]
         if os_platform == 'linux' and arch == 'rpi':
             os.environ['CROSS_COMPILE'] = '/opt/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin/arm-linux-gnueabihf-'
         if os_platform == 'linux' and arch == 'mipsel':
@@ -427,7 +429,7 @@ class JenkinsBuild():
         entries = os.listdir('Build/Bundles/')
         for entry in entries:
             src = 'Build/Bundles/' + entry
-            dst = 's3://linn-artifacts-public/artifacts/ohNet/' + entry.split('/')[-1]
+            dst = 's3://linn-artifacts-public/artifacts/ohNet-yocto/' + entry.split('/')[-1]
             print('Publish %s --> %s' % (src, dst))
             resource = boto3.resource('s3')
             bucket = resource.Bucket(dst.split('/')[2])
