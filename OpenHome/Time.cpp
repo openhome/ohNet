@@ -288,7 +288,7 @@ TUint PointInTime::ConvertToUnixTimestamp() const
     }
 
     for(TByte i = 1; i < month; ++i) {
-        timestamp += Time::SecondsInMonth(i, month);
+        timestamp += Time::SecondsInMonth(i, year);
     }
 
     timestamp += (Day() - 1) * Time::kSecondsPerDay;
