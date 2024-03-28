@@ -64,7 +64,12 @@ void XmlFetch::SetError(Error::ELevel aLevel, TUint aCode, const Brx& aDescripti
     /* If an error is set repeatedly, assume that the first setter will have had
        access to the most accurate description */
     if (iError.Level() == Error::eNone) {
-        iError.Set(aLevel, aCode, aDescription);
+        if (iInterrupted && aLevel != Error::ELevel::eAsync) {
+            iError.Set(Error::eAsync, Error::eCodeInterrupted, Error::kDescriptionAsyncInterrupted);
+        }
+        else {
+            iError.Set(aLevel, aCode, aDescription);
+        }
     }
 }
 
@@ -166,6 +171,25 @@ TBool XmlFetch::WasContactable(IAsync& aAsync)
     return self.iContactable;
 }
 
+TBool XmlFetch::DidError(IAsync& aAsync)
+{ // static
+    ASSERT(((Async&)aAsync).Type() == Async::eXmlFetch);
+    XmlFetch& self = (XmlFetch&)aAsync;
+    return self.Error();
+}
+
+Error& XmlFetch::GetError(IAsync& aAsync)
+{ // static
+    ASSERT(((Async&)aAsync).Type() == Async::eXmlFetch);
+    XmlFetch& self = (XmlFetch&)aAsync;
+    if (self.Error()) {
+        return self.iError;
+    }
+    
+    // Can't return an error if there is none.
+    THROW(XmlFetchError); 
+}
+
 XmlFetch::XmlFetch(CpStack& aCpStack)
     : iCpStack(aCpStack)
     , iSequenceNumber(0)
@@ -258,6 +282,9 @@ XmlFetcher::XmlFetcher(const TChar* aName, Fifo<XmlFetcher*>& aFree)
 
 XmlFetcher::~XmlFetcher()
 {
+    if (iFetch) {
+        iFetch->Interrupt();
+    }
     Kill();
     Join();
 }
