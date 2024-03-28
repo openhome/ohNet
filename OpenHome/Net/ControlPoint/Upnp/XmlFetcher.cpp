@@ -12,6 +12,12 @@
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
+static const Brn kHttpErrorDescription("Http Error");
+static const Brn kReaderErrorDescription("Reader Error");
+static const Brn kWriterErrorDescription("Writer Error");
+static const Brn kNetworkErrorDescription("Network Error");
+
+
 // XmlFetch
 
 void XmlFetch::Set(const Brx& aAbsoluteUri, FunctorAsync& aFunctor)
@@ -119,16 +125,16 @@ void XmlFetch::Fetch()
         SetError(Error::eSocket, Error::eCodeTimeout, Error::kDescriptionSocketTimeout);
     }
     catch (NetworkError&) {
-        SetError(Error::eSocket, Error::kCodeUnknown, Error::kDescriptionUnknown);
+        SetError(Error::eSocket, Error::kCodeUnknown, kNetworkErrorDescription);
     }
     catch (HttpError&) {
-        SetError(Error::eHttp, Error::kCodeUnknown, Error::kDescriptionUnknown);
+        SetError(Error::eHttp, Error::kCodeUnknown, kHttpErrorDescription);
     }
     catch (WriterError&) {
-        SetError(Error::eSocket, Error::kCodeUnknown, Error::kDescriptionUnknown);
+        SetError(Error::eSocket, Error::kCodeUnknown, kWriterErrorDescription);
     }
     catch (ReaderError&) {
-        SetError(Error::eSocket, Error::kCodeUnknown, Error::kDescriptionUnknown);
+        SetError(Error::eSocket, Error::kCodeUnknown, kReaderErrorDescription);
     }
 
     LOG(kXmlFetch, "< XmlFetch::Fetch for %.*s\n", PBUF(absUri));
@@ -326,14 +332,14 @@ void XmlFetcher::Run()
             LogError("NetworkTimeout");
         }
         catch (NetworkError&) {
-            iFetch->SetError(Error::eSocket, Error::kCodeUnknown, Error::kDescriptionUnknown);
+            iFetch->SetError(Error::eSocket, Error::kCodeUnknown, kNetworkErrorDescription);
             LogError("Network");
         }
         catch (WriterError&) {
             LogError("Writer");
         }
         catch (ReaderError&) {
-            iFetch->SetError(Error::eSocket, Error::kCodeUnknown, Error::kDescriptionUnknown);
+            iFetch->SetError(Error::eSocket, Error::kCodeUnknown, kReaderErrorDescription);
             LogError("Reader");
         }
         iFetch->SignalCompleted();

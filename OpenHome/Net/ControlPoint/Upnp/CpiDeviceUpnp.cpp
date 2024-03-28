@@ -592,23 +592,19 @@ void CpiDeviceUpnp::XmlCheckRefreshCompleted(IAsync& aAsync)
         if (XmlFetch::DidError(aAsync)) {
             Error& err = XmlFetch::GetError(aAsync);
             if (err.Level() == Error::eAsync) {
-                if (err.Code() == Error::eCodeInterrupted || err.Code() == Error::eCodeShutdown) {
-                    interrupted = true;
-                }
+                interrupted = true;
+            }
+            else {
+                Log::Print("!!! XmlFetchError: %s\n", err.Description());
             }
         }
+        else {
+            contactable = XmlFetch::WasContactable(aAsync); // should NOT throw, because we've handled the error case above!!
+        }
 
-        if (!interrupted) {
-            try {
-                contactable = XmlFetch::WasContactable(aAsync);
-            }
-            catch (XmlFetchError&) {
-                Log::Print("!!! XmlFetchError\n");
-            }
-            if (!contactable) {
-                Log::Print("XmlCheckRefreshCompleted - FAIL - %.*s\n", PBUF(Udn()));
-                iDeviceList.Remove(Udn());
-            }
+        if (!interrupted && !contactable) {
+            Log::Print("XmlCheckRefreshCompleted - FAIL - %.*s\n", PBUF(Udn()));
+            iDeviceList.Remove(Udn());
         }
     }
     iDevice->RemoveRef();
