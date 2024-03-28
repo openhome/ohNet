@@ -64,7 +64,7 @@ void XmlFetch::SetError(Error::ELevel aLevel, TUint aCode, const Brx& aDescripti
     /* If an error is set repeatedly, assume that the first setter will have had
        access to the most accurate description */
     if (iError.Level() == Error::eNone) {
-        if (iInterrupted && aLevel != Error::ELevel::eAsync) {
+        if (iInterrupted && aLevel != Error::eAsync) {
             iError.Set(Error::eAsync, Error::eCodeInterrupted, Error::kDescriptionAsyncInterrupted);
         }
         else {
