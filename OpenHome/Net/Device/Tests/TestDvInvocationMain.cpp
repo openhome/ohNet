@@ -32,6 +32,9 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::Init
     lib->StartCombined(subnet, cpStack, dvStack);
     dvStack->Start();
 
+    Debug::SetLevel(Debug::kDvInvocation);
+    Debug::SetSeverity(Debug::kSeverityTrace);
+
     TestDvInvocation(*cpStack, *dvStack);
 
     delete lib;
