@@ -591,8 +591,8 @@ void CpiDeviceUpnp::XmlCheckRefreshCompleted(IAsync& aAsync)
 
         if (XmlFetch::DidError(aAsync)) {
             Error& err = XmlFetch::GetError(aAsync);
-            if (err.Level() == Error::ELevel::eAsync) {
-                if (err.Code() == Error::ECodeAsync::eCodeInterrupted || err.Code() == Error::eCodeShutdown) {
+            if (err.Level() == Error::eAsync) {
+                if (err.Code() == Error::eCodeInterrupted || err.Code() == Error::eCodeShutdown) {
                     interrupted = true;
                 }
             }
