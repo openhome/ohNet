@@ -283,13 +283,15 @@ TUint XmlFetch::Type() const
 XmlFetcher::XmlFetcher(const TChar* aName, Fifo<XmlFetcher*>& aFree)
     : Thread(aName)
     , iFree(aFree)
+    , iFetch(NULL)
 {
 }
 
 XmlFetcher::~XmlFetcher()
 {
-    if (iFetch) {
+    if (iFetch != NULL) {
         iFetch->Interrupt();
+        iFetch = NULL;
     }
     Kill();
     Join();
