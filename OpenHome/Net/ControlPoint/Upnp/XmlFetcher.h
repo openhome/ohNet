@@ -37,6 +37,8 @@ public:
     void SetError(Error::ELevel aLevel, TUint aCode, const Brx& aDescription);
     static Bwh& Xml(IAsync& aAsync);
     static TBool WasContactable(IAsync& aAsync);
+    static TBool DidError(IAsync& aAsync);
+    static OpenHome::Net::Error& GetError(IAsync& aAsync); // Throws XMLFetchError if not errored. Check DidError() first
     void Fetch();
     void Interrupt();
     TBool Interrupted() const;

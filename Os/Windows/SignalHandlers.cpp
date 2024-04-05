@@ -2,12 +2,6 @@
 #include <OpenHome/Exception.h>
 #include <OpenHome/Private/Standard.h>
 
-#ifdef DEFINE_WINDOWS_UNIVERSAL
-extern "C" void OsThreadInstallSignalHandlers()
-{
-}
-#else
-
 #include <windows.h>
 #include <stdio.h>
 
@@ -38,4 +32,3 @@ extern "C" void OsThreadInstallSignalHandlers()
 {
     (void)_set_se_translator(SEHTranslator);
 }
-#endif

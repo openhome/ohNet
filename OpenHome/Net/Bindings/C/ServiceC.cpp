@@ -96,9 +96,6 @@ ServiceParameter STDCALL ServiceParameterCreateRelated(const char* aName, Servic
     return kHandleNull;
 }
 
-#ifdef DEFINE_WINDOWS_UNIVERSAL
-# pragma warning(disable:4702)
-#endif
 void STDCALL ServicePropertyDestroy(ServiceProperty aProperty)
 {
     try {
@@ -111,9 +108,6 @@ void STDCALL ServicePropertyDestroy(ServiceProperty aProperty)
         UnhandledExceptionHandler(ex);
     }
 }
-#ifdef DEFINE_WINDOWS_UNIVERSAL
-# pragma warning(default:4702)
-#endif
 
 ServiceProperty STDCALL ServicePropertyCreateIntCp(const char* aName, OhNetCallback aCallback, void* aPtr)
 {
@@ -528,9 +522,6 @@ ServiceAction STDCALL ServiceActionCreate(const char* aName)
     return kHandleNull;
 }
 
-#ifdef DEFINE_WINDOWS_UNIVERSAL
-# pragma warning(disable:4702)
-#endif
 void STDCALL ServiceActionDestroy(ServiceAction aAction)
 {
     try {
@@ -544,9 +535,6 @@ void STDCALL ServiceActionDestroy(ServiceAction aAction)
         UnhandledExceptionHandler(ex);
     }
 }
-#ifdef DEFINE_WINDOWS_UNIVERSAL
-# pragma warning(default:4702)
-#endif
 
 void STDCALL ServiceActionAddInputParameter(ServiceAction aAction, ServiceParameter aParameter)
 {

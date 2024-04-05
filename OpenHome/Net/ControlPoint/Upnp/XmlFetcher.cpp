@@ -12,6 +12,12 @@
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
+static const Brn kHttpErrorDescription("Http Error");
+static const Brn kReaderErrorDescription("Reader Error");
+static const Brn kWriterErrorDescription("Writer Error");
+static const Brn kNetworkErrorDescription("Network Error");
+
+
 // XmlFetch
 
 void XmlFetch::Set(const Brx& aAbsoluteUri, FunctorAsync& aFunctor)
@@ -64,7 +70,12 @@ void XmlFetch::SetError(Error::ELevel aLevel, TUint aCode, const Brx& aDescripti
     /* If an error is set repeatedly, assume that the first setter will have had
        access to the most accurate description */
     if (iError.Level() == Error::eNone) {
-        iError.Set(aLevel, aCode, aDescription);
+        if (iInterrupted && aLevel != Error::eAsync) {
+            iError.Set(Error::eAsync, Error::eCodeInterrupted, Error::kDescriptionAsyncInterrupted);
+        }
+        else {
+            iError.Set(aLevel, aCode, aDescription);
+        }
     }
 }
 
@@ -114,16 +125,16 @@ void XmlFetch::Fetch()
         SetError(Error::eSocket, Error::eCodeTimeout, Error::kDescriptionSocketTimeout);
     }
     catch (NetworkError&) {
-        SetError(Error::eSocket, Error::kCodeUnknown, Error::kDescriptionUnknown);
+        SetError(Error::eSocket, Error::kCodeUnknown, kNetworkErrorDescription);
     }
     catch (HttpError&) {
-        SetError(Error::eHttp, Error::kCodeUnknown, Error::kDescriptionUnknown);
+        SetError(Error::eHttp, Error::kCodeUnknown, kHttpErrorDescription);
     }
     catch (WriterError&) {
-        SetError(Error::eSocket, Error::kCodeUnknown, Error::kDescriptionUnknown);
+        SetError(Error::eSocket, Error::kCodeUnknown, kWriterErrorDescription);
     }
     catch (ReaderError&) {
-        SetError(Error::eSocket, Error::kCodeUnknown, Error::kDescriptionUnknown);
+        SetError(Error::eSocket, Error::kCodeUnknown, kReaderErrorDescription);
     }
 
     LOG(kXmlFetch, "< XmlFetch::Fetch for %.*s\n", PBUF(absUri));
@@ -164,6 +175,25 @@ TBool XmlFetch::WasContactable(IAsync& aAsync)
         THROW(XmlFetchError);
     }
     return self.iContactable;
+}
+
+TBool XmlFetch::DidError(IAsync& aAsync)
+{ // static
+    ASSERT(((Async&)aAsync).Type() == Async::eXmlFetch);
+    XmlFetch& self = (XmlFetch&)aAsync;
+    return self.Error();
+}
+
+Error& XmlFetch::GetError(IAsync& aAsync)
+{ // static
+    ASSERT(((Async&)aAsync).Type() == Async::eXmlFetch);
+    XmlFetch& self = (XmlFetch&)aAsync;
+    if (self.Error()) {
+        return self.iError;
+    }
+    
+    // Can't return an error if there is none.
+    THROW(XmlFetchError); 
 }
 
 XmlFetch::XmlFetch(CpStack& aCpStack)
@@ -253,11 +283,16 @@ TUint XmlFetch::Type() const
 XmlFetcher::XmlFetcher(const TChar* aName, Fifo<XmlFetcher*>& aFree)
     : Thread(aName)
     , iFree(aFree)
+    , iFetch(NULL)
 {
 }
 
 XmlFetcher::~XmlFetcher()
 {
+    if (iFetch != NULL) {
+        iFetch->Interrupt();
+        iFetch = NULL;
+    }
     Kill();
     Join();
 }
@@ -299,14 +334,14 @@ void XmlFetcher::Run()
             LogError("NetworkTimeout");
         }
         catch (NetworkError&) {
-            iFetch->SetError(Error::eSocket, Error::kCodeUnknown, Error::kDescriptionUnknown);
+            iFetch->SetError(Error::eSocket, Error::kCodeUnknown, kNetworkErrorDescription);
             LogError("Network");
         }
         catch (WriterError&) {
             LogError("Writer");
         }
         catch (ReaderError&) {
-            iFetch->SetError(Error::eSocket, Error::kCodeUnknown, Error::kDescriptionUnknown);
+            iFetch->SetError(Error::eSocket, Error::kCodeUnknown, kReaderErrorDescription);
             LogError("Reader");
         }
         iFetch->SignalCompleted();
