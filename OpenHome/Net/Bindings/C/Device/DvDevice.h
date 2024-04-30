@@ -71,7 +71,7 @@ typedef int32_t (STDCALL *OhNetCallbackWriteResourceEnd)(void* aWriterData);
  *
  * @param[in] aUserData       'aPtr' passed to DvDeviceCreate
  * @param[in] aUriTail        File being requested
- * @param[in] aInterface      Network interface the file request was made on
+ * @param[in] aInterface      IPv4 network interface the file request was made on
  * @param[in] aLanguageList   Handle to a prioritised list of the languages accepted in the resources to
  *                            be written.  This should be passed to DvResourceWriterLanguage*.
  * @param[in] aWriterData     Opaque pointer to be passed to all 3 OhNetCallbackWriteResource* callbacks
@@ -86,7 +86,7 @@ typedef int32_t (STDCALL *OhNetCallbackWriteResourceEnd)(void* aWriterData);
  *
  * @return  0 on success; non-zero on error.
  */
-typedef int32_t (STDCALL *OhNetCallbackResourceManager)(void* aUserData, const char* aUriTail, TIpAddress aInterface, THandle aLanguageList, void* aWriterData,
+typedef int32_t (STDCALL *OhNetCallbackResourceManager)(void* aUserData, const char* aUriTail, uint32_t aInterface, THandle aLanguageList, void* aWriterData,
                                                         OhNetCallbackWriteResourceBegin aWriteBegin,
                                                         OhNetCallbackWriteResource aWriteResource,
                                                         OhNetCallbackWriteResourceEnd aWriteEnd);

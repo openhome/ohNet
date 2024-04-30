@@ -108,6 +108,7 @@ objects_core = \
 	$(objdir)Terminal.$(objext) \
 	$(objdir)TerminalOs.$(objext) \
 	$(objdir)Thread.$(objext) \
+	$(objdir)Time.$(objext) \
 	$(objdir)Timer.$(objext) \
 	$(objdir)TIpAddressUtils.$(objext) \
 	$(objdir)Uri.$(objext) \
@@ -164,6 +165,7 @@ headers = \
 	$(inc_build)/OpenHome/Private/Stream.h \
 	$(inc_build)/OpenHome/Private/Terminal.h \
 	$(inc_build)/OpenHome/Private/Thread.h \
+	$(inc_build)/OpenHome/Private/Time.h \
 	$(inc_build)/OpenHome/Private/Timer.h \
 	$(inc_build)/OpenHome/Private/TIpAddressUtils.h \
 	$(inc_build)/OpenHome/Private/Uri.h \
@@ -425,6 +427,8 @@ $(objdir)Terminal.$(objext) : OpenHome/Terminal.cpp $(headers)
 	$(compiler)Terminal.$(objext) -c $(cppflags) $(includes) OpenHome/Terminal.cpp
 $(objdir)Thread.$(objext) : OpenHome/Thread.cpp $(headers)
 	$(compiler)Thread.$(objext) -c $(cppflags) $(includes) OpenHome/Thread.cpp
+$(objdir)Time.$(objext) : OpenHome/Time.cpp $(headers)
+	$(compiler)Time.$(objext) -c $(cppflags) $(includes) OpenHome/Time.cpp
 $(objdir)Timer.$(objext) : OpenHome/Timer.cpp $(headers)
 	$(compiler)Timer.$(objext) -c $(cppflags) $(includes) OpenHome/Timer.cpp
 $(objdir)TIpAddressUtils.$(objext) : OpenHome/TIpAddressUtils.cpp $(headers)
@@ -609,6 +613,14 @@ $(objdir)TestNetwork.$(objext) : OpenHome/Tests/TestNetwork.cpp $(headers)
 	$(compiler)TestNetwork.$(objext) -c $(cppflags) $(includes) OpenHome/Tests/TestNetwork.cpp
 $(objdir)TestNetworkMain.$(objext) : OpenHome/Tests/TestNetworkMain.cpp $(headers)
 	$(compiler)TestNetworkMain.$(objext) -c $(cppflags) $(includes) OpenHome/Tests/TestNetworkMain.cpp
+
+TestTime: $(objdir)TestTime.$(exeext)
+$(objdir)TestTime.$(exeext) :  ohNetCore $(objdir)TestTime.$(objext) $(objdir)TestTimeMain.$(objext) $(libprefix)TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)TestTime.$(exeext) $(objdir)TestTimeMain.$(objext) $(objdir)TestTime.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
+$(objdir)TestTime.$(objext) : OpenHome/Tests/TestTime.cpp $(headers)
+	$(compiler)TestTime.$(objext) -c $(cppflags) $(includes) OpenHome/Tests/TestTime.cpp
+$(objdir)TestTimeMain.$(objext) : OpenHome/Tests/TestTimeMain.cpp $(headers)
+	$(compiler)TestTimeMain.$(objext) -c $(cppflags) $(includes) OpenHome/Tests/TestTimeMain.cpp
 
 TestTimer: $(objdir)TestTimer.$(exeext)
 $(objdir)TestTimer.$(exeext) :  ohNetCore $(objdir)TestTimer.$(objext) $(objdir)TestTimerMain.$(objext) $(libprefix)TestFramework.$(libext)
@@ -861,6 +873,7 @@ tests_core = \
 	$(objdir)TestQueue.$(objext) \
 	$(objdir)TestTextUtils.$(objext) \
 	$(objdir)TestNetwork.$(objext) \
+	$(objdir)TestTime.$(objext) \
 	$(objdir)TestTimer.$(objext) \
 	$(objdir)TestTimerMock.$(objext) \
 	$(objdir)TestSsdpMListen.$(objext) \
@@ -882,7 +895,7 @@ tests_core = \
 TestsCore: $(tests_core)
 	$(ar)ohNetTestsCore.$(libext) $(tests_core)
 
-TestsNative: TestBuffer TestPrinter TestThread TestFunctorGeneric TestFifo TestStream TestFile TestQueue TestTextUtils TestMulticast TestNetwork TestEcho TestTimer TestTimerMock TestSsdpMListen TestSsdpUListen TestXmlParser TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLpec TestDvTestBasic TestAdapterChange TestDeviceFinder TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestShell
+TestsNative: TestBuffer TestPrinter TestThread TestFunctorGeneric TestFifo TestStream TestFile TestQueue TestTextUtils TestMulticast TestNetwork TestEcho TestTime TestTimer TestTimerMock TestSsdpMListen TestSsdpUListen TestXmlParser TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLpec TestDvTestBasic TestAdapterChange TestDeviceFinder TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestShell
 
 TestsCs: TestProxyCs TestDvDeviceCs TestCpDeviceDvCs TestPerformanceDv TestPerformanceCp TestPerformanceDvCs TestPerformanceCpCs
 
@@ -893,15 +906,18 @@ $(objdir)ohNet.net.dll: make_obj_dir
 
 TestProxyCs: $(objdir)TestProxyCs.exe
 
-# iOS currently doesn't build the test projects as these will require their own csprojs which bring in the iOS SDKs
-# now that ohNet.Net is built that way....
+# NOTE: The dotnet SDK will only provide a 'self-contained' single file executable when running the "publish" command. However,
+#       it only allows to publish one project at a time to a directory and so specifying the --output argument results in all .NET code being deleted
+#       from Build/Obj/... before the code is copied. Therefore, we build to the standard .NET ouptut directory then copy the output files into
+#       Build/Obj/... as required
+
 $(objdir)TestProxyCs.exe: \
 	ohNetDll \
 	$(objdir)ohNet.net.dll \
 	$(csCpTests)TestProxy.cs \
-	$(objdir)CpUpnpOrgConnectionManager1.net.dll \
-
-	$(dotnetsdk) build $(csCpTests)TestProxy.csproj --framework $(dotnetFramework) --output $(objdir)
+	$(objdir)CpUpnpOrgConnectionManager1.net.dll
+	$(dotnetsdk) publish $(csCpTests)TestProxy.csproj --framework $(dotnetFramework) --runtime $(dotnetRuntime) --self-contained /p:PublishSingleFile=true --output $(csShared)bin/TestProxy
+	cp -r $(csShared)bin/TestProxy/* $(objdir)
 
 TestDvDeviceCs: $(objdir)TestDvDeviceCs.exe
 
@@ -913,7 +929,8 @@ $(objdir)TestDvDeviceCs.exe: \
 	$(csDvTests)TestBasicDv.cs \
 	$(csCpTests)TestBasicCp.cs \
 	$(csDvTests)TestDvDevice.cs
-	$(dotnetsdk) build $(csShared)TestDvDeviceCs.csproj --framework $(dotnetFramework) --output $(objdir)
+	$(dotnetsdk) publish $(csShared)TestDvDeviceCs.csproj --framework $(dotnetFramework) --runtime $(dotnetRuntime) --self-contained /p:PublishSingleFile=true --output $(csShared)bin/TestDvDeviceCs
+	cp -r $(csShared)bin/TestDvDeviceCs/* $(objdir)
 
 TestDvLightsCs: $(objdir)TestDvLightsCs.exe
 
@@ -927,7 +944,8 @@ $(objdir)TestCpDeviceDvCs.exe: \
 	$(csDvTests)TestBasicDv.cs \
 	$(csCpTests)TestBasicCp.cs \
 	$(csCpTests)TestCpDeviceDv.cs
-	$(dotnetsdk) build $(csShared)TestCpDeviceDvCs.csproj --framework $(dotnetFramework) --output $(objdir)
+	$(dotnetsdk) publish $(csShared)TestCpDeviceDvCs.csproj --framework $(dotnetFramework) --runtime $(dotnetRuntime) --self-contained /p:PublishSingleFile=true --output $(csShared)bin/TestCpDeviceDvCs
+	cp -r $(csShared)bin/TestCpDeviceDvCs/* $(objdir)
 
 
 TestPerformanceDvCs: $(objdir)TestPerformanceDvCs.exe
@@ -938,7 +956,8 @@ $(objdir)TestPerformanceDvCs.exe: \
 	$(objdir)DvOpenhomeOrgTestBasic1.net.dll \
 	$(csDvTests)TestBasicDv.cs \
 	$(csDvTests)TestPerformanceDv.cs
-	$(dotnetsdk) build $(csDvTests)TestPerformanceDvCs.csproj --framework $(dotnetFramework) --output $(objdir)
+	$(dotnetsdk) publish $(csDvTests)TestPerformanceDvCs.csproj --framework $(dotnetFramework) --runtime $(dotnetRuntime) --self-contained /p:PublishSingleFile=true --output $(csShared)bin/TestPerformanceDvCs
+	cp -r $(csShared)bin/TestPerformanceDvCs/* $(objdir)
 
 
 TestPerformanceCpCs: $(objdir)TestPerformanceCpCs.exe
@@ -948,7 +967,8 @@ $(objdir)TestPerformanceCpCs.exe: \
 	$(objdir)ohNet.net.dll \
 	$(objdir)CpOpenhomeOrgTestBasic1.net.dll \
 	$(csCpTests)TestPerformanceCp.cs
-	$(dotnetsdk) build $(csCpTests)TestPerformanceCpCs.csproj --framework $(dotnetFramework) --output $(objdir)
+	$(dotnetsdk) publish $(csCpTests)TestPerformanceCpCs.csproj --framework $(dotnetFramework) --runtime $(dotnetRuntime) --self-contained /p:PublishSingleFile=true --output $(csShared)bin/TestPerformanceCpCs
+	cp -r $(csShared)bin/TestPerformanceCpCs/* $(objdir)
 
 
 ohNetJavaAll : ohNetJni ohNetJava CpProxyJavaClasses DvDeviceJavaClasses ohNetJavaSrc

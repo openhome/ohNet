@@ -6,39 +6,6 @@
 
 using namespace OpenHome;
 
-// Time
-
-TUint Time::Now(Environment& aEnv)
-{
-    return Os::TimeInMs(aEnv.OsCtx());
-};
-
-TBool Time::IsBeforeOrAt(TUint aQuestionableTime, TUint aTime)
-{
-    TInt diff = aTime - aQuestionableTime;
-    return (diff >= 0);
-}
-
-TBool Time::IsAfter(TUint aQuestionableTime, TUint aTime)
-{
-    TInt diff = aTime - aQuestionableTime;
-    return (diff < 0);
-}
-
-TBool Time::IsInPastOrNow(Environment& aEnv, TUint aTime)
-{
-    return (IsBeforeOrAt(aTime, Now(aEnv)));
-}
-
-TBool Time::IsInFuture(Environment& aEnv, TUint aTime)
-{
-    return (IsAfter(aTime, Now(aEnv)));
-}
-
-TInt Time::TimeToWaitFor(Environment& aEnv, TUint aTime)
-{
-    return (aTime - Os::TimeInMs(aEnv.OsCtx()));
-}
 
 // Timer
 
@@ -308,7 +275,7 @@ TimerManager::CallbackList::CallbackList()
     : iHead(0)
     , iTail(0)
 {
-    (void)memset(iList, 0, sizeof(iList));
+    (void)memset((void*)iList, 0, sizeof(iList));
 }
 
 void TimerManager::CallbackList::Add(Timer& aTimer)

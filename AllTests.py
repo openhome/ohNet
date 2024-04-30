@@ -28,10 +28,6 @@ def buildArgs():
     buildArgs = ''
     if gDebugBuild == 1:
         buildArgs += ' debug=1'
-    if gWindows81 == 1:
-        buildArgs += ' windows_store_81=1'
-    if gWindows10 == 1:
-        buildArgs += ' windows_store_10=1'
     if gMac64 == 1:
         buildArgs += ' mac-64=1'
     if giOsArm64 == 1:
@@ -77,8 +73,6 @@ def runBuilds():
         build('copy_build_includes')
     if gCore == 1:
         build('ohNet TestFramework', gParallel)
-    elif gWindows81 == 1 or gWindows10 == 1:
-        build('ohNet.net.dll', gParallel)
     else:
         build('all', gParallel)
     if (gRunJavaTests == 1):
@@ -97,8 +91,7 @@ def runTests():
         print('\nTest: ' + test.name)
         cmdLine = test.args
         cmdLine.insert(0, test.Path())
-        if (not test.native and os.name != 'nt'):
-            cmdLine.insert(0, 'mono')
+        print("Running: %s" % cmdLine)    
         ret = subprocess.call(cmdLine)
         if ret != 0:
             print('\nTest ' + test.name + ' failed, aborting')
@@ -182,7 +175,7 @@ def runTestsHelgrind():
     if len(failed) > 0:
         print('\nERROR, the following tests failed:')
         for fail in failed:
-            print('\t' + fail)
+            print('\t', fail)
         sys.exit(-1)
 
 gStartTime = time.strftime('%H:%M:%S')
@@ -204,8 +197,6 @@ giOsArm64 = 0
 giOsx64 = 0
 gAndroid = 0
 gQnap = 0
-gWindows81 = 0
-gWindows10 = 0
 try:
     gPlatform = os.environ['PLATFORM']
 except KeyError:
@@ -213,11 +204,7 @@ except KeyError:
 gCore = 0
 gParallel = False
 for arg in sys.argv[1:]:
-    if arg == '--Windows81':
-        gWindows81 = 1
-    elif arg == '--Windows10':
-        gWindows10 = 1
-    elif arg == '-b' or arg == '--buildonly':
+    if arg == '-b' or arg == '--buildonly':
         gBuildOnly = 1
     elif arg == '--debug':
         gDebugBuild = 1
@@ -271,7 +258,7 @@ for arg in sys.argv[1:]:
     elif arg == '--qnap':
         gQnap = 1;
     else:
-        print('Unrecognised argument - ' + arg)
+        print('Unrecognised argument - ', arg)
         sys.exit(1)
     os.environ["ABORT_ON_FAILURE"] = "1"
     if gSilent != 0:
@@ -289,7 +276,7 @@ class TestCase(object):
             path += '.exe'
         elif not self.native:
             os.environ['LD_LIBRARY_PATH'] = objPath()
-            path += '.exe'
+            #NOTE: newer dotnet SDKs create self-contained executables without a prefix
         else:
             path += '.elf'
         return path
@@ -303,6 +290,7 @@ gAllTests = [ TestCase('TestBuffer', [], True)
              ,TestCase('TestQueue', [], True)
              ,TestCase('TestTextUtils', [], True)
              ,TestCase('TestNetwork', [], True)
+             ,TestCase('TestTime', [], True)
              #,TestCase('TestTimer', [])
              ,TestCase('TestTimerMock', [], True)
              #,TestCase('TestHttpReader', [], True)
@@ -357,7 +345,7 @@ class js_test:
         time.sleep(5)
         test_devfinder = subprocess.Popen([os.path.join(self.objpath, 'TestDeviceFinder.exe'), '-l', '-s', 'openhome.org:service:TestBasic:1'],stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         self.launch_url = test_devfinder.communicate()[1].rstrip()
-        print('found device at ' + self.launch_url)
+        print('found device at ', self.launch_url)
 
     def run_browser(self):
         subprocess.call(["%s" %(self.browser_location), "%s" %(self.launch_url)])
@@ -392,9 +380,10 @@ if gBuildOnly == 0:
         runTestsHelgrind()
     if gValgrind == 0 and gHelgrind == 0:
         runTests()
-    if gJsTests == 1:
-        JsTests()
+    # JS tests currently disabled as they are not Python3 compatible
+    #if gJsTests == 1:
+    #    JsTests()
     print('\nFinished.  All tests passed')
-print('Start time: ' + gStartTime)
-print('Builds complete: ' + gBuildsCompleteTime)
-print('End time: ' + time.strftime('%H:%M:%S'))
+print('Start time: ', gStartTime)
+print('Builds complete: ', gBuildsCompleteTime)
+print('End time: ', time.strftime('%H:%M:%S'))

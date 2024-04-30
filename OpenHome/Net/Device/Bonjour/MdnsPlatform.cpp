@@ -200,11 +200,7 @@ TUint MdnsPlatform::MdnsService::Register()
     SetDomainName(domain, "local");
     SetDomainName(host, "");
     SetPort(port, iPort);
-#ifndef DEFINE_WINDOWS_UNIVERSAL
     return mDNS_RegisterService(&iMdns, iService, &name, &type, &domain, 0, port, NULL, (const mDNSu8*)iInfo.PtrZ(), (mDNSu16)strlen(iInfo.PtrZ()), 0, 0, iInterfaceId, &MdnsPlatform::ServiceCallback, this, 0);
-#else // DEFINE_WINDOWS_UNIVERSAL
-    return 0;
-#endif // DEFINE_WINDOWS_UNIVERSAL
 }
 
 TUint MdnsPlatform::MdnsService::Deregister()
@@ -659,11 +655,11 @@ MdnsPlatform::~MdnsPlatform()
     iEnv.NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
     iEnv.NetworkAdapterList().RemoveCurrentChangeListener(iCurrentAdapterChangeListenerId);
     iEventScheduler->SetEnabled(false);
-#ifndef DEFINE_WINDOWS_UNIVERSAL
+
     for (TUint i=0; i<iSdRefs.size(); i++) {
         DNSServiceRefDeallocate(*iSdRefs[i]);
     }
-#endif // !DEFINE_WINDOWS_UNIVERSAL
+
     mDNS_Close(iMdns);
     Map::iterator it = iServices.begin();
     while (it != iServices.end()) {
@@ -709,7 +705,6 @@ void MdnsPlatform::CurrentAdapterChanged()
 void MdnsPlatform::UpdateInterfaceList()
 {
     iInterfacesLock.Wait();
-    NetworkAdapter* current = iEnv.NetworkAdapterList().CurrentAdapter(kNifCookie).Ptr();
     NetworkAdapterList& nifList = iEnv.NetworkAdapterList();
     std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
 
@@ -723,18 +718,8 @@ void MdnsPlatform::UpdateInterfaceList()
         }
     }
 
-    TBool addInterfaces = false;
-    if (current != NULL) {
-        if (iInterfaces.size() == 0) { // current adapter is on a newly added subnet
-            addInterfaces = true;
-        }
-        current->RemoveRef(kNifCookie);
-    }
-
-    if (current == NULL || addInterfaces) { // add new subnets
-        AddValidInterfaces(*subnetList);
-    }
-
+    // Add any new interfaces
+    AddValidInterfaces(*subnetList);
     iInterfacesLock.Signal();
 
     iListeners.Rebind(*subnetList);     // May throw NetworkError.
@@ -775,9 +760,8 @@ MdnsPlatform::Status MdnsPlatform::AddInterface(NetworkAdapter* aNif)
 {
     Status status;
     NetworkInterfaceInfo* nifInfo = (NetworkInterfaceInfo*)calloc(1, sizeof(*nifInfo));
-#ifndef DEFINE_WINDOWS_UNIVERSAL
     nifInfo->InterfaceID = iInterfaceIdAllocator.AllocateId(aNif);
-#endif // DEFINE_WINDOWS_UNIVERSAL    
+
     SetAddress(nifInfo->ip, Endpoint(0, aNif->Address()));
     SetAddress(nifInfo->mask, Endpoint(0, aNif->Mask()));
     size_t len = strlen(aNif->Name());
@@ -848,20 +832,16 @@ void MdnsPlatform::ReceiveMulticastPacket(const Brx& aMsg, const Endpoint aSrc, 
         TIpAddress senderAddr = aSrc.Address();
         for (TUint i=0; i<(TUint)iInterfaces.size(); i++) {
             if (iInterfaces[i]->ContainsAddress(senderAddr)) {
-#ifndef DEFINE_WINDOWS_UNIVERSAL
                 interfaceId = iInterfaces[i]->Info().InterfaceID;
-#endif // DEFINE_WINDOWS_UNIVERSAL
                 break;
             }
         }
     }
 
     if (interfaceId != (mDNSInterfaceID)0) {
-#ifndef DEFINE_WINDOWS_UNIVERSAL
         AutoMutex amx(iMulticastReceiveLock);
         DNSMessage* msg = reinterpret_cast<DNSMessage*>(ptr);
         mDNSCoreReceive(iMdns, msg, ptr + bytes, &src, srcport, &dst, dstport, interfaceId);
-#endif // DEFINE_WINDOWS_UNIVERSAL
     }
 }
 
@@ -1233,13 +1213,6 @@ void ResolveReply(
     }
 }
 
-#ifdef DEFINE_WINDOWS_UNIVERSAL
-TBool MdnsPlatform::FindDevices(const TChar* /*aServiceName*/)
-{
-    LOG_ERROR(kBonjour, "MdnsPlatform::FindDevices not supported for WINDOW_UNIVERSAL builds\n");
-    return false;
-}
-#else
 extern "C" 
 void BrowseReply(DNSServiceRef sdRef,
     DNSServiceFlags      flags,
@@ -1291,7 +1264,6 @@ TBool MdnsPlatform::FindDevices(const TChar* aServiceName)
                                                this /*context*/);
     return (err == kDNSServiceErr_NoError);
 }
-#endif // DEFINE_WINDOWS_UNIVERSAL
 
 void MdnsPlatform::DeviceDiscovered(const Brx& aType, const Brx& aFriendlyName, const Brx& aUglyName, const Brx&  aIpAddress, TUint aPort)
 {
@@ -1310,14 +1282,12 @@ void MdnsPlatform::StatusCallback(mDNS *const m, mStatus aStatus)
     if (aStatus == mStatus_GrowCache && reinterpret_cast<MdnsPlatform*>(m->p)->iHasCache) {
         // Allocate another chunk of cache storage
         (void)m;
-        #ifndef DEFINE_WINDOWS_UNIVERSAL
-            LOG(kBonjour, "WARNING: mDNS cache size insufficient, GROWING...\n");
-            CacheEntity *storage = (CacheEntity*)calloc(MdnsPlatform::kRRCacheSize, sizeof(CacheEntity));
-            if (storage) {
-                mDNS_GrowCache(m, storage, MdnsPlatform::kRRCacheSize);
-                reinterpret_cast<MdnsPlatform*>(m->p)->iDynamicCache.push_back(storage);
-            }
-        #endif
+        LOG(kBonjour, "WARNING: mDNS cache size insufficient, GROWING...\n");
+        CacheEntity *storage = (CacheEntity*)calloc(MdnsPlatform::kRRCacheSize, sizeof(CacheEntity));
+        if (storage) {
+            mDNS_GrowCache(m, storage, MdnsPlatform::kRRCacheSize);
+            reinterpret_cast<MdnsPlatform*>(m->p)->iDynamicCache.push_back(storage);
+        }
     }
     else if (aStatus != mStatus_NoError) {
         Log::Print("ERROR: mDNS status=%d\n", aStatus);

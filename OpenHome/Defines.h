@@ -27,15 +27,4 @@
 # endif
 #endif
 
-#ifdef DEFINE_WINDOWS_UNIVERSAL
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-#define NOMINMAX
-#include <windows.h>
-#include <memory.h>
-#include <malloc.h>
-#include <SDKDDKVer.h>
-#endif
-
 #endif /* HEADER_OPENHOME_DEFINES */

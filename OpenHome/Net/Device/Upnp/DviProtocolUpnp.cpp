@@ -1,3 +1,4 @@
+
 #include <OpenHome/Net/Private/DviProtocolUpnp.h>
 #include <OpenHome/Net/Private/DviDevice.h>
 #include <OpenHome/Types.h>
@@ -694,7 +695,7 @@ void DviProtocolUpnp::SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx
                     LogUnicastNotification("service");
                     Bws<kMaxUriBytes> uri;
                     GetUriDeviceXml(uri, iAdapters[index]->UriBase());
-                    iDvStack.SsdpNotifierManager().MsearchResponseServiceType(*this, aEndpoint, aMx, serviceType, uri, iDevice.ConfigId(), aAdapter);
+                    iDvStack.SsdpNotifierManager().MsearchResponseServiceType(*this, aEndpoint, aMx, serviceType, uri, iDevice.ConfigId(), aAdapter, aVersion);
                 }
                 break;
             }
@@ -716,9 +717,7 @@ DviProtocolUpnpAdapterSpecificData::DviProtocolUpnpAdapterSpecificData(DvStack& 
     , iMask(aAdapter.Mask())
     , iUriBase(aUriBase)
     , iServerPort(aServerPort)
-#ifndef DEFINE_WINDOWS_UNIVERSAL
     , iBonjourWebPage(0)
-#endif
     , iDevice(NULL)
 {
     iListener = &(iDvStack.Env().MulticastListenerClaim(aAdapter.Address()));
@@ -747,12 +746,11 @@ TBool DviProtocolUpnpAdapterSpecificData::RemoveRef()
 
 DviProtocolUpnpAdapterSpecificData::~DviProtocolUpnpAdapterSpecificData()
 {
-#ifndef DEFINE_WINDOWS_UNIVERSAL
     if (iBonjourWebPage != NULL) {
         iBonjourWebPage->SetDisabled();
         delete iBonjourWebPage;
     }
-#endif
+
     iListener->RemoveMsearchHandler(iId);
     iDvStack.Env().MulticastListenerRelease(iAdapter);
 }
@@ -811,18 +809,6 @@ void DviProtocolUpnpAdapterSpecificData::SetPendingDelete()
     iLock.Signal();
 }
 
-#ifdef DEFINE_WINDOWS_UNIVERSAL
-
-void DviProtocolUpnpAdapterSpecificData::BonjourRegister(const TChar* /*aName*/, const Brx& /*aUdn*/, const Brx& /*aProtocol*/, const Brx& /*aResourceDir*/)
-{
-}
-
-void DviProtocolUpnpAdapterSpecificData::BonjourDeregister()
-{
-}
-
-#else
-
 void DviProtocolUpnpAdapterSpecificData::BonjourRegister(const TChar* aName, const Brx& aUdn, const Brx& aProtocol, const Brx& aResourceDir)
 {
     if (aName != NULL) {
@@ -854,8 +840,6 @@ void DviProtocolUpnpAdapterSpecificData::BonjourDeregister()
         iBonjourWebPage->SetDisabled();
     }
 }
-
-#endif
 
 void DviProtocolUpnpAdapterSpecificData::SendByeByeThenAlive(DviProtocolUpnp& aDevice)
 {

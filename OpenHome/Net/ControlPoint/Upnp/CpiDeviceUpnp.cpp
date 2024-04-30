@@ -21,6 +21,7 @@
 #include <OpenHome/OsWrapper.h>
 #include <OpenHome/Net/Private/Globals.h>
 #include <OpenHome/Private/TIpAddressUtils.h>
+#include <OpenHome/Net/Private/Error.h>
 
 #include <string.h>
 
@@ -585,14 +586,23 @@ void CpiDeviceUpnp::XmlCheckRefreshCompleted(IAsync& aAsync)
     iXmlCheckRefresh = NULL;
     iLock.Signal();
     if (!iRemoved) {
+        TBool interrupted = false;
         TBool contactable = false;
-        try {
-            contactable = XmlFetch::WasContactable(aAsync);
+
+        if (XmlFetch::DidError(aAsync)) {
+            Error& err = XmlFetch::GetError(aAsync);
+            if (err.Level() == Error::eAsync) {
+                interrupted = true;
+            }
+            else {
+                Log::Print("!!! XmlFetchError: %s\n", err.Description());
+            }
         }
-        catch (XmlFetchError&) {
-            Log::Print("!!! XmlFetchError\n");
+        else {
+            contactable = XmlFetch::WasContactable(aAsync); // should NOT throw, because we've handled the error case above!!
         }
-        if (!contactable) {
+
+        if (!interrupted && !contactable) {
             Log::Print("XmlCheckRefreshCompleted - FAIL - %.*s\n", PBUF(Udn()));
             iDeviceList.Remove(Udn());
         }

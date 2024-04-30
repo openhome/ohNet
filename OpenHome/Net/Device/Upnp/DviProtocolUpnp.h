@@ -165,9 +165,7 @@ private:
     Bws<Uri::kMaxUriBytes> iUriBase;
     TUint iServerPort;
     Brh iDeviceXml;
-#ifndef DEFINE_WINDOWS_UNIVERSAL
     BonjourWebPage* iBonjourWebPage;
-#endif
     DviProtocolUpnp* iDevice;
 };
 

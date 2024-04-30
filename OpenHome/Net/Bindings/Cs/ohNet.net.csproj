@@ -5,6 +5,7 @@
     <RootNamespace>OpenHome.Net</RootNamespace>
     <TargetFrameworks>net6.0</TargetFrameworks>
     <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('OSX'))">$(TargetFrameworks);net6.0-ios</TargetFrameworks>
+    <Platform>AnyCPU</Platform>
   </PropertyGroup>
 
   <ItemGroup>

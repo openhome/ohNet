@@ -3,6 +3,7 @@
 
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Private/Thread.h>
+#include <OpenHome/Private/Time.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Network.h>
 #include <OpenHome/Private/Ascii.h>
@@ -482,6 +483,42 @@ private:
     TUint iStart;
     TUint iEnd;
 };
+
+template<TUint S>
+class HttpHeaderString : public HttpHeader
+{
+public:
+    virtual const Brx& Key() const = 0;
+    const Brx& Value() const { return iValue; }
+private:
+    TBool Recognise(const Brx& aHeader) { return Ascii::CaseInsensitiveEquals(aHeader, Key()); }
+    void Process(const Brx& aValue)
+    {
+        try {
+            iValue.ReplaceThrow(aValue);
+            SetReceived();
+        }
+        catch (BufferOverflow&) {
+        }
+    }
+protected:
+    Bws<S> iValue;
+};
+
+class HttpHeaderDate : public HttpHeaderString<512>
+{
+public: // HttpHeaderString
+    const Brx& Key() const;
+
+public:
+    PointInTime ValueAsPointInTime() const;
+
+public:
+    static void WriteDateTimeValue(IWriter &aWriter, TUint aUnixTimestamp);
+    static void WriteDateTimeValue(IWriter &aWriter, PointInTime& aPointInTime);
+    static void WriteDateTimeValue(IWriter &aWriter, TByte aDay, TByte aMonth, TUint aYear, TByte aHour, TByte aMinute, TByte aSecond);
+};
+
 
 class ReaderHttpChunked : public IReader
 {

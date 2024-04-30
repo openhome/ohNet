@@ -3,6 +3,7 @@
 
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Types.h>
+#include <OpenHome/Private/Time.h>
 #include <OpenHome/Private/Queue.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Functor.h>
@@ -10,17 +11,6 @@
 namespace OpenHome {
 
 class Environment;
-
-class Time
-{
-public:
-    static TUint Now(Environment& aEnv);
-    static TBool IsBeforeOrAt(TUint aQuestionableTime, TUint aTime);
-    static TBool IsAfter(TUint aQuestionableTime, TUint aTime);
-    static TBool IsInPastOrNow(Environment& aEnv, TUint aTime);
-    static TBool IsInFuture(Environment& aEnv, TUint aTime);
-    static TInt TimeToWaitFor(Environment& aEnv, TUint aTime);
-};
 
 class QueueSortedEntryTimer : public QueueSortedEntry
 {

@@ -51,6 +51,7 @@ OpenHome/Net/Bindings/Android/libs/
 
 # dotnet SDK build outputs
 /OpenHome/Net/Bindings/Cs/**/obj/**
+/OpenHome/Net/Bindings/Cs/**/bin/**
 
 # Mac Finder nonsense
 .DS_Store
