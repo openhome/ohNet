@@ -1,5 +1,5 @@
 diff --git a/thirdparty/mDNSResponder-1310.80.1/mDNSCore/mDNSEmbeddedAPI.h b/thirdparty/mDNSResponder-1310.80.1/mDNSCore/mDNSEmbeddedAPI.h
-index 27deefdd..0cfde388 100755
+index 27deefdd..0bcb9d66 100755
 --- a/Build/mDNS/mDNSEmbeddedAPI.h
 +++ b/Build/mDNS/mDNSEmbeddedAPI.h
 @@ -156,20 +156,6 @@ extern "C" {
@@ -33,6 +33,15 @@ index 27deefdd..0cfde388 100755
   #pragma pack(push,2)
  #endif
  typedef       union { mDNSu8 b[ 2]; mDNSu16 NotAnInteger; } mDNSOpaque16;
+@@ -907,7 +896,7 @@ typedef struct
+ 
+ // StandardAuthRDSize is 264 (256+8), which is large enough to hold a maximum-sized SRV record (6 + 256 bytes)
+ // MaximumRDSize is 8K the absolute maximum we support (at least for now)
+-#define StandardAuthRDSize 264
++#define StandardAuthRDSize 520
+ #ifndef MaximumRDSize
+ #define MaximumRDSize 8192
+ #endif
 @@ -1973,7 +1962,7 @@ typedef void ZoneDataCallback (mDNS *const m, mStatus err, const ZoneData *resul
  struct ZoneData_struct
  {
@@ -78,3 +87,12 @@ index 27deefdd..0cfde388 100755
  extern void       mDNSPlatformDynDNSHostNameStatusChanged(const domainname *const dname, const mStatus status);
  
  extern void       mDNSPlatformSetAllowSleep(mDNSBool allowSleep, const char *reason);
+@@ -3521,7 +3510,7 @@ struct CompileTimeAssertionChecks_mDNS
+     // Check our structures are reasonable sizes. Including overly-large buffers, or embedding
+     // other overly-large structures instead of having a pointer to them, can inadvertently
+     // cause structure sizes (and therefore memory usage) to balloon unreasonably.
+-    char sizecheck_RDataBody           [(sizeof(RDataBody)            ==   264) ? 1 : -1];
++    char sizecheck_RDataBody           [(sizeof(RDataBody)            ==   520) ? 1 : -1];
+     char sizecheck_ResourceRecord      [(sizeof(ResourceRecord)       <=    72) ? 1 : -1];
+     char sizecheck_AuthRecord          [(sizeof(AuthRecord)           <=  1176) ? 1 : -1];
+     char sizecheck_CacheRecord         [(sizeof(CacheRecord)          <=   232) ? 1 : -1];
