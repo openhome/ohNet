@@ -627,7 +627,7 @@ MdnsPlatform::MdnsPlatform(Environment& aEnv, const TChar* aHost, TBool aHasCach
 
     Status status = mStatus_NoError;
     if (iHasCache) {
-        iMdnsCache = (CacheEntity*)calloc(kRRCacheSize, sizeof *iMdnsCache);
+        iMdnsCache = (CacheEntity*)calloc(kRRCacheBytes, sizeof *iMdnsCache);
         status = mDNS_Init(iMdns, (mDNS_PlatformSupport*)this, iMdnsCache, kRRCacheSize, mDNS_Init_AdvertiseLocalAddresses,
                  StatusCallback, mDNS_Init_NoInitCallbackContext);
     }
