@@ -127,7 +127,8 @@ objects_core = \
 	$(objdir)SignalHandlers.$(objext) \
 	$(objdir)Shell.$(objext) \
 	$(objdir)InfoProvider.$(objext) \
-	$(objdir)ShellCommandDebug.$(objext)
+	$(objdir)ShellCommandDebug.$(objext) \
+	$(objdir)ShellCommandLogMode.$(objext)
 
 
 # For simplicity, we make a list of all headers in the project and have all (core) source files depend on them
@@ -471,6 +472,8 @@ $(objdir)InfoProvider.$(objext) : OpenHome/Shell/InfoProvider.cpp $(headers)
 	$(compiler)InfoProvider.$(objext) -c $(cppflags) $(includes) OpenHome/Shell/InfoProvider.cpp
 $(objdir)ShellCommandDebug.$(objext) : OpenHome/Shell/ShellCommandDebug.cpp $(headers)
 	$(compiler)ShellCommandDebug.$(objext) -c $(cppflags) $(includes) OpenHome/Shell/ShellCommandDebug.cpp
+$(objdir)ShellCommandLogMode.$(objext) : OpenHome/Shell/ShellCommandLogMode.cpp $(headers)
+	$(compiler)ShellCommandLogMode.$(objext) -c $(cppflags) $(includes) OpenHome/Shell/ShellCommandLogMode.cpp
 
 ohNetDllImpl: ohNetCore
 	$(link_dll) $(linkopts_ohNet) $(linkoutput)$(objdir)$(dllprefix)ohNet.$(dllext) $(objects_core)
@@ -860,7 +863,14 @@ $(objdir)TestShell.$(exeext) :  ohNetCore $(objdir)ShellCommandRun.$(objext) $(o
 	$(link) $(linkoutput)$(objdir)TestShell.$(exeext) $(objdir)TestShell.$(objext) $(objdir)ohNetTestsCore.$(libext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
 $(objdir)TestShell.$(objext) : OpenHome/Shell/TestShell.cpp $(headers)
 	$(compiler)TestShell.$(objext) -c $(cppflags) $(includes) OpenHome/Shell/TestShell.cpp
-
+	
+TestShellCommandLogMode: $(objdir)TestShellCommandLogMode.$(exeext)
+$(objdir)TestShellCommandLogMode.$(exeext) :  ohNetCore $(objdir)TestShellCommandLogMode.$(objext) $(objdir)TestShellCommandLogModeMain.$(objext) $(libprefix)TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)TestShellCommandLogMode.$(exeext) $(objdir)TestShellCommandLogModeMain.$(objext) $(objdir)TestShellCommandLogMode.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
+$(objdir)TestShellCommandLogMode.$(objext) : OpenHome/Tests/TestShellCommandLogMode.cpp $(headers)
+	$(compiler)TestShellCommandLogMode.$(objext) -c $(cppflags) $(includes) OpenHome/Tests/TestShellCommandLogMode.cpp
+$(objdir)TestShellCommandLogModeMain.$(objext) : OpenHome/Tests/TestShellCommandLogModeMain.cpp $(headers)
+	$(compiler)TestShellCommandLogModeMain.$(objext) -c $(cppflags) $(includes) OpenHome/Tests/TestShellCommandLogModeMain.cpp
 
 tests_core = \
 	$(objdir)TestBuffer.$(objext) \
@@ -890,12 +900,13 @@ tests_core = \
 	$(objdir)TestDvSubscription.$(objext) \
 	$(objdir)TestDvLpec.$(objext) \
 	$(objdir)TestException.$(objext) \
-	$(objdir)TestCpDeviceListMdns.$(objext)
+	$(objdir)TestCpDeviceListMdns.$(objext) \
+	$(objdir)TestShellCommandLogMode.$(objext)
 
 TestsCore: $(tests_core)
 	$(ar)ohNetTestsCore.$(libext) $(tests_core)
 
-TestsNative: TestBuffer TestPrinter TestThread TestFunctorGeneric TestFifo TestStream TestFile TestQueue TestTextUtils TestMulticast TestNetwork TestEcho TestTime TestTimer TestTimerMock TestSsdpMListen TestSsdpUListen TestXmlParser TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLpec TestDvTestBasic TestAdapterChange TestDeviceFinder TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestShell
+TestsNative: TestBuffer TestPrinter TestThread TestFunctorGeneric TestFifo TestStream TestFile TestQueue TestTextUtils TestMulticast TestNetwork TestEcho TestTime TestTimer TestTimerMock TestSsdpMListen TestSsdpUListen TestXmlParser TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLpec TestDvTestBasic TestAdapterChange TestDeviceFinder TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestShell TestShellCommandLogMode
 
 TestsCs: TestProxyCs TestDvDeviceCs TestCpDeviceDvCs TestPerformanceDv TestPerformanceCp TestPerformanceDvCs TestPerformanceCpCs
 

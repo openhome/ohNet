@@ -25,6 +25,7 @@ class IStackObject;
 class Shell;
 class IInfoAggregator;
 class ShellCommandDebug;
+class ShellCommandLogMode;
 class IWriter;
 class DnsChangeNotifier;
 class IDnsChangeNotifier;
@@ -143,6 +144,7 @@ private:
     OpenHome::Shell* iShell;
     IInfoAggregator* iInfoAggregator;
     OpenHome::ShellCommandDebug* iShellCommandDebug;
+    OpenHome::ShellCommandLogMode* iShellCommandLogMode;
     std::vector<MListener*> iMulticastListeners;
     std::vector<ISuspendObserver*> iSuspendObservers;
     std::vector<IResumeObserver*> iResumeObservers;

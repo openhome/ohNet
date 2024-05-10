@@ -7,6 +7,7 @@
 #include <OpenHome/Private/Network.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Thread.h>
+#include <OpenHome/Private/Printer.h>
 
 #include <vector>
 #include <map>
@@ -22,7 +23,7 @@ public:
     virtual void HandleShellCommand(Brn aCommand, const std::vector<Brn>& aArgs, IWriter& aResponse) = 0;
     virtual void DisplayHelp(IWriter& aResponse) = 0;
 };
-    
+
 class WriterShellResponse : public IWriter
 {
     static const TUint kWriteBufferSizeBytes = 1024;
@@ -38,6 +39,38 @@ private:
     Sws<kWriteBufferSizeBytes>* iWriteBuffer;
 };
 
+enum EShellLogMode
+{
+    eShell,
+    eAll
+};
+
+class IShellLogMode
+{
+public:
+    virtual ~IShellLogMode() {}
+    virtual void SetLogMode(EShellLogMode aMode) = 0;
+    virtual EShellLogMode GetLogMode() const = 0;
+};
+
+class ShellLogDistributor : public IShellLogMode
+{
+public:
+    ShellLogDistributor();
+
+    void Enable(FunctorMsg& aLogShell);
+    void Disable();
+
+    void SetLogMode(EShellLogMode aMode);
+    EShellLogMode GetLogMode() const;
+private:
+    void Log(const char* aMsg);
+
+    FunctorMsg iLogShell;
+    FunctorMsg iLogDefault;
+    EShellLogMode iMode;
+};
+
 class ShellSession : public SocketTcpSession
 {
     static const TUint kMaxCommandBytes = 256;
@@ -45,6 +78,7 @@ class ShellSession : public SocketTcpSession
 public:
     ShellSession(IShellCommandHandler& aCommandHandler);
     virtual ~ShellSession();
+    IShellLogMode& GetShellLogMode();
 private:
     void Log(const char* aMsg);
 private: // from SocketTcpSession
@@ -55,6 +89,7 @@ private:
     ReaderUntil* iReaderUntil;
     WriterShellResponse* iWriterResponse;
     Semaphore iShutdownSem;
+    ShellLogDistributor iLogDistributor;
 };
 
 class ShellCommandHelp;
@@ -77,6 +112,7 @@ public:
     Shell(Environment& aStack, TUint aPort, TUint aSessionPriority);
     ~Shell();
     TUint Port() const;
+    IShellLogMode& GetShellLogMode();
 public: // from IShell
     void AddCommandHandler(const TChar* aCommand, IShellCommandHandler& aHandler);
     void RemoveCommandHandler(const TChar* aCommand);
@@ -87,6 +123,7 @@ private:
     void Initialise(Environment& aEnv, TUint aPort, TUint aSessionPriority);
 private:
     Mutex iLock;
+    ShellSession* iSession; // not taking ownership
     SocketTcpServer* iServer;
     typedef std::map<Brn, IShellCommandHandler*, BufferCmp> CommandMap;
     CommandMap iCommands;

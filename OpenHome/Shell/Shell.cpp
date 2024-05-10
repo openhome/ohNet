@@ -2,9 +2,43 @@
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Parser.h>
-#include <OpenHome/Private/Printer.h>
 
 using namespace OpenHome;
+
+// ShellLogDistributor
+ShellLogDistributor::ShellLogDistributor() : iMode(EShellLogMode::eShell) {}
+
+void ShellLogDistributor::Enable(FunctorMsg& aLogShell) {
+    // Check shell log is not empty functor, store and then swap log functor
+    ASSERT(aLogShell);
+    iLogShell = aLogShell;
+    FunctorMsg logMsg = MakeFunctorMsg(*this, &ShellLogDistributor::Log);
+    iLogDefault = Log::SwapOutput(logMsg);
+}
+
+void ShellLogDistributor::Disable() {
+    // Clear logging functors and return default log
+    iLogShell = FunctorMsg();
+    (void)Log::SwapOutput(iLogDefault);
+    iLogDefault = FunctorMsg();
+}
+
+void ShellLogDistributor::SetLogMode(EShellLogMode aMode) {
+    iMode = aMode;
+}
+
+EShellLogMode ShellLogDistributor::GetLogMode() const {
+    return iMode;
+}
+
+void ShellLogDistributor::Log(const char* aMsg) {
+    // Always log to shell
+    iLogShell(aMsg);
+
+    // Log to other methods if mode is set to all
+    if (iMode == EShellLogMode::eAll && iLogDefault)
+        iLogDefault(aMsg);
+}
 
 // WriterShellResponse
 
@@ -83,6 +117,11 @@ ShellSession::~ShellSession()
     delete iReadBuffer;
 }
 
+IShellLogMode& ShellSession::GetShellLogMode()
+{
+    return iLogDistributor;
+}
+
 void ShellSession::Log(const char* aMsg)
 {
     Brn msg(aMsg);
@@ -92,8 +131,8 @@ void ShellSession::Log(const char* aMsg)
 
 void ShellSession::Run()
 {
-    FunctorMsg logger = MakeFunctorMsg(*this, &OpenHome::ShellSession::Log);
-    FunctorMsg oldLogger = Log::SwapOutput(logger);
+    FunctorMsg logMsg = MakeFunctorMsg(*this, &OpenHome::ShellSession::Log);
+    iLogDistributor.Enable(logMsg);
     iShutdownSem.Wait();
     for (;;) {
         try {
@@ -125,7 +164,7 @@ void ShellSession::Run()
             break;
         }
     }
-    (void)Log::SwapOutput(oldLogger);
+    iLogDistributor.Disable();
     iShutdownSem.Signal();
 }
     
@@ -138,7 +177,8 @@ void Shell::Initialise(Environment& aEnv, TUint aPort, TUint aSessionPriority)
     // there's no obvious benefit to only listening on one interface per subnet
     // ...and we can save a bit of code by just binding to all interfaces rather than tracking subnet changes...
     iServer = new SocketTcpServer(aEnv, "ShellServer", aPort, kIpAddressV4AllAdapters, aSessionPriority);
-    iServer->Add("ShellSession", new ShellSession(*this));
+    iSession = new ShellSession(*this);
+    iServer->Add("ShellSession", iSession);
 }
 
 Shell::Shell(Environment& aEnv, TUint aPort)
@@ -162,6 +202,11 @@ Shell::~Shell()
 TUint Shell::Port() const
 {
     return iServer->Port();
+}
+
+IShellLogMode& Shell::GetShellLogMode()
+{
+    return iSession->GetShellLogMode();
 }
 
 void Shell::AddCommandHandler(const TChar* aCommand, IShellCommandHandler& aHandler)

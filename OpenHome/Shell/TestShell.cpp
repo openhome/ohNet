@@ -5,6 +5,7 @@
 #include <OpenHome/Private/ShellCommandDebug.h>
 #include <OpenHome/Private/ShellCommandQuit.h>
 #include <OpenHome/Private/ShellCommandWatchDog.h>
+#include <OpenHome/Private/ShellCommandLogMode.h>
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Net/Private/CpiStack.h>
 #include <OpenHome/Net/Private/DviStack.h>
@@ -79,6 +80,9 @@ static void RunTestDvLpec(CpStack& aCpStack, DvStack& aDvStack, const std::vecto
 extern void TestXmlParser();
 static void RunTestXmlParser(CpStack& /*aCpStack*/, DvStack& /*aDvStack*/, const std::vector<Brn>& /*aArgs*/) { TestXmlParser(); }
 
+extern void TestShellCommandLogMode(OpenHome::Environment& aEnv);
+static void RunTestShellCommandLogMode(CpStack& aCpStack, DvStack& /*aDvStack*/, const std::vector<Brn>& /*aArgs*/) { TestShellCommandLogMode(aCpStack.Env()); }
+
 void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
 {
     aInitParams->SetDvNumLpecThreads(4);    // from TestDvLpecMain
@@ -125,6 +129,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     shellTests.push_back(ShellTest("TestException", RunTestException));
     shellTests.push_back(ShellTest("TestFunctorGeneric", RunTestFunctorGeneric));
     shellTests.push_back(ShellTest("TestXmlParser", RunTestXmlParser));
+    shellTests.push_back(ShellTest("TestShellCommandLogMode", RunTestShellCommandLogMode));
 
     ShellCommandRun* cmdRun = new ShellCommandRun(*cpStack, *dvStack, *shell, shellTests);
     ShellCommandQuit* cmdQuit = new ShellCommandQuit(*shell, *blocker);

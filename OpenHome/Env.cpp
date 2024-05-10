@@ -13,6 +13,7 @@
 #include <OpenHome/Private/Shell.h>
 #include <OpenHome/Private/InfoProvider.h>
 #include <OpenHome/Private/ShellCommandDebug.h>
+#include <OpenHome/Private/ShellCommandLogMode.h>
 #include <OpenHome/Net/Private/MdnsProvider.h>
 #include <OpenHome/Private/TIpAddressUtils.h>
 
@@ -70,6 +71,7 @@ Environment::Environment(FunctorMsg& aLogOutput)
     , iShell(NULL)
     , iInfoAggregator(NULL)
     , iShellCommandDebug(NULL)
+    , iShellCommandLogMode(NULL)
     , iSequenceNumber(0)
     , iCpStack(NULL)
     , iDvStack(NULL)
@@ -103,6 +105,7 @@ Environment::Environment(FunctorMsg& aLogOutput,
     , iShell(NULL)
     , iInfoAggregator(NULL)
     , iShellCommandDebug(NULL)
+    , iShellCommandLogMode(NULL)
     , iSequenceNumber(0)
     , iCpStack(NULL)
     , iDvStack(NULL)
@@ -121,6 +124,7 @@ Environment::Environment(InitialisationParams* aInitParams)
     , iShell(NULL)
     , iInfoAggregator(NULL)
     , iShellCommandDebug(NULL)
+    , iShellCommandLogMode(NULL)
     , iSequenceNumber(0)
     , iCpStack(NULL)
     , iDvStack(NULL)
@@ -173,6 +177,7 @@ Environment::~Environment()
     }
     delete iCpStack;
     delete iDvStack;
+    delete iShellCommandLogMode;
     delete iShellCommandDebug;
     delete iInfoAggregator;
     delete iShell;
@@ -443,6 +448,7 @@ void Environment::CreateShell()
     iShell = new OpenHome::Shell(*this, shellPort, shellSessionPriority);
     iInfoAggregator = new OpenHome::InfoAggregator(*iShell);
     iShellCommandDebug = new OpenHome::ShellCommandDebug(*iShell);
+    iShellCommandLogMode = new OpenHome::ShellCommandLogMode(*iShell, iShell->GetShellLogMode());
 }
 
 void Environment::SetCpStack(IStack* aStack)
