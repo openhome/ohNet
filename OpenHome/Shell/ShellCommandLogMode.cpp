@@ -33,17 +33,23 @@ void ShellCommandLogMode::HandleShellCommand(Brn aCommand, const std::vector<Brn
         else if (aArgs[0] == Brn("all")) {
             iMode.SetLogMode(EShellLogMode::eAll);
         }
+        else if (aArgs[0] == Brn("status")) {
+            if (iMode.GetLogMode() == EShellLogMode::eAll)
+                aResponse.Write(Brn("Current log mode: all"));
+            else
+                aResponse.Write(Brn("Current logmode: shell"));
+        }
         else {
-           aResponse.Write(Brn("Unknown argument for \'logmode\' command\n"));
+            aResponse.Write(Brn("Unknown argument for \'logmode\' command\n"));
         }
     }
 }
 
 void ShellCommandLogMode::DisplayHelp(IWriter& aResponse)
 {
-    aResponse.Write(Brn("logmode [shell|all]\n"));
-    aResponse.Write(Brn("  Output options for debugging logs. \'all\' mode will print logs to RS232 and flash\n"));
+    aResponse.Write(Brn("logmode [shell|all|status]\n"));
+    aResponse.Write(Brn("  Output options for debugging logs. Defaults to shell, persists on disconnect\n"));
     aResponse.Write(Brn("  \'shell\' mode will print logs to shell only\n"));
-    aResponse.Write(Brn("  \'all\' mode will additionally print logs to RS232 and flash\n"));
-    aResponse.Write(Brn("  Note that this will be set to shell by default and will reset on disconnect\n"));
+    aResponse.Write(Brn("  \'all\' mode will print logs to shell, RS232 and flash\n"));
+    aResponse.Write(Brn("  \'status\' will display the active log mode\n"));
 }
