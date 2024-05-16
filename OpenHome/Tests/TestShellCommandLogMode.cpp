@@ -12,21 +12,21 @@ class MockShellLogMode : public IShellLogMode
 {
 public:
     MockShellLogMode()
-        : iMode(ShellLogMode::eShell)
+        : iMode(EShellLogMode::eShell)
     { }
 
-    void SetLogMode(ShellLogMode aMode)
+    void SetLogMode(EShellLogMode aMode)
     {
         iMode = aMode;
     }
 
-    ShellLogMode GetLogMode() const
+    EShellLogMode GetLogMode() const
     {
         return iMode;
     }
 
 private:
-    ShellLogMode iMode;
+    EShellLogMode iMode;
 };
 
 

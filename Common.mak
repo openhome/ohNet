@@ -872,6 +872,14 @@ $(objdir)TestShellCommandLogMode.$(objext) : OpenHome/Tests/TestShellCommandLogM
 $(objdir)TestShellCommandLogModeMain.$(objext) : OpenHome/Tests/TestShellCommandLogModeMain.cpp $(headers)
 	$(compiler)TestShellCommandLogModeMain.$(objext) -c $(cppflags) $(includes) OpenHome/Tests/TestShellCommandLogModeMain.cpp
 
+TestShellLogDistributor: $(objdir)TestShellLogDistributor.$(exeext)
+$(objdir)TestShellLogDistributor.$(exeext) :  ohNetCore $(objdir)TestShellLogDistributor.$(objext) $(objdir)TestShellLogDistributorMain.$(objext) $(libprefix)TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)TestShellLogDistributor.$(exeext) $(objdir)TestShellLogDistributorMain.$(objext) $(objdir)TestShellLogDistributor.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
+$(objdir)TestShellLogDistributor.$(objext) : OpenHome/Tests/TestShellLogDistributor.cpp $(headers)
+	$(compiler)TestShellLogDistributor.$(objext) -c $(cppflags) $(includes) OpenHome/Tests/TestShellLogDistributor.cpp
+$(objdir)TestShellLogDistributorMain.$(objext) : OpenHome/Tests/TestShellLogDistributorMain.cpp $(headers)
+	$(compiler)TestShellLogDistributorMain.$(objext) -c $(cppflags) $(includes) OpenHome/Tests/TestShellLogDistributorMain.cpp
+
 tests_core = \
 	$(objdir)TestBuffer.$(objext) \
 	$(objdir)TestPrinter.$(objext) \
@@ -901,12 +909,13 @@ tests_core = \
 	$(objdir)TestDvLpec.$(objext) \
 	$(objdir)TestException.$(objext) \
 	$(objdir)TestCpDeviceListMdns.$(objext) \
-	$(objdir)TestShellCommandLogMode.$(objext)
+	$(objdir)TestShellCommandLogMode.$(objext) \
+	$(objdir)TestShellLogDistributor.$(objext)
 
 TestsCore: $(tests_core)
 	$(ar)ohNetTestsCore.$(libext) $(tests_core)
 
-TestsNative: TestBuffer TestPrinter TestThread TestFunctorGeneric TestFifo TestStream TestFile TestQueue TestTextUtils TestMulticast TestNetwork TestEcho TestTime TestTimer TestTimerMock TestSsdpMListen TestSsdpUListen TestXmlParser TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLpec TestDvTestBasic TestAdapterChange TestDeviceFinder TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestShell TestShellCommandLogMode
+TestsNative: TestBuffer TestPrinter TestThread TestFunctorGeneric TestFifo TestStream TestFile TestQueue TestTextUtils TestMulticast TestNetwork TestEcho TestTime TestTimer TestTimerMock TestSsdpMListen TestSsdpUListen TestXmlParser TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLpec TestDvTestBasic TestAdapterChange TestDeviceFinder TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestShell TestShellCommandLogMode TestShellLogDistributor
 
 TestsCs: TestProxyCs TestDvDeviceCs TestCpDeviceDvCs TestPerformanceDv TestPerformanceCp TestPerformanceDvCs TestPerformanceCpCs
 
