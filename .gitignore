@@ -56,3 +56,9 @@ OpenHome/Net/Bindings/Android/libs/
 # Mac Finder nonsense
 .DS_Store
 **/.DS_Store
+
+# Visual Studio nonsense
+.vs/*
+
+# CLion CMake build outputs
+cmake-*

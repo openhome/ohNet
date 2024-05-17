@@ -153,7 +153,8 @@ class MdnsPlatform : public IMdnsMulticastPacketReceiver
     static const TChar* kNifCookie;
     static const TUint kInterfaceIdPoolSize = 10;
 public:
-    static const TUint kRRCacheSize = 500;
+    static const TUint kRRCacheSize = 32;
+    static const TUint kRRCacheBytes = kRRCacheSize * sizeof(CacheRecord);
 public: 
     MdnsPlatform(Environment& aStack, const TChar* aHost, TBool aHasCache);
     ~MdnsPlatform();

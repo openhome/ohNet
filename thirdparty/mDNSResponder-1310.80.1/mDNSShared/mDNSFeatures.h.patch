@@ -1,0 +1,27 @@
+diff --git a/thirdparty/mDNSResponder-1310.80.1/mDNSShared/mDNSFeatures.h b/thirdparty/mDNSResponder-1310.80.1/mDNSShared/mDNSFeatures.h
+index 3f2f79e9..a6c4ba19 100644
+--- a/Build/mDNS/mDNSFeatures.h
++++ b/Build/mDNS/mDNSFeatures.h
+@@ -38,10 +38,18 @@
+     #endif
+ #endif
+ 
+-#define HAS_FEATURE_CAT(A, B)       A ## B
+-#define HAS_FEATURE_CHECK_0         1
+-#define HAS_FEATURE_CHECK_1         1
+-#define HAS_FEATURE(X)              ((X) / HAS_FEATURE_CAT(HAS_FEATURE_CHECK_, X))
++#ifndef HAS_FEATURE_CAT
++ #define HAS_FEATURE_CAT(A, B)       A ## B
++#endif
++#ifndef HAS_FEATURE_CHECK_0
++ #define HAS_FEATURE_CHECK_0         1
++#endif
++#ifndef HAS_FEATURE_CHECK_1
++ #define HAS_FEATURE_CHECK_1         1
++#endif
++#ifndef HAS_FEATURE
++ #define HAS_FEATURE(X)              ((X) / HAS_FEATURE_CAT(HAS_FEATURE_CHECK_, X))
++#endif
+ 
+ #define MDNSRESPONDER_SUPPORTS(PLATFORM, FEATURE) \
+     (defined(MDNSRESPONDER_PLATFORM_ ## PLATFORM) && MDNSRESPONDER_PLATFORM_ ## PLATFORM && \

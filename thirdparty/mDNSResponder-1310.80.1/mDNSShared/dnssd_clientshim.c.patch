@@ -1,5 +1,5 @@
 diff --git a/thirdparty/mDNSResponder-1310.80.1/mDNSShared/dnssd_clientshim.c b/thirdparty/mDNSResponder-1310.80.1/mDNSShared/dnssd_clientshim.c
-index 3c0371e4..43b6860b 100644
+index 3c0371e4..15312fad 100644
 --- a/Build/mDNS/dnssd_clientshim.c
 +++ b/Build/mDNS/dnssd_clientshim.c
 @@ -24,14 +24,18 @@
@@ -52,13 +52,11 @@ index 3c0371e4..43b6860b 100644
  } mDNS_DirectOP_Resolve;
  
  typedef struct
-@@ -98,19 +115,21 @@ typedef struct
+@@ -98,19 +115,19 @@ typedef struct
      DNSQuestion                aaaa;
  } mDNS_DirectOP_GetAddrInfo;
  
 -dnssd_sock_t DNSServiceRefSockFD(DNSServiceRef sdRef)
-+#ifndef DEFINE_WINDOWS_UNIVERSAL // cannot build as c++ on winrt arm so def it out...
-+
 +dnssd_sock_t DNSSD_API DNSServiceRefSockFD(DNSServiceRef sdRef)
  {
      (void)sdRef;    // Unused
@@ -77,7 +75,7 @@ index 3c0371e4..43b6860b 100644
  {
      mDNS_DirectOP *op = (mDNS_DirectOP *)sdRef;
      //LogMsg("DNSServiceRefDeallocate");
-@@ -138,7 +157,7 @@ static mDNSInterfaceID DNSServiceInterfaceIndexToID(mDNSu32 interfaceIndex, DNSS
+@@ -138,7 +155,7 @@ static mDNSInterfaceID DNSServiceInterfaceIndexToID(mDNSu32 interfaceIndex, DNSS
  // is run against this Extension, it will get a reasonable error code instead of just
  // failing to launch (Strong Link) or calling an unresolved symbol and crashing (Weak Link)
  #if !MDNS_BUILDINGSTUBLIBRARY
@@ -86,7 +84,7 @@ index 3c0371e4..43b6860b 100644
  (
      DNSServiceRef                       *sdRef,
      DNSServiceFlags flags,
-@@ -228,7 +247,7 @@ mDNSlocal void RegCallback(mDNS *const m, ServiceRecordSet *const sr, mStatus re
+@@ -228,7 +245,7 @@ mDNSlocal void RegCallback(mDNS *const m, ServiceRecordSet *const sr, mStatus re
      }
  }
  
@@ -95,7 +93,7 @@ index 3c0371e4..43b6860b 100644
  (
      DNSServiceRef                       *sdRef,
      DNSServiceFlags flags,
-@@ -286,7 +305,7 @@ DNSServiceErrorType DNSServiceRegister
+@@ -286,7 +303,7 @@ DNSServiceErrorType DNSServiceRegister
                                 &x->name, &t, &d, // Name, type, domain
                                 &x->host, port, // Host and port
  							   mDNSNULL,
@@ -104,7 +102,7 @@ index 3c0371e4..43b6860b 100644
                                 SubTypes, NumSubTypes, // Subtypes
                                 mDNSInterface_Any, // Interface ID
                                 RegCallback, x, 0); // Callback, context, flags
-@@ -311,7 +330,7 @@ fail:
+@@ -311,7 +328,7 @@ fail:
  // is run against this Extension, it will get a reasonable error code instead of just
  // failing to launch (Strong Link) or calling an unresolved symbol and crashing (Weak Link)
  #if !MDNS_BUILDINGSTUBLIBRARY
@@ -113,7 +111,7 @@ index 3c0371e4..43b6860b 100644
  (
      DNSServiceRef sdRef,
      DNSRecordRef                        *RecordRef,
-@@ -332,7 +351,7 @@ DNSServiceErrorType DNSServiceAddRecord
+@@ -332,7 +349,7 @@ DNSServiceErrorType DNSServiceAddRecord
      return(kDNSServiceErr_Unsupported);
  }
  
@@ -122,7 +120,7 @@ index 3c0371e4..43b6860b 100644
  (
      DNSServiceRef sdRef,
      DNSRecordRef RecordRef,                            /* may be NULL */
-@@ -351,7 +370,7 @@ DNSServiceErrorType DNSServiceUpdateRecord
+@@ -351,7 +368,7 @@ DNSServiceErrorType DNSServiceUpdateRecord
      return(kDNSServiceErr_Unsupported);
  }
  
@@ -131,7 +129,7 @@ index 3c0371e4..43b6860b 100644
  (
      DNSServiceRef sdRef,
      DNSRecordRef RecordRef,
-@@ -404,7 +423,7 @@ mDNSlocal void FoundInstance(mDNS *const m, DNSQuestion *question, const Resourc
+@@ -404,7 +421,7 @@ mDNSlocal void FoundInstance(mDNS *const m, DNSQuestion *question, const Resourc
          x->callback((DNSServiceRef)x, flags, 0, 0, cname, ctype, cdom, x->context);
  }
  
@@ -140,7 +138,7 @@ index 3c0371e4..43b6860b 100644
  (
      DNSServiceRef                       *sdRef,
      DNSServiceFlags flags,
-@@ -424,7 +443,7 @@ DNSServiceErrorType DNSServiceBrowse
+@@ -424,7 +441,7 @@ DNSServiceErrorType DNSServiceBrowse
  
      // Check parameters
      if (!regtype[0] || !MakeDomainNameFromDNSNameString(&t, regtype))      { errormsg = "Illegal regtype"; goto badparam; }
@@ -149,7 +147,7 @@ index 3c0371e4..43b6860b 100644
  
      // Allocate memory, and handle failure
      x = (mDNS_DirectOP_Browse *) mDNSPlatformMemAllocateClear(sizeof(*x));
-@@ -457,6 +476,7 @@ fail:
+@@ -457,6 +474,7 @@ fail:
  static void DNSServiceResolveDispose(mDNS_DirectOP *op)
  {
      mDNS_DirectOP_Resolve *x = (mDNS_DirectOP_Resolve*)op;
@@ -157,7 +155,7 @@ index 3c0371e4..43b6860b 100644
      if (x->qSRV.ThisQInterval >= 0) mDNS_StopQuery(&mDNSStorage, &x->qSRV);
      if (x->qTXT.ThisQInterval >= 0) mDNS_StopQuery(&mDNSStorage, &x->qTXT);
      mDNSPlatformMemFree(x);
-@@ -468,25 +488,50 @@ mDNSlocal void FoundServiceInfo(mDNS *const m, DNSQuestion *question, const Reso
+@@ -468,25 +486,50 @@ mDNSlocal void FoundServiceInfo(mDNS *const m, DNSQuestion *question, const Reso
      (void)m;    // Unused
      if (!AddRecord)
      {
@@ -215,7 +213,7 @@ index 3c0371e4..43b6860b 100644
  (
      DNSServiceRef                       *sdRef,
      DNSServiceFlags flags,
-@@ -515,11 +560,36 @@ DNSServiceErrorType DNSServiceResolve
+@@ -515,11 +558,36 @@ DNSServiceErrorType DNSServiceResolve
      if (!x) { err = mStatus_NoMemoryErr; errormsg = "No memory"; goto fail; }
  
      // Set up object
@@ -257,7 +255,7 @@ index 3c0371e4..43b6860b 100644
  
      x->qSRV.ThisQInterval       = -1;       // So that DNSServiceResolveDispose() knows whether to cancel this question
      x->qSRV.InterfaceID         = DNSServiceInterfaceIndexToID(interfaceIndex, &flags);
-@@ -532,6 +602,7 @@ DNSServiceErrorType DNSServiceResolve
+@@ -532,6 +600,7 @@ DNSServiceErrorType DNSServiceResolve
      x->qSRV.ForceMCast          = mDNSfalse;
      x->qSRV.ReturnIntermed      = mDNSfalse;
      x->qSRV.SuppressUnusable    = mDNSfalse;
@@ -265,7 +263,7 @@ index 3c0371e4..43b6860b 100644
      x->qSRV.AppendSearchDomains = 0;
      x->qSRV.TimeoutQuestion     = 0;
      x->qSRV.WakeOnResolve       = 0;
-@@ -552,6 +623,7 @@ DNSServiceErrorType DNSServiceResolve
+@@ -552,6 +621,7 @@ DNSServiceErrorType DNSServiceResolve
      x->qTXT.ForceMCast          = mDNSfalse;
      x->qTXT.ReturnIntermed      = mDNSfalse;
      x->qTXT.SuppressUnusable    = mDNSfalse;
@@ -273,7 +271,7 @@ index 3c0371e4..43b6860b 100644
      x->qTXT.AppendSearchDomains = 0;
      x->qTXT.TimeoutQuestion     = 0;
      x->qTXT.WakeOnResolve       = 0;
-@@ -585,13 +657,13 @@ fail:
+@@ -585,13 +655,13 @@ fail:
  // is run against this Extension, it will get a reasonable error code instead of just
  // failing to launch (Strong Link) or calling an unresolved symbol and crashing (Weak Link)
  #if !MDNS_BUILDINGSTUBLIBRARY
@@ -289,7 +287,7 @@ index 3c0371e4..43b6860b 100644
  (
      DNSServiceRef sdRef,
      DNSRecordRef                        *RecordRef,
-@@ -643,7 +715,7 @@ mDNSlocal void DNSServiceQueryRecordResponse(mDNS *const m, DNSQuestion *questio
+@@ -643,7 +713,7 @@ mDNSlocal void DNSServiceQueryRecordResponse(mDNS *const m, DNSQuestion *questio
                  fullname, answer->rrtype, answer->rrclass, answer->rdlength, answer->rdata->u.data, answer->rroriginalttl, x->context);
  }
  
@@ -298,7 +296,7 @@ index 3c0371e4..43b6860b 100644
  (
      DNSServiceRef             *sdRef,
      DNSServiceFlags            flags,
-@@ -703,7 +775,7 @@ fail:
+@@ -703,7 +773,7 @@ fail:
  //*************************************************************************************************************
  // DNSServiceGetAddrInfo
  //
@@ -307,7 +305,7 @@ index 3c0371e4..43b6860b 100644
  static void DNSServiceGetAddrInfoDispose(mDNS_DirectOP *op)
  {
      mDNS_DirectOP_GetAddrInfo *x = (mDNS_DirectOP_GetAddrInfo*)op;
-@@ -887,6 +959,8 @@ fail:
+@@ -887,6 +957,8 @@ fail:
      return(err);
  }
  
@@ -316,12 +314,3 @@ index 3c0371e4..43b6860b 100644
  //*************************************************************************************************************
  // DNSServiceReconfirmRecord
  
-@@ -918,6 +992,8 @@ DNSServiceErrorType DNSSD_API DNSServiceReconfirmRecord
- 
- #endif // !MDNS_BUILDINGSTUBLIBRARY
- 
-+#endif // DEFINE_WINDOWS_UNIVERSAL
-+
- // Local Variables:
- // mode: C
- // tab-width: 4

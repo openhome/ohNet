@@ -49,9 +49,6 @@ DvProviderC STDCALL DvProviderCreate(DvDeviceC aDevice, const char* aDomain, con
     return kHandleNull;
 }
 
-#ifdef DEFINE_WINDOWS_UNIVERSAL
-# pragma warning(disable:4702)
-#endif
 void STDCALL DvProviderDestroy(DvProviderC aProvider)
 {
     try {
@@ -64,9 +61,6 @@ void STDCALL DvProviderDestroy(DvProviderC aProvider)
         UnhandledExceptionHandler(ex);
     }
 }
-#ifdef DEFINE_WINDOWS_UNIVERSAL
-# pragma warning(default:4702)
-#endif
 
 void STDCALL DvProviderAddAction(DvProviderC aProvider, ServiceAction aAction, OhNetCallbackDvInvocation aCallback, void* aPtr)
 {

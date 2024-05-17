@@ -1,5 +1,5 @@
 diff --git a/thirdparty/mDNSResponder-1310.80.1/mDNSCore/mDNSEmbeddedAPI.h b/thirdparty/mDNSResponder-1310.80.1/mDNSCore/mDNSEmbeddedAPI.h
-index 27deefdd..0cfde388 100755
+index 27deefdd..cfd832f6 100755
 --- a/Build/mDNS/mDNSEmbeddedAPI.h
 +++ b/Build/mDNS/mDNSEmbeddedAPI.h
 @@ -156,20 +156,6 @@ extern "C" {
@@ -33,6 +33,15 @@ index 27deefdd..0cfde388 100755
   #pragma pack(push,2)
  #endif
  typedef       union { mDNSu8 b[ 2]; mDNSu16 NotAnInteger; } mDNSOpaque16;
+@@ -907,7 +896,7 @@ typedef struct
+ 
+ // StandardAuthRDSize is 264 (256+8), which is large enough to hold a maximum-sized SRV record (6 + 256 bytes)
+ // MaximumRDSize is 8K the absolute maximum we support (at least for now)
+-#define StandardAuthRDSize 264
++#define StandardAuthRDSize 520
+ #ifndef MaximumRDSize
+ #define MaximumRDSize 8192
+ #endif
 @@ -1973,7 +1962,7 @@ typedef void ZoneDataCallback (mDNS *const m, mStatus err, const ZoneData *resul
  struct ZoneData_struct
  {
@@ -78,3 +87,29 @@ index 27deefdd..0cfde388 100755
  extern void       mDNSPlatformDynDNSHostNameStatusChanged(const domainname *const dname, const mStatus status);
  
  extern void       mDNSPlatformSetAllowSleep(mDNSBool allowSleep, const char *reason);
+@@ -3521,20 +3510,20 @@ struct CompileTimeAssertionChecks_mDNS
+     // Check our structures are reasonable sizes. Including overly-large buffers, or embedding
+     // other overly-large structures instead of having a pointer to them, can inadvertently
+     // cause structure sizes (and therefore memory usage) to balloon unreasonably.
+-    char sizecheck_RDataBody           [(sizeof(RDataBody)            ==   264) ? 1 : -1];
++    char sizecheck_RDataBody           [(sizeof(RDataBody)            ==   520) ? 1 : -1];
+     char sizecheck_ResourceRecord      [(sizeof(ResourceRecord)       <=    72) ? 1 : -1];
+-    char sizecheck_AuthRecord          [(sizeof(AuthRecord)           <=  1176) ? 1 : -1];
++    char sizecheck_AuthRecord          [(sizeof(AuthRecord)           <=  1432) ? 1 : -1];
+     char sizecheck_CacheRecord         [(sizeof(CacheRecord)          <=   232) ? 1 : -1];
+     char sizecheck_CacheGroup          [(sizeof(CacheGroup)           <=   232) ? 1 : -1];
+     char sizecheck_DNSQuestion         [(sizeof(DNSQuestion)          <=  1216) ? 1 : -1];
+     char sizecheck_ZoneData            [(sizeof(ZoneData)             <=  2048) ? 1 : -1];
+     char sizecheck_NATTraversalInfo    [(sizeof(NATTraversalInfo)     <=   200) ? 1 : -1];
+-    char sizecheck_HostnameInfo        [(sizeof(HostnameInfo)         <=  3050) ? 1 : -1];
++    char sizecheck_HostnameInfo        [(sizeof(HostnameInfo)         <=  3562) ? 1 : -1];
+ #if !MDNSRESPONDER_SUPPORTS(APPLE, QUERIER)
+     char sizecheck_DNSServer           [(sizeof(DNSServer)            <=   328) ? 1 : -1];
+ #endif
+-    char sizecheck_NetworkInterfaceInfo[(sizeof(NetworkInterfaceInfo) <=  9000) ? 1 : -1];
+-    char sizecheck_ServiceRecordSet    [(sizeof(ServiceRecordSet)     <=  4760) ? 1 : -1];
++    char sizecheck_NetworkInterfaceInfo[(sizeof(NetworkInterfaceInfo) <= 10024) ? 1 : -1];
++    char sizecheck_ServiceRecordSet    [(sizeof(ServiceRecordSet)     <=  6808) ? 1 : -1];
+     char sizecheck_DomainAuthInfo      [(sizeof(DomainAuthInfo)       <=   944) ? 1 : -1];
+ #if APPLE_OSX_mDNSResponder
+     char sizecheck_ClientTunnel        [(sizeof(ClientTunnel)         <=  1560) ? 1 : -1];

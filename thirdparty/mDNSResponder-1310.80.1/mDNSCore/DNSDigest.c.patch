@@ -1,17 +1,8 @@
 diff --git a/thirdparty/mDNSResponder-1310.80.1/mDNSCore/DNSDigest.c b/thirdparty/mDNSResponder-1310.80.1/mDNSCore/DNSDigest.c
-index 95df5fd6..f33e75e0 100644
+index 95df5fd6..8de28d1c 100644
 --- a/Build/mDNS/DNSDigest.c
 +++ b/Build/mDNS/DNSDigest.c
-@@ -21,6 +21,8 @@ extern "C" {
- #include "mDNSEmbeddedAPI.h"
- #include "DNSCommon.h"
- 
-+#ifndef DEFINE_WINDOWS_UNIVERSAL // cannot build as c++ on winrt arm so def it out...
-+
- // Disable certain benign warnings with Microsoft compilers
- #if (defined(_MSC_VER))
- // Disable "conditional expression is constant" warning for debug macros.
-@@ -188,6 +190,15 @@ mDNSlocal mDNSu32 NToH32(mDNSu8 * bytes)
+@@ -188,6 +188,15 @@ mDNSlocal mDNSu32 NToH32(mDNSu8 * bytes)
  #define MD5_LBLOCK  (MD5_CBLOCK/4)
  #define MD5_DIGEST_LENGTH 16
  
@@ -27,7 +18,7 @@ index 95df5fd6..f33e75e0 100644
  void MD5_Transform(MD5_CTX *c, const unsigned char *b);
  
  // From md5_locl.h
-@@ -198,15 +209,15 @@ void MD5_Transform(MD5_CTX *c, const unsigned char *b);
+@@ -198,15 +207,15 @@ void MD5_Transform(MD5_CTX *c, const unsigned char *b);
  
  #ifdef MD5_ASM
  # if defined(__i386) || defined(__i386__) || defined(_M_IX86) || defined(__INTEL__)
@@ -48,7 +39,7 @@ index 95df5fd6..f33e75e0 100644
  
  #if defined(__i386) || defined(__i386__) || defined(_M_IX86) || defined(__INTEL__)
  /*
-@@ -252,9 +263,9 @@ void md5_block_data_order (MD5_CTX *c, const void *p,int num);
+@@ -252,9 +261,9 @@ void md5_block_data_order (MD5_CTX *c, const void *p,int num);
          ll=(c)->C; HOST_l2c(ll,(s));    \
          ll=(c)->D; HOST_l2c(ll,(s));    \
  } while (0)
@@ -61,7 +52,7 @@ index 95df5fd6..f33e75e0 100644
  /*
   * Little-endians (Intel and Alpha) feel better without this.
   * It looks like memcpy does better job than generic
-@@ -572,21 +583,16 @@ void md5_block_data_order (MD5_CTX *c, const void *p,int num);
+@@ -572,21 +581,16 @@ void md5_block_data_order (MD5_CTX *c, const void *p,int num);
  #define HOST_p_c2l(c,l,n)   {                       \
          switch (n) {                                \
          case 0: l =((unsigned long)(*((c)++)))<<24; \
@@ -83,7 +74,7 @@ index 95df5fd6..f33e75e0 100644
          case 2: l|=((unsigned long)(*((c)++)))<< 8; \
          } }
  /* NOTE the pointer is not incremented at the end of this */
-@@ -594,9 +600,7 @@ void md5_block_data_order (MD5_CTX *c, const void *p,int num);
+@@ -594,9 +598,7 @@ void md5_block_data_order (MD5_CTX *c, const void *p,int num);
          l=0; (c)+=n;                                \
          switch (n) {                                \
          case 3: l =((unsigned long)(*(--(c))))<< 8; \
@@ -93,7 +84,7 @@ index 95df5fd6..f33e75e0 100644
          case 1: l|=((unsigned long)(*(--(c))))<<24; \
          } }
  #define _HOST_l2c(l,c)  (*((c)++)=(unsigned char)(((l)>>24)&0xff),  \
-@@ -615,21 +619,16 @@ void md5_block_data_order (MD5_CTX *c, const void *p,int num);
+@@ -615,21 +617,16 @@ void md5_block_data_order (MD5_CTX *c, const void *p,int num);
  #define HOST_p_c2l(c,l,n)   {                       \
          switch (n) {                                \
          case 0: l =((unsigned long)(*((c)++)));     \
@@ -115,7 +106,7 @@ index 95df5fd6..f33e75e0 100644
          case 2: l|=((unsigned long)(*((c)++)))<<16; \
          } }
  /* NOTE the pointer is not incremented at the end of this */
-@@ -637,9 +636,7 @@ void md5_block_data_order (MD5_CTX *c, const void *p,int num);
+@@ -637,9 +634,7 @@ void md5_block_data_order (MD5_CTX *c, const void *p,int num);
          l=0; (c)+=n;                                \
          switch (n) {                                \
          case 3: l =((unsigned long)(*(--(c))))<<16; \
@@ -125,7 +116,7 @@ index 95df5fd6..f33e75e0 100644
          case 1: l|=((unsigned long)(*(--(c))));     \
          } }
  #define _HOST_l2c(l,c)  (*((c)++)=(unsigned char)(((l)    )&0xff),  \
-@@ -929,7 +926,7 @@ int HASH_FINAL (unsigned char *md, HASH_CTX *c)
+@@ -929,7 +924,7 @@ int HASH_FINAL (unsigned char *md, HASH_CTX *c)
  #define INIT_DATA_C (unsigned long)0x98badcfeL
  #define INIT_DATA_D (unsigned long)0x10325476L
  
@@ -134,7 +125,7 @@ index 95df5fd6..f33e75e0 100644
  {
      c->A=INIT_DATA_A;
      c->B=INIT_DATA_B;
-@@ -941,8 +938,8 @@ int MD5_Init(MD5_CTX *c)
+@@ -941,8 +936,8 @@ int MD5_Init(MD5_CTX *c)
      return 1;
  }
  
@@ -145,7 +136,7 @@ index 95df5fd6..f33e75e0 100644
  {
      const mDNSu32 *X=(const mDNSu32 *)data;
      register unsigned MD32_REG_T A,B,C,D;
-@@ -1031,11 +1028,11 @@ void md5_block_host_order (MD5_CTX *c, const void *data, int num)
+@@ -1031,11 +1026,11 @@ void md5_block_host_order (MD5_CTX *c, const void *data, int num)
  }
  #endif
  
@@ -159,7 +150,7 @@ index 95df5fd6..f33e75e0 100644
  {
      const unsigned char *data=data_;
      register unsigned MD32_REG_T A,B,C,D,l;
-@@ -1293,7 +1290,7 @@ mDNSlocal mDNSs32 DNSDigest_Base64ToBin(const char *src, mDNSu8 *target, mDNSu32
+@@ -1293,7 +1288,7 @@ mDNSlocal mDNSs32 DNSDigest_Base64ToBin(const char *src, mDNSu8 *target, mDNSu32
  #define HMAC_OPAD   0x5c
  #define MD5_LEN     16
  
@@ -168,7 +159,7 @@ index 95df5fd6..f33e75e0 100644
  
  // Adapted from Appendix, RFC 2104
  mDNSlocal void DNSDigest_ConstructHMACKey(DomainAuthInfo *info, const mDNSu8 *key, mDNSu32 len)
-@@ -1371,10 +1368,10 @@ mDNSexport void DNSDigest_SignMessage(DNSMessage *msg, mDNSu8 **end, DomainAuthI
+@@ -1371,10 +1366,10 @@ mDNSexport void DNSDigest_SignMessage(DNSMessage *msg, mDNSu8 **end, DomainAuthI
      MD5_Update(&c, (mDNSu8 *)&tsig.resrec.rroriginalttl, sizeof(tsig.resrec.rroriginalttl));
  
      // alg name
@@ -182,7 +173,7 @@ index 95df5fd6..f33e75e0 100644
  
      // time
      // get UTC (universal time), convert to 48-bit unsigned in network byte order
-@@ -1455,7 +1452,7 @@ mDNSexport mDNSBool DNSDigest_VerifyMessage(DNSMessage *msg, mDNSu8 *end, LargeC
+@@ -1455,7 +1450,7 @@ mDNSexport mDNSBool DNSDigest_VerifyMessage(DNSMessage *msg, mDNSu8 *end, LargeC
  
      algo = (domainname*) ptr;
  
@@ -191,12 +182,3 @@ index 95df5fd6..f33e75e0 100644
      {
          LogMsg("ERROR: DNSDigest_VerifyMessage - TSIG algorithm not supported: %##s", algo->c);
          *rcode = kDNSFlag1_RC_NotAuth;
-@@ -1578,6 +1575,8 @@ exit:
-     return ok;
- }
- 
-+#else   // DEFINE_WINDOWS_UNIVERSAL
-+#endif  // DEFINE_WINDOWS_UNIVERSAL
- 
- #ifdef __cplusplus
- }

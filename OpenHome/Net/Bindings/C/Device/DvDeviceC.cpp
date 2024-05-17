@@ -127,9 +127,6 @@ DvDeviceC STDCALL DvDeviceCreate(const char* aUdn)
     return kHandleNull;
 }
 
-#ifdef DEFINE_WINDOWS_UNIVERSAL
-# pragma warning(disable:4702)
-#endif
 void STDCALL DvDeviceDestroy(DvDeviceC aDevice)
 {
     try {
@@ -142,9 +139,6 @@ void STDCALL DvDeviceDestroy(DvDeviceC aDevice)
         UnhandledExceptionHandler(ex);
     }
 }
-#ifdef DEFINE_WINDOWS_UNIVERSAL
-# pragma warning(default:4702)
-#endif
 
 const char* STDCALL DvDeviceUdn(DvDeviceC aDevice)
 {

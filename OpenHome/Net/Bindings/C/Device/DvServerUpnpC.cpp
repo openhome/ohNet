@@ -21,9 +21,6 @@ THandle STDCALL DvServerUpnpCreate()
     return kHandleNull;
 }
 
-#ifdef DEFINE_WINDOWS_UNIVERSAL
-# pragma warning(disable:4702)
-#endif
 void STDCALL DvServerUpnpDestroy(THandle aServer)
 {
     try {
@@ -37,9 +34,6 @@ void STDCALL DvServerUpnpDestroy(THandle aServer)
         UnhandledExceptionHandler(ex);
     }
 }
-#ifdef DEFINE_WINDOWS_UNIVERSAL
-# pragma warning(default:4702)
-#endif
 
 void STDCALL DvServerUpnpAddDevice(THandle aServer, DvDeviceC aDevice)
 {
