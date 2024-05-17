@@ -2,6 +2,7 @@
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Parser.h>
+#include <OpenHome/Private/Debug.h>
 
 using namespace OpenHome;
 
@@ -131,6 +132,7 @@ void ShellSession::Log(const char* aMsg)
 
 void ShellSession::Run()
 {
+    Debug::RemoveLevel(Debug::kNetwork);    // ensure network logging is disabled on shell session starting
     FunctorMsg logMsg = MakeFunctorMsg(*this, &OpenHome::ShellSession::Log);
     iLogDistributor.Enable(logMsg);
     iShutdownSem.Wait();
