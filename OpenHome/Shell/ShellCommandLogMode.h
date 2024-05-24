@@ -11,7 +11,7 @@
 namespace OpenHome {
 class IWriter;
 
-class ShellCommandLogMode : private IShellCommandHandler
+class ShellCommandLogMode : public IShellCommandHandler
 {
 public:
     ShellCommandLogMode(Shell& aShell, IShellLogMode& aMode);

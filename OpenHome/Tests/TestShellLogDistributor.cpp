@@ -10,6 +10,7 @@ using namespace OpenHome::TestFramework;
 
 class SuiteShellLogDistributor : public SuiteUnitTest
 {
+    static const TChar* kTestMsg;
 public:
     SuiteShellLogDistributor();
 public: // from SuiteUnitTest
@@ -27,11 +28,10 @@ private:
     ShellLogDistributor* iDistributor;
     Bws<256> iShellMsg;
     Bws<256> iFlashAndRs232Msg;
-    const char iTestMsg[17] = "test log message";
     FunctorMsg iOriginalOutput;
 };
 
-// SuitePriorityQueue
+const TChar* SuiteShellLogDistributor::kTestMsg = "test log message";
 
 SuiteShellLogDistributor::SuiteShellLogDistributor()
     : SuiteUnitTest("ShellLogDistributor")
@@ -64,22 +64,22 @@ void SuiteShellLogDistributor::TestLogDistributorDefault()
     FunctorMsg logShell = MakeFunctorMsg(*this, &SuiteShellLogDistributor::LogShell);
     iDistributor->Enable(logShell);
 
-    Log::Print(iTestMsg);
+    Log::Print(kTestMsg);
 
     // by default should in shell log mode and output to shell only
     TEST(iDistributor->GetLogMode() == EShellLogMode::eShell);
-    TEST(iShellMsg == Brn(iTestMsg));
+    TEST(iShellMsg == Brn(kTestMsg));
     TEST(iFlashAndRs232Msg.Bytes() == 0);
 
     // reset shell msg and disable log distributor, print test message again
     iShellMsg.SetBytes(0);
     iDistributor->Disable();
 
-    Log::Print(iTestMsg);
+    Log::Print(kTestMsg);
 
     // should have returned to outputing to flash/rs232
     TEST(iShellMsg.Bytes() == 0);
-    TEST(iFlashAndRs232Msg == Brn(iTestMsg));
+    TEST(iFlashAndRs232Msg == Brn(kTestMsg));
 }
 
 void SuiteShellLogDistributor::TestLogDistributorSetModeShell()
@@ -88,19 +88,19 @@ void SuiteShellLogDistributor::TestLogDistributorSetModeShell()
     iDistributor->Enable(logShell);
     iDistributor->SetLogMode(EShellLogMode::eShell);    // enable shell log mode, same as default otherwise
 
-    Log::Print(iTestMsg);
+    Log::Print(kTestMsg);
 
     TEST(iDistributor->GetLogMode() == EShellLogMode::eShell);
-    TEST(iShellMsg == Brn(iTestMsg));
+    TEST(iShellMsg == Brn(kTestMsg));
     TEST(iFlashAndRs232Msg.Bytes() == 0);
 
     iShellMsg.SetBytes(0);
     iDistributor->Disable();
 
-    Log::Print(iTestMsg);
+    Log::Print(kTestMsg);
 
     TEST(iShellMsg.Bytes() == 0);
-    TEST(iFlashAndRs232Msg == Brn(iTestMsg));
+    TEST(iFlashAndRs232Msg == Brn(kTestMsg));
 }
 
 void SuiteShellLogDistributor::TestLogDistributorSetModeAll()
@@ -109,21 +109,21 @@ void SuiteShellLogDistributor::TestLogDistributorSetModeAll()
     iDistributor->Enable(logShell);
     iDistributor->SetLogMode(EShellLogMode::eAll);      // enable all log mode
 
-    Log::Print(iTestMsg);
+    Log::Print(kTestMsg);
 
     // for this case should print to shell + flash/rs232
     TEST(iDistributor->GetLogMode() == EShellLogMode::eAll);
-    TEST(iShellMsg == Brn(iTestMsg));
-    TEST(iFlashAndRs232Msg == Brn(iTestMsg));
+    TEST(iShellMsg == Brn(kTestMsg));
+    TEST(iFlashAndRs232Msg == Brn(kTestMsg));
 
     iShellMsg.SetBytes(0);
     iFlashAndRs232Msg.SetBytes(0);
     iDistributor->Disable();
 
-    Log::Print(iTestMsg);
+    Log::Print(kTestMsg);
 
     TEST(iShellMsg.Bytes() == 0);
-    TEST(iFlashAndRs232Msg == Brn(iTestMsg));
+    TEST(iFlashAndRs232Msg == Brn(kTestMsg));
 }
 
 void SuiteShellLogDistributor::TestLogDistributorEnableWithEmptyShellMsgFunctor()
@@ -145,7 +145,7 @@ void SuiteShellLogDistributor::TestLogDistributorPrintWithEmptyDefaultMsgFunctor
     iDistributor->Enable(logShell);
     iDistributor->SetLogMode(EShellLogMode::eAll);      // enable all log mode
 
-    Log::Print(iTestMsg);
+    Log::Print(kTestMsg);
 
     TEST(iFlashAndRs232Msg.Bytes() == 0);
 }

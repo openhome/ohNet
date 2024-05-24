@@ -7,9 +7,11 @@
 using namespace OpenHome;
 
 // ShellLogDistributor
-ShellLogDistributor::ShellLogDistributor() : iMode(EShellLogMode::eShell) {}
+ShellLogDistributor::ShellLogDistributor() 
+    : iMode(EShellLogMode::eShell) {}
 
-void ShellLogDistributor::Enable(FunctorMsg& aLogShell) {
+void ShellLogDistributor::Enable(FunctorMsg& aLogShell) 
+{
     // Check shell log is not empty functor, store and then swap log functor
     ASSERT(aLogShell);
     iLogShell = aLogShell;
@@ -17,22 +19,26 @@ void ShellLogDistributor::Enable(FunctorMsg& aLogShell) {
     iLogDefault = Log::SwapOutput(logMsg);
 }
 
-void ShellLogDistributor::Disable() {
+void ShellLogDistributor::Disable() 
+{
     // Clear logging functors and return default log
     iLogShell = FunctorMsg();
     (void)Log::SwapOutput(iLogDefault);
     iLogDefault = FunctorMsg();
 }
 
-void ShellLogDistributor::SetLogMode(EShellLogMode aMode) {
+void ShellLogDistributor::SetLogMode(EShellLogMode aMode) 
+{
     iMode = aMode;
 }
 
-EShellLogMode ShellLogDistributor::GetLogMode() const {
+EShellLogMode ShellLogDistributor::GetLogMode() const 
+{
     return iMode;
 }
 
-void ShellLogDistributor::Log(const char* aMsg) {
+void ShellLogDistributor::Log(const char* aMsg) 
+{
     // Always log to shell
     iLogShell(aMsg);
 
@@ -133,6 +139,7 @@ void ShellSession::Log(const char* aMsg)
 void ShellSession::Run()
 {
     Debug::RemoveLevel(Debug::kNetwork);    // ensure network logging is disabled on shell session starting
+                                            // prevents infinite loop occuring that causes shell to crash
     FunctorMsg logMsg = MakeFunctorMsg(*this, &OpenHome::ShellSession::Log);
     iLogDistributor.Enable(logMsg);
     iShutdownSem.Wait();

@@ -49,8 +49,6 @@ private:
     WriterBuffer* iWriterBuffer;
 };
 
-// SuitePriorityQueue
-
 SuiteShellCommandLogMode::SuiteShellCommandLogMode(Environment& aEnv)
     : SuiteUnitTest("ShellCommandLogMode")
     , iEnv(aEnv)
