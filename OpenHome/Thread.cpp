@@ -57,6 +57,9 @@ void Semaphore::Signal()
 
 // Mutex
 
+const TChar* Mutex::kErrorStringDeadlock = "Recursive lock attempted on mutex";
+const TChar* Mutex::kErrorStringUninitialised = "Lock attempted on uninitialised mutex";
+
 Mutex::Mutex(const TChar* aName)
 {
     iHandle = OpenHome::Os::MutexCreate(OpenHome::gEnv->OsCtx(), aName);
@@ -75,20 +78,13 @@ Mutex::~Mutex()
 void Mutex::Wait()
 {
     TInt err = OpenHome::Os::MutexLock(iHandle);
-    if (err != 0) {
-        const char* msg;
-        if (err == -1) {
-            msg = "Recursive lock attempted on mutex";
-        }
-        else {
-            msg = "Lock attempted on uninitialised mutex";
-        }    
-        Brhz thBuf;
-        Bws<Thread::kMaxNameBytes+1> thName(Thread::CurrentThreadName());
-        thName.PtrZ();
-        Log::Print("ERROR: %s %s from thread %s\n", msg, iName, thName.Ptr());
-        ASSERT(err == 0);
+    if (err == 0) {
+        return;
     }
+
+    const TChar* msg = (err == -1) ? kErrorStringDeadlock : kErrorStringUninitialised;
+    Log::Print("ERROR: %s %s from thread %.*s\n", msg, iName, PBUF(Thread::CurrentThreadName()));
+    ASSERTS();
 }
 
 void Mutex::Signal()
