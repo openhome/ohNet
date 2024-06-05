@@ -148,6 +148,8 @@ struct OsContext {
     struct timeval iTimeAdjustment; /* Amount to adjust return for OsTimeInUs() by. 
                                        Will be 0 unless time ever jumps backwards. */
     THandle iMutex;
+    THandle iMutexNetwork;
+    THandle iMutexTime;
     OsThreadSchedulePolicy iSchedulerPolicy;
     pthread_key_t iThreadArgKey;
     struct InterfaceChangedObserver* iInterfaceChangedObserver;
@@ -174,6 +176,41 @@ static void SleepWakeDestroy(OsContext* aContext);
 #endif /* !PLATFORM_IOS */
 #endif /* PLATFORM_MACOSX */
 
+static int OsInitialiseOsMutexes(OsContext* aContext)
+{
+    // OS Mutex General Purpose
+    aContext->iMutex = OsMutexCreate(aContext, "OSMG");
+    if (aContext->iMutex == kHandleNull) {
+        return -1;
+    }
+
+    // OS Mutex Network
+    aContext->iMutexNetwork = OsMutexCreate(aContext, "OSMN");
+    if (aContext->iMutexNetwork == kHandleNull) {
+        return -1;
+    }
+
+    // OS Mutex Time
+    aContext->iMutexTime = OsMutexCreate(aContext, "OSMT"); 
+    if (aContext->iMutexTime == kHandleNull) {
+        return -1;
+    }
+
+    return 0;
+}
+
+static void OsDestroyOsMutexes(OsContext* aContext)
+{
+    if (aContext->iMutex != kHandleNull) {
+        OsMutexDestroy(aContext->iMutex);
+    }
+    if (aContext->iMutexNetwork != kHandleNull) {
+        OsMutexDestroy(aContext->iMutexNetwork);
+    }
+    if (aContext->iMutexTime != kHandleNull) {
+        OsMutexDestroy(aContext->iMutexTime);
+    }
+}
 
 OsContext* OsCreate(OsThreadSchedulePolicy aSchedulerPolicy)
 {
@@ -182,13 +219,15 @@ OsContext* OsCreate(OsThreadSchedulePolicy aSchedulerPolicy)
     ctx->iPrevTime = ctx->iStartTime;
     memset(&ctx->iTimeAdjustment, 0, sizeof(ctx->iTimeAdjustment));
     ctx->iSchedulerPolicy = aSchedulerPolicy;
-    ctx->iMutex = OsMutexCreate(ctx, "DNSM");
-    if (ctx->iMutex == kHandleNull) {
+
+    if (OsInitialiseOsMutexes(ctx) != 0) {
+        OsDestroyOsMutexes(ctx);
         free(ctx);
         return NULL;
     }
+
     if (pthread_key_create(&ctx->iThreadArgKey, NULL) != 0) {
-        OsMutexDestroy(ctx->iMutex);
+        OsDestroyOsMutexes(ctx);
         free(ctx);
         return NULL;
     }
@@ -210,22 +249,24 @@ OsContext* OsCreate(OsThreadSchedulePolicy aSchedulerPolicy)
 
 void OsDestroy(OsContext* aContext)
 {
-    if (aContext != NULL) {
+    if (aContext == NULL) {
+        return;
+    }
 
 #ifdef PLATFORM_MACOSX_GNU
 #ifndef PLATFORM_IOS
-        SleepWakeDestroy(aContext);
+    SleepWakeDestroy(aContext);
 #endif /* !PLATFORM_IOS */
 #endif /* PLATFORM_MACOSX */ 
 
 #if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD) && !defined(__ANDROID__)
-        DnsRefreshDestroy(aContext);
+    DnsRefreshDestroy(aContext);
 #endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD && !defined(__ANDROID__) */
-        DestroyInterfaceChangedObserver(aContext);
-        pthread_key_delete(aContext->iThreadArgKey);
-        OsMutexDestroy(aContext->iMutex);
-        free(aContext);
-    }
+
+    DestroyInterfaceChangedObserver(aContext);
+    pthread_key_delete(aContext->iThreadArgKey);
+    OsDestroyOsMutexes(aContext);
+    free(aContext);
 }
 
 void OsQuit(OsContext* aContext)
@@ -377,7 +418,7 @@ static struct timeval addTimeval(struct timeval* aT1, struct timeval* aT2)
 uint64_t OsTimeInUs(OsContext* aContext)
 {
     struct timeval now, diff, adjustedNow;
-    OsMutexLock(aContext->iMutex);
+    OsMutexLock(aContext->iMutexTime);
     gettimeofday(&now, NULL);
     
     /* if time has moved backwards, calculate by how much and add this to aContext->iTimeAdjustment */
@@ -390,7 +431,7 @@ uint64_t OsTimeInUs(OsContext* aContext)
     aContext->iPrevTime = now; /* stash current time to allow the next call to spot any backwards move */
     adjustedNow = addTimeval(&now, &aContext->iTimeAdjustment); /* add any previous backwards moves to the time */
     diff = subtractTimeval(&adjustedNow, &aContext->iStartTime); /* how long since we started, ignoring any backwards moves */
-    OsMutexUnlock(aContext->iMutex);
+    OsMutexUnlock(aContext->iMutexTime);
 
     return (uint64_t)diff.tv_sec * 1000000 + diff.tv_usec;
 }
@@ -868,9 +909,9 @@ static void SetFdNonBlocking(int32_t aSocket)
 static int32_t SocketInterrupted(const OsNetworkHandle* aHandle)
 {
     int32_t interrupted;
-    OsMutexLock(aHandle->iCtx->iMutex);
+    OsMutexLock(aHandle->iCtx->iMutexNetwork);
     interrupted = aHandle->iInterrupted;
-    OsMutexUnlock(aHandle->iCtx->iMutex);
+    OsMutexUnlock(aHandle->iCtx->iMutexNetwork);
     return interrupted;
 }
 
@@ -1488,7 +1529,7 @@ int32_t OsNetworkInterrupt(THandle aHandle, int32_t aInterrupt)
     int32_t err = 0;
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
     OsContext* ctx = handle->iCtx;
-    OsMutexLock(ctx->iMutex);
+    OsMutexLock(ctx->iMutexNetwork);
     handle->iInterrupted = aInterrupt;
     int32_t val = 1;
     if (aInterrupt != 0) {
@@ -1501,7 +1542,7 @@ int32_t OsNetworkInterrupt(THandle aHandle, int32_t aInterrupt)
             ;
         }
     }
-    OsMutexUnlock(ctx->iMutex);
+    OsMutexUnlock(ctx->iMutexNetwork);
     return err;
 }
 
@@ -2331,11 +2372,11 @@ void DnsRefreshThread(void* aPtr)
                 if (len > 0) {
                     // Only one watcher. If len > 0, assume message is from that single watcher.
                     res_init();
-                    OsMutexLock(ctx->iMutex);
+                    OsMutexLock(ctx->iMutexNetwork);
                     if (dnsRefresh->iCallback != NULL) {
                         dnsRefresh->iCallback(dnsRefresh->iCallbackArg);
                     }
-                    OsMutexUnlock(ctx->iMutex);
+                    OsMutexUnlock(ctx->iMutexNetwork);
                 }
             }
         }
@@ -2625,8 +2666,8 @@ void OsNetworkSetDnsChangedObserver(OsContext* aContext, DnsChanged aCallback, v
     if (aContext->iDnsRefresh == NULL) {
         return;
     }
-    OsMutexLock(aContext->iMutex);
+    OsMutexLock(aContext->iMutexNetwork);
     aContext->iDnsRefresh->iCallback = aCallback;
     aContext->iDnsRefresh->iCallbackArg = aArg;
-    OsMutexUnlock(aContext->iMutex);
+    OsMutexUnlock(aContext->iMutexNetwork);
 }
