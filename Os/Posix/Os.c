@@ -958,7 +958,8 @@ static int TIpAddressesAreEqual(const TIpAddress* aAddr1, const TIpAddress* aAdd
     }
 
     if (aAddr1->iFamily == kFamilyV6) {
-        for (int i = 0; i < 16; i++) {
+        int i = 0;
+        for (i = 0; i < 16; i++) {
             if (aAddr1->iV6[i] != aAddr2->iV6[i]) {
                 return 0;
             }
@@ -976,7 +977,8 @@ static int TIpAddressIsLessThan(const TIpAddress* aAddr1, const TIpAddress* aAdd
     }
 
     if (aAddr1->iFamily == kFamilyV6) {
-        for (int i = 0; i < 16; i++) {
+        int i = 0;
+        for (i = 0; i < 16; i++) {
             if (aAddr1->iV6[i] < aAddr2->iV6[i]) {
                 return 1;
             }
@@ -1865,7 +1867,8 @@ static void append(OsNetworkAdapter* aAdapter, OsNetworkAdapter** aHead, OsNetwo
 
 static int32_t NonLoopbackAdapterExists(struct ifaddrs* aInterfaces, int32_t aIncludeIPv6)
 {
-    for (struct ifaddrs* iter = aInterfaces; iter != NULL; iter = iter->ifa_next) {
+    struct ifaddrs* iter;
+    for (iter = aInterfaces; iter != NULL; iter = iter->ifa_next) {
         if (iter->ifa_addr == NULL) {
             continue;
         }
