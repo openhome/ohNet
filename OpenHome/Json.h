@@ -31,7 +31,7 @@ class Json
     static const Brn kEscapedLinefeed;
     static const Brn kEscapedTab;
 public:
-    enum class Encoding
+    enum Encoding
     {
         Utf8,
         Utf16
@@ -51,6 +51,8 @@ class JsonParser
 {
     static const Brn kBoolValTrue;
     static const Brn kBoolValFalse;
+private:
+    typedef std::map<Brn, Brn, BufferCmp> PairMap;
 public:
     JsonParser();
     void Parse(const Brx& aJson);
@@ -74,28 +76,17 @@ private:
     inline void Add(const Brn& aKey, const TByte* aValStart, TUint aValBytes);
     Brn Value(const Brx& aKey) const;
 private:
-    std::map<Brn, Brn, BufferCmp> iPairs;
+    PairMap iPairs;
 };
 
 class JsonParserArray
 {
 public:
-    enum class ValType
+    enum ValType
     {
         Undefined,
         Null,
-        Int,
-        Bool,
-        String,
-        Object,
-        Array,
-        NullEntry
-    };
-    enum class EntryValType
-    {
-        Undefined,
         NullEntry,
-        Null,
         Int,
         Bool,
         String,
@@ -111,7 +102,7 @@ public:
      * Identfies type of array based on first entry. Not suitable for heterogeneous arrays. Use EntryType() to check type of each entry instead.
      */
     ValType Type() const;
-    EntryValType EntryType() const;
+    ValType EntryType() const;
     TInt NextInt();
     TBool NextBool();
     Brn NextNull();
@@ -141,7 +132,7 @@ private:
     ValType iType;
     const TByte* iPtr;
     const TByte* iEnd;
-    EntryValType iEntryType;
+    ValType iEntryType;
 };
 
 class WriterJson
@@ -173,7 +164,7 @@ class WriterJsonValueString;
 class WriterJsonArray : public IWriterJson
 {
 public:
-    enum class WriteOnEmpty
+    enum WriteOnEmpty
     {
         eNull,          // "null"
         eEmptyArray     // "[]"
@@ -190,7 +181,7 @@ public:
     WriterJsonArray CreateArray(WriterJsonArray::WriteOnEmpty aWriteOnEmpty = WriterJsonArray::WriteOnEmpty::eNull);
     WriterJsonObject CreateObject();
 public: // from IWriterJson
-    void WriteEnd() override;
+    void WriteEnd();
 private:
     void WriteStartOrSeparator();
 private:
@@ -232,7 +223,7 @@ public:
     WriterJsonValueString CreateStringStreamed(const TChar* aKey);
     WriterJsonValueString CreateStringStreamed(const Brx& aKey);
 public: // from IWriterJson
-    void WriteEnd() override;
+    void WriteEnd();
 private:
     void Set(IWriter* aWriter);
     void CheckStarted();
@@ -252,11 +243,11 @@ public:
     WriterJsonValueString(IWriter& aWriter);
     void WriteEscaped(const Brx& aFragment);
 public: // from IWriterJson
-    void WriteEnd() override;
+    void WriteEnd();
 public: // from IWriter
-    void Write(TByte aValue) override;
-    void Write(const Brx& aBuffer) override;
-    void WriteFlush() override;
+    void Write(TByte aValue);
+    void Write(const Brx& aBuffer);
+    void WriteFlush();
 private:
     void CheckStarted();
 private:

@@ -16,14 +16,14 @@ class SuiteJsonEncode : public Suite, private IWriter
 public:
     SuiteJsonEncode();
 private: // from Suite
-    void Test() override;
+    void Test();
 private:
     void EncodeChar(TByte aChar, const TChar* aEncoded);
     void EncodeUni(TByte aChar);
 private: // from IWriter
-    void Write(TByte aValue) override;
-    void Write(const Brx& aBuffer) override;
-    void WriteFlush() override;
+    void Write(TByte aValue);
+    void Write(const Brx& aBuffer);
+    void WriteFlush();
 private:
     Bws<128> iEncoded;
 };
@@ -33,7 +33,7 @@ class SuiteJsonDecode : public Suite
 public:
     SuiteJsonDecode();
 private: // from Suite
-    void Test() override;
+    void Test();
 private:
     static void DecodeChar(const TChar* aEncoded, TByte aDecoded);
 };
@@ -43,8 +43,8 @@ class SuiteJsonParser : public SuiteUnitTest
 public:
     SuiteJsonParser();
 public: // from SuiteUnitTest
-    void Setup() override;
-    void TearDown() override;
+    void Setup();
+    void TearDown();
 private:
     void TestParseUnescapeInPlace();
     void TestParseNoUnescapeInPlace();
@@ -73,8 +73,8 @@ class SuiteWriterJson : public SuiteUnitTest
 public:
     SuiteWriterJson();
 public: // from SuiteUnitTest
-    void Setup() override;
-    void TearDown() override;
+    void Setup();
+    void TearDown();
 private:
     void TestWriteInt();
     void TestWriteString();
@@ -86,8 +86,8 @@ class SuiteWriterJsonObject : public SuiteUnitTest
 public:
     SuiteWriterJsonObject();
 public: // from SuiteUnitTest
-    void Setup() override;
-    void TearDown() override;
+    void Setup();
+    void TearDown();
 private:
     void TestWriteEmptyObject();
     void TestWriteInt();
@@ -108,8 +108,8 @@ class SuiteWriterJsonArray : public SuiteUnitTest
 public:
     SuiteWriterJsonArray();
 public: // from SuiteUnitTest
-    void Setup() override;
-    void TearDown() override;
+    void Setup();
+    void TearDown();
 private:
     void TestWriteEmptyNull();
     void TestWriteEmptyArray();
@@ -130,8 +130,8 @@ class SuiteParserJsonArray : public SuiteUnitTest
 public:
     SuiteParserJsonArray();
 public: // from SuiteUnitTest
-    void Setup() override;
-    void TearDown() override;
+    void Setup();
+    void TearDown();
 private:
     void TestIdentifyType();
     void TestIntArray();
@@ -1039,48 +1039,48 @@ void SuiteParserJsonArray::TearDown()
 
 void SuiteParserJsonArray::TestIdentifyType()
 {
-    auto parser1 = JsonParserArray::Create(Brn("[1,2,3]"));
+    JsonParserArray parser1 = JsonParserArray::Create(Brn("[1,2,3]"));
     TEST(parser1.Type() == JsonParserArray::ValType::Int);
-    TEST(parser1.EntryType() == JsonParserArray::EntryValType::Int);
-    auto parser2 = JsonParserArray::Create(Brn("[-9,0]"));
+    TEST(parser1.EntryType() == JsonParserArray::ValType::Int);
+    JsonParserArray parser2 = JsonParserArray::Create(Brn("[-9,0]"));
     TEST(parser2.Type() == JsonParserArray::ValType::Int);
-    TEST(parser2.EntryType() == JsonParserArray::EntryValType::Int);
+    TEST(parser2.EntryType() == JsonParserArray::ValType::Int);
 
-    auto parser3 = JsonParserArray::Create(Brn("[true]"));
+    JsonParserArray parser3 = JsonParserArray::Create(Brn("[true]"));
     TEST(parser3.Type() == JsonParserArray::ValType::Bool);
-    TEST(parser3.EntryType() == JsonParserArray::EntryValType::Bool);
-    auto parser4 = JsonParserArray::Create(Brn("[false]"));
+    TEST(parser3.EntryType() == JsonParserArray::ValType::Bool);
+    JsonParserArray parser4 = JsonParserArray::Create(Brn("[false]"));
     TEST(parser4.Type() == JsonParserArray::ValType::Bool);
-    TEST(parser4.EntryType() == JsonParserArray::EntryValType::Bool);
+    TEST(parser4.EntryType() == JsonParserArray::ValType::Bool);
 
-    auto parser5 = JsonParserArray::Create(Brn("null"));
+    JsonParserArray parser5 = JsonParserArray::Create(Brn("null"));
     TEST(parser5.Type() == JsonParserArray::ValType::Null);
-    TEST(parser5.EntryType() == JsonParserArray::EntryValType::Null);
+    TEST(parser5.EntryType() == JsonParserArray::ValType::Null);
 
-    auto parser6 = JsonParserArray::Create(Brn("[\"foo\"]"));
+    JsonParserArray parser6 = JsonParserArray::Create(Brn("[\"foo\"]"));
     TEST(parser6.Type() == JsonParserArray::ValType::String);
-    TEST(parser6.EntryType() == JsonParserArray::EntryValType::String);
+    TEST(parser6.EntryType() == JsonParserArray::ValType::String);
 
-    auto parser7 = JsonParserArray::Create(Brn("[{\"foo\":1}]"));
+    JsonParserArray parser7 = JsonParserArray::Create(Brn("[{\"foo\":1}]"));
     TEST(parser7.Type() == JsonParserArray::ValType::Object);
-    TEST(parser7.EntryType() == JsonParserArray::EntryValType::Object);
+    TEST(parser7.EntryType() == JsonParserArray::ValType::Object);
 
-    auto parser8 = JsonParserArray::Create(Brn("[[1,2],[3,4,5]]"));
+    JsonParserArray parser8 = JsonParserArray::Create(Brn("[[1,2],[3,4,5]]"));
     TEST(parser8.Type() == JsonParserArray::ValType::Array);
-    TEST(parser8.EntryType() == JsonParserArray::EntryValType::Array);
+    TEST(parser8.EntryType() == JsonParserArray::ValType::Array);
 
-    auto parser9 = JsonParserArray::Create(Brn("[null]"));
+    JsonParserArray parser9 = JsonParserArray::Create(Brn("[null]"));
     TEST(parser9.Type() == JsonParserArray::ValType::NullEntry);
-    TEST(parser9.EntryType() == JsonParserArray::EntryValType::NullEntry);
+    TEST(parser9.EntryType() == JsonParserArray::ValType::NullEntry);
 
-    auto parser10 = JsonParserArray::Create(Brn("[]"));
+    JsonParserArray parser10 = JsonParserArray::Create(Brn("[]"));
     TEST(parser10.Type() == JsonParserArray::ValType::Null);
-    TEST(parser10.EntryType() == JsonParserArray::EntryValType::Null);
+    TEST(parser10.EntryType() == JsonParserArray::ValType::Null);
 }
 
 void SuiteParserJsonArray::TestIntArray()
 {
-    auto parser = JsonParserArray::Create(Brn("[ 1,2, -3]"));
+    JsonParserArray parser = JsonParserArray::Create(Brn("[ 1,2, -3]"));
     TEST(parser.NextInt() == 1);
     TEST_THROWS(parser.NextBool(), JsonWrongType);
     TEST_THROWS(parser.NextString(), JsonWrongType);
@@ -1089,12 +1089,12 @@ void SuiteParserJsonArray::TestIntArray()
     TEST_THROWS(parser.NextNull(), JsonWrongType);
     TEST(parser.NextInt() == 2);
     TEST(parser.NextInt() == -3);
-    TEST(parser.EntryType() == JsonParserArray::EntryValType::End);
+    TEST(parser.EntryType() == JsonParserArray::ValType::End);
 }
 
 void SuiteParserJsonArray::TestBoolArray()
 {
-    auto parser = JsonParserArray::Create(Brn("[true, false,true ]"));
+    JsonParserArray parser = JsonParserArray::Create(Brn("[true, false,true ]"));
     TEST(parser.NextBool());
     TEST_THROWS(parser.NextInt(), JsonWrongType);
     TEST_THROWS(parser.NextString(), JsonWrongType);
@@ -1103,12 +1103,12 @@ void SuiteParserJsonArray::TestBoolArray()
     TEST_THROWS(parser.NextNull(), JsonWrongType);
     TEST(!parser.NextBool());
     TEST(parser.NextBool());
-    TEST(parser.EntryType() == JsonParserArray::EntryValType::End);
+    TEST(parser.EntryType() == JsonParserArray::ValType::End);
 }
 
 void SuiteParserJsonArray::TestStringArray()
 {
-    auto parser1 = JsonParserArray::Create(Brn("[\"foo\",\"bar\"]"));
+    JsonParserArray parser1 = JsonParserArray::Create(Brn("[\"foo\",\"bar\"]"));
     TEST(parser1.NextString() == Brn("foo"));
     TEST_THROWS(parser1.NextInt(), JsonWrongType);
     TEST_THROWS(parser1.NextBool(), JsonWrongType);
@@ -1116,34 +1116,34 @@ void SuiteParserJsonArray::TestStringArray()
     TEST_THROWS(parser1.NextArray(), JsonWrongType);
     TEST_THROWS(parser1.NextNull(), JsonWrongType);
     TEST(parser1.NextString() == Brn("bar"));
-    TEST(parser1.EntryType() == JsonParserArray::EntryValType::End);
+    TEST(parser1.EntryType() == JsonParserArray::ValType::End);
 
-    auto parser2 = JsonParserArray::Create(Brn("[ \"foo\" , \"bar\" ]"));
+    JsonParserArray parser2 = JsonParserArray::Create(Brn("[ \"foo\" , \"bar\" ]"));
     TEST(parser2.NextString() == Brn("foo"));
     TEST(parser2.NextString() == Brn("bar"));
-    TEST(parser2.EntryType() == JsonParserArray::EntryValType::End);
+    TEST(parser2.EntryType() == JsonParserArray::ValType::End);
 
     Bws<16> arrW("[\"\\\"\"]");
-    auto parser3 = JsonParserArray::Create(arrW);
+    JsonParserArray parser3 = JsonParserArray::Create(arrW);
     TEST(parser3.NextStringEscaped() == Brn("\""));
-    TEST(parser3.EntryType() == JsonParserArray::EntryValType::End);
+    TEST(parser3.EntryType() == JsonParserArray::ValType::End);
 
     Bws<64> arrW2("[\" \\\" \\\\ \\/ \\b \\f \\n \\r \\t \"]");
-    auto parser4 = JsonParserArray::Create(arrW2);
+    JsonParserArray parser4 = JsonParserArray::Create(arrW2);
     TEST(parser4.NextStringEscaped() == Brn(" \" \\ / \b \f \n \r \t "));
-    TEST(parser4.EntryType() == JsonParserArray::EntryValType::End);
+    TEST(parser4.EntryType() == JsonParserArray::ValType::End);
 
 
     Brn result;
 
     // Using TryNextString()
-    auto parser5 = JsonParserArray::Create(Brn("[\"foo\",\"bar\"]"));
+    JsonParserArray parser5 = JsonParserArray::Create(Brn("[\"foo\",\"bar\"]"));
     TEST(parser5.TryNextString(result));
     TEST(result == Brn("foo"));
     TEST(parser5.TryNextString(result));
     TEST(result == Brn("bar"));
 
-    auto parser6 = JsonParserArray::Create(Brn("[ \"foo\" , \"bar\" ]"));
+    JsonParserArray parser6 = JsonParserArray::Create(Brn("[ \"foo\" , \"bar\" ]"));
     TEST(parser6.TryNextString(result));
     TEST(result == Brn("foo"));
     TEST(parser6.TryNextString(result));
@@ -1153,7 +1153,7 @@ void SuiteParserJsonArray::TestStringArray()
 void SuiteParserJsonArray::TestObjectArray()
 {
     {
-        auto parser = JsonParserArray::Create(Brn("[{\"val\":0}, {\"val\":1} ]"));
+        JsonParserArray parser = JsonParserArray::Create(Brn("[{\"val\":0}, {\"val\":1} ]"));
         TEST(parser.NextObject() == Brn("{\"val\":0}"));
         TEST_THROWS(parser.NextBool(), JsonWrongType);
         TEST_THROWS(parser.NextInt(), JsonWrongType);
@@ -1161,37 +1161,37 @@ void SuiteParserJsonArray::TestObjectArray()
         TEST_THROWS(parser.NextArray(), JsonWrongType);
         TEST_THROWS(parser.NextNull(), JsonWrongType);
         TEST(parser.NextObject() == Brn("{\"val\":1}"));
-        TEST(parser.EntryType() == JsonParserArray::EntryValType::End);
+        TEST(parser.EntryType() == JsonParserArray::ValType::End);
 
-        auto parser2 = JsonParserArray::Create(Brn("[{\"val\":\"open{\"}, {\"val\":\"close}\"} ]"));
+        JsonParserArray parser2 = JsonParserArray::Create(Brn("[{\"val\":\"open{\"}, {\"val\":\"close}\"} ]"));
         TEST(parser2.NextObject() == Brn("{\"val\":\"open{\"}"));
         TEST(parser2.NextObject() == Brn("{\"val\":\"close}\"}"));
-        TEST(parser2.EntryType() == JsonParserArray::EntryValType::End);
+        TEST(parser2.EntryType() == JsonParserArray::ValType::End);
     }
 
     {
         Brn result;
-        auto parser = JsonParserArray::Create(Brn("[{\"val\":0}, {\"val\":1} ]"));
+        JsonParserArray parser = JsonParserArray::Create(Brn("[{\"val\":0}, {\"val\":1} ]"));
 
         TEST(parser.TryNextObject(result));
         TEST(result == Brn("{\"val\":0}"));
         TEST(parser.TryNextObject(result));
         TEST(result == Brn("{\"val\":1}"));
-        TEST(parser.EntryType() == JsonParserArray::EntryValType::End);
+        TEST(parser.EntryType() == JsonParserArray::ValType::End);
 
-        auto parser2 = JsonParserArray::Create(Brn("[{\"val\":\"open{\"}, {\"val\":\"close}\"} ]"));
+        JsonParserArray parser2 = JsonParserArray::Create(Brn("[{\"val\":\"open{\"}, {\"val\":\"close}\"} ]"));
         TEST(parser2.TryNextObject(result));
         TEST(result == Brn("{\"val\":\"open{\"}"));
         TEST(parser2.TryNextObject(result));
         TEST(result == Brn("{\"val\":\"close}\"}"));
-        TEST(parser2.EntryType() == JsonParserArray::EntryValType::End);
+        TEST(parser2.EntryType() == JsonParserArray::ValType::End);
     }
 }
 
 void SuiteParserJsonArray::TestArrayArray()
 {
     {
-        auto parser = JsonParserArray::Create(Brn("[[1,2],[3,4,5]]"));
+        JsonParserArray parser = JsonParserArray::Create(Brn("[[1,2],[3,4,5]]"));
         TEST(parser.NextArray() == Brn("[1,2]"));
         TEST_THROWS(parser.NextBool(), JsonWrongType);
         TEST_THROWS(parser.NextInt(), JsonWrongType);
@@ -1199,17 +1199,17 @@ void SuiteParserJsonArray::TestArrayArray()
         TEST_THROWS(parser.NextObject(), JsonWrongType);
         TEST_THROWS(parser.NextNull(), JsonWrongType);
         TEST(parser.NextArray() == Brn("[3,4,5]"));
-        TEST(parser.EntryType() == JsonParserArray::EntryValType::End);
+        TEST(parser.EntryType() == JsonParserArray::ValType::End);
     }
     {
         Brn result;
-        auto parser = JsonParserArray::Create(Brn("[[1,2],[3,4,5]]"));
+        JsonParserArray parser = JsonParserArray::Create(Brn("[[1,2],[3,4,5]]"));
         TEST(parser.TryNextArray(result));
         TEST(result == Brn("[1,2]"));
 
         TEST(parser.TryNextArray(result));
         TEST(result == Brn("[3,4,5]"));
-        TEST(parser.EntryType() == JsonParserArray::EntryValType::End);
+        TEST(parser.EntryType() == JsonParserArray::ValType::End);
     }
 }
 
@@ -1218,19 +1218,19 @@ void SuiteParserJsonArray::TestEmptyArray()
     Brn result;
 
     {
-        auto parser = JsonParserArray::Create(Brn("[]"));
+        JsonParserArray parser = JsonParserArray::Create(Brn("[]"));
         TEST_THROWS(
             parser.NextBool(),
             JsonArrayEnumerationComplete);
     }
     {
-        auto parser = JsonParserArray::Create(Brn("[]"));
+        JsonParserArray parser = JsonParserArray::Create(Brn("[]"));
         TEST_THROWS(
             parser.NextInt(),
             JsonArrayEnumerationComplete);
     }
     {
-        auto parser = JsonParserArray::Create(Brn("[]"));
+        JsonParserArray parser = JsonParserArray::Create(Brn("[]"));
         TEST_THROWS(
             parser.NextString(),
             JsonArrayEnumerationComplete);
@@ -1238,7 +1238,7 @@ void SuiteParserJsonArray::TestEmptyArray()
         TEST(result.Bytes() == 0);
     }
     {
-        auto parser = JsonParserArray::Create(Brn("[]"));
+        JsonParserArray parser = JsonParserArray::Create(Brn("[]"));
         TEST_THROWS(
             parser.NextStringEscaped(),
             JsonArrayEnumerationComplete);
@@ -1246,7 +1246,7 @@ void SuiteParserJsonArray::TestEmptyArray()
         TEST(result.Bytes() == 0);
     }
     {
-        auto parser = JsonParserArray::Create(Brn("[]"));
+        JsonParserArray parser = JsonParserArray::Create(Brn("[]"));
         TEST_THROWS(
             parser.NextArray(),
             JsonArrayEnumerationComplete);
@@ -1254,7 +1254,7 @@ void SuiteParserJsonArray::TestEmptyArray()
         TEST(result.Bytes() == 0);
     }
     {
-        auto parser = JsonParserArray::Create(Brn("[]"));
+        JsonParserArray parser = JsonParserArray::Create(Brn("[]"));
         TEST_THROWS(
             parser.NextObject(),
             JsonArrayEnumerationComplete);
@@ -1269,105 +1269,105 @@ void SuiteParserJsonArray::TestArrayInObject()
     JsonParser parser;
     parser.Parse(json);
     Brn arr = parser.String("arr");
-    auto arrParser = JsonParserArray::Create(arr);
-    TEST(arrParser.EntryType() == JsonParserArray::EntryValType::Int);
+    JsonParserArray arrParser = JsonParserArray::Create(arr);
+    TEST(arrParser.EntryType() == JsonParserArray::ValType::Int);
     TEST(arrParser.NextInt() == -7);
     TEST(arrParser.NextInt() == 9);
 }
 
 void SuiteParserJsonArray::TestNullObjectArray()
 {
-    auto parser = JsonParserArray::Create(Brn("[{\"val\":0}, null]"));
+    JsonParserArray parser = JsonParserArray::Create(Brn("[{\"val\":0}, null]"));
     TEST(parser.NextObject() == Brn("{\"val\":0}"));
     TEST_THROWS(parser.NextBool(), JsonWrongType);
     TEST_THROWS(parser.NextInt(), JsonWrongType);
     TEST_THROWS(parser.NextString(), JsonWrongType);
     TEST_THROWS(parser.NextArray(), JsonWrongType);
     TEST(parser.NextNull() == Brn("null"));
-    TEST(parser.EntryType() == JsonParserArray::EntryValType::End);
+    TEST(parser.EntryType() == JsonParserArray::ValType::End);
 
-    auto parser2 = JsonParserArray::Create(Brn("[ null, {\"val\":0}]"));
+    JsonParserArray parser2 = JsonParserArray::Create(Brn("[ null, {\"val\":0}]"));
     TEST(parser2.NextNull() == Brn("null"));
     TEST_THROWS(parser2.NextBool(), JsonWrongType);
     TEST_THROWS(parser2.NextInt(), JsonWrongType);
     TEST_THROWS(parser2.NextString(), JsonWrongType);
     TEST_THROWS(parser2.NextArray(), JsonWrongType);
     TEST(parser2.NextObject() == Brn("{\"val\":0}"));
-    TEST(parser2.EntryType() == JsonParserArray::EntryValType::End);
+    TEST(parser2.EntryType() == JsonParserArray::ValType::End);
 }
 
 void SuiteParserJsonArray::TestNullArrayArray()
 {
-    auto parser = JsonParserArray::Create(Brn("[[1,2], null]"));
+    JsonParserArray parser = JsonParserArray::Create(Brn("[[1,2], null]"));
     TEST(parser.NextArray() == Brn("[1,2]"));
     TEST_THROWS(parser.NextBool(), JsonWrongType);
     TEST_THROWS(parser.NextInt(), JsonWrongType);
     TEST_THROWS(parser.NextString(), JsonWrongType);
     TEST_THROWS(parser.NextObject(), JsonWrongType);
     TEST(parser.NextNull() == Brn("null"));
-    TEST(parser.EntryType() == JsonParserArray::EntryValType::End);
+    TEST(parser.EntryType() == JsonParserArray::ValType::End);
 
-    auto parser2 = JsonParserArray::Create(Brn("[null, [3,4,5]]"));
+    JsonParserArray parser2 = JsonParserArray::Create(Brn("[null, [3,4,5]]"));
     TEST(parser2.NextNull() == Brn("null"));
     TEST_THROWS(parser2.NextBool(), JsonWrongType);
     TEST_THROWS(parser2.NextInt(), JsonWrongType);
     TEST_THROWS(parser2.NextString(), JsonWrongType);
     TEST_THROWS(parser2.NextObject(), JsonWrongType);
     TEST(parser2.NextArray() == Brn("[3,4,5]"));
-    TEST(parser2.EntryType() == JsonParserArray::EntryValType::End);
+    TEST(parser2.EntryType() == JsonParserArray::ValType::End);
 }
 
 void SuiteParserJsonArray::TestMultiTypeArray()
 {
-    auto parser = JsonParserArray::Create(Brn("[42, true,[1,2] ,null, \"foo\", {\"val\":0}]"));
+    JsonParserArray parser = JsonParserArray::Create(Brn("[42, true,[1,2] ,null, \"foo\", {\"val\":0}]"));
     // Type() method is deprecated. Its value is set based on first array entry and does not change as array is parsed. For compatbility with existing clients, ensure that remains the case.
     TEST(parser.Type() == JsonParserArray::ValType::Int);
-    TEST(parser.EntryType() == JsonParserArray::EntryValType::Int);
+    TEST(parser.EntryType() == JsonParserArray::ValType::Int);
     TEST(parser.NextInt() == 42);
     TEST(parser.Type() == JsonParserArray::ValType::Int);
-    TEST(parser.EntryType() == JsonParserArray::EntryValType::Bool);
+    TEST(parser.EntryType() == JsonParserArray::ValType::Bool);
     TEST(parser.NextBool());
     TEST(parser.Type() == JsonParserArray::ValType::Int);
-    TEST(parser.EntryType() == JsonParserArray::EntryValType::Array);
+    TEST(parser.EntryType() == JsonParserArray::ValType::Array);
     TEST(parser.NextArray() == Brn("[1,2]"));
     TEST(parser.Type() == JsonParserArray::ValType::Int);
-    TEST(parser.EntryType() == JsonParserArray::EntryValType::NullEntry);
+    TEST(parser.EntryType() == JsonParserArray::ValType::NullEntry);
     TEST(parser.Next() == Brn("null"));
     TEST(parser.Type() == JsonParserArray::ValType::Int);
-    TEST(parser.EntryType() == JsonParserArray::EntryValType::String);
+    TEST(parser.EntryType() == JsonParserArray::ValType::String);
     TEST(parser.NextString() == Brn("foo"));
     TEST(parser.Type() == JsonParserArray::ValType::Int);
-    TEST(parser.EntryType() == JsonParserArray::EntryValType::Object);
+    TEST(parser.EntryType() == JsonParserArray::ValType::Object);
     TEST(parser.NextObject() == Brn("{\"val\":0}"));
     TEST(parser.Type() == JsonParserArray::ValType::Int);
-    TEST(parser.EntryType() == JsonParserArray::EntryValType::End);
+    TEST(parser.EntryType() == JsonParserArray::ValType::End);
 }
 
 void SuiteParserJsonArray::TestSubsetTypeArray()
 {
-    auto parser = JsonParserArray::Create(Brn("[[1,2] ,null, \"foo\", {\"val\":0}]"));
-    TEST(parser.EntryType() == JsonParserArray::EntryValType::Array);
+    JsonParserArray parser = JsonParserArray::Create(Brn("[[1,2] ,null, \"foo\", {\"val\":0}]"));
+    TEST(parser.EntryType() == JsonParserArray::ValType::Array);
     TEST(parser.Next() == Brn("[1,2]"));
     TEST(parser.Next() == Brn("null"));
     TEST(parser.Next() == Brn("foo"));
     TEST(parser.Next() == Brn("{\"val\":0}"));
-    TEST(parser.EntryType() == JsonParserArray::EntryValType::End);
+    TEST(parser.EntryType() == JsonParserArray::ValType::End);
     TEST_THROWS(parser.Next(), JsonArrayEnumerationComplete);
 
-    auto parser2 = JsonParserArray::Create(Brn("[42, true, [1,2],null ,\"foo\", {\"val\":0}]"));
-    TEST(parser2.EntryType() == JsonParserArray::EntryValType::Int);
+    JsonParserArray parser2 = JsonParserArray::Create(Brn("[42, true, [1,2],null ,\"foo\", {\"val\":0}]"));
+    TEST(parser2.EntryType() == JsonParserArray::ValType::Int);
     TEST(parser2.Next() == Brn("42"));
-    TEST(parser2.EntryType() == JsonParserArray::EntryValType::Bool);
+    TEST(parser2.EntryType() == JsonParserArray::ValType::Bool);
     TEST(parser2.Next() == Brn("true"));
-    TEST(parser2.EntryType() == JsonParserArray::EntryValType::Array);
+    TEST(parser2.EntryType() == JsonParserArray::ValType::Array);
     TEST(parser2.Next() == Brn("[1,2]"));
-    TEST(parser2.EntryType() == JsonParserArray::EntryValType::NullEntry);
+    TEST(parser2.EntryType() == JsonParserArray::ValType::NullEntry);
     TEST(parser2.Next() == Brn("null"));
-    TEST(parser2.EntryType() == JsonParserArray::EntryValType::String);
+    TEST(parser2.EntryType() == JsonParserArray::ValType::String);
     TEST(parser2.Next() == Brn("foo"));
-    TEST(parser2.EntryType() == JsonParserArray::EntryValType::Object);
+    TEST(parser2.EntryType() == JsonParserArray::ValType::Object);
     TEST(parser2.Next() == Brn("{\"val\":0}"));
-    TEST(parser2.EntryType() == JsonParserArray::EntryValType::End);
+    TEST(parser2.EntryType() == JsonParserArray::ValType::End);
     TEST_THROWS(parser.Next(), JsonArrayEnumerationComplete);
 }
 
@@ -1378,10 +1378,10 @@ void SuiteParserJsonArray::TestCorruptArray()
 
 void SuiteParserJsonArray::TestArrayConclusion()
 {
-    auto parser = JsonParserArray::Create(Brn("[1, 2]"));
+    JsonParserArray parser = JsonParserArray::Create(Brn("[1, 2]"));
     TEST(parser.NextInt() == 1);
     TEST(parser.NextInt() == 2);
-    TEST(parser.EntryType() == JsonParserArray::EntryValType::End);
+    TEST(parser.EntryType() == JsonParserArray::ValType::End);
     TEST_THROWS(parser.Next(), JsonArrayEnumerationComplete);
     TEST_THROWS(parser.NextInt(), JsonArrayEnumerationComplete);
     TEST_THROWS(parser.NextBool(), JsonArrayEnumerationComplete);
