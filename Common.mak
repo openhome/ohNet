@@ -81,6 +81,7 @@ objects_core = \
 	$(objdir)FileStream.$(objext) \
 	$(objdir)Globals.$(objext) \
 	$(objdir)Http.$(objext) \
+	$(objdir)Json.$(objext) \
 	$(objdir)DNSCommon.$(objext) \
 	$(objdir)DNSDigest.$(objext) \
 	$(objdir)mDNS.$(objext) \
@@ -154,6 +155,7 @@ headers = \
 	$(inc_build)/OpenHome/Private/Fifo.h \
 	$(inc_build)/OpenHome/Private/File.h \
 	$(inc_build)/OpenHome/Private/Http.h \
+	$(inc_build)/OpenHome/Private/Json.h \
 	$(inc_build)/OpenHome/Private/md5.h \
 	$(inc_build)/OpenHome/Private/Network.h \
 	$(inc_build)/OpenHome/Private/NetworkAdapterList.h \
@@ -367,6 +369,8 @@ $(objdir)Globals.$(objext) : OpenHome/Net/Globals.cpp $(headers)
 	$(compiler)Globals.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Globals.cpp
 $(objdir)Http.$(objext) : OpenHome/Http.cpp $(headers)
 	$(compiler)Http.$(objext) -c $(cppflags) $(includes) OpenHome/Http.cpp
+$(objdir)Json.$(objext) : OpenHome/Json.cpp $(headers)
+	$(compiler)Json.$(objext) -c $(cppflags) $(includes) OpenHome/Json.cpp
 $(objdir)anonymous.$(objext) : $(mDNSdir)/anonymous.c $(headers)
 	$(compiler)anonymous.$(objext) -c $(cflags_third_party) $(includes) $(mDNSdir)/anonymous.c
 $(objdir)CryptoAlg.$(objext) : $(mDNSdir)/CryptoAlg.c $(headers)
@@ -545,6 +549,14 @@ $(objdir)TestFunctorGeneric.$(objext) : OpenHome/Tests/TestFunctorGeneric.cpp $(
 	$(compiler)TestFunctorGeneric.$(objext) -c $(cppflags) $(includes) OpenHome/Tests/TestFunctorGeneric.cpp
 $(objdir)TestFunctorGenericMain.$(objext) : OpenHome/Tests/TestFunctorGenericMain.cpp $(headers)
 	$(compiler)TestFunctorGenericMain.$(objext) -c $(cppflags) $(includes) OpenHome/Tests/TestFunctorGenericMain.cpp
+
+TestJson: $(objdir)TestJson.$(exeext)
+$(objdir)TestJson.$(exeext) :  ohNetCore $(objdir)TestJson.$(objext) $(objdir)TestJsonMain.$(objext) $(libprefix)TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)TestJson.$(exeext) $(objdir)TestJsonMain.$(objext) $(objdir)TestJson.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
+$(objdir)TestJson.$(objext) : OpenHome/Tests/TestJson.cpp $(headers)
+	$(compiler)TestJson.$(objext) -c $(cppflags) $(includes) OpenHome/Tests/TestJson.cpp
+$(objdir)TestJsonMain.$(objext) : OpenHome/Tests/TestJsonMain.cpp $(headers)
+	$(compiler)TestJsonMain.$(objext) -c $(cppflags) $(includes) OpenHome/Tests/TestJsonMain.cpp
 
 TestFile: $(objdir)TestFile.$(exeext)
 $(objdir)TestFile.$(exeext) :  ohNetCore $(objdir)TestFile.$(objext) $(objdir)TestFileMain.$(objext) $(libprefix)TestFramework.$(libext)

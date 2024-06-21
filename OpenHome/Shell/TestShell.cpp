@@ -25,6 +25,9 @@ static void RunTestException(CpStack& /*aCpStack*/, DvStack& /*aDvStack*/, const
 extern void TestFunctorGeneric();
 static void RunTestFunctorGeneric(CpStack& /*aCpStack*/, DvStack& /*aDvStack*/, const std::vector<Brn>& /*aArgs*/) { TestFunctorGeneric(); }
 
+extern void TestJson();
+static void RunTestJson(CpStack& /*aCpStack*/, DvStack& /*aDvStack*/, const std::vector<Brn>& /*aArgs*/) { TestJson(); }
+
 extern void TestFifo();
 static void RunTestFifo(CpStack& /*aCpStack*/, DvStack& /*aDvStack*/, const std::vector<Brn>& /*aArgs*/) { TestFifo(); }
 
@@ -124,6 +127,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     shellTests.push_back(ShellTest("TestDvLpec", RunTestDvLpec));
     shellTests.push_back(ShellTest("TestException", RunTestException));
     shellTests.push_back(ShellTest("TestFunctorGeneric", RunTestFunctorGeneric));
+    shellTests.push_back(ShellTest("TestJson", RunTestJson));
     shellTests.push_back(ShellTest("TestXmlParser", RunTestXmlParser));
 
     ShellCommandRun* cmdRun = new ShellCommandRun(*cpStack, *dvStack, *shell, shellTests);
