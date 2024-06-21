@@ -20,6 +20,28 @@ namespace OpenHome {
 
 class IWriter;
 
+typedef enum {
+    eJsonEncodingUtf8,
+    eJsonEncodingUtf16
+} EJsonEncoding;
+
+typedef enum {
+    eJsonValTypeUndefined,
+    eJsonValTypeNull,
+    eJsonValTypeNullEntry,
+    eJsonValTypeInt,
+    eJsonValTypeBool,
+    eJsonValTypeString,
+    eJsonValTypeObject,
+    eJsonValTypeArray,
+    eJsonValTypeEnd
+} EJsonValType;
+
+typedef enum {
+    eJsonWriteOnEmptyNull,          // "null"
+    eJsonWriteOnEmptyEmptyArray     // "[]"
+} EJsonWriteOnEmpty;
+
 class Json
 {
     static const Brn kEscapedDoubleQuote;
@@ -31,14 +53,8 @@ class Json
     static const Brn kEscapedLinefeed;
     static const Brn kEscapedTab;
 public:
-    enum Encoding
-    {
-        Utf8,
-        Utf16
-    };
-public:
     static void Escape(IWriter& aWriter, const Brx& aValue);
-    static void Unescape(Bwx& aValue, Encoding aEncoding = Encoding::Utf8); // converts in place
+    static void Unescape(Bwx& aValue, EJsonEncoding aEncoding = eJsonEncodingUtf8); // converts in place
 };
 
 /*
@@ -82,32 +98,19 @@ private:
 class JsonParserArray
 {
 public:
-    enum ValType
-    {
-        Undefined,
-        Null,
-        NullEntry,
-        Int,
-        Bool,
-        String,
-        Object,
-        Array,
-        End
-    };
-public:
     static JsonParserArray Create(const Brx& aArray);
     /*
      * Deprecated.
      *
      * Identfies type of array based on first entry. Not suitable for heterogeneous arrays. Use EntryType() to check type of each entry instead.
      */
-    ValType Type() const;
-    ValType EntryType() const;
+    EJsonValType Type() const;
+    EJsonValType EntryType() const;
     TInt NextInt();
     TBool NextBool();
     Brn NextNull();
     Brn NextString();
-    Brn NextStringEscaped(Json::Encoding aEncoding = Json::Encoding::Utf8); // array passed to Set must be writable in this case
+    Brn NextStringEscaped(EJsonEncoding aEncoding = eJsonEncodingUtf8); // array passed to Set must be writable in this case
     Brn NextArray();
     Brn NextObject();
     Brn Next();
@@ -115,7 +118,7 @@ public:
     // These methods don't throw an exception when no value is present. Saves constructing a full exception when parsing content
     // NOTE: NextInt/NextBool/NextNull don't throw JsonArrayEnumerationComplete so don't have a TryXXX() overload
     TBool TryNextString(Brn& aResult);
-    TBool TryNextStringEscaped(Brn& aResult, Json::Encoding aEncoding = Json::Encoding::Utf8); // array passed to Set must be writable in this case
+    TBool TryNextStringEscaped(Brn& aResult, EJsonEncoding aEncoding = eJsonEncodingUtf8); // array passed to Set must be writable in this case
     TBool TryNextArray(Brn& aResult);
     TBool TryNextObject(Brn& aResult);
     TBool TryNext(Brn& aResult);
@@ -129,10 +132,10 @@ private:
     TBool TryEndEnumerationIfNull();
 private:
     Brn iBuf;
-    ValType iType;
+    EJsonValType iType;
     const TByte* iPtr;
     const TByte* iEnd;
-    ValType iEntryType;
+    EJsonValType iEntryType;
 };
 
 class WriterJson
@@ -164,21 +167,15 @@ class WriterJsonValueString;
 class WriterJsonArray : public IWriterJson
 {
 public:
-    enum WriteOnEmpty
-    {
-        eNull,          // "null"
-        eEmptyArray     // "[]"
-    };
-public:
     WriterJsonArray();
-    WriterJsonArray(IWriter& aWriter, WriteOnEmpty aWriteOnEmpty = WriteOnEmpty::eNull);
+    WriterJsonArray(IWriter& aWriter, EJsonWriteOnEmpty aWriteOnEmpty = eJsonWriteOnEmptyNull);
     WriterJsonArray(const WriterJsonArray& aWriter);
     void WriteInt(TInt aValue);
     void WriteUint(TUint aValue);
     void WriteString(const TChar* aValue);
     void WriteString(const Brx& aValue);
     void WriteBool(TBool aValue);
-    WriterJsonArray CreateArray(WriterJsonArray::WriteOnEmpty aWriteOnEmpty = WriterJsonArray::WriteOnEmpty::eNull);
+    WriterJsonArray CreateArray(EJsonWriteOnEmpty aWriteOnEmpty = eJsonWriteOnEmptyNull);
     WriterJsonObject CreateObject();
 public: // from IWriterJson
     void WriteEnd();
@@ -188,7 +185,7 @@ private:
     static const Brn kArrayStart;
     static const Brn kArrayEnd;
     IWriter* iWriter;
-    WriteOnEmpty iWriteOnEmpty;
+    EJsonWriteOnEmpty iWriteOnEmpty;
     TBool iStarted;
     TBool iEnded;
 };
@@ -216,8 +213,8 @@ public:
     void WriteBinary(const Brx& aKey, const Brx& aValue);
     void WriteRaw(const TChar* aKey, const Brx& aValue);
     void WriteRaw(const Brx& aKey, const Brx& aValue);
-    WriterJsonArray CreateArray(const TChar* aKey, WriterJsonArray::WriteOnEmpty aWriteOnEmpty = WriterJsonArray::WriteOnEmpty::eNull);
-    WriterJsonArray CreateArray(const Brx& aKey, WriterJsonArray::WriteOnEmpty aWriteOnEmpty = WriterJsonArray::WriteOnEmpty::eNull);
+    WriterJsonArray CreateArray(const TChar* aKey, EJsonWriteOnEmpty aWriteOnEmpty = eJsonWriteOnEmptyNull);
+    WriterJsonArray CreateArray(const Brx& aKey, EJsonWriteOnEmpty aWriteOnEmpty = eJsonWriteOnEmptyNull);
     WriterJsonObject CreateObject(const TChar* aKey);
     WriterJsonObject CreateObject(const Brx& aKey);
     WriterJsonValueString CreateStringStreamed(const TChar* aKey);

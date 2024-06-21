@@ -71,7 +71,7 @@ void Json::Escape(IWriter& aWriter, const Brx& aValue)
     }
 }
 
-void Json::Unescape(Bwx& aValue, Encoding aEncoding)
+void Json::Unescape(Bwx& aValue, EJsonEncoding aEncoding)
 {
     TUint j = 0;
     const TUint bytes = aValue.Bytes();
@@ -133,7 +133,7 @@ void Json::Unescape(Bwx& aValue, Encoding aEncoding)
                         aValue[j++] = (TByte)hex;
                     }
                 }
-                else if (aEncoding == Encoding::Utf8) {
+                else if (aEncoding == eJsonEncodingUtf8) {
                     if (hex > 0xFF) {
                         // we expected aValue to already be UTF-8 encoded; it's not
                         THROW(JsonInvalid);
@@ -482,15 +482,15 @@ JsonParserArray JsonParserArray::Create(const Brx& aArray)
     return self;
 }
 
-JsonParserArray::ValType JsonParserArray::Type() const
+EJsonValType JsonParserArray::Type() const
 {
-    ASSERT(iType != ValType::Undefined);
+    ASSERT(iType != eJsonValTypeUndefined);
     return iType;
 }
 
-JsonParserArray::ValType JsonParserArray::EntryType() const
+EJsonValType JsonParserArray::EntryType() const
 {
-    ASSERT(iEntryType != ValType::Undefined);
+    ASSERT(iEntryType != eJsonValTypeUndefined);
     return iEntryType;
 }
 
@@ -499,7 +499,7 @@ TInt JsonParserArray::NextInt()
     if (TryEndEnumerationIfNull()) {
         THROW(JsonArrayEnumerationComplete);
     }
-    if (iEntryType != ValType::Int) {
+    if (iEntryType != eJsonValTypeInt) {
         THROW(JsonWrongType);
     }
     Brn val = ValueToDelimiter();
@@ -516,7 +516,7 @@ TBool JsonParserArray::NextBool()
     if (TryEndEnumerationIfNull()) {
         THROW(JsonArrayEnumerationComplete);
     }
-    if (iEntryType != ValType::Bool) {
+    if (iEntryType != eJsonValTypeBool) {
         THROW(JsonWrongType);
     }
     Brn val = ValueToDelimiter();
@@ -534,7 +534,7 @@ Brn JsonParserArray::NextNull()
     if (TryEndEnumerationIfNull()) {
         THROW(JsonArrayEnumerationComplete);
     }
-    if (iEntryType != ValType::NullEntry) {
+    if (iEntryType != eJsonValTypeNullEntry) {
         THROW(JsonWrongType);
     }
     Brn val = ValueToDelimiter();
@@ -561,7 +561,7 @@ TBool JsonParserArray::TryNextString(Brn& aResult)
         return false;
     }
 
-    if (iEntryType != ValType::String) {
+    if (iEntryType != eJsonValTypeString) {
         THROW(JsonWrongType);
     }
 
@@ -603,7 +603,7 @@ TBool JsonParserArray::TryNextString(Brn& aResult)
     return true;
 }
 
-Brn JsonParserArray::NextStringEscaped(Json::Encoding aEncoding)
+Brn JsonParserArray::NextStringEscaped(EJsonEncoding aEncoding)
 {
     Brn result;
     if (!TryNextStringEscaped(result, aEncoding)) {
@@ -614,7 +614,7 @@ Brn JsonParserArray::NextStringEscaped(Json::Encoding aEncoding)
     }
 }
 
-TBool JsonParserArray::TryNextStringEscaped(Brn& aResult, Json::Encoding aEncoding)
+TBool JsonParserArray::TryNextStringEscaped(Brn& aResult, EJsonEncoding aEncoding)
 {
     if (!TryNextString(aResult)) {
         return false;
@@ -642,7 +642,7 @@ TBool JsonParserArray::TryNextArray(Brn& aResult)
         return false;
     }
 
-    if (iEntryType != ValType::Array) {
+    if (iEntryType != eJsonValTypeArray) {
         THROW(JsonWrongType);
     }
 
@@ -678,7 +678,7 @@ TBool JsonParserArray::TryNextObject(Brn& aResult)
         return false;
     }
 
-    if (iEntryType != ValType::Object) {
+    if (iEntryType != eJsonValTypeObject) {
         THROW(JsonWrongType);
     }
 
@@ -708,24 +708,24 @@ Brn JsonParserArray::Next()
 
 TBool JsonParserArray::TryNext(Brn& aResult)
 {
-    if (iEntryType == ValType::Object) {
+    if (iEntryType == eJsonValTypeObject) {
         return TryNextObject(aResult);
     }
-    else if (iEntryType == ValType::Array) {
+    else if (iEntryType == eJsonValTypeArray) {
         return TryNextArray(aResult);
     }
-    else if (iEntryType == ValType::NullEntry) {
+    else if (iEntryType == eJsonValTypeNullEntry) {
         aResult.Set(NextNull());
         return true;
     }
-    else if (iEntryType == ValType::String) {
+    else if (iEntryType == eJsonValTypeString) {
         return TryNextString(aResult);
     }
-    else if (iEntryType == ValType::Int || iEntryType == ValType::Bool) {
+    else if (iEntryType == eJsonValTypeInt || iEntryType == eJsonValTypeBool) {
         aResult.Set(ValueToDelimiter());
         return true;
     }
-    else if (iEntryType == ValType::Undefined) {
+    else if (iEntryType == eJsonValTypeUndefined) {
         THROW(JsonCorrupt);
     }
     else {
@@ -735,58 +735,58 @@ TBool JsonParserArray::TryNext(Brn& aResult)
 
 JsonParserArray::JsonParserArray(const Brx& aArray)
     : iBuf(Ascii::Trim(aArray))
-    , iType(ValType::Undefined)
+    , iType(eJsonValTypeUndefined)
     , iPtr(iBuf.Ptr())
     , iEnd(iPtr + iBuf.Bytes())
-    , iEntryType(ValType::Undefined)
+    , iEntryType(eJsonValTypeUndefined)
 {
 }
 
 void JsonParserArray::StartParse()
 {
     if (iBuf == WriterJson::kNull || iBuf.Bytes() == 0) {
-        iType = ValType::Null;
+        iType = eJsonValTypeNull;
         return;
     }
 
     if (*iPtr++ != '[') {
         THROW(JsonCorrupt);
     }
-    while (iType == ValType::Undefined && iPtr < iEnd) {
+    while (iType == eJsonValTypeUndefined && iPtr < iEnd) {
         const TChar ch = (TChar)*iPtr;
         if (Ascii::IsWhitespace(ch)) {
             iPtr++;
             continue;
         }
         if (ch == '{') {
-            iType = ValType::Object;
+            iType = eJsonValTypeObject;
         }
         else if (ch == '[') {
-            iType = ValType::Array;
+            iType = eJsonValTypeArray;
         }
         else if (ch == ']') {
-            iType = ValType::Null;
+            iType = eJsonValTypeNull;
         }
         else if (ch == '\"') {
-            iType = ValType::String;
+            iType = eJsonValTypeString;
         }
         else if (ch == '-' || Ascii::IsDigit(ch)) {
-            iType = ValType::Int;
+            iType = eJsonValTypeInt;
         }
         else if (iBuf == WriterJson::kNull) {
-            iType = ValType::Null;
+            iType = eJsonValTypeNull;
         }
         else if (ch == 't' || ch == 'f') {
-            iType = ValType::Bool;
+            iType = eJsonValTypeBool;
         }
         else if (ch == 'n') {
-            iType = ValType::NullEntry;
+            iType = eJsonValTypeNullEntry;
         }
         else {
             THROW(JsonCorrupt);
         }
     }
-    if (iType == ValType::Undefined) {
+    if (iType == eJsonValTypeUndefined) {
         THROW(JsonCorrupt);
     }
 }
@@ -794,7 +794,7 @@ void JsonParserArray::StartParse()
 void JsonParserArray::StartParseEntry()
 {
     if (iBuf == WriterJson::kNull || iBuf.Bytes() == 0) {
-        iEntryType = ValType::Null;
+        iEntryType = eJsonValTypeNull;
         return;
     }
     if (*iPtr++ != '[') {
@@ -805,36 +805,36 @@ void JsonParserArray::StartParseEntry()
 
 void JsonParserArray::ReturnType()
 {
-    iEntryType = ValType::Undefined;
-    while (iEntryType == ValType::Undefined && iPtr < iEnd) {
+    iEntryType = eJsonValTypeUndefined;
+    while (iEntryType == eJsonValTypeUndefined && iPtr < iEnd) {
         const TChar ch = (TChar)*iPtr;
         if (Ascii::IsWhitespace(ch) || ch == ',') {
             iPtr++;
             continue;
         }
         if (iBuf == Brn("[]") || iBuf == WriterJson::kNull) {
-            iEntryType = ValType::Null;
+            iEntryType = eJsonValTypeNull;
         }
         else if (ch == ']') {
-            iEntryType = ValType::End;
+            iEntryType = eJsonValTypeEnd;
         }
         else if (ch == '[') {
-            iEntryType = ValType::Array;
+            iEntryType = eJsonValTypeArray;
         }
         else if (ch == '{') {
-            iEntryType = ValType::Object;
+            iEntryType = eJsonValTypeObject;
         }
         else if (ch == '\"') {
-            iEntryType = ValType::String;
+            iEntryType = eJsonValTypeString;
         }
         else if (ch == '-' || Ascii::IsDigit(ch)) {
-            iEntryType = ValType::Int;
+            iEntryType = eJsonValTypeInt;
         }
         else if (ch == 't' || ch == 'f') {
-            iEntryType = ValType::Bool;
+            iEntryType = eJsonValTypeBool;
         }
         else if (ch == 'n') {
-            iEntryType = ValType::NullEntry;
+            iEntryType = eJsonValTypeNullEntry;
         }
         else {
             break;
@@ -929,7 +929,7 @@ TBool JsonParserArray::NextCollection(TChar aStart, TChar aEnd, Brn& aResult)
 
 TBool JsonParserArray::TryEndEnumerationIfNull()
 {
-    if (iEntryType == ValType::Null || iEntryType == ValType::End) {
+    if (iEntryType == eJsonValTypeNull || iEntryType == eJsonValTypeEnd) {
         return true;
     }
 
@@ -985,13 +985,13 @@ const Brn WriterJsonArray::kArrayEnd("]");
 
 WriterJsonArray::WriterJsonArray()
     : iWriter(nullptr)
-    , iWriteOnEmpty(WriteOnEmpty::eNull)
+    , iWriteOnEmpty(eJsonWriteOnEmptyNull)
     , iStarted(false)
     , iEnded(false)
 {
 }
 
-WriterJsonArray::WriterJsonArray(IWriter& aWriter, WriteOnEmpty aWriteOnEmpty)
+WriterJsonArray::WriterJsonArray(IWriter& aWriter, EJsonWriteOnEmpty aWriteOnEmpty)
     : iWriter(&aWriter)
     , iWriteOnEmpty(aWriteOnEmpty)
     , iStarted(false)
@@ -1037,7 +1037,7 @@ void WriterJsonArray::WriteBool(TBool aValue)
     WriterJson::WriteValueBool(*iWriter, aValue);
 }
 
-WriterJsonArray WriterJsonArray::CreateArray(WriterJsonArray::WriteOnEmpty aWriteOnEmpty)
+WriterJsonArray WriterJsonArray::CreateArray(EJsonWriteOnEmpty aWriteOnEmpty)
 {
     WriteStartOrSeparator();
     WriterJsonArray writer(*iWriter, aWriteOnEmpty);
@@ -1057,10 +1057,10 @@ void WriterJsonArray::WriteEnd()
         iWriter->Write(kArrayEnd);
     }
     else {
-        if (iWriteOnEmpty == WriteOnEmpty::eNull) {
+        if (iWriteOnEmpty == eJsonWriteOnEmptyNull) {
             iWriter->Write(WriterJson::kNull);
         }
-        else if (iWriteOnEmpty == WriteOnEmpty::eEmptyArray) {
+        else if (iWriteOnEmpty == eJsonWriteOnEmptyEmptyArray) {
             iWriter->Write(kArrayStart);
             iWriter->Write(kArrayEnd);
         }
@@ -1211,12 +1211,12 @@ void WriterJsonObject::WriteRaw(const Brx& aKey, const Brx& aValue)
     iWriter->Write(aValue);
 }
 
-WriterJsonArray WriterJsonObject::CreateArray(const TChar* aKey, WriterJsonArray::WriteOnEmpty aWriteOnEmpty)
+WriterJsonArray WriterJsonObject::CreateArray(const TChar* aKey, EJsonWriteOnEmpty aWriteOnEmpty)
 {
     return CreateArray(Brn(aKey), aWriteOnEmpty);
 }
 
-WriterJsonArray WriterJsonObject::CreateArray(const Brx& aKey, WriterJsonArray::WriteOnEmpty aWriteOnEmpty)
+WriterJsonArray WriterJsonObject::CreateArray(const Brx& aKey, EJsonWriteOnEmpty aWriteOnEmpty)
 {
     CheckStarted();
     WriteKey(aKey);
