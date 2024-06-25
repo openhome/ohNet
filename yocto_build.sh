@@ -1,4 +1,7 @@
 #!/bin/sh
+# optionally takes path to yocto sdk environment file
+# get this manually from https://s3-eu-west-1.amazonaws.com/linn-artifacts-private/yocto_core4_sdk/0.1.35/linn-fb-glibc-x86_64-linn-image-core-cortexa9t2hf-neon-linn-imx6dl-toolchain-5.15-kirkstone.sh (VPN required)
+# if DS (or another waf-based repo) is also checked out and set up, this could be ../ds/dependencies/Linux-armhf/yocto_core4_sdk/environment-setup-cortexa9t2hf-neon-poky-linux-gnueabi
 if [ -z $1 ]; then
     YOCTO_SDK_ENV=/opt/linn-fb/5.15-kirkstone/environment-setup-cortexa9t2hf-neon-poky-linux-gnueabi  
 else
