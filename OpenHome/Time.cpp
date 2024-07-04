@@ -225,50 +225,37 @@ TBool PointInTime::IsValid() const
 
 TBool PointInTime::TryParseFromUnixTimestamp(TInt64 aTimestamp)
 {
-    if (aTimestamp == 0) {
-        Set(0,0,0,0,0,0);
-        return true;
-    }
-    else if (aTimestamp > 0) {
+    if (aTimestamp >= 0) {
         TUint secsRemaining = aTimestamp;
         TUint year = Time::kUnixEpochYear;
+        TUint secs = 0;
 
-        while (true) {
-            TUint secsForYear = Time::SecondsInYear(year);
-            if (secsForYear > secsRemaining) {
-                break;
-            }
-
-            ++year;
-            secsRemaining -= secsForYear;
+        while ((secs = Time::SecondsInYear(year)) <= secsRemaining ) {
+            year += 1;
+            secsRemaining -= secs;
         }
 
         TByte month = 1;
-        while (true) {
-            TUint secsForMonth = Time::SecondsInMonth(month, year);
-            if (secsForMonth > secsRemaining) {
-                break;
-            }
-
-            ++month;
-            secsRemaining -= secsForMonth;
+        while ((secs = Time::SecondsInMonth(month, year)) <= secsRemaining) {
+            month += 1;
+            secsRemaining -= secs;
         }
 
         TByte day = 1;
         while (Time::kSecondsPerDay <= secsRemaining) {
-            ++day;
+            day += 1;
             secsRemaining -= Time::kSecondsPerDay;
         }
 
         TByte hour = 0;
         while (Time::kSecondsPerHour <= secsRemaining) {
-            ++hour;
+            hour += 1;
             secsRemaining -= Time::kSecondsPerHour;
         }
 
         TByte min = 0;
         while (Time::kSecondsPerMinute <= secsRemaining) {
-            ++min;
+            min += 1;
             secsRemaining -= Time::kSecondsPerMinute;
         }
 
@@ -278,47 +265,40 @@ TBool PointInTime::TryParseFromUnixTimestamp(TInt64 aTimestamp)
     else {
         TUint secsRemaining = abs(aTimestamp);
         TUint year = Time::kUnixEpochYear -1;
+        TUint secs = 0;
 
-        while (true) {
-            TUint secsForYear = Time::SecondsInYear(year);
-            if (secsForYear > secsRemaining) {
-                break;
-            }
-
-            --year;
-            secsRemaining -= secsForYear;
+        while ((secs = Time::SecondsInYear(year)) <= secsRemaining) {
+            year -= 1;
+            secsRemaining -= secs;
         }
 
         TByte month = 12;
-        while (true) {
-            TUint secsForMonth = Time::SecondsInMonth(month, year);
-            if (secsForMonth > secsRemaining) {
-                break;
-            }
-
-            --month;
-            secsRemaining -= secsForMonth;
+        while ((secs = Time::SecondsInMonth(month, year)) <= secsRemaining) {
+            month -=1;
+            secsRemaining -= secs;
         }
 
         TByte day = Time::DaysInMonth(month, year);
         while (Time::kSecondsPerDay <= secsRemaining) {
-            --day;
+            day -= 1;
             secsRemaining -= Time::kSecondsPerDay;
         }
 
         TByte hour = 23;
         while (Time::kSecondsPerHour <= secsRemaining) {
-            --hour;
+            hour -= 1;
             secsRemaining -= Time::kSecondsPerHour;
         }
 
         TByte min = 59;
         while (Time::kSecondsPerMinute <= secsRemaining) {
-            --min;
+            min -= 1;
             secsRemaining -= Time::kSecondsPerMinute;
         }
 
-        Set(day, month, year, hour, min, 60 - secsRemaining);
+        TByte seconds = 60 - secsRemaining;
+
+        Set(day, month, year, hour, min, seconds);
         return IsValid();
     }
 }
