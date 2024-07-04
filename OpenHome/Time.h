@@ -101,10 +101,10 @@ public:
     TBool IsValid() const;    
 
     // Converts the internal components into a UnixTimestamp
-    // NOTE: Returns 0 if invalid OR the Year < Unix Epoch (1970)
-    TUint ConvertToUnixTimestamp() const;
+    // NOTE: Returns 0 if invalid.
+    TInt64 ConvertToUnixTimestamp() const;
 
-    TBool TryParseFromUnixTimestamp(TUint aTimestamp);
+    TBool TryParseFromUnixTimestamp(TInt64 aTimestamp);
 
     // Converts a given ISO8601 time string into a PointInTime value.
     // This is very limited support as we currently only parse:
