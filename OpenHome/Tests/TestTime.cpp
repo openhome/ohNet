@@ -35,6 +35,7 @@ private:
     void TestTryParseFromUnixTimestamp() const;
     void TestConvertToUnixTimestamp() const;
     void TestIsValid() const;
+    void TestIOS8601() const;
 };
 
 class SuiteHttpHeaderDate : public Suite
@@ -232,6 +233,7 @@ void SuitePointInTime::Test()
     TestTryParseFromUnixTimestamp();
     TestConvertToUnixTimestamp();
     TestIsValid();
+    TestIOS8601();
 }
 
 void SuitePointInTime::TestConstruction() const
@@ -346,6 +348,44 @@ void SuitePointInTime::TestIsValid() const
     // Month day capping
     PointInTime p7(31, 11, 2300, 1, 1, 1);
     TEST(p7.IsValid() == false); // There's no 31st of November
+}
+
+void SuitePointInTime::TestIOS8601() const
+{
+    PointInTime subject;
+    Brn kTime1("");                          // Nothing
+    Brn kTime2("Jibberish");                 // As stated
+    Brn kTime3("2001-02-01");                // Year only
+    Brn kTime4("11:12:13");                  // Time only
+    Brn kTime5("2010-09-12 04:11:19Z");      // Space in middle
+    Brn kTime6("1985-01-01T00:00:05");       // No timezone at the end
+    Brn kTime7("1999-10-10T10:10:10+01:00"); // Timezone, but not UTC
+    Brn kTime8("1969-12-31T23:59:44Z");      // Valid #1
+    Brn kTime9("2002-05-23T07:30:27Z");      // Valid #2
+
+    TEST(subject.TryParseFromISO8601Time(kTime1) == false);
+    TEST(subject.TryParseFromISO8601Time(kTime2) == false);
+    TEST(subject.TryParseFromISO8601Time(kTime3) == false);
+    TEST(subject.TryParseFromISO8601Time(kTime4) == false);
+    TEST(subject.TryParseFromISO8601Time(kTime5) == false);
+    TEST(subject.TryParseFromISO8601Time(kTime6) == false);
+    TEST(subject.TryParseFromISO8601Time(kTime7) == false);
+
+    TEST(subject.TryParseFromISO8601Time(kTime8));
+    TEST(subject.Year()    == 1969);
+    TEST(subject.Month()   == 12);
+    TEST(subject.Day()     == 31);
+    TEST(subject.Hours()   == 23);
+    TEST(subject.Minutes() == 59);
+    TEST(subject.Seconds() == 44);
+
+    TEST(subject.TryParseFromISO8601Time(kTime9));
+    TEST(subject.Year()    == 2002);
+    TEST(subject.Month()   == 5);
+    TEST(subject.Day()     == 23);
+    TEST(subject.Hours()   == 7);
+    TEST(subject.Minutes() == 30);
+    TEST(subject.Seconds() == 27);
 }
 
 

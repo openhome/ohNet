@@ -1,6 +1,8 @@
 #include <OpenHome/OsWrapper.h>
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Private/Time.h>
+#include <OpenHome/Private/Ascii.h>
+#include <OpenHome/Private/Parser.h>
 
 using namespace OpenHome;
 
@@ -300,3 +302,32 @@ TUint PointInTime::ConvertToUnixTimestamp() const
     return timestamp;
 }
 
+// Converts a given ISO8601 time string into a PointInTime value.
+// This is very limited support as we currently only parse:
+// - Combined Date/Time (UTC only) YYYY-MM-DDThh:mm:ssZ
+TBool PointInTime::TryParseFromISO8601Time(const Brx& aTimeString)
+{
+    if (aTimeString.Bytes() == 0) {
+        return false; // Empty string, so nothing to parse
+    }
+
+    if (aTimeString.At(aTimeString.Bytes() - 1) != 'Z') {
+        return false; // Non-UTC timezone
+    }
+
+    try {
+        Parser p(aTimeString);
+        TUint year   = Ascii::Uint(p.Next('-'));
+        TByte month  = Ascii::Uint(p.Next('-'));
+        TByte day    = Ascii::Uint(p.Next('T'));
+        TByte hour   = Ascii::Uint(p.Next(':'));
+        TByte min    = Ascii::Uint(p.Next(':'));
+        TByte second = Ascii::Uint(p.Next('Z'));
+
+        Set(day, month, year, hour, min, second);
+        return true;
+    }
+    catch (AsciiError&) {
+        return false;
+    }
+}
