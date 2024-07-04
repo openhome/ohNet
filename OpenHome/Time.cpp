@@ -4,6 +4,8 @@
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Parser.h>
 
+#include <stdlib.h>
+
 using namespace OpenHome;
 
 
