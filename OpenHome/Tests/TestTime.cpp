@@ -35,6 +35,7 @@ private:
     void TestTryParseFromUnixTimestamp() const;
     void TestConvertToUnixTimestamp() const;
     void TestIsValid() const;
+    void TestIOS8601() const;
 };
 
 class SuiteHttpHeaderDate : public Suite
@@ -232,6 +233,7 @@ void SuitePointInTime::Test()
     TestTryParseFromUnixTimestamp();
     TestConvertToUnixTimestamp();
     TestIsValid();
+    TestIOS8601();
 }
 
 void SuitePointInTime::TestConstruction() const
@@ -256,13 +258,10 @@ void SuitePointInTime::TestConstruction() const
 
 void SuitePointInTime::TestTryParseFromUnixTimestamp() const
 {
-    const TUint ts1 = 1746513367; // Tue May 06 2025 06:36:07
-    const TUint ts2 = 1259584993; // Mon Nov 30 2009 12:43:13
-    const TUint ts3 = 0;          // Thu Jan 01 1970 00:00:00
-
     PointInTime p;
 
-    TEST(p.TryParseFromUnixTimestamp(ts1));
+    // Tue May 06 2025 06:36:07
+    TEST(p.TryParseFromUnixTimestamp(1746513367));
     TEST(p.Year()    == 2025);
     TEST(p.Month()   == 5);
     TEST(p.Day()     == 6);
@@ -270,7 +269,8 @@ void SuitePointInTime::TestTryParseFromUnixTimestamp() const
     TEST(p.Minutes() == 36);
     TEST(p.Seconds() == 7);
 
-    TEST(p.TryParseFromUnixTimestamp(ts2));
+    // Mon Nov 30 2009 12:43:13
+    TEST(p.TryParseFromUnixTimestamp(1259584993));
     TEST(p.Year()    == 2009);
     TEST(p.Month()   == 11);
     TEST(p.Day()     == 30);
@@ -278,8 +278,9 @@ void SuitePointInTime::TestTryParseFromUnixTimestamp() const
     TEST(p.Minutes() == 43);
     TEST(p.Seconds() == 13);
 
-    // Lets add a day (to the 31s November, which doesn't exist so we should notice that we're into the 1st December)
-    TEST(p.TryParseFromUnixTimestamp((ts2 + Time::kSecondsPerDay )));
+    // Mon Nov 30 2009 12:43:13 (+ 1 day)
+    // Takes us to 31st November which doesn't exist, so we should report 1st December instead
+    TEST(p.TryParseFromUnixTimestamp((1259584993 + Time::kSecondsPerDay )));
     TEST(p.Year()    == 2009);
     TEST(p.Month()   == 12);
     TEST(p.Day()     == 1);
@@ -288,36 +289,65 @@ void SuitePointInTime::TestTryParseFromUnixTimestamp() const
     TEST(p.Seconds() == 13);
 
 
-    TEST(p.TryParseFromUnixTimestamp(ts3));
+    // 1st Jan 1970 00:00:00
+    TEST(p.TryParseFromUnixTimestamp(0));
     TEST(p.Year()    == Time::kUnixEpochYear);
     TEST(p.Month()   == 1);
     TEST(p.Day()     == 1);
     TEST(p.Hours()   == 0);
     TEST(p.Minutes() == 0);
     TEST(p.Seconds() == 0);
+
+    // 31st December 1969, 23:59:44
+    TEST(p.TryParseFromUnixTimestamp(-16));
+    TEST(p.Year()    == 1969);
+    TEST(p.Month()   == 12);
+    TEST(p.Day()     == 31);
+    TEST(p.Hours()   == 23);
+    TEST(p.Minutes() == 59);
+    TEST(p.Seconds() == 44);
+
+    // 23rd April 1931, 05:45:30
+    TEST(p.TryParseFromUnixTimestamp(-1221070470));
+    TEST(p.Year()    == 1931);
+    TEST(p.Month()   == 4);
+    TEST(p.Day()     == 23);
+    TEST(p.Hours()   == 5);
+    TEST(p.Minutes() == 45);
+    TEST(p.Seconds() == 30);
 }
 
 void SuitePointInTime::TestConvertToUnixTimestamp() const
 {
-    const TUint ts1 = 1746513367; // Tue May 06 2025 06:36:07
-    const TUint ts2 = 1259584993; // Mon Nov 30 2009 12:43:13
-    const TUint ts3 = 0;          // Thu Jan 01 1970 00:00:00
+    // Tue May 06 2025 06:36:07
+    {
+        PointInTime subject(6, 5, 2025, 6, 36, 7);
+        TEST(subject.ConvertToUnixTimestamp() == 1746513367);
+    }
 
-    PointInTime p1(6, 5, 2025, 6, 36, 7);
-    TEST(p1.ConvertToUnixTimestamp() == ts1);
+    // Mon Nov 30 2009 12:43:13
+    {
+        PointInTime subject(30, 11, 2009, 12, 43, 13);
+        TEST(subject.ConvertToUnixTimestamp() == 1259584993);
+    }
 
-    PointInTime p2(30, 11, 2009, 12, 43, 13);
-    TEST(p2.ConvertToUnixTimestamp() == ts2);
+    // Thu Jan 01 1970 00:00:00
+    {
+        PointInTime subject(1, 1, 1970, 0, 0, 0);
+        TEST(subject.ConvertToUnixTimestamp() == 0);
+    }
 
-    PointInTime p3(1, 1, 1970, 0, 0, 0);
-    TEST(p3.ConvertToUnixTimestamp() == ts3);
+    // 31st December 1969, 23:59:44
+    {
+        PointInTime subject(31, 12, 1969, 23, 59, 44);
+        TEST(subject.ConvertToUnixTimestamp() == -16);
+    }
 
-    // We also insist that any times before 1970 are 0
-    PointInTime p4(31, 12, 1968, 23, 59, 59);
-    TEST(p4.ConvertToUnixTimestamp() == 0);
-
-    PointInTime p5(2, 2, 1870, 12, 34, 56);
-    TEST(p5.ConvertToUnixTimestamp() == 0);
+    // 1st Feb 1945, 11:23:07
+    {
+        PointInTime subject(1, 2, 1945, 11, 23, 07);
+        TEST(subject.ConvertToUnixTimestamp() == -786199013);
+    }
 }
 
 void SuitePointInTime::TestIsValid() const
@@ -346,6 +376,44 @@ void SuitePointInTime::TestIsValid() const
     // Month day capping
     PointInTime p7(31, 11, 2300, 1, 1, 1);
     TEST(p7.IsValid() == false); // There's no 31st of November
+}
+
+void SuitePointInTime::TestIOS8601() const
+{
+    PointInTime subject;
+    Brn kTime1("");                          // Nothing
+    Brn kTime2("Jibberish");                 // As stated
+    Brn kTime3("2001-02-01");                // Year only
+    Brn kTime4("11:12:13");                  // Time only
+    Brn kTime5("2010-09-12 04:11:19Z");      // Space in middle
+    Brn kTime6("1985-01-01T00:00:05");       // No timezone at the end
+    Brn kTime7("1999-10-10T10:10:10+01:00"); // Timezone, but not UTC
+    Brn kTime8("1969-12-31T23:59:44Z");      // Valid #1
+    Brn kTime9("2002-05-23T07:30:27Z");      // Valid #2
+
+    TEST(subject.TryParseFromISO8601Time(kTime1) == false);
+    TEST(subject.TryParseFromISO8601Time(kTime2) == false);
+    TEST(subject.TryParseFromISO8601Time(kTime3) == false);
+    TEST(subject.TryParseFromISO8601Time(kTime4) == false);
+    TEST(subject.TryParseFromISO8601Time(kTime5) == false);
+    TEST(subject.TryParseFromISO8601Time(kTime6) == false);
+    TEST(subject.TryParseFromISO8601Time(kTime7) == false);
+
+    TEST(subject.TryParseFromISO8601Time(kTime8));
+    TEST(subject.Year()    == 1969);
+    TEST(subject.Month()   == 12);
+    TEST(subject.Day()     == 31);
+    TEST(subject.Hours()   == 23);
+    TEST(subject.Minutes() == 59);
+    TEST(subject.Seconds() == 44);
+
+    TEST(subject.TryParseFromISO8601Time(kTime9));
+    TEST(subject.Year()    == 2002);
+    TEST(subject.Month()   == 5);
+    TEST(subject.Day()     == 23);
+    TEST(subject.Hours()   == 7);
+    TEST(subject.Minutes() == 30);
+    TEST(subject.Seconds() == 27);
 }
 
 

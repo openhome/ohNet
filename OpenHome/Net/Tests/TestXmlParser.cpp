@@ -149,6 +149,43 @@ void SuiteXmlParserBasic::Test()
     TEST(tag == Brn("person"));
     TEST(next == personTag);
     TEST(remaining.Bytes() == 0);
+
+
+    // Given a list of attribute only elements, what would you expect to be the result of parsing this??
+    Brn multipleAttributeOnlyElements(
+            "<foo id=\"A\" />"                          \
+            "<foo id=\"B\" />"                               \
+            "<foo id=\"C\" />"                               \
+            "<foo />"                                        \
+            "<foo id=\"f\"/>"                                \
+            );
+
+    Brn element;
+    TEST(XmlParserBasic::TryGetElement(Brn("foo"), multipleAttributeOnlyElements, remaining, element));
+    TEST(element == Brn("<foo id=\"A\" />"));
+    TEST(XmlParserBasic::TryFind("Something", element, next) == false);
+    TEST(XmlParserBasic::TryFindAttribute("foo", "id", element, next));
+    TEST(next == Brn("A"));
+
+    TEST(XmlParserBasic::TryGetElement(Brn("foo"), remaining, remaining, element));
+    TEST(element == Brn("<foo id=\"B\" />"));
+    TEST(XmlParserBasic::TryFindAttribute("foo", "id", element, next));
+    TEST(next == Brn("B"));
+
+    TEST(XmlParserBasic::TryGetElement(Brn("foo"), remaining, remaining, element));
+    TEST(element == Brn("<foo id=\"C\" />"));
+    TEST(XmlParserBasic::TryFindAttribute("foo", "id", element, next));
+    TEST(next == Brn("C"));
+
+    TEST(XmlParserBasic::TryGetElement(Brn("foo"), remaining, remaining, element));
+    TEST(element.Bytes() == 0); // No attributes, so no content!
+
+    TEST(XmlParserBasic::TryGetElement(Brn("foo"), remaining, remaining, element));
+    TEST(element == Brn("<foo id=\"f\"/>"));
+    TEST(XmlParserBasic::TryFindAttribute("foo", "id", element, next));
+    TEST(next == Brn("f"));
+
+    TEST(XmlParserBasic::TryGetElement(Brn("foo"), remaining, remaining, element) == false);
 }
 
 void TestXmlParser()
