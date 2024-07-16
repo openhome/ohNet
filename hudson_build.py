@@ -6,6 +6,7 @@ import requests
 import subprocess
 import shutil
 import sys
+import stat
 from optparse import OptionParser
 from Helpers.valgrind_parser import *
 from Helpers.remote import *
@@ -185,7 +186,7 @@ class JenkinsBuild():
         ]
 
         if os_platform in pre_installed_platforms:
-            print ('dotent SDK should be preinstalled on for this platform ')
+            print ('dotnet SDK should be preinstalled on for this platform ')
             return
 
         dotnet_install_cmd.append('./dotnet-install.sh')
@@ -217,7 +218,29 @@ class JenkinsBuild():
         if os_platform == 'linux' and arch == 'armel':
             os.environ['CROSS_COMPILE'] = '/usr/local/arm-2011.09/bin/arm-none-linux-gnueabi-'
         if os_platform == 'linux' and arch == 'armhf':
-            os.environ['CROSS_COMPILE'] = '/opt/gcc-linaro-5.3.1-2016.05-i686_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-'
+            # get built SDK from our AWS storage
+            # print("working dir is " + os.getcwd())
+            # print("running as " + os.getlogin())
+            # resource = boto3.resource('s3')
+            # bucket = resource.Bucket("linn-artifacts-private")
+            # fetched_path = "/home/hudson-smarties/yocto_sdk.sh"
+            # with open(fetched_path, "wb") as sdk_file:
+            #     bucket.download_fileobj("yocto_core4_sdk/linn-fb-glibc-x86_64-linn-image-core-cortexa9t2hf-neon-linn-imx6dl-toolchain-5.15-kirkstone-0.0.24.sh", sdk_file)
+            # st = os.stat(fetched_path)
+            # os.chmod(fetched_path, st.st_mode | stat.S_IXUSR)
+            
+            # subprocess.check_output(fetched_path + " -y -d /home/hudson-smarties/linn-fb/5.15-kirkstone", shell=True)
+
+            # Parse yocto environment file, set up for build
+            env_string = subprocess.check_output(". /opt/linn-fb/5.15-kirkstone/environment-setup-cortexa9t2hf-neon-poky-linux-gnueabi && env", shell=True)
+            for el in env_string.decode("utf-8").split("\n"):
+                if "=" in el:
+                    os.environ[el.split("=")[0]] = el.split("=", 1)[1]
+            if os.environ.get("CC", None):
+                os.environ["CFLAGS"] = " ".join(os.environ["CC"].split(" ")[1:])
+            if os.environ.get("CXX", None):
+                os.environ["CXXFLAGS"] = " ".join(os.environ["CXX"].split(" ")[1:])
+            os.environ["LDFLAGS"] = '--sysroot=%s' % os.environ["SDKTARGETSYSROOT"]
         if os_platform == 'linux' and arch == 'rpi':
             os.environ['CROSS_COMPILE'] = '/opt/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin/arm-linux-gnueabihf-'
         if os_platform == 'linux' and arch == 'mipsel':
