@@ -79,6 +79,8 @@ protected:
     QueueSortedEntry& Prev();
     void AddBefore(QueueSortedEntry& aEntry);
     void Remove();
+    void SetNext(QueueSortedEntry& aEntry);
+    void SetPrev(QueueSortedEntry& aEntry);
 protected:
     QueueSortedEntry* iNext;
     QueueSortedEntry* iPrev;
@@ -88,14 +90,14 @@ class QueueSortedEntryHead : public QueueSortedEntry
 {
     friend class QueueSortedBase;
 protected:
-    QueueSortedEntryHead(QueueSortedEntry& aTail);
+    QueueSortedEntryHead();
 };
 
 class QueueSortedEntryTail : public QueueSortedEntry
 {
     friend class QueueSortedBase;
 protected:
-    QueueSortedEntryTail(QueueSortedEntry& aHead);
+    QueueSortedEntryTail();
 };
 
 class QueueSortedBase : public INonCopyable
