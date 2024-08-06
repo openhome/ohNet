@@ -140,27 +140,36 @@ void QueueSortedEntry::Remove()
     iPrev = 0;
 }
 
+void QueueSortedEntry::SetNext(QueueSortedEntry& aEntry)
+{
+    iNext = &aEntry;
+}
+
+void QueueSortedEntry::SetPrev(QueueSortedEntry& aEntry)
+{
+    iPrev = &aEntry;
+}
+
+
 // QueueSortedEntryHead
 
-QueueSortedEntryHead::QueueSortedEntryHead(QueueSortedEntry& aTail)
+QueueSortedEntryHead::QueueSortedEntryHead()
 {
-    iNext = &aTail;
 }
 
 // QueueSortedEntryTail
 
-QueueSortedEntryTail::QueueSortedEntryTail(QueueSortedEntry& aHead)
+QueueSortedEntryTail::QueueSortedEntryTail()
 {
-    iPrev = &aHead;
 }
 
 // QueueSorted
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wuninitialized"
-QueueSortedBase::QueueSortedBase() : iMutex("QSBM"), iHead(iTail), iTail(iHead)
+
+QueueSortedBase::QueueSortedBase() : iMutex("QSBM")
 {
+    iHead.SetNext(iTail);
+    iTail.SetPrev(iHead);
 }
-#pragma GCC diagnostic pop
 
 TBool QueueSortedBase::IsEmpty()
 {
