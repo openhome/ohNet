@@ -36,6 +36,12 @@ else()
     set(OS_LINK_LIBS "pthread")
 ENDIF()
 
+IF (APPLE)
+    set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -DPLATFORM_MACOSX_GNU")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DPLATFORM_MACOSX_GNU")
+    set(OS_LINK_LIBS    "${OS_LINK_LIBS} -framework CoreFoundation -framework SystemConfiguration -framework IOKit")
+ENDIF()
+
 # ohNetCore
 
 add_library(ohNetCore STATIC
