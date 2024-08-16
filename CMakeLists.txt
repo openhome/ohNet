@@ -200,12 +200,6 @@ add_executable(TestFunctorGeneric
         OpenHome/Tests/TestFunctorGenericMain.cpp)
 target_link_libraries(TestFunctorGeneric TestFramework ohNetCore ${OS_LINK_LIBS})
 
-# TestJson
-add_executable(TestJson
-        OpenHome/Tests/TestJson.cpp
-        OpenHome/Tests/TestJsonMain.cpp)
-target_link_libraries(TestJson TestFramework ohNetCore ${OS_LINK_LIBS})
-
 # TestFile
 add_executable(TestFile
         OpenHome/Tests/TestFile.cpp
