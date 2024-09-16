@@ -92,7 +92,7 @@ void OpenHome::UnhandledExceptionHandler(const TChar* aExceptionMessage, const T
         gExitHandler->UnhandledExceptionHandler(aExceptionMessage, aFile, aLine);
     }
 
-    Bws<Thread::kMaxNameBytes> thName;
+    Bws<Thread::kMaxNameBytes + 1> thName; // +1 to allow for NULL termination on the longer thread names we use (Mainly in Exakt)
     GetThreadName(thName);
     char buf[1024];
     (void)snprintf(buf, sizeof(buf), "Unhandled exception %s at %s:%lu in thread %s\n", aExceptionMessage, aFile, (unsigned long)aLine, thName.Ptr());
@@ -105,7 +105,7 @@ void OpenHome::UnhandledExceptionHandler(Exception& aException)
         gExitHandler->UnhandledExceptionHandler(aException);
     }
 
-    Bws<Thread::kMaxNameBytes> thName;
+    Bws<Thread::kMaxNameBytes + 1> thName; // +1 to allow for NULL termination on the longer thread names we use (Mainly in Exakt)
     GetThreadName(thName);
     char buf[512];
     (void)snprintf(buf, sizeof(buf), "Unhandled exception %s at %s:%lu in thread %s\n", aException.Message(), aException.File(), (unsigned long)aException.Line(), thName.Ptr());
@@ -143,7 +143,7 @@ void OpenHome::UnhandledExceptionHandler(std::exception& aException)
         gExitHandler->UnhandledExceptionHandler(aException);
     }
 
-    Bws<Thread::kMaxNameBytes> thName;
+    Bws<Thread::kMaxNameBytes + 1> thName; // +1 to allow for NULL termination on the longer thread names we use (Mainly in Exakt)
     GetThreadName(thName);
     char buf[1024];
     (void)snprintf(buf, sizeof(buf), "Unhandled exception %s in thread %s\n", aException.what(), thName.Ptr());

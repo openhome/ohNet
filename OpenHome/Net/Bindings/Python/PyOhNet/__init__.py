@@ -90,7 +90,13 @@ cpProxies    = []
 def Initialise( aInitParams=None ):
     """Initialise ohNet library - must be first call to module"""
     # aInitParams is a dict, which can contain the following key/value pairs
-    #   - loopack:  True or False
+    #   - loopack:                  True or False   (default False)
+    #   - invokeTimeout:            in msecs
+    #   - msearchTime:              in secs
+    #   - numEventSessionThreads    (default 4)
+    #   - numXmlFetcherThreads      (default 4)
+    #   - numActionInvokerThreads   (default 4)
+    #   - numSubscriberThreads      (default 4)
     lib.OhNetInitParamsCreate.restype = ctypes.c_void_p
     params = ctypes.c_void_p( lib.OhNetInitParamsCreate() )
     if aInitParams:
@@ -98,7 +104,18 @@ def Initialise( aInitParams=None ):
             if aInitParams['loopback'] is not False:
                 lib.OhNetInitParamsSetUseLoopbackNetworkAdapter( params )
         if 'invokeTimeout' in aInitParams:
-            lib.OhNetInitParamsSetInvocationTimeout( params, aInitParams['invokeTimeout'] )     # in millisecs
+            lib.OhNetInitParamsSetInvocationTimeout( params, aInitParams['invokeTimeout'] )
+        if 'numEventSessionThreads' in aInitParams:
+            lib.OhNetInitParamsSetNumEventSessionThreads( params, aInitParams['numEventSessionThreads'] )
+        if 'numXmlFetcherThreads' in aInitParams:
+            lib.OhNetInitParamsSetNumXmlFetcherThreads( params, aInitParams['numXmlFetcherThreads'] )
+        if 'numActionInvokerThreads' in aInitParams:
+            lib.OhNetInitParamsSetNumActionInvokerThreads( params, aInitParams['numActionInvokerThreads'] )
+        if 'numSubscriberThreads' in aInitParams:
+            lib.OhNetInitParamsSetNumSubscriberThreads( params, aInitParams['numSubscriberThreads'] )
+        if 'msearchTime' in aInitParams:
+            lib.OhNetInitParamsSetMsearchTime( params, aInitParams['msearchTime'] )
+            
     if lib.OhNetLibraryInitialise( params ):
         raise OhNetError( 'Failed to initialise Library')
 
