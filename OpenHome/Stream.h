@@ -260,7 +260,8 @@ private:
 class WriterBwh : public IWriter
 {
 public:
-    WriterBwh(TInt aGranularity);
+    WriterBwh(TUint aGranularity);
+    WriterBwh(TUint aGranularity, TUint aStartSize);
     void Reset();
     void TransferTo(Bwh& aDest);
     void TransferTo(Brh& aDest);
@@ -272,7 +273,7 @@ public: // from IWriter
     void WriteFlush();
 private:
     Bwh iBuf;
-    TInt iGranularity;
+    TUint iGranularity;
 };
 
 class WriterBinary : private INonCopyable
