@@ -637,7 +637,8 @@ void WriterBuffer::Flush()
 // WriterBwh
 
 WriterBwh::WriterBwh(TUint aGranularity)
-    : WriterBwh(aGranularity, aGranularity)
+    : iBuf(aGranularity)
+    , iGranularity(aGranularity)
 { }
 
 WriterBwh::WriterBwh(TUint aGranularity, TUint aStartSize)
