@@ -46,7 +46,7 @@ ALL_TARGETS = {
         BuildTarget("Linux",   "rpi",   "Debug"):     BuildInfo(builddir="Build/Obj/Posix/Debug"),
         BuildTarget("Linux",   "ppc32", "Debug"):     BuildInfo(builddir="Build/Obj/Posix/Debug"),
         BuildTarget("Linux",   "mipsel","Debug"):     BuildInfo(builddir="Build/Obj/Posix/Debug"),
-        BuildTarget("Linux",   "arm64", "Debug"):     BuildInfo(builddir="Build/Obj/Posix/Debug"),
+        BuildTarget("Linux",   "aarch64", "Debug"):     BuildInfo(builddir="Build/Obj/Posix/Debug"),
         BuildTarget("Linux",   "riscv64", "Debug"):   BuildInfo(builddir="Build/Obj/Posix/Debug"),
         BuildTarget("Linux",   "x86",   "Release"):   BuildInfo(builddir="Build/Obj/Posix/Release"),
         BuildTarget("Linux",   "x64",   "Release"):   BuildInfo(builddir="Build/Obj/Posix/Release"),
@@ -55,7 +55,7 @@ ALL_TARGETS = {
         BuildTarget("Linux",   "rpi",   "Release"):   BuildInfo(builddir="Build/Obj/Posix/Release"),
         BuildTarget("Linux",   "ppc32", "Release"):   BuildInfo(builddir="Build/Obj/Posix/Release"),
         BuildTarget("Linux",   "mipsel","Release"):   BuildInfo(builddir="Build/Obj/Posix/Release"),
-        BuildTarget("Linux",   "arm64", "Release"):   BuildInfo(builddir="Build/Obj/Posix/Release"),
+        BuildTarget("Linux",   "aarch64", "Release"):   BuildInfo(builddir="Build/Obj/Posix/Release"),
         BuildTarget("Linux",   "riscv64", "Release"): BuildInfo(builddir="Build/Obj/Posix/Release"),
 
         BuildTarget("Qnap",    "x86",   "Debug"):   BuildInfo(builddir="Build/Obj/Posix/Debug"),
