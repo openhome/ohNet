@@ -161,7 +161,8 @@ class JenkinsBuild():
             'Linux-armhf': { 'os': 'linux', 'arch': 'armhf', 'publish': True, 'system': 'Linux'},
             'Linux-rpi': { 'os': 'linux', 'arch': 'rpi', 'publish': True, 'system': 'Linux'},
             'Linux-mipsel': { 'os': 'linux', 'arch': 'mipsel', 'publish': True, 'system': 'Linux'},
-            'Linux-arm64': { 'os': 'linux', 'arch': 'arm64', 'publish': True, 'system': 'Linux'},
+            'Linux-arm64': { 'os': 'linux', 'arch': 'arm64', 'publish': True, 'system': 'Linux'}, # TODO: delete this? what system was this intended for?
+            'Linux-aarch4': { 'os': 'linux', 'arch': 'aarch64', 'publish': True, 'system': 'Linux'},
             'iOs-x64': { 'os': 'iOs', 'arch': 'x64', 'publish': True, 'system': 'iOs'},
             'iOs-arm64': { 'os': 'iOs', 'arch': 'arm64', 'publish': True, 'system': 'iOs'},
             'Core-ppc32': { 'os': 'Core', 'arch': 'ppc32', 'publish': True, 'system': 'Core'},
@@ -236,7 +237,7 @@ class JenkinsBuild():
                 # subprocess.check_output(fetched_path + " -y -d /home/hudson-smarties/linn-fb/5.15-kirkstone", shell=True)
 
                 # Parse yocto environment file, set up for build
-                env_string = subprocess.check_output(". /opt/linn-fb/5.15-kirkstone/environment-setup-cortexa9t2hf-neon-poky-linux-gnueabi && env", shell=True)
+                env_string = subprocess.check_output(". /opt/linn-wayland/5.15-kirkstone/environment-setup-cortexa9t2hf-neon-poky-linux-gnueabi && env", shell=True)
                 for el in env_string.decode("utf-8").split("\n"):
                     if "=" in el:
                         os.environ[el.split("=")[0]] = el.split("=", 1)[1]
@@ -245,6 +246,17 @@ class JenkinsBuild():
                 if os.environ.get("CXX", None):
                     os.environ["CXXFLAGS"] = " ".join(os.environ["CXX"].split(" ")[1:])
                 os.environ["LDFLAGS"] = '--sysroot=%s' % os.environ["SDKTARGETSYSROOT"]
+        if os_platform == 'linux' and arch == 'aarch64':
+            # Parse yocto environment file, set up for build
+            env_string = subprocess.check_output(". /opt/linn-wayland/5.15-kirkstone/environment-setup-armv8a-poky-linux && env", shell=True)
+            for el in env_string.decode("utf-8").split("\n"):
+                if "=" in el:
+                    os.environ[el.split("=")[0]] = el.split("=", 1)[1]
+            if os.environ.get("CC", None):
+                os.environ["CFLAGS"] = " ".join(os.environ["CC"].split(" ")[1:])
+            if os.environ.get("CXX", None):
+                os.environ["CXXFLAGS"] = " ".join(os.environ["CXX"].split(" ")[1:])
+            os.environ["LDFLAGS"] = '--sysroot=%s' % os.environ["SDKTARGETSYSROOT"]
         if os_platform == 'linux' and arch == 'rpi':
             os.environ['CROSS_COMPILE'] = '/opt/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin/arm-linux-gnueabihf-'
         if os_platform == 'linux' and arch == 'mipsel':
@@ -289,7 +301,7 @@ class JenkinsBuild():
 
         self.platform_make_args = []
 
-        if    arch in ['armel', 'armhf', 'armv7', 'arm64', 'armv5', 'armv6', 'mipsel', 'ppc32', 'rpi', 'arm64'] \
+        if arch in ['armel', 'armhf', 'armv7', 'arm64', 'armv5', 'armv6', 'armv8', 'mipsel', 'ppc32', 'rpi', 'aarch64', 'riscv64' ] \
            or os_platform in ['iOs', 'Android']                                       \
            or self.options.release == '1':
             args.append('--buildonly')
