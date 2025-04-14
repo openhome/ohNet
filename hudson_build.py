@@ -162,7 +162,7 @@ class JenkinsBuild():
             'Linux-rpi': { 'os': 'linux', 'arch': 'rpi', 'publish': True, 'system': 'Linux'},
             'Linux-mipsel': { 'os': 'linux', 'arch': 'mipsel', 'publish': True, 'system': 'Linux'},
             'Linux-arm64': { 'os': 'linux', 'arch': 'arm64', 'publish': True, 'system': 'Linux'}, # TODO: delete this? what system was this intended for?
-            'Linux-aarch4': { 'os': 'linux', 'arch': 'aarch64', 'publish': True, 'system': 'Linux'},
+            'Linux-aarch64': { 'os': 'linux', 'arch': 'aarch64', 'publish': True, 'system': 'Linux'},
             'iOs-x64': { 'os': 'iOs', 'arch': 'x64', 'publish': True, 'system': 'iOs'},
             'iOs-arm64': { 'os': 'iOs', 'arch': 'arm64', 'publish': True, 'system': 'iOs'},
             'Core-ppc32': { 'os': 'Core', 'arch': 'ppc32', 'publish': True, 'system': 'Core'},
