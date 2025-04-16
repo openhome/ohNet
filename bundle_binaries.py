@@ -130,7 +130,7 @@ def main():
         print("Please specify --distro from one of {0}, None.".format(", ".join(sorted(ALL_DISTROS))))
         sys.exit(1)
     if options.distro is not None and options.distro.lower() != "none":
-        target = BuildDistroTarget(options.architecture, options.distro, options.system, options.configuration)
+        target = BuildDistroTarget(options.architecture, options.distro, options.system.lower(), options.configuration)
     else:    
         target = BuildTarget(options.system, options.architecture, options.configuration)
     if target not in ALL_TARGETS:

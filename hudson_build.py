@@ -425,11 +425,14 @@ class JenkinsBuild():
             build.append('uset4=yes')
             if self.platform['os'] == 'Qnap':
                 build.append('platform=' + platform)
-            build.append('openhome_system=' + openhome_system)
-            build.append('openhome_architecture=' + openhome_architecture)
-            build.append('openhome_configuration=' + openhome_configuration)
+
             if openhome_distro is not None:
                 build.append("openhome_distro=" + openhome_distro)
+                build.append('openhome_system=' + openhome_system.lower())
+            else:
+                build.append('openhome_system=' + openhome_system)
+            build.append('openhome_architecture=' + openhome_architecture)
+            build.append('openhome_configuration=' + openhome_configuration)
             build.extend(self.platform_make_args)
             print( "doing release with bundle %s" % (build,))
 

@@ -90,7 +90,9 @@ else
     endif
     ifneq (,$(findstring arm,$(gcc_machine)))
         ifneq (,$(findstring linux-gnueabihf,$(gcc_machine)))
-            detected_openhome_architecture = armhf
+            detected_openhome_architecture = armhf		
+        else ifneq (,$(findstring arm-poky-linux-gnueabi,$(gcc_machine)))
+            detected_openhome_architecture = armhf		
         else ifeq (${detected_openhome_system},Qnap)
             detected_openhome_architecture = x19
         else
