@@ -220,6 +220,7 @@ class JenkinsBuild():
         
         if arch in ['armhf', 'aarch64', 'riscv64'] and 'distro' in self.platform:
             distro = self.platform['distro']
+            os.environ["openhome_distro"] = distro
             if distro in ['kirkstone', 'scarthgap']:
                 toolchain_arch = {
                     'armhf': 'cortexa9t2hf-neon-poky-linux-gnueabi',
@@ -377,7 +378,7 @@ class JenkinsBuild():
             if build_t == 'release':
                 build.append('--incremental')
 
-            print( 'running build with %s' % (build,))
+            print('running build with %s' % (build,))
 
             ret = subprocess.check_call(build)
             if ret != 0:
@@ -410,7 +411,7 @@ class JenkinsBuild():
             build.append('uset4=yes')
             if self.platform['os'] == 'Qnap':
                 build.append('platform=' + platform)
-                
+
             if openhome_distro is not None:
                 build.append("openhome_distro=" + openhome_distro)
                 build.append('openhome_system=' + openhome_system.lower())
@@ -419,6 +420,7 @@ class JenkinsBuild():
             build.append('openhome_architecture=' + openhome_architecture)
             build.append('openhome_configuration=' + openhome_configuration)
 
+            print("doing debug build %s" % (build,))
             ret = subprocess.check_call(build)
             if ret != 0:
                 print( ret )
@@ -443,7 +445,7 @@ class JenkinsBuild():
             build.append('openhome_architecture=' + openhome_architecture)
             build.append('openhome_configuration=' + openhome_configuration)
             build.extend(self.platform_make_args)
-            print( "doing release with bundle %s" % (build,))
+            print("doing release with bundle %s" % (build,))
 
             ret = subprocess.check_call(build)
             if ret != 0:
