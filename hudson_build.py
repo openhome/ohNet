@@ -157,12 +157,11 @@ class JenkinsBuild():
             'Windows-x64': { 'os': 'windows', 'arch': 'x64', 'publish': True, 'system': 'Windows'},
             'Macos-x64': { 'os': 'macos', 'arch': 'x86', 'publish': False, 'system': 'Mac'},  # Old Jenkins label
             'Mac-x64': { 'os': 'macos', 'arch': 'x64', 'publish': True, 'system': 'Mac'},     # New Jenkins label, matches downstream builds
-            'Linux-ARM': { 'os': 'linux', 'arch': 'armel', 'publish': True, 'system': 'Linux'},
-            'Linux-armhf': { 'os': 'linux', 'arch': 'armhf', 'publish': True, 'system': 'Linux'},
-            'Linux-rpi': { 'os': 'linux', 'arch': 'rpi', 'publish': True, 'system': 'Linux'},
+            'armhf-buildroot-linux': { 'os': 'linux', 'arch': 'armhf', 'publish': True, 'system': 'Linux', 'distro': 'buildroot'},
+            'armhf-raspbian-linux': { 'os': 'linux', 'arch': 'rpi', 'publish': True, 'system': 'Linux', 'distro': 'raspbian'},
+            'armhf-kirkstone-linux': { 'os': 'linux', 'arch': 'aarch64', 'publish': True, 'system': 'Linux', 'distro': 'kirkstone'},
+            'aarch64-kirkstone-linux': { 'os': 'linux', 'arch': 'aarch64', 'publish': True, 'system': 'Linux', 'distro': 'kirkstone'},
             'Linux-mipsel': { 'os': 'linux', 'arch': 'mipsel', 'publish': True, 'system': 'Linux'},
-            'Linux-arm64': { 'os': 'linux', 'arch': 'arm64', 'publish': True, 'system': 'Linux'}, # TODO: delete this? what system was this intended for?
-            'Linux-aarch64': { 'os': 'linux', 'arch': 'aarch64', 'publish': True, 'system': 'Linux'},
             'iOs-x64': { 'os': 'iOs', 'arch': 'x64', 'publish': True, 'system': 'iOs'},
             'iOs-arm64': { 'os': 'iOs', 'arch': 'arm64', 'publish': True, 'system': 'iOs'},
             'Core-ppc32': { 'os': 'Core', 'arch': 'ppc32', 'publish': True, 'system': 'Core'},
@@ -216,8 +215,10 @@ class JenkinsBuild():
             args.append('C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Auxiliary\\Build\\vcvarsall.bat')
             args.append('amd64')
             os.environ['CS_PLATFORM'] = 'x64'
-        if os_platform == 'linux' and arch == 'armel':
-            os.environ['CROSS_COMPILE'] = '/usr/local/arm-2011.09/bin/arm-none-linux-gnueabi-'
+
+
+
+            
         if os_platform == 'linux' and arch == 'armhf':
             if os.environ['LEGACY_BUILD'].lower() in ['true', 'yes', '1']:
                 # os.environ['CROSS_COMPILE'] = '/opt/gcc-linaro-5.3.1-2016.05-i686_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-'
@@ -259,6 +260,9 @@ class JenkinsBuild():
             os.environ["LDFLAGS"] = '--sysroot=%s' % os.environ["SDKTARGETSYSROOT"]
         if os_platform == 'linux' and arch == 'rpi':
             os.environ['CROSS_COMPILE'] = '/opt/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin/arm-linux-gnueabihf-'
+
+            
+
         if os_platform == 'linux' and arch == 'mipsel':
             os.environ['CROSS_COMPILE'] = '/opt/mips-2015.05-18/bin/mips-linux-gnu-'
         if os_platform == 'linux' and arch == 'ppc32':
