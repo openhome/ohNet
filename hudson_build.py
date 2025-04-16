@@ -158,9 +158,11 @@ class JenkinsBuild():
             'Macos-x64': { 'os': 'macos', 'arch': 'x86', 'publish': False, 'system': 'Mac'},  # Old Jenkins label
             'Mac-x64': { 'os': 'macos', 'arch': 'x64', 'publish': True, 'system': 'Mac'},     # New Jenkins label, matches downstream builds
             'armhf-buildroot-linux': { 'os': 'linux', 'arch': 'armhf', 'publish': True, 'system': 'Linux', 'distro': 'buildroot'},
-            'armhf-raspbian-linux': { 'os': 'linux', 'arch': 'rpi', 'publish': True, 'system': 'Linux', 'distro': 'raspbian'},
-            'armhf-kirkstone-linux': { 'os': 'linux', 'arch': 'aarch64', 'publish': True, 'system': 'Linux', 'distro': 'kirkstone'},
+            'armhf-raspbian-linux': { 'os': 'linux', 'arch': 'armhf', 'publish': True, 'system': 'Linux', 'distro': 'raspbian'},
+            'armhf-kirkstone-linux': { 'os': 'linux', 'arch': 'armhf', 'publish': True, 'system': 'Linux', 'distro': 'kirkstone'},
+            'armhf-scarthgap-linux': { 'os': 'linux', 'arch': 'armhf', 'publish': True, 'system': 'Linux', 'distro': 'scarthgap'},
             'aarch64-kirkstone-linux': { 'os': 'linux', 'arch': 'aarch64', 'publish': True, 'system': 'Linux', 'distro': 'kirkstone'},
+            'aarch64-scarthgap-linux': { 'os': 'linux', 'arch': 'aarch64', 'publish': True, 'system': 'Linux', 'distro': 'scarthgap'},
             'Linux-mipsel': { 'os': 'linux', 'arch': 'mipsel', 'publish': True, 'system': 'Linux'},
             'iOs-x64': { 'os': 'iOs', 'arch': 'x64', 'publish': True, 'system': 'iOs'},
             'iOs-arm64': { 'os': 'iOs', 'arch': 'arm64', 'publish': True, 'system': 'iOs'},
