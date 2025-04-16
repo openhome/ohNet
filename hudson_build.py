@@ -410,6 +410,15 @@ class JenkinsBuild():
             build.append('uset4=yes')
             if self.platform['os'] == 'Qnap':
                 build.append('platform=' + platform)
+                
+            if openhome_distro is not None:
+                build.append("openhome_distro=" + openhome_distro)
+                build.append('openhome_system=' + openhome_system.lower())
+            else:
+                build.append('openhome_system=' + openhome_system)
+            build.append('openhome_architecture=' + openhome_architecture)
+            build.append('openhome_configuration=' + openhome_configuration)
+
             ret = subprocess.check_call(build)
             if ret != 0:
                 print( ret )
