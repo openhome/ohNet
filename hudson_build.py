@@ -292,6 +292,7 @@ class JenkinsBuild():
     def get_build_args(self):
         nightly = self.options.nightly
         arch = self.platform['arch']
+        distro = self.platform.get('distro', None)
         os_platform = self.platform['os']
         args = []
         args.append('python')
@@ -326,7 +327,7 @@ class JenkinsBuild():
                 args.append('--iOs-arm64')
                 self.platform_make_args.append('iOs-arm64=1')
         if os_platform == 'Linux':
-            if arch == 'rpi':
+            if arch == 'arhmf' and distro == 'raspbian':
                 args.append('--Linux-rpi')
                 self.platform_make_args.append('Linux-rpi=1')
             # 32 and 64-bit builds run in parallel on the same slave.
@@ -427,6 +428,8 @@ class JenkinsBuild():
             build.append('openhome_system=' + openhome_system)
             build.append('openhome_architecture=' + openhome_architecture)
             build.append('openhome_configuration=' + openhome_configuration)
+            if openhome_distro is not None:
+                build.append("openhome_distro=" + openhome_distro)
             build.extend(self.platform_make_args)
             print( "doing release with bundle %s" % (build,))
 
