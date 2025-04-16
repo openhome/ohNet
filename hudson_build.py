@@ -217,13 +217,18 @@ class JenkinsBuild():
             os.environ['CS_PLATFORM'] = 'x64'
 
 
-
-            
-        if os_platform == 'linux' and arch == 'armhf':
-            if os.environ['LEGACY_BUILD'].lower() in ['true', 'yes', '1']:
-                # os.environ['CROSS_COMPILE'] = '/opt/gcc-linaro-5.3.1-2016.05-i686_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-'
-                os.environ['CROSS_COMPILE'] = '/opt/gcc-linaro-7.3.1-2018.05-i686_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-'
-            else:
+        
+        if arch in ['armhf', 'aarch64', 'riscv64'] and 'distro' in self.platform:
+            distro = self.platform['distro']
+            if distro in ['kirkstone', 'scarthgap']:
+                toolchain_arch = {
+                    'armhf': 'cortexa9t2hf-neon-poky-linux-gnueabi',
+                    'aarch64': 'armv8a-poky-linux',
+                }
+                distro_version = {
+                    'kirkstone': '5.15-kirkstone',
+                    'scarthgap': '6.6-scarthgap',
+                }  
                 # get built SDK from our AWS storage
                 # print("working dir is " + os.getcwd())
                 # print("running as " + os.getlogin())
@@ -238,7 +243,7 @@ class JenkinsBuild():
                 # subprocess.check_output(fetched_path + " -y -d /home/hudson-smarties/linn-fb/5.15-kirkstone", shell=True)
 
                 # Parse yocto environment file, set up for build
-                env_string = subprocess.check_output(". /opt/linn-wayland/5.15-kirkstone/environment-setup-cortexa9t2hf-neon-poky-linux-gnueabi && env", shell=True)
+                env_string = subprocess.check_output(f". /opt/linn-wayland/{distro_version[distro]}/environment-setup-{toolchain_arch[arch]} && env", shell=True)
                 for el in env_string.decode("utf-8").split("\n"):
                     if "=" in el:
                         os.environ[el.split("=")[0]] = el.split("=", 1)[1]
@@ -246,23 +251,13 @@ class JenkinsBuild():
                     os.environ["CFLAGS"] = " ".join(os.environ["CC"].split(" ")[1:])
                 if os.environ.get("CXX", None):
                     os.environ["CXXFLAGS"] = " ".join(os.environ["CXX"].split(" ")[1:])
-                os.environ["LDFLAGS"] = '--sysroot=%s' % os.environ["SDKTARGETSYSROOT"]
-        if os_platform == 'linux' and arch == 'aarch64':
-            # Parse yocto environment file, set up for build
-            env_string = subprocess.check_output(". /opt/linn-wayland/5.15-kirkstone/environment-setup-armv8a-poky-linux && env", shell=True)
-            for el in env_string.decode("utf-8").split("\n"):
-                if "=" in el:
-                    os.environ[el.split("=")[0]] = el.split("=", 1)[1]
-            if os.environ.get("CC", None):
-                os.environ["CFLAGS"] = " ".join(os.environ["CC"].split(" ")[1:])
-            if os.environ.get("CXX", None):
-                os.environ["CXXFLAGS"] = " ".join(os.environ["CXX"].split(" ")[1:])
-            os.environ["LDFLAGS"] = '--sysroot=%s' % os.environ["SDKTARGETSYSROOT"]
-        if os_platform == 'linux' and arch == 'rpi':
-            os.environ['CROSS_COMPILE'] = '/opt/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin/arm-linux-gnueabihf-'
-
-            
-
+                os.environ["LDFLAGS"] = '--sysroot=%s' % os.environ["SDKTARGETSYSROOT"]               
+            elif distro in ['buildroot']:
+                # use pre-installed linaro toolchain
+                # os.environ['CROSS_COMPILE'] = '/opt/gcc-linaro-5.3.1-2016.05-i686_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-'
+                os.environ['CROSS_COMPILE'] = '/opt/gcc-linaro-7.3.1-2018.05-i686_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-'
+            elif distro in ['raspbian']:
+               os.environ['CROSS_COMPILE'] = '/opt/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin/arm-linux-gnueabihf-'         
         if os_platform == 'linux' and arch == 'mipsel':
             os.environ['CROSS_COMPILE'] = '/opt/mips-2015.05-18/bin/mips-linux-gnu-'
         if os_platform == 'linux' and arch == 'ppc32':
