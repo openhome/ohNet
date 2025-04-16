@@ -243,7 +243,7 @@ class JenkinsBuild():
                 # subprocess.check_output(fetched_path + " -y -d /home/hudson-smarties/linn-fb/5.15-kirkstone", shell=True)
 
                 # Parse yocto environment file, set up for build
-                env_string = subprocess.check_output(f". /opt/linn-wayland/{distro_version[distro]}/environment-setup-{toolchain_arch[arch]} && env", shell=True)
+                env_string = subprocess.check_output(". /opt/linn-wayland/%s/environment-setup-%s && env" % (distro_version[distro], toolchain_arch[arch]), shell=True)
                 for el in env_string.decode("utf-8").split("\n"):
                     if "=" in el:
                         os.environ[el.split("=")[0]] = el.split("=", 1)[1]
@@ -390,7 +390,7 @@ class JenkinsBuild():
         version = self.options.version
         openhome_system = self.platform['system']
         openhome_architecture = self.platform['arch']
-
+        openhome_distro = self.platform.get('distro', None)
         release_targets = []
         release_targets.append('release')
         release_targets.append('debug')
@@ -435,8 +435,12 @@ class JenkinsBuild():
                 print( ret )
                 sys.exit(10)
 
-            native_bundle_name = os.path.join('Build/Bundles', "ohNet-%s-%s-%s.tar.gz" % (openhome_system, openhome_architecture, openhome_configuration))
-            native_dest = os.path.join('Build/Bundles', "ohNet-%s-%s-%s-%s.tar.gz" % (version, openhome_system, openhome_architecture, openhome_configuration))
+            if openhome_distro is not None:
+                native_bundle_name = os.path.join('Build/Bundles', "ohNet-%s-%s-%s-%s.tar.gz" % (openhome_architecture, openhome_distro, openhome_system.lower(), openhome_configuration))
+                native_dest = os.path.join('Build/Bundles', "ohNet-%s-%s-%s-%s-%s.tar.gz" % (version, openhome_architecture, openhome_distro, openhome_system.lower(), openhome_configuration))
+            else:
+                native_bundle_name = os.path.join('Build/Bundles', "ohNet-%s-%s-%s.tar.gz" % (openhome_system, openhome_architecture, openhome_configuration))
+                native_dest = os.path.join('Build/Bundles', "ohNet-%s-%s-%s-%s.tar.gz" % (version, openhome_system, openhome_architecture, openhome_configuration))                
             if os.path.exists(native_dest):
                 os.remove(native_dest)
             os.rename(native_bundle_name, native_dest)
