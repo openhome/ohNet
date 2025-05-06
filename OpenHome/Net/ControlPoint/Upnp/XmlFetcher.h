@@ -82,6 +82,7 @@ private:
     void Run();
 private:
     Fifo<XmlFetcher*>& iFree;
+    OpenHome::Mutex iLock;
     XmlFetch* iFetch;
 };
 
