@@ -152,7 +152,7 @@ dotnetRuntime = linux-x64
 
 # NOTE: If you change this, you MUST go through an edit any of the csproj (or csproj generation code) to ensure that the correct defines
 #       are included for iOS builds. 
-dotnetFramework = net6.0
+dotnetFramework = net8.0
 
 ifeq ($(openhome_system),Linux)
 	dotnetsdk = ~/.dotnet/dotnet
@@ -194,7 +194,7 @@ ifeq ($(platform),iOS)
 	ar = $(toolroot)/ar rc $(objdir)
 	no_shared_objects = yes
 
-    dotnetFramework = net6.0-ios
+    dotnetFramework = net8.0-ios
     dotnetRuntime = osx-x64
 endif
 
