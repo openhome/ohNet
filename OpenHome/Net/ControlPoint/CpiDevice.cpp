@@ -71,6 +71,7 @@ void CpiDevice::RemoveRef()
     dead = (--iRefCount <= 0);
     iLock.Signal();
     if (dead) {
+        NotifyDestroy();
         iObserver.Release();
         delete this;
     }
@@ -109,6 +110,11 @@ TBool CpiDevice::OrphanSubscriptionsOnSubnetChange() const
 void CpiDevice::NotifyRemovedBeforeReady()
 {
     iProtocol.NotifyRemovedBeforeReady();
+}
+
+void CpiDevice::NotifyDestroy()
+{
+    iProtocol.NotifyDestroy();
 }
 
 TUint CpiDevice::Version(const TChar* aDomain, const TChar* aName, TUint aProxyVersion) const

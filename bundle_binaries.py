@@ -46,7 +46,7 @@ ALL_TARGETS = {
         BuildTarget("Linux",   "rpi",   "Debug"):     BuildInfo(builddir="Build/Obj/Posix/Debug"),
         BuildTarget("Linux",   "ppc32", "Debug"):     BuildInfo(builddir="Build/Obj/Posix/Debug"),
         BuildTarget("Linux",   "mipsel","Debug"):     BuildInfo(builddir="Build/Obj/Posix/Debug"),
-        BuildTarget("Linux",   "arm64", "Debug"):     BuildInfo(builddir="Build/Obj/Posix/Debug"),
+        BuildTarget("Linux",   "aarch64", "Debug"):     BuildInfo(builddir="Build/Obj/Posix/Debug"),
         BuildTarget("Linux",   "riscv64", "Debug"):   BuildInfo(builddir="Build/Obj/Posix/Debug"),
         BuildTarget("Linux",   "x86",   "Release"):   BuildInfo(builddir="Build/Obj/Posix/Release"),
         BuildTarget("Linux",   "x64",   "Release"):   BuildInfo(builddir="Build/Obj/Posix/Release"),
@@ -55,7 +55,7 @@ ALL_TARGETS = {
         BuildTarget("Linux",   "rpi",   "Release"):   BuildInfo(builddir="Build/Obj/Posix/Release"),
         BuildTarget("Linux",   "ppc32", "Release"):   BuildInfo(builddir="Build/Obj/Posix/Release"),
         BuildTarget("Linux",   "mipsel","Release"):   BuildInfo(builddir="Build/Obj/Posix/Release"),
-        BuildTarget("Linux",   "arm64", "Release"):   BuildInfo(builddir="Build/Obj/Posix/Release"),
+        BuildTarget("Linux",   "aarch64", "Release"):   BuildInfo(builddir="Build/Obj/Posix/Release"),
         BuildTarget("Linux",   "riscv64", "Release"): BuildInfo(builddir="Build/Obj/Posix/Release"),
 
         BuildTarget("Qnap",    "x86",   "Debug"):   BuildInfo(builddir="Build/Obj/Posix/Debug"),
@@ -149,20 +149,19 @@ def main():
     if os.path.exists(bundle_path):
         os.remove(bundle_path)
 
-    tf = tarfile.open(bundle_path, 'w:gz')
-
-    if options.managed_only:
-        recursively_add_directory(tf, builddir, bundle_fileprefix + "/lib", exclude=exclude_non_managed)
-    else:
-        recursively_add_directory(tf, builddir, bundle_fileprefix + "/lib", exclude=exclude_non_binary)
-        #tf.add(builddir, bundle_fileprefix + "/lib", exclude=exclude_non_binary)
-        recursively_add_directory(tf, includedir, bundle_fileprefix + "/include/ohnet")
-        #tf.add(includedir, bundle_fileprefix + "/include/ohnet")
-        recursively_add_directory(tf, t4dir, bundle_fileprefix + "/lib/t4")
-        recursively_add_directory(tf, templateDir, bundle_fileprefix + "/lib/t4")
-        recursively_add_directory(tf, uisdkDir, bundle_fileprefix + "/lib/ui")
-        recursively_add_directory(tf, pyDir, bundle_fileprefix + "/lib/PyOhNet")
-        recursively_add_directory(tf, serviceGenDir, bundle_fileprefix + "/lib/ServiceGen")
-
+    with tarfile.open(bundle_path, 'w:gz') as tf:
+        if options.managed_only:
+            recursively_add_directory(tf, builddir, bundle_fileprefix + "/lib", exclude=exclude_non_managed)
+        else:
+            recursively_add_directory(tf, builddir, bundle_fileprefix + "/lib", exclude=exclude_non_binary)
+            #tf.add(builddir, bundle_fileprefix + "/lib", exclude=exclude_non_binary)
+            recursively_add_directory(tf, includedir, bundle_fileprefix + "/include/ohnet")
+            #tf.add(includedir, bundle_fileprefix + "/include/ohnet")
+            recursively_add_directory(tf, t4dir, bundle_fileprefix + "/lib/t4")
+            recursively_add_directory(tf, templateDir, bundle_fileprefix + "/lib/t4")
+            recursively_add_directory(tf, uisdkDir, bundle_fileprefix + "/lib/ui")
+            recursively_add_directory(tf, pyDir, bundle_fileprefix + "/lib/PyOhNet")
+            recursively_add_directory(tf, serviceGenDir, bundle_fileprefix + "/lib/ServiceGen")
+            
 if __name__ == "__main__":
     main()

@@ -122,7 +122,7 @@ else
       detected_openhome_architecture = mipsel
     endif
     ifneq (,$(findstring aarch64,$(gcc_machine)))
-      detected_openhome_architecture = arm64
+      detected_openhome_architecture = aarch64
     endif
     ifneq (,$(findstring riscv64,$(gcc_machine)))
       detected_openhome_architecture = riscv64

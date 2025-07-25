@@ -7,6 +7,7 @@ if [ -z $1 ]; then
 else
     YOCTO_SDK_ENV=$1
 fi
+echo "sourcing $YOCTO_SDK_ENV"
 source $YOCTO_SDK_ENV
 # Yocto env appends essential build flags to CC/CXX environment variables;
 # our makefiles doesn't use CC to determine compiler since we do some more complex stuff to deal with building under other OSes.
@@ -14,4 +15,4 @@ source $YOCTO_SDK_ENV
 _CC=$(python -c 'import os; print(" ".join(os.getenv("CC").split(" ")[1:]))')
 _CXX=$(python -c 'import os; print(" ".join(os.getenv("CXX").split(" ")[1:]))')
 make clean 
-CFLAGS=$_CC CXXFLAGS=$_CXX LDFLAGS="--sysroot=$SDKTARGETSYSROOT" make
+CFLAGS=$_CC CXXFLAGS=$_CXX LDFLAGS="--sysroot=$SDKTARGETSYSROOT" make uset4=yes

@@ -189,6 +189,9 @@ void CpiDeviceDv::NotifySubscriptionExpired(const Brx& /*aSid*/)
 {
 }
 
+void CpiDeviceDv::NotifyDestroy()
+{ }
+
 void CpiDeviceDv::LogUserData(IWriter& aWriter, const IDviSubscriptionUserData& /*aUserData*/)
 {
     aWriter.Write(Brn(", protocol: Dv"));
