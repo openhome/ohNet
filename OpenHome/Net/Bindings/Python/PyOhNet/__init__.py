@@ -159,21 +159,26 @@ def Start( aMode='cp', aInterface=None ):
     else:
         raise OhNetError( 'Stack mode <%s> not supported' % aMode )
 
-
 def Shutdown():
     """Cleanly shut down ohNet"""
-    while len( adapters ):
-        adapters[0].Shutdown()
-    while len( adapterLists ):
-        adapterLists[0].Shutdown()
-    while len( devices ):
-        devices[0].Shutdown()
-    while len( devLists ):
-        devLists[0].Shutdown()
     while len( actions ):
         actions[0].Shutdown()
+    print('PyOhNet shutdown -->>> actions')
     while len( cpProxies ):
         cpProxies[0].Shutdown()
+    print('PyOhNet shutdown -->>> proxies')
+    while len( devices ):
+        devices[0].Shutdown()
+    print('PyOhNet shutdown -->>> devices')
+    while len( devLists ):
+        devLists[0].Shutdown()
+    print('PyOhNet shutdown -->>> devLists')
+    while len( adapters ):
+        adapters[0].Shutdown()
+    print('PyOhNet shutdown -->>> adapters')
+    while len( adapterLists ):
+        adapterLists[0].Shutdown()
+    print('PyOhNet shutdown -->>> adapterLists')
     if lib:
         if initParams:
             lib.OhNetInitParamsDestroy( initParams )

@@ -155,7 +155,7 @@ dotnetRuntime = linux-x64
 
 # NOTE: If you change this, you MUST go through an edit any of the csproj (or csproj generation code) to ensure that the correct defines
 #       are included for iOS builds. 
-dotnetFramework = net6.0
+dotnetFramework = net8.0
 
 ifeq ($(openhome_system),Linux)
 	dotnetsdk = ~/.dotnet/dotnet
@@ -185,7 +185,7 @@ ifeq ($(platform),iOS)
 	devroot=/Applications/Xcode.app/Contents/Developer
 	toolroot=$(devroot)/Toolchains/XcodeDefault.xctoolchain/usr/bin
 	sdkroot=$(devroot)/Platforms/$(platform_prefix).platform/Developer/SDKs/$(platform_prefix).sdk
-	platform_cflags = -I$(sdkroot)/usr/include/ -miphoneos-version-min=12.0 -pipe -no-cpp-precomp -isysroot $(sdkroot) -DPLATFORM_MACOSX_GNU -DPLATFORM_IOS
+	platform_cflags = -I$(sdkroot)/usr/include/ -miphoneos-version-min=12.0 -pipe -no-cpp-precomp -isysroot $(sdkroot) -DPLATFORM_MACOSX_GNU -DPLATFORM_IOS -Wno-unused-command-line-argument
 	# TODO: Support armv6 for old devices
 	osbuilddir = $(platform)-$(detected_openhome_architecture)
 	objdir = Build/Obj/$(osbuilddir)/$(build_dir)/
@@ -197,7 +197,7 @@ ifeq ($(platform),iOS)
 	ar = $(toolroot)/ar rc $(objdir)
 	no_shared_objects = yes
 
-    dotnetFramework = net6.0-ios
+    dotnetFramework = net8.0-ios
     dotnetRuntime = osx-x64
 endif
 
@@ -205,13 +205,13 @@ ifeq ($(platform),Mac)
 	# Darwin, not iOS or Linux-rpi -> Mac
 	linkopts_ohNet = -Wl,-install_name,@loader_path/libohNet.dylib
     ifeq ($(detected_openhome_architecture),x64)
-		platform_cflags = -DPLATFORM_MACOSX_GNU -arch x86_64 -mmacosx-version-min=10.7
+		platform_cflags = -DPLATFORM_MACOSX_GNU -arch x86_64 -mmacosx-version-min=10.7 -Wno-unused-command-line-argument
 		platform_linkflags = -arch x86_64 -framework CoreFoundation -framework SystemConfiguration -framework IOKit
 		osbuilddir = Mac-x64
 		openhome_architecture = x64
 	else
 		# building for arm64
-		platform_cflags = -DPLATFORM_MACOSX_GNU -arch arm64 -mmacosx-version-min=11
+		platform_cflags = -DPLATFORM_MACOSX_GNU -arch arm64 -mmacosx-version-min=11 -Wno-unused-command-line-argument
 		platform_linkflags = -arch arm64 -framework CoreFoundation -framework SystemConfiguration -framework IOKit
 		osbuilddir = Mac-arm64
 		openhome_architecture = arm64
