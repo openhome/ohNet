@@ -31,6 +31,7 @@ private: // ICpiProtocol
     void Unsubscribe(CpiSubscription& aSubscription, const Brx& aSid);
     TBool OrphanSubscriptionsOnSubnetChange() const;
     void NotifyRemovedBeforeReady();
+    void NotifyDestroy();
     TUint Version(const TChar* aDomain, const TChar* aName, TUint aProxyVersion) const;
 private: // ICpiDeviceObserver
     void Release();

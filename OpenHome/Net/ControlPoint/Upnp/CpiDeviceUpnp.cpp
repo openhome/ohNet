@@ -306,6 +306,12 @@ void CpiDeviceUpnp::NotifyRemovedBeforeReady()
     iSemReady.Wait();
 }
 
+void CpiDeviceUpnp::NotifyDestroy()
+{
+    iTimer->Cancel();
+    InterruptXmlFetch();
+}
+
 TUint CpiDeviceUpnp::Version(const TChar* aDomain, const TChar* aName, TUint /*aProxyVersion*/) const
 {
     ServiceType defaultServiceType(aDomain, aName, 0);
