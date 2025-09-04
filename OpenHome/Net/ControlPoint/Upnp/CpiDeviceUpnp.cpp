@@ -308,7 +308,9 @@ void CpiDeviceUpnp::NotifyRemovedBeforeReady()
 
 void CpiDeviceUpnp::NotifyDestroy()
 {
-    iTimer->Cancel();
+    if (iTimer != nullptr) {
+        iTimer->Cancel();
+    }
     InterruptXmlFetch();
 }
 
