@@ -90,7 +90,9 @@ else
     endif
     ifneq (,$(findstring arm,$(gcc_machine)))
         ifneq (,$(findstring linux-gnueabihf,$(gcc_machine)))
-            detected_openhome_architecture = armhf
+            detected_openhome_architecture = armhf		
+        else ifneq (,$(findstring arm-poky-linux-gnueabi,$(gcc_machine)))
+            detected_openhome_architecture = armhf		
         else ifeq (${detected_openhome_system},Qnap)
             detected_openhome_architecture = x19
         else
@@ -131,6 +133,7 @@ endif
 
 detected_openhome_system ?= Unknown
 detected_openhome_architecture ?= Unknown
+openhome_distro ?= None
 
 ifneq (${openhome_system},)
   ifneq (${openhome_system},${detected_openhome_system})
@@ -655,11 +658,11 @@ docs:
 
 bundle-after-build: $(build_targets)
 	$(mkdir) $(bundle_build)
-	python bundle_binaries.py --system $(openhome_system) --architecture $(openhome_architecture) --configuration $(openhome_configuration)
+	python bundle_binaries.py --system $(openhome_system) --architecture $(openhome_architecture) --distro $(openhome_distro) --configuration $(openhome_configuration)
 
 bundle:
-	$(mkdir) $(bundle_build)
-	python bundle_binaries.py --system $(openhome_system) --architecture $(openhome_architecture) --configuration $(openhome_configuration)
+	$(mkdir) $(bundle_build)	
+	python bundle_binaries.py --system $(openhome_system) --architecture $(openhome_architecture) --distro $(openhome_distro) --configuration $(openhome_configuration)
 
 ifeq ($(platform),iOS)
 ohNet.net.dll :  $(objdir)ohNet.net.dll

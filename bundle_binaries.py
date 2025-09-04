@@ -32,6 +32,7 @@ def recursively_add_directory(tarfile, directory_path, path_in_archive, exclude=
                 tarfile.add(path.join(sub_path, fname), path.join(path_in_archive, relative_dir, fname))
 
 BuildTarget = namedtuple("BuildTarget", "system architecture configuration")
+BuildDistroTarget = namedtuple("BuildTarget", "architecture distro system configuration")
 BuildInfo = namedtuple("BuildInfo", "builddir")
 ALL_TARGETS = {
         BuildTarget("Windows", "x86",   "Debug"):   BuildInfo(builddir="Build/Obj/Windows/Debug"),
@@ -42,21 +43,30 @@ ALL_TARGETS = {
         BuildTarget("Linux",   "x86",   "Debug"):     BuildInfo(builddir="Build/Obj/Posix/Debug"),
         BuildTarget("Linux",   "x64",   "Debug"):     BuildInfo(builddir="Build/Obj/Posix/Debug"),
         BuildTarget("Linux",   "armel", "Debug"):     BuildInfo(builddir="Build/Obj/Posix/Debug"),
-        BuildTarget("Linux",   "armhf", "Debug"):     BuildInfo(builddir="Build/Obj/Posix/Debug"),
-        BuildTarget("Linux",   "rpi",   "Debug"):     BuildInfo(builddir="Build/Obj/Posix/Debug"),
         BuildTarget("Linux",   "ppc32", "Debug"):     BuildInfo(builddir="Build/Obj/Posix/Debug"),
         BuildTarget("Linux",   "mipsel","Debug"):     BuildInfo(builddir="Build/Obj/Posix/Debug"),
-        BuildTarget("Linux",   "aarch64", "Debug"):     BuildInfo(builddir="Build/Obj/Posix/Debug"),
-        BuildTarget("Linux",   "riscv64", "Debug"):   BuildInfo(builddir="Build/Obj/Posix/Debug"),
+                
+        BuildDistroTarget("armhf",      "buildroot",    "linux", "Debug"):   BuildInfo(builddir="Build/Obj/Posix/Debug"),
+        BuildDistroTarget("armhf",      "raspbian",     "linux",   "Debug"):   BuildInfo(builddir="Build/Obj/Posix/Debug"),
+        BuildDistroTarget("armhf",      "kirkstone",    "linux", "Debug"):   BuildInfo(builddir="Build/Obj/Posix/Debug"),
+        BuildDistroTarget("armhf",      "scarthgap",    "linux", "Debug"):   BuildInfo(builddir="Build/Obj/Posix/Debug"),
+        BuildDistroTarget("aarch64",    "kirkstone",    "linux", "Debug"):   BuildInfo(builddir="Build/Obj/Posix/Debug"),
+        BuildDistroTarget("aarch64",    "scarthgap",    "linux", "Debug"):   BuildInfo(builddir="Build/Obj/Posix/Debug"),
+        BuildDistroTarget("riscv64",    "buildroot",    "linux", "Debug"): BuildInfo(builddir="Build/Obj/Posix/Debug"),
+
         BuildTarget("Linux",   "x86",   "Release"):   BuildInfo(builddir="Build/Obj/Posix/Release"),
         BuildTarget("Linux",   "x64",   "Release"):   BuildInfo(builddir="Build/Obj/Posix/Release"),
         BuildTarget("Linux",   "armel", "Release"):   BuildInfo(builddir="Build/Obj/Posix/Release"),
-        BuildTarget("Linux",   "armhf", "Release"):   BuildInfo(builddir="Build/Obj/Posix/Release"),
-        BuildTarget("Linux",   "rpi",   "Release"):   BuildInfo(builddir="Build/Obj/Posix/Release"),
         BuildTarget("Linux",   "ppc32", "Release"):   BuildInfo(builddir="Build/Obj/Posix/Release"),
         BuildTarget("Linux",   "mipsel","Release"):   BuildInfo(builddir="Build/Obj/Posix/Release"),
-        BuildTarget("Linux",   "aarch64", "Release"):   BuildInfo(builddir="Build/Obj/Posix/Release"),
-        BuildTarget("Linux",   "riscv64", "Release"): BuildInfo(builddir="Build/Obj/Posix/Release"),
+        
+        BuildDistroTarget("armhf",      "buildroot",    "linux", "Release"):   BuildInfo(builddir="Build/Obj/Posix/Release"),
+        BuildDistroTarget("armhf",      "raspbian",     "linux",   "Release"):   BuildInfo(builddir="Build/Obj/Posix/Release"),
+        BuildDistroTarget("armhf",      "kirkstone",    "linux", "Release"):   BuildInfo(builddir="Build/Obj/Posix/Release"),
+        BuildDistroTarget("armhf",      "scarthgap",    "linux", "Release"):   BuildInfo(builddir="Build/Obj/Posix/Release"),
+        BuildDistroTarget("aarch64",    "kirkstone",    "linux", "Release"):   BuildInfo(builddir="Build/Obj/Posix/Release"),
+        BuildDistroTarget("aarch64",    "scarthgap",    "linux", "Release"):   BuildInfo(builddir="Build/Obj/Posix/Release"),
+        BuildDistroTarget("riscv64",    "buildroot",    "linux", "Release"): BuildInfo(builddir="Build/Obj/Posix/Release"),
 
         BuildTarget("Qnap",    "x86",   "Debug"):   BuildInfo(builddir="Build/Obj/Posix/Debug"),
         BuildTarget("Qnap",    "x86",   "Release"): BuildInfo(builddir="Build/Obj/Posix/Release"),
@@ -86,10 +96,13 @@ ALL_TARGETS = {
     }
 
 ALL_SYSTEMS = set(tgt.system for tgt in ALL_TARGETS.keys())
+ALL_DISTROS = set(tgt.distro for tgt in ALL_TARGETS.keys() if isinstance(tgt, BuildDistroTarget))
 ALL_ARCHITECTURES = set(tgt.architecture for tgt in ALL_TARGETS.keys())
 ALL_CONFIGURATIONS = set(tgt.configuration for tgt in ALL_TARGETS.keys())
 
 def get_target_as_option_string(target):
+    if isinstance(target, BuildDistroTarget):
+        return "--architecture {0} --distro {1} --system {2} --configuration {3}".format(target.architecture, target.distro, target.system, target.configuration)    
     return "--system {0} --architecture {1} --configuration {2}".format(target.system, target.architecture, target.configuration)
 
 def main():
@@ -98,6 +111,7 @@ def main():
     parser.add_option("-s", "--system", default=None, help="Target operating system. (One of: {0})".format(", ".join(sorted(ALL_SYSTEMS))))
     parser.add_option("-a", "--architecture", default=None, help="Target architecture. (One of: {0})".format(", ".join(sorted(ALL_ARCHITECTURES))))
     parser.add_option("-c", "--configuration", default=None, help="Target configuration. (One of: {0})".format(", ".join(sorted(ALL_CONFIGURATIONS))))
+    parser.add_option("-d", "--distro", default=None, help="Target distro. (One of: {0})".format(", ".join(sorted(ALL_DISTROS))))
     parser.add_option("-m", "--managed-only", default=False, action="store_true", help="Package only the managed assembly.")
     options, args = parser.parse_args()
     if len(args)>0:
@@ -112,7 +126,13 @@ def main():
     if options.configuration not in ALL_CONFIGURATIONS:
         print("Please specify --configuration from one of {0}.".format(", ".join(sorted(ALL_CONFIGURATIONS))))
         sys.exit(1)
-    target = BuildTarget(options.system, options.architecture, options.configuration)
+    if options.distro is not None and options.distro.lower() != "none" and options.distro not in ALL_DISTROS:
+        print("Please specify --distro from one of {0}, None.".format(", ".join(sorted(ALL_DISTROS))))
+        sys.exit(1)
+    if options.distro is not None and options.distro.lower() != "none":
+        target = BuildDistroTarget(options.architecture, options.distro, options.system.lower(), options.configuration)
+    else:    
+        target = BuildTarget(options.system, options.architecture, options.configuration)
     if target not in ALL_TARGETS:
         print("Unrecognized target combination. Valid combinations are:")
         for valid_target in sorted(ALL_TARGETS.keys()):
@@ -143,7 +163,10 @@ def main():
     if options.managed_only:
         bundle_fileprefix = "ohNet.net-AnyPlatform-{target.configuration}".format(target=target)
     else:
-        bundle_fileprefix = "ohNet-{target.system}-{target.architecture}-{target.configuration}".format(target=target)
+        if isinstance(target, BuildDistroTarget):
+            bundle_fileprefix = "ohNet-{target.architecture}-{target.distro}-{target.system}-{target.configuration}".format(target=target)
+        else:
+            bundle_fileprefix = "ohNet-{target.system}-{target.architecture}-{target.configuration}".format(target=target)
     bundle_filename = bundle_fileprefix + ".tar.gz"
     bundle_path = path.join(outputdir, bundle_filename)
     if os.path.exists(bundle_path):
