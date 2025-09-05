@@ -116,7 +116,7 @@ class JenkinsBuild():
 
         parser = OptionParser()
         parser.add_option("-p", "--platform", dest="platform",
-            help="Linux-x86, Linux-x64, Windows-x86, Windows-x64, Linux-ARM, Linux-armhf, Linux-mipsel, Linux-ppc32, Linux-rpi, Mac-x64, Core-ppc32, Core-armv6, iOs-arm64, iOs-x64, Qnap-x86, Qnap-x19")
+            help="Linux-x86, Linux-x64, Windows-x86, Windows-x64, Linux-ARM, Linux-armhf, Linux-mipsel, Linux-ppc32, Linux-rpi, Mac-x64, Core-ppc32, Core-armv6, iOs-arm64, iOs-x64")
         parser.add_option("-n", "--nightly",
                   action="store_true", dest="nightly", default=False,
                   help="Perform a nightly build")
@@ -171,8 +171,6 @@ class JenkinsBuild():
             'Core-ppc32': { 'os': 'Core', 'arch': 'ppc32', 'publish': True, 'system': 'Core'},
             'Core-armv6': { 'os': 'Core', 'arch': 'armv6', 'publish': True, 'system': 'Core'},
             'Android-anycpu': { 'os': 'Android', 'arch': 'anycpu', 'publish': True, 'system': 'Android'},
-            'Qnap-x86': { 'os': 'Qnap', 'arch': 'x86', 'publish': True, 'system': 'Qnap'},
-            'Qnap-x19': {'os': 'Qnap', 'arch': 'x19', 'publish': True, 'system': 'Qnap'}
         }
         current_platform = self.options.platform
         self.platform = platforms[current_platform]
@@ -271,8 +269,6 @@ class JenkinsBuild():
             os.environ['CROSS_COMPILE'] = '/opt/rtems-4.11-rsb/bin/powerpc-rtems4.11-'
         if os_platform == 'Core' and (arch == 'armv5' or arch == 'armv6'):
             os.environ['CROSS_COMPILE'] = '/opt/rtems-4.11-rsb/bin/arm-rtems4.11-'
-        if os_platform == 'Qnap' and arch == 'x19':
-            os.environ['CROSS_COMPILE'] = '/home/bldslv/qnap-gcc/cross-project/arm/marvell/bin/arm-none-linux-gnueabi-'
 
         # If building on a 64-bit machine it is possible that both 32-bit and 64-bit JDKs/JREs are installed, and JAVA_HOME may point to the wrong one for the target architecture.
         # Python provides no generic way to check if build machine OS is 32-bit or 64-bit.
@@ -348,8 +344,6 @@ class JenkinsBuild():
         if os_platform == 'Android':
             args.append('--Android-anycpu')
             self.platform_make_args.append('Android-anycpu=1')
-        if os_platform == 'Qnap':
-            args.extend(['--qnap', '--buildonly'])
         if os_platform == 'Core':
             args.append('--core')
         if os_platform == 'linux' and arch == 'x86':
@@ -419,8 +413,6 @@ class JenkinsBuild():
             build.append('make')
             build.append('tt')
             build.append('uset4=yes')
-            if self.platform['os'] == 'Qnap':
-                build.append('platform=' + platform)
 
             if openhome_distro is not None:
                 build.append("openhome_distro=" + openhome_distro)
@@ -444,8 +436,6 @@ class JenkinsBuild():
             build.append('make')
             build.append('bundle')
             build.append('uset4=yes')
-            if self.platform['os'] == 'Qnap':
-                build.append('platform=' + platform)
 
             if openhome_distro is not None:
                 build.append("openhome_distro=" + openhome_distro)
