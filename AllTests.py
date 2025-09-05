@@ -33,9 +33,9 @@ def buildArgs():
     if gDebugBuild == 1:
         buildArgs += ' debug=1'
     if gMac64 == 1:
-        buildArgs += ' mac-64=1'
+        buildArgs += ' Mac-x64=1'
     if gMacArm64 == 1:
-        buildArgs += 'mac-arm64=1'
+        buildArgs += ' Mac-arm64=1'
     if giOsArm64 == 1:
         buildArgs += ' iOs-arm64=1'
     if giOsx64 == 1:
