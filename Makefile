@@ -44,6 +44,10 @@ ifeq ($(MACHINE),Darwin)
     platform = iOS
     detected_openhome_system = iOs
     detected_openhome_architecture = x64
+  else ifeq($(iOS-arm64-sim),1)
+    platform = iOS
+    detected_openhome_system = iOs
+    detected_openhome_architecture = arm64-sim
   else ifeq ($(Linux-rpi),1)
       platform = Linux
       detected_openhome_system = Linux
@@ -181,6 +185,12 @@ ifeq ($(platform),iOS)
 		platform_prefix=iPhoneSimulator
 		platform_compiler=i686-apple-darwin10
 		platform_arch=x86_64
+        dotnetRuntime=osx-x64
+    else ifeq ($(detected_openhome_architecture),arm64-sim)
+        platform_prefix=iPhoneSimulator
+        platform_compiler=arm64-apple-darwin10
+        platform_arch=arm64
+        dotnetRuntime=osx-arm64
 	endif
 	devroot=/Applications/Xcode.app/Contents/Developer
 	toolroot=$(devroot)/Toolchains/XcodeDefault.xctoolchain/usr/bin
@@ -198,7 +208,6 @@ ifeq ($(platform),iOS)
 	no_shared_objects = yes
 
     dotnetFramework = net8.0-ios
-    dotnetRuntime = osx-x64
 endif
 
 ifeq ($(platform),Mac)

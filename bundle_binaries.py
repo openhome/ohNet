@@ -81,10 +81,12 @@ ALL_TARGETS = {
         BuildTarget("FreeBSD", "x86",   "Debug"):   BuildInfo(builddir="Build/Obj/Posix/Debug"),
         BuildTarget("FreeBSD", "x86",   "Release"): BuildInfo(builddir="Build/Obj/Posix/Release"),
 
-        BuildTarget("iOs",     "x64",   "Debug"):   BuildInfo(builddir="Build/Obj/iOs-x64/Debug"),
-        BuildTarget("iOs",     "arm64", "Debug"):   BuildInfo(builddir="Build/Obj/iOs-arm64/Debug"),
-        BuildTarget("iOs",     "x64",   "Release"): BuildInfo(builddir="Build/Obj/iOs-x64/Release"),
-        BuildTarget("iOs",     "arm64", "Release"): BuildInfo(builddir="Build/Obj/iOs-arm64/Release"),
+        BuildTarget("iOs",     "x64",       "Debug"):   BuildInfo(builddir="Build/Obj/iOs-x64/Debug"),
+        BuildTarget("iOs",     "arm64",     "Debug"):   BuildInfo(builddir="Build/Obj/iOs-arm64/Debug"),
+        BuildTarget("iOs",     "arm64-sim", "Debug"):   BuildInfo(builddir="Build/Obj/iOs-x64-sim/Debug"),
+        BuildTarget("iOs",     "x64",       "Release"): BuildInfo(builddir="Build/Obj/iOs-x64/Release"),
+        BuildTarget("iOs",     "arm64",     "Release"): BuildInfo(builddir="Build/Obj/iOs-arm64/Release"),
+        BuildTarget("iOs",     "arm64-sim", "Release"): BuildInfo(builddir="Build/Obj/iOs-x64-sim/Release"),
 
         BuildTarget("Core",    "armv5", "Debug"):   BuildInfo(builddir="Build/Obj/Core-armv5/Debug"),
         BuildTarget("Core",    "armv5", "Release"): BuildInfo(builddir="Build/Obj/Core-armv5/Release"),

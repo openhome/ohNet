@@ -19,6 +19,8 @@ def objPath():
             plat = 'iOs-arm64'
         elif giOsx64 == 1:
             plat = 'iOs-x64'
+        elif giOsArm64Sim == 1:
+            plat = 'iOs-arm64'
     variant = 'Release'
     if gDebugBuild == 1:
         variant = 'Debug'
@@ -38,6 +40,8 @@ def buildArgs():
         buildArgs += ' iOs-arm64=1'
     if giOsx64 == 1:
         buildArgs += ' iOs-x64=1'
+    if giOsArm64Sim == 1:
+        buildArgs += ' iOS-arm64-sim=1'
     if gAndroid == 1:
         buildArgs += ' Android-anycpu=1'
     if gCore == 1 or gQnap == 1:
@@ -197,6 +201,7 @@ gMac64 = 0
 gMacArm64 = 0
 giOsArm64 = 0
 giOsx64 = 0
+giOsArm64Sim = 0
 gAndroid = 0
 gQnap = 0
 try:
@@ -253,6 +258,11 @@ for arg in sys.argv[1:]:
             sys.exit(1)
     elif arg == '--iOs-x64':
         giOsx64 = 1
+        if platform.system() != 'Darwin':
+            print('ERROR - --iOs-x64 only applicable on Darwin')
+            sys.exit(1)
+    elif arg == '--iOs-arm64-sim':
+        giOsArm64Sim = 1
         if platform.system() != 'Darwin':
             print('ERROR - --iOs-x64 only applicable on Darwin')
             sys.exit(1)

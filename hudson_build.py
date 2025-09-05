@@ -167,6 +167,7 @@ class JenkinsBuild():
             'Linux-mipsel': { 'os': 'linux', 'arch': 'mipsel', 'publish': True, 'system': 'Linux'},
             'iOs-x64': { 'os': 'iOs', 'arch': 'x64', 'publish': True, 'system': 'iOs'},
             'iOs-arm64': { 'os': 'iOs', 'arch': 'arm64', 'publish': True, 'system': 'iOs'},
+            'iOs-arm64-sim': { 'os': 'iOs', 'arch': 'arm64-sim', 'publish': True, 'system': 'iOs'},
             'Core-ppc32': { 'os': 'Core', 'arch': 'ppc32', 'publish': True, 'system': 'Core'},
             'Core-armv6': { 'os': 'Core', 'arch': 'armv6', 'publish': True, 'system': 'Core'},
             'Android-anycpu': { 'os': 'Android', 'arch': 'anycpu', 'publish': True, 'system': 'Android'},
@@ -333,6 +334,9 @@ class JenkinsBuild():
             elif arch == 'arm64':
                 args.append('--iOs-arm64')
                 self.platform_make_args.append('iOs-arm64=1')
+            elif arch == 'arm64-sim':
+                args.append('--iOs-arm64-sim')
+                self.platform_make_args.append('iOs-arm64-sim=1')
         if os_platform == 'Linux':
             if arch == 'arhmf' and distro == 'raspbian':
                 args.append('--Linux-rpi')
