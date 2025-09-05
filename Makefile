@@ -51,10 +51,10 @@ ifeq ($(MACHINE),Darwin)
   else
     platform = Mac
     detected_openhome_system = Mac
-    ifeq ($(Mac-arm64),1)
-        detected_openhome_architecture = arm64
-    else
+    ifeq ($(Mac-x64),1)
         detected_openhome_architecture = x64
+    else
+        detected_openhome_architecture = arm64
     endif
   endif
 else ifneq (, $(findstring powerpc, $(gcc_machine)))
@@ -203,27 +203,28 @@ endif
 
 ifeq ($(platform),Mac)
 	# Darwin, not iOS or Linux-rpi -> Mac
+    openhome_system = Mac
 	linkopts_ohNet = -Wl,-install_name,@loader_path/libohNet.dylib
     ifeq ($(detected_openhome_architecture),x64)
-		platform_cflags = -DPLATFORM_MACOSX_GNU -arch x86_64 -mmacosx-version-min=10.7 -Wno-unused-command-line-argument
-		platform_linkflags = -arch x86_64 -framework CoreFoundation -framework SystemConfiguration -framework IOKit
-		osbuilddir = Mac-x64
-		openhome_architecture = x64
-	else
-		# building for arm64
-		platform_cflags = -DPLATFORM_MACOSX_GNU -arch arm64 -mmacosx-version-min=11 -Wno-unused-command-line-argument
-		platform_linkflags = -arch arm64 -framework CoreFoundation -framework SystemConfiguration -framework IOKit
-		osbuilddir = Mac-arm64
-		openhome_architecture = arm64
+        mac_osx_arch = x86_64
+        osbuilddir = Mac-x64
+        openhome_architecture = x64
+        dotnetRuntime = osx-x64
+    else
+        mac_osx_arch = arm64
+        osbuilddir = Mac-arm64
+        openhome_architecture = arm64
+        dotnetRuntime = osx-arm64
 	endif
+
+    platform_cflags = -DPLATFORM_MACOSX_GNU -arch $(mac_osx_arch) -mmacosx-version-min=11 -Wno-unused-command-line-argument
+    platform_linkflags = -arch $(mac_osx_arch) -framework CoreFoundation -framework SystemConfiguration -framework IOKit
 
 	objdir = Build/Obj/$(osbuilddir)/$(build_dir)/
 	compiler = clang -fPIC -stdlib=libc++ -o $(objdir)
 	link = clang++ -pthread -stdlib=libc++ $(platform_linkflags)
 	ar = ar rc $(objdir)
-	openhome_system = Mac
 
-	dotnetRuntime = osx-x64
 endif
 
 ifeq ($(platform), Core-ppc32)

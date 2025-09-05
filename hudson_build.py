@@ -157,6 +157,7 @@ class JenkinsBuild():
             'Windows-x64': { 'os': 'windows', 'arch': 'x64', 'publish': True, 'system': 'Windows'},
             'Macos-x64': { 'os': 'macos', 'arch': 'x86', 'publish': False, 'system': 'Mac'},  # Old Jenkins label
             'Mac-x64': { 'os': 'macos', 'arch': 'x64', 'publish': True, 'system': 'Mac'},     # New Jenkins label, matches downstream builds
+            'Mac-arm64': { 'os': 'macos', 'arch': 'arm64', 'publish': True, 'system': 'Mac'},     # New Jenkins label, matches downstream builds
             'armhf-buildroot-linux': { 'os': 'linux', 'arch': 'armhf', 'publish': True, 'system': 'Linux', 'distro': 'buildroot'},
             'armhf-raspbian-linux': { 'os': 'linux', 'arch': 'armhf', 'publish': True, 'system': 'Linux', 'distro': 'raspbian'},
             'armhf-kirkstone-linux': { 'os': 'linux', 'arch': 'armhf', 'publish': True, 'system': 'Linux', 'distro': 'kirkstone'},
@@ -309,9 +310,7 @@ class JenkinsBuild():
            or self.options.release == '1':
             args.append('--buildonly')
         elif arch == 'x64':
-            if os_platform  == 'macos':
-                args.append('--native-tests')
-            elif os_platform not in ['windows', 'linux', 'iOs']:
+            if os_platform not in ['windows', 'linux', 'iOs', 'macos']:
                 args.append('--native-builds')
         if os_platform == 'windows' and arch == 'x86':
             args.append('--js')
@@ -320,8 +319,13 @@ class JenkinsBuild():
         if os_platform == 'linux' and arch == 'x86':
             args.append('--java')
         if os_platform == 'macos':
-            args.append('--mac-64')
-            self.platform_make_args.append('mac-64=1')
+            args.append('--native-tests')
+            if arch == 'x64':
+                args.append('--mac-64')
+                self.platform_make_args.append('Mac-x64=1')
+            elif arch == 'arm64':
+                args.append('--mac-arm64')
+                self.platform_make_args.append('Mac-arm64=1')
         if os_platform == 'iOs':
             if arch == 'x64':
                 args.append('--iOs-x64')
