@@ -44,7 +44,7 @@ ifeq ($(MACHINE),Darwin)
     platform = iOS
     detected_openhome_system = iOs
     detected_openhome_architecture = x64
-  else ifeq($(iOS-arm64-sim),1)
+  else ifeq ($(iOS-arm64-sim),1)
     platform = iOS
     detected_openhome_system = iOs
     detected_openhome_architecture = arm64-sim
