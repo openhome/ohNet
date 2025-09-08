@@ -180,22 +180,27 @@ ifeq ($(platform),iOS)
 	linkopts_ohNet =
 	platform_prefix=iPhoneOS
 	platform_compiler=arm-apple-darwin10
+    min_ios_version=12.0
+    min_os_version_opt=-miphoneos-version-min=12.0
 	platform_arch=$(detected_openhome_architecture)
 	ifeq ($(detected_openhome_architecture),x64)
 		platform_prefix=iPhoneSimulator
 		platform_compiler=i686-apple-darwin10
 		platform_arch=x86_64
         dotnetRuntime=osx-x64
+        min_os_version_opt=-mios-simulator-version-min=$(min_ios_version) 
+
     else ifeq ($(detected_openhome_architecture),arm64-sim)
         platform_prefix=iPhoneSimulator
         platform_compiler=arm64-apple-darwin10
         platform_arch=arm64
         dotnetRuntime=osx-arm64
+        min_os_version_opt=-mios-simulator-version-min=$(min_ios_version) 
 	endif
 	devroot=/Applications/Xcode.app/Contents/Developer
 	toolroot=$(devroot)/Toolchains/XcodeDefault.xctoolchain/usr/bin
 	sdkroot=$(devroot)/Platforms/$(platform_prefix).platform/Developer/SDKs/$(platform_prefix).sdk
-	platform_cflags = -I$(sdkroot)/usr/include/ -miphoneos-version-min=12.0 -pipe -no-cpp-precomp -isysroot $(sdkroot) -DPLATFORM_MACOSX_GNU -DPLATFORM_IOS -Wno-unused-command-line-argument
+	platform_cflags = -I$(sdkroot)/usr/include/ $(min_os_version_opt) -pipe -no-cpp-precomp -isysroot $(sdkroot) -DPLATFORM_MACOSX_GNU -DPLATFORM_IOS -Wno-unused-command-line-argument
 	# TODO: Support armv6 for old devices
 	osbuilddir = $(platform)-$(detected_openhome_architecture)
 	objdir = Build/Obj/$(osbuilddir)/$(build_dir)/
