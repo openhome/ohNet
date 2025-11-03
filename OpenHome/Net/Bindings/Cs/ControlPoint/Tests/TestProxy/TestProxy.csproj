@@ -19,8 +19,8 @@
     <Compile Remove="*" />
     <Compile Include="TestProxy.cs" />
 
-    <ProjectReference Include="../../ohNet.net.csproj" />
-    <ProjectReference Include="../Proxies/CpUpnpOrgConnectionManager1.csproj" />
+    <ProjectReference Include="../../../ohNet.net.csproj" />
+    <ProjectReference Include="../../Proxies/CpUpnpOrgConnectionManager1.csproj" />
   </ItemGroup>
 
 </Project>
