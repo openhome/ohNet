@@ -234,7 +234,7 @@ OsContext* OsCreate(OsThreadSchedulePolicy aSchedulerPolicy)
 {
     OsContext* ctx = calloc(1, sizeof(*ctx));
     clock_gettime(CLOCK_MONOTONIC, &ctx->iStartTime);
-    ctx->iThreadPrioritiesEnabled = (aSchedulerPolicy == eScheduleDefault || aSchedulerPolicy == eSchedulePriority);
+    ctx->iThreadPrioritiesEnabled = (aSchedulerPolicy == eSchedulePriority);
 
     if (OsInitialiseOsMutexes(ctx) != 0) {
         OsDestroyOsMutexes(ctx);
@@ -705,9 +705,11 @@ int32_t OsMutexUnlock(THandle aMutex)
 void OsThreadGetPriorityRange(OsContext* aContext, uint32_t* aHostMin, uint32_t* aHostMax)
 {
     if (aContext->iThreadPrioritiesEnabled) {
-        *aHostMin = sched_get_priority_min(kThreadSchedPolicy);
-        *aHostMax = sched_get_priority_max(kThreadSchedPolicy);
-        aContext->iThreadPriorityMin = *aHostMin;
+        const int32_t platMin = sched_get_priority_min(kThreadSchedPolicy);
+        const int32_t platMax = sched_get_priority_max(kThreadSchedPolicy);
+        aContext->iThreadPriorityMin = platMin;
+        *aHostMin = 0;
+        *aHostMax = platMax - platMin;
     }
     else {
         *aHostMin = 1;
