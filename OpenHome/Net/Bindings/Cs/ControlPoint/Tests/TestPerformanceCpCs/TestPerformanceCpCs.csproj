@@ -15,8 +15,8 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <Compile Include="../TestBasicCp.cs" />
-    <Compile Include="../TestPerformanceCp.cs" />
+    <Compile Include="TestBasicCp.cs" />
+    <Compile Include="TestPerformanceCp.cs" />
 
     <ProjectReference Include="../../../ohNet.net.csproj" />
     <ProjectReference Include="../../Proxies/CpOpenhomeOrgTestBasic1.csproj" />
