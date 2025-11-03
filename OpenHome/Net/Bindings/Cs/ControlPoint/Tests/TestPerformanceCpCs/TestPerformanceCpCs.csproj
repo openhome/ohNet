@@ -18,8 +18,8 @@
     <Compile Include="TestBasicCp.cs" />
     <Compile Include="TestPerformanceCp.cs" />
 
-    <ProjectReference Include="../../../ohNet.net.csproj" />
-    <ProjectReference Include="../../Proxies/CpOpenhomeOrgTestBasic1.csproj" />
+    <ProjectReference Include="../../ohNet.net.csproj" />
+    <ProjectReference Include="../Proxies/CpOpenhomeOrgTestBasic1.csproj" />
   </ItemGroup>
 
 </Project>
