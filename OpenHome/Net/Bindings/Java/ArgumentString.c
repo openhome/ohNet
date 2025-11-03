@@ -1,4 +1,5 @@
 #include <jni.h>
+#include <stdio.h>
 #include "ArgumentString.h"
 #include "OpenHome/Net/C/CpService.h"
 
