@@ -13,9 +13,9 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <Compile Include="ControlPoint/Tests/TestBasicCp.cs" />
-    <Compile Include="Device/Tests/TestBasicDv.cs" />
-    <Compile Include="Device/Tests/TestDvDevice.cs" />
+    <Compile Include="../ControlPoint/Tests/TestBasicCp.cs" />
+    <Compile Include="../Device/Tests/TestBasicDv.cs" />
+    <Compile Include="../Device/Tests/TestDvDevice.cs" />
 
     <ProjectReference Include="../ohNet.net.csproj" />
     <ProjectReference Include="../ControlPoint/Proxies/CpOpenhomeOrgTestBasic1.csproj" />
