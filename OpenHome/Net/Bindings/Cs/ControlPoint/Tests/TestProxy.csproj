@@ -10,6 +10,8 @@
 
     <Platform>AnyCPU</Platform>
 
+    <EnableDefaultItems>False</EnableDefaultItems>
+
     <IntermediateOutputPath>../../obj</IntermediateOutputPath>
 
     <ApplicationId>uk.co.linn.ohNet.TestProxy</ApplicationId>
