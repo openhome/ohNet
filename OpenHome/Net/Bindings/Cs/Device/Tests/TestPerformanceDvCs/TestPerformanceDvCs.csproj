@@ -12,18 +12,18 @@
 
     <Platform>AnyCPU</Platform>
 
-    <IntermediateOutputPath>../../obj</IntermediateOutputPath>
+    <IntermediateOutputPath>../../../obj</IntermediateOutputPath>
 
     <!-- Required for Mac Catalyst -->
     <ApplicationId>uk.co.linn.ohNet.TestPerformanceDvCs</ApplicationId>
   </PropertyGroup>
   
   <ItemGroup>
-    <Compile Include="TestBasicDv.cs" />
-    <Compile Include="TestPerformanceDv.cs" />
+    <Compile Include="../TestBasicDv.cs" />
+    <Compile Include="../TestPerformanceDv.cs" />
 
-    <ProjectReference Include="../../ohNet.net.csproj" />
-    <ProjectReference Include="../Providers/DvOpenhomeOrgTestBasic1.csproj" />
+    <ProjectReference Include="../../../ohNet.net.csproj" />
+    <ProjectReference Include="../../Providers/DvOpenhomeOrgTestBasic1.csproj" />
   </ItemGroup>
 
 </Project>

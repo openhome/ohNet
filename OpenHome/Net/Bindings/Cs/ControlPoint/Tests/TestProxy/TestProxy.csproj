@@ -12,17 +12,17 @@
 
     <EnableDefaultItems>False</EnableDefaultItems>
 
-    <IntermediateOutputPath>../../obj</IntermediateOutputPath>
+    <IntermediateOutputPath>../../../obj</IntermediateOutputPath>
 
     <ApplicationId>uk.co.linn.ohNet.TestProxy</ApplicationId>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="*" />
-    <Compile Include="TestProxy.cs" />
+    <Compile Remove="../*" />
+    <Compile Include="../TestProxy.cs" />
 
-    <ProjectReference Include="../../ohNet.net.csproj" />
-    <ProjectReference Include="../Proxies/CpUpnpOrgConnectionManager1.csproj" />
+    <ProjectReference Include="../../../ohNet.net.csproj" />
+    <ProjectReference Include="../../Proxies/CpUpnpOrgConnectionManager1.csproj" />
   </ItemGroup>
 
 </Project>

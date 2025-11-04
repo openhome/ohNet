@@ -9,17 +9,17 @@
     <EnableDefaultItems>False</EnableDefaultItems>
     <Platform>AnyCPU</Platform>
 
-    <IntermediateOutputPath>../../obj</IntermediateOutputPath>
+    <IntermediateOutputPath>../../../obj</IntermediateOutputPath>
 
     <ApplicationId>uk.co.linn.ohNet.TestPerformanceCpCs</ApplicationId>
   </PropertyGroup>
   
   <ItemGroup>
-    <Compile Include="TestBasicCp.cs" />
-    <Compile Include="TestPerformanceCp.cs" />
+    <Compile Include="../TestBasicCp.cs" />
+    <Compile Include="../TestPerformanceCp.cs" />
 
-    <ProjectReference Include="../../ohNet.net.csproj" />
-    <ProjectReference Include="../Proxies/CpOpenhomeOrgTestBasic1.csproj" />
+    <ProjectReference Include="../../../ohNet.net.csproj" />
+    <ProjectReference Include="../../Proxies/CpOpenhomeOrgTestBasic1.csproj" />
   </ItemGroup>
 
 </Project>
