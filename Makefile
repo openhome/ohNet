@@ -377,6 +377,10 @@ ifeq ($(vanilla_settings), yes)
 	endif
 endif
 
+ifeq ($(openhome_architecture), aarch64)
+	platform_cflags += -DOHNET_CORE5
+endif
+
 
 
 
