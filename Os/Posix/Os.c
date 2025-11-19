@@ -438,13 +438,13 @@ static struct timespec timespecSubtract(struct timespec* aT1, struct timespec* a
 
 uint64_t OsTimeInUs(OsContext* aContext)
 {
-    struct timespec now;
+    struct timespec now, adjusted;
     OsMutexLock(aContext->iMutexTime);
     clock_gettime(CLOCK_MONOTONIC, &now);
-    diff = timespecSubtract(&now, &aContext->iStartTime);
+    adjusted = timespecSubtract(&now, &aContext->iStartTime);
     OsMutexUnlock(aContext->iMutexTime);
 
-    return (uint64_t)((now.tv_sec * 1000000) + (now.tv_nsec / 1000));
+    return (uint64_t)((adjusted.tv_sec * 1000000) + (adjusted.tv_nsec / 1000));
 }
 #else
 static struct timeval timevalSubtract(struct timeval* aT1, struct timeval* aT2)
