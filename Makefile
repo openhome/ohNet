@@ -624,9 +624,7 @@ copy_build_includes:
 	$(cp) OpenHome/Net/Device/DviStack.h $(inc_build)/OpenHome/Net/Private
 	$(cp) OpenHome/Net/Device/Tests/TestBasicDv.h $(inc_build)/OpenHome/Net/Private/Tests
 	$(cp) OpenHome/Net/Device/DviSubscription.h $(inc_build)/OpenHome/Net/Private
-	$(cp) OpenHome/Net/Device/DviPropertyUpdateCollection.h $(inc_build)/OpenHome/Net/Private
 	$(cp) OpenHome/Net/Device/FunctorDviInvocation.h $(inc_build)/OpenHome/Net/Private
-	$(cp) OpenHome/Net/Device/DviProviderSubscriptionLongPoll.h $(inc_build)/OpenHome/Net/Private
 	$(cp) OpenHome/Net/Device/Bonjour/*.h $(inc_build)/OpenHome/Net/Private
 	$(cp) OpenHome/Net/Device/Providers/*.h $(inc_build)/OpenHome/Net/Core
 	$(cp) OpenHome/Net/Device/Upnp/*.h $(inc_build)/OpenHome/Net/Private
@@ -643,7 +641,6 @@ copy_build_includes:
 	$(cp) -r OpenHome/Net/Bindings/Js/ControlPoint/Tests/*.* $(inc_build)/OpenHome/Net/Private/Js/Tests
 	$(cp) OpenHome/Net/Bindings/Js/ControlPoint/lib/*.js $(inc_build)/OpenHome/Net/Private/Js/Tests/lib
 	$(cp) OpenHome/Net/Bindings/Js/ControlPoint/Proxies/CpOpenhomeOrgTestBasic1.js $(inc_build)/OpenHome/Net/Private/Js/Tests/proxies
-	$(cp) OpenHome/Net/Bindings/Js/ControlPoint/Proxies/CpOpenhomeOrgSubscriptionLongPoll1.js $(inc_build)/OpenHome/Net/Private/Js/Tests/proxies
 	$(cp) Os/*.h $(inc_build)/OpenHome
 	$(cp) Os/*.inl $(inc_build)/OpenHome
 
