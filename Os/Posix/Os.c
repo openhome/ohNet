@@ -157,7 +157,14 @@ typedef struct SleepWake
 #endif
 
 struct OsContext {
+#ifdef SYS_CLOCK_MONOTONIC
     struct timespec iStartTime; /* Time OsCreate was called */
+#else
+    struct timeval iStartTime; /* Time OsCreate was called */
+    struct timeval iPrevTime; /* Last time OsTimeInUs() was called */
+    struct timeval iTimeAdjustment; /* Amount to adjust return for OsTimeInUs() by. 
+                                       Will be 0 unless time ever jumps backwards. */
+#endif
     THandle iMutex;
     THandle iMutexNetwork;
     THandle iMutexTime;
@@ -233,7 +240,13 @@ static void OsDestroyOsMutexes(OsContext* aContext)
 OsContext* OsCreate(OsThreadSchedulePolicy aSchedulerPolicy)
 {
     OsContext* ctx = calloc(1, sizeof(*ctx));
+#ifdef SYS_CLOCK_MONOTONIC
     clock_gettime(CLOCK_MONOTONIC, &ctx->iStartTime);
+#else
+    gettimeofday(&ctx->iStartTime, NULL);
+    ctx->iPrevTime = ctx->iStartTime;
+    memset(&ctx->iTimeAdjustment, 0, sizeof(ctx->iTimeAdjustment));
+#endif
     ctx->iThreadPrioritiesEnabled = (aSchedulerPolicy == eSchedulePriority);
 
     if (OsInitialiseOsMutexes(ctx) != 0) {
@@ -408,6 +421,7 @@ void OsStackTraceFinalise(THandle aStackTrace)
 #endif /* STACK_TRACE_ENABLE */
 }
 
+#ifdef SYS_CLOCK_MONOTONIC
 static struct timespec timespecSubtract(struct timespec* aT1, struct timespec* aT2)
 {
     struct timespec diff;
@@ -424,14 +438,71 @@ static struct timespec timespecSubtract(struct timespec* aT1, struct timespec* a
 
 uint64_t OsTimeInUs(OsContext* aContext)
 {
-    struct timespec now, diff;
+    struct timespec now, adjusted;
     OsMutexLock(aContext->iMutexTime);
     clock_gettime(CLOCK_MONOTONIC, &now);
-    diff = timespecSubtract(&now, &aContext->iStartTime);
+    adjusted = timespecSubtract(&now, &aContext->iStartTime);
     OsMutexUnlock(aContext->iMutexTime);
 
-    return (uint64_t)((now.tv_sec * 1000000) + (now.tv_nsec / 1000));
+    return (uint64_t)((adjusted.tv_sec * 1000000) + (adjusted.tv_nsec / 1000));
 }
+#else
+static struct timeval timevalSubtract(struct timeval* aT1, struct timeval* aT2)
+{
+    struct timeval diff;
+    diff.tv_sec = aT1->tv_sec - aT2->tv_sec;
+    if (aT1->tv_usec > aT2->tv_usec) {
+        diff.tv_usec = aT1->tv_usec - aT2->tv_usec;
+    }
+    else {
+        diff.tv_sec--;
+        diff.tv_usec = 1000000 - aT2->tv_usec + aT1->tv_usec;
+    }
+    return diff;
+}
+
+static struct timeval timevalAdd(struct timeval* aT1, struct timeval* aT2)
+{
+    struct timeval result;
+    result.tv_sec = aT1->tv_sec + aT2->tv_sec;
+    int32_t usec = aT1->tv_usec + aT2->tv_usec;
+    if (usec < 1000000) {
+        result.tv_usec = usec;
+    }
+    else {
+        result.tv_sec++;
+        result.tv_usec = usec - 1000000;
+    }
+    return result;
+}
+
+uint64_t OsTimeInUs(OsContext* aContext)
+{
+    struct timeval now, diff, adjustedNow;
+    OsMutexLock(aContext->iMutexTime);
+    gettimeofday(&now, NULL);
+    
+    /* if time has moved backwards, calculate by how much and add this to aContext->iTimeAdjustment */
+    if (now.tv_sec < aContext->iPrevTime.tv_sec ||
+        (now.tv_sec == aContext->iPrevTime.tv_sec && now.tv_usec < aContext->iPrevTime.tv_usec)) {
+        diff = timevalSubtract(&aContext->iPrevTime, &now);
+        fprintf(stderr, "WARNING: clock moved backwards by %llu.%03llusecs\n", (unsigned long long)diff.tv_sec, (unsigned long long)(diff.tv_usec/1000));
+        aContext->iTimeAdjustment = timevalAdd(&aContext->iTimeAdjustment, &diff);
+    }
+    /* if previous reported time was more than 48 hours ago, assume system time has been updated and jumped forwards*/
+    /* calculate by how much and add this to aContext->iTimeAdjustment */
+    // if (now.tv_sec - aContext->iPrevTime.tv_sec > 172800) {
+    //     diff = timevalSubtract(&now, &aContext->iPrevTime);
+    //     aContext->iTimeAdjustment = timevalSubtract(&aContext->iTimeAdjustment, &diff);
+    // }
+    aContext->iPrevTime = now; /* stash current time to allow the next call to spot any backwards move */
+    adjustedNow = timevalAdd(&now, &aContext->iTimeAdjustment); /* add any previous backwards moves to the time */
+    diff = timevalSubtract(&adjustedNow, &aContext->iStartTime); /* how long since we started, ignoring any backwards moves */
+    OsMutexUnlock(aContext->iMutexTime);
+
+    return (uint64_t)diff.tv_sec * 1000000 + diff.tv_usec;
+}
+#endif
 
 void OsConsoleWrite(const char* aStr)
 {
