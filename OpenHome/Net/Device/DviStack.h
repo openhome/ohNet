@@ -13,10 +13,8 @@
 #include <OpenHome/Net/Private/DviServerUpnp.h>
 #include <OpenHome/Net/Private/DviDevice.h>
 #include <OpenHome/Net/Private/DviSubscription.h>
-#include <OpenHome/Net/Private/DviServerWebSocket.h>
 #include <OpenHome/Net/Private/DviService.h>
 #include <OpenHome/Net/Private/Bonjour.h>
-#include <OpenHome/Net/Private/DviPropertyUpdateCollection.h>
 #include <OpenHome/Net/Private/DviSsdpNotifier.h>
 #include <OpenHome/Private/Standard.h>
 
@@ -46,7 +44,6 @@ public:
     DviServerUpnp& ServerUpnp();
     DviDeviceMap& DeviceMap();
     DviSubscriptionManager& SubscriptionManager();
-    DviPropertyUpdateCollection& PropertyUpdateCollection();
     DviSsdpNotifierManager& SsdpNotifierManager();
     void AddProtocolFactory(IDvProtocolFactory* aProtocolFactory);
     std::vector<IDvProtocolFactory*>& ProtocolFactories();
@@ -63,8 +60,6 @@ private:
     DviServerUpnp* iDviServerUpnp;
     DviDeviceMap* iDviDeviceMap;
     DviSubscriptionManager* iSubscriptionManager;
-    DviServerWebSocket* iDviServerWebSocket;
-    DviPropertyUpdateCollection* iPropertyUpdateCollection;
     DviSsdpNotifierManager* iSsdpNotifierManager;
     std::vector<IDvProtocolFactory*> iProtocolFactories;
     std::vector<IControlPointObserver*> iControlPointObservers;

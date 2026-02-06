@@ -16,9 +16,6 @@ objects_devices = \
 				  $(objdir)DvOpenhomeOrgTestBasic1.$(objext) \
 				  $(objdir)DvOpenhomeOrgTestBasic1Std.$(objext) \
 				  $(objdir)DvOpenhomeOrgTestBasic1C.$(objext) \
-				  $(objdir)DvOpenhomeOrgSubscriptionLongPoll1.$(objext) \
-				  $(objdir)DvOpenhomeOrgSubscriptionLongPoll1Std.$(objext) \
-				  $(objdir)DvOpenhomeOrgSubscriptionLongPoll1C.$(objext) \
 
 # Devices have well controlled dependencies so we can document a more limited set of headers
 headers_device = $(inc_build)/OpenHome/Types.h \
@@ -32,21 +29,18 @@ device_dotnet_assemblies = \
 		DvAvOpenhomeOrgProduct1.net.dll \
 		DvAvOpenhomeOrgSender1.net.dll \
 		DvOpenhomeOrgTestBasic1.net.dll \
-		DvOpenhomeOrgSubscriptionLongPoll1.net.dll \
 
 device_dotnet_assemblies_with_path = \
 		$(objdir)DvUpnpOrgConnectionManager1.net.dll \
 		$(objdir)DvAvOpenhomeOrgProduct1.net.dll \
 		$(objdir)DvAvOpenhomeOrgSender1.net.dll \
 		$(objdir)DvOpenhomeOrgTestBasic1.net.dll \
-		$(objdir)DvOpenhomeOrgSubscriptionLongPoll1.net.dll \
 
 device_java_classes_with_path = \
 		$(objdir)org/openhome/net/device/providers/DvProviderUpnpOrgConnectionManager1.class \
 		$(objdir)org/openhome/net/device/providers/DvProviderAvOpenhomeOrgProduct1.class \
 		$(objdir)org/openhome/net/device/providers/DvProviderAvOpenhomeOrgSender1.class \
 		$(objdir)org/openhome/net/device/providers/DvProviderOpenhomeOrgTestBasic1.class \
-		$(objdir)org/openhome/net/device/providers/DvProviderOpenhomeOrgSubscriptionLongPoll1.class \
 
 devices : ohNetCore $(objects_devices)
 	$(ar)$(libprefix)ohNetDevices.$(libext) $(objects_devices)
@@ -74,19 +68,12 @@ $(objdir)DvOpenhomeOrgTestBasic1Std.$(objext) : $(deviceCppStd)DvOpenhomeOrgTest
 	$(compiler)DvOpenhomeOrgTestBasic1Std.$(objext) -c $(cppflags) $(includes) $(deviceCppStd)DvOpenhomeOrgTestBasic1Std.cpp
 $(objdir)DvOpenhomeOrgTestBasic1C.$(objext) : $(deviceC)DvOpenhomeOrgTestBasic1C.cpp $(headers_device) OpenHome/Net/Bindings/C/Device/Providers/DvOpenhomeOrgTestBasic1.h
 	$(compiler)DvOpenhomeOrgTestBasic1C.$(objext) -c $(cppflags) $(includes) $(deviceC)DvOpenhomeOrgTestBasic1C.cpp
-$(objdir)DvOpenhomeOrgSubscriptionLongPoll1.$(objext) : $(deviceCppCore)DvOpenhomeOrgSubscriptionLongPoll1.cpp $(headers_device) OpenHome/Net/Device/Providers/DvOpenhomeOrgSubscriptionLongPoll1.h
-	$(compiler)DvOpenhomeOrgSubscriptionLongPoll1.$(objext) -c $(cppflags) $(includes) $(deviceCppCore)DvOpenhomeOrgSubscriptionLongPoll1.cpp
-$(objdir)DvOpenhomeOrgSubscriptionLongPoll1Std.$(objext) : $(deviceCppStd)DvOpenhomeOrgSubscriptionLongPoll1Std.cpp $(headers_device) OpenHome/Net/Bindings/Cpp/Device/Providers/DvOpenhomeOrgSubscriptionLongPoll1.h
-	$(compiler)DvOpenhomeOrgSubscriptionLongPoll1Std.$(objext) -c $(cppflags) $(includes) $(deviceCppStd)DvOpenhomeOrgSubscriptionLongPoll1Std.cpp
-$(objdir)DvOpenhomeOrgSubscriptionLongPoll1C.$(objext) : $(deviceC)DvOpenhomeOrgSubscriptionLongPoll1C.cpp $(headers_device) OpenHome/Net/Bindings/C/Device/Providers/DvOpenhomeOrgSubscriptionLongPoll1.h
-	$(compiler)DvOpenhomeOrgSubscriptionLongPoll1C.$(objext) -c $(cppflags) $(includes) $(deviceC)DvOpenhomeOrgSubscriptionLongPoll1C.cpp
 
 device_dlls = \
 			 DvUpnpOrgConnectionManager1Dll \
 			 DvAvOpenhomeOrgProduct1Dll \
 			 DvAvOpenhomeOrgSender1Dll \
 			 DvOpenhomeOrgTestBasic1Dll \
-			 DvOpenhomeOrgSubscriptionLongPoll1Dll \
 
 DvDeviceDlls: $(device_dlls)
 DvUpnpOrgConnectionManager1Dll: $(objdir)$(dllprefix)DvUpnpOrgConnectionManager1.$(dllext) 
@@ -101,9 +88,6 @@ $(objdir)$(dllprefix)DvAvOpenhomeOrgSender1.$(dllext) : ZappUpnpDll $(objdir)DvA
 DvOpenhomeOrgTestBasic1Dll: $(objdir)$(dllprefix)DvOpenhomeOrgTestBasic1.$(dllext) 
 $(objdir)$(dllprefix)DvOpenhomeOrgTestBasic1.$(dllext) : ZappUpnpDll $(objdir)DvOpenhomeOrgTestBasic1.$(objext)
 	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvOpenhomeOrgTestBasic1.$(dllext) $(objdir)DvOpenhomeOrgTestBasic1.$(objext)
-DvOpenhomeOrgSubscriptionLongPoll1Dll: $(objdir)$(dllprefix)DvOpenhomeOrgSubscriptionLongPoll1.$(dllext) 
-$(objdir)$(dllprefix)DvOpenhomeOrgSubscriptionLongPoll1.$(dllext) : ZappUpnpDll $(objdir)DvOpenhomeOrgSubscriptionLongPoll1.$(objext)
-	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvOpenhomeOrgSubscriptionLongPoll1.$(dllext) $(objdir)DvOpenhomeOrgSubscriptionLongPoll1.$(objext)
 
 
 # Device assemblies for .NET:
@@ -118,8 +102,6 @@ $(objdir)DvAvOpenhomeOrgSender1.net.dll: $(objdir)ohNet.net.dll $(deviceCs)DvAvO
 	$(dotnetsdk) build $(proxyCs)CpAvOpenhomeOrgSender1.csproj --framework $(dotnetFramework) --output $(objdir)
 $(objdir)DvOpenhomeOrgTestBasic1.net.dll: $(objdir)ohNet.net.dll $(deviceCs)DvOpenhomeOrgTestBasic1.cs
 	$(dotnetsdk) build $(proxyCs)CpOpenhomeOrgTestBasic1.csproj --framework $(dotnetFramework) --output $(objdir)
-$(objdir)DvOpenhomeOrgSubscriptionLongPoll1.net.dll: $(objdir)ohNet.net.dll $(deviceCs)DvOpenhomeOrgSubscriptionLongPoll1.cs
-	$(dotnetsdk) build $(proxyCs)CpOpenhomeOrgSubscriptionLongPoll1.csproj --framework $(dotnetFramework) --output $(objdir)
 
 # Device classes for Java:
 
@@ -133,7 +115,5 @@ $(objdir)org/openhome/net/device/providers/DvProviderAvOpenhomeOrgSender1.class 
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(deviceJava)DvProviderAvOpenhomeOrgSender1.java
 $(objdir)org/openhome/net/device/providers/DvProviderOpenhomeOrgTestBasic1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderOpenhomeOrgTestBasic1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(deviceJava)DvProviderOpenhomeOrgTestBasic1.java
-$(objdir)org/openhome/net/device/providers/DvProviderOpenhomeOrgSubscriptionLongPoll1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderOpenhomeOrgSubscriptionLongPoll1.java
-	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(deviceJava)DvProviderOpenhomeOrgSubscriptionLongPoll1.java
 
 

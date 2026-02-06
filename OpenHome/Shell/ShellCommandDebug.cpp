@@ -73,8 +73,8 @@ ShellCommandDebug::ShellCommandDebug(Shell& aShell)
     AddLevel("Application41", Debug::kApplication41);
     AddLevel("Application42", Debug::kApplication42);
     AddLevel("Application43", Debug::kApplication43);
-    AddLevel("Application44", Debug::kApplication44);
 
+    AddLevel("Essential", Debug::kEssential);
     AddLevel("AdapterChange", Debug::kAdapterChange);
     AddLevel("CpDeviceDv", Debug::kCpDeviceDv);
 

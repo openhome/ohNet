@@ -134,7 +134,7 @@ public:
     static const TUint64 kApplication41  = static_cast<TUint64>(1)<<58;
     static const TUint64 kApplication42  = static_cast<TUint64>(1)<<59;
     static const TUint64 kApplication43  = static_cast<TUint64>(1)<<60;
-    static const TUint64 kApplication44  = static_cast<TUint64>(1)<<61;
+    static const TUint64 kEssential      = static_cast<TUint64>(1)<<61; // logs that we always want to see out in the field, but might want to suppress during development
     static const TUint64 kCpDeviceDv     = static_cast<TUint64>(1)<<62;
     static const TUint64 kAdapterChange  = static_cast<TUint64>(1)<<63;
 
