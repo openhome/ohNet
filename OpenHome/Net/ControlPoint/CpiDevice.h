@@ -50,6 +50,7 @@ public:
     virtual void Unsubscribe(CpiSubscription& aSubscription, const Brx& aSid) = 0;
     virtual TBool OrphanSubscriptionsOnSubnetChange() const = 0;
     virtual void NotifyRemovedBeforeReady() = 0;
+    virtual void NotifyDestroy() = 0;
     virtual TUint Version(const TChar* aDomain, const TChar* aName, TUint aProxyVersion) const = 0;
 };
 
@@ -108,6 +109,7 @@ public:
     virtual void Unsubscribe(CpiSubscription& aSubscription, const Brx& aSid);
     virtual TBool OrphanSubscriptionsOnSubnetChange() const;
     virtual void NotifyRemovedBeforeReady();
+    virtual void NotifyDestroy();
     virtual TUint Version(const TChar* aDomain, const TChar* aName, TUint aProxyVersion) const;
 
     /**

@@ -16,6 +16,9 @@ csCpTests = OpenHome$(dirsep)Net$(dirsep)Bindings$(dirsep)Cs$(dirsep)ControlPoin
 csDv = OpenHome$(dirsep)Net$(dirsep)Bindings$(dirsep)Cs$(dirsep)Device$(dirsep)
 csDvTests = OpenHome$(dirsep)Net$(dirsep)Bindings$(dirsep)Cs$(dirsep)Device$(dirsep)Tests$(dirsep)
 
+java_target_version = 1.8
+java_source_version = 1.8
+
 objects_core = \
 	$(objdir)Ascii.$(objext) \
 	$(objdir)AsyncC.$(objext) \
@@ -54,18 +57,14 @@ objects_core = \
 	$(objdir)DvInvocationC.$(objext) \
 	$(objdir)DvInvocationStd.$(objext) \
 	$(objdir)DviProtocolUpnp.$(objext) \
-	$(objdir)DviProviderSubscriptionLongPoll.$(objext) \
-	$(objdir)DvOpenhomeOrgSubscriptionLongPoll1.$(objext) \
 	$(objdir)DviServer.$(objext) \
 	$(objdir)DviServerUpnp.$(objext) \
-	$(objdir)DviServerWebSocket.$(objext) \
 	$(objdir)DviProtocolLpec.$(objext) \
 	$(objdir)DviServerLpec.$(objext) \
 	$(objdir)DviService.$(objext) \
 	$(objdir)DviSsdpNotifier.$(objext) \
 	$(objdir)DviStack.$(objext) \
 	$(objdir)DviSubscription.$(objext) \
-	$(objdir)DviPropertyUpdateCollection.$(objext) \
 	$(objdir)DvProvider.$(objext) \
 	$(objdir)DvProviderC.$(objext) \
 	$(objdir)DvServerUpnp.$(objext) \
@@ -128,7 +127,11 @@ objects_core = \
 	$(objdir)Shell.$(objext) \
 	$(objdir)InfoProvider.$(objext) \
 	$(objdir)ShellCommandDebug.$(objext) \
+<<<<<<< HEAD
 	$(objdir)ShellCommandLogMode.$(objext)
+=======
+	$(extra_dependencies)
+>>>>>>> master
 
 
 # For simplicity, we make a list of all headers in the project and have all (core) source files depend on them
@@ -183,15 +186,12 @@ headers = \
 	$(inc_build)/OpenHome/Net/Private/DviProtocolUpnp.h \
 	$(inc_build)/OpenHome/Net/Private/DviServer.h \
 	$(inc_build)/OpenHome/Net/Private/DviServerUpnp.h \
-	$(inc_build)/OpenHome/Net/Private/DviServerWebSocket.h \
 	$(inc_build)/OpenHome/Net/Private/DviProtocolLpec.h \
 	$(inc_build)/OpenHome/Net/Private/DviServerLpec.h \
 	$(inc_build)/OpenHome/Net/Private/DviService.h \
 	$(inc_build)/OpenHome/Net/Private/DviSsdpNotifier.h \
 	$(inc_build)/OpenHome/Net/Private/DviStack.h \
 	$(inc_build)/OpenHome/Net/Private/DviSubscription.h \
-	$(inc_build)/OpenHome/Net/Private/DviPropertyUpdateCollection.h \
-	$(inc_build)/OpenHome/Net/Private/DviProviderSubscriptionLongPoll.h \
 	$(inc_build)/OpenHome/Net/Private/Error.h \
 	$(inc_build)/OpenHome/Net/Private/EventUpnp.h \
 	$(inc_build)/OpenHome/Net/Private/FunctorCpiDevice.h \
@@ -239,7 +239,6 @@ headers = \
 	$(inc_build)/OpenHome/Net/Core/DvResourceWriter.h \
 	$(inc_build)/OpenHome/Net/Core/DvServerUpnp.h \
 	$(inc_build)/OpenHome/Net/Core/FunctorCpDevice.h
-
 
 ohNetCore : make_obj_dir copy_build_includes patch_thirdparty_sources $(objects_core) $(objdir)$(libprefix)ohNetCore.$(libext)
 $(objdir)$(libprefix)ohNetCore.$(libext) : $(objects_core)
@@ -318,14 +317,10 @@ $(objdir)DvInvocationStd.$(objext) : OpenHome/Net/Bindings/Cpp/Device/DvInvocati
 	$(compiler)DvInvocationStd.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Bindings/Cpp/Device/DvInvocationStd.cpp
 $(objdir)DviProtocolUpnp.$(objext) : OpenHome/Net/Device/Upnp/DviProtocolUpnp.cpp $(headers)
 	$(compiler)DviProtocolUpnp.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Device/Upnp/DviProtocolUpnp.cpp
-$(objdir)DviProviderSubscriptionLongPoll.$(objext) : OpenHome/Net/Device/DviProviderSubscriptionLongPoll.cpp $(objdir)DvOpenhomeOrgSubscriptionLongPoll1.$(objext)  $(headers)
-	$(compiler)DviProviderSubscriptionLongPoll.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Device/DviProviderSubscriptionLongPoll.cpp
 $(objdir)DviServer.$(objext) : OpenHome/Net/Device/DviServer.cpp $(headers)
 	$(compiler)DviServer.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Device/DviServer.cpp
 $(objdir)DviServerUpnp.$(objext) : OpenHome/Net/Device/Upnp/DviServerUpnp.cpp $(headers)
 	$(compiler)DviServerUpnp.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Device/Upnp/DviServerUpnp.cpp
-$(objdir)DviServerWebSocket.$(objext) : OpenHome/Net/Device/Upnp/DviServerWebSocket.cpp $(headers)
-	$(compiler)DviServerWebSocket.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Device/Upnp/DviServerWebSocket.cpp
 $(objdir)DviProtocolLpec.$(objext) : OpenHome/Net/Device/Lpec/DviProtocolLpec.cpp $(headers)
 	$(compiler)DviProtocolLpec.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Device/Lpec/DviProtocolLpec.cpp
 $(objdir)DviServerLpec.$(objext) : OpenHome/Net/Device/Lpec/DviServerLpec.cpp $(headers)
@@ -338,8 +333,6 @@ $(objdir)DviStack.$(objext) : OpenHome/Net/Device/DviStack.cpp $(headers)
 	$(compiler)DviStack.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Device/DviStack.cpp
 $(objdir)DviSubscription.$(objext) : OpenHome/Net/Device/DviSubscription.cpp $(headers)
 	$(compiler)DviSubscription.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Device/DviSubscription.cpp
-$(objdir)DviPropertyUpdateCollection.$(objext) : OpenHome/Net/Device/DviPropertyUpdateCollection.cpp $(headers)
-	$(compiler)DviPropertyUpdateCollection.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Device/DviPropertyUpdateCollection.cpp
 $(objdir)DvProvider.$(objext) : OpenHome/Net/Device/DvProvider.cpp $(headers)
 	$(compiler)DvProvider.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Device/DvProvider.cpp
 $(objdir)DvProviderC.$(objext) : OpenHome/Net/Bindings/C/Device/DvProviderC.cpp $(headers)
@@ -474,6 +467,45 @@ $(objdir)ShellCommandDebug.$(objext) : OpenHome/Shell/ShellCommandDebug.cpp $(he
 	$(compiler)ShellCommandDebug.$(objext) -c $(cppflags) $(includes) OpenHome/Shell/ShellCommandDebug.cpp
 $(objdir)ShellCommandLogMode.$(objext) : OpenHome/Shell/ShellCommandLogMode.cpp $(headers)
 	$(compiler)ShellCommandLogMode.$(objext) -c $(cppflags) $(includes) OpenHome/Shell/ShellCommandLogMode.cpp
+
+$(objdir)ctrl.$(objext) : $(libnldir)/ctrl.c $(headers)
+	$(compiler)ctrl.$(objext) -c $(cflags_third_party) $(includes) $(libnldir)/ctrl.c
+$(objdir)family.$(objext) : $(libnldir)/family.c $(headers)
+	$(compiler)family.$(objext) -c $(cflags_third_party) $(includes) $(libnldir)/family.c
+$(objdir)mngt.$(objext) : $(libnldir)/mngt.c $(headers)
+	$(compiler)mngt.$(objext) -c $(cflags_third_party) $(includes) $(libnldir)/mngt.c
+$(objdir)genl.$(objext) : $(libnldir)/genl.c $(headers)
+	$(compiler)genl.$(objext) -c $(cflags_third_party) $(includes) $(libnldir)/genl.c
+$(objdir)msg.$(objext) : $(libnldir)/msg.c $(headers)
+	$(compiler)msg.$(objext) -c $(cflags_third_party) $(includes) $(libnldir)/msg.c
+$(objdir)attr.$(objext) : $(libnldir)/attr.c $(headers)
+	$(compiler)attr.$(objext) -c $(cflags_third_party) $(includes) $(libnldir)/attr.c
+$(objdir)utils.$(objext) : $(libnldir)/utils.c $(headers)
+	$(compiler)utils.$(objext) -c $(cflags_third_party) $(includes) $(libnldir)/utils.c
+$(objdir)addr.$(objext) : $(libnldir)/addr.c $(headers)
+	$(compiler)addr.$(objext) -c $(cflags_third_party) $(includes) $(libnldir)/addr.c
+$(objdir)data.$(objext) : $(libnldir)/data.c $(headers)
+	$(compiler)data.$(objext) -c $(cflags_third_party) $(includes) $(libnldir)/data.c
+$(objdir)mpls.$(objext) : $(libnldir)/mpls.c $(headers)
+	$(compiler)mpls.$(objext) -c $(cflags_third_party) $(includes) $(libnldir)/mpls.c
+$(objdir)cache.$(objext) : $(libnldir)/cache.c $(headers)
+	$(compiler)cache.$(objext) -c $(cflags_third_party) $(includes) $(libnldir)/cache.c
+$(objdir)object.$(objext) : $(libnldir)/object.c $(headers)
+	$(compiler)object.$(objext) -c $(cflags_third_party) $(includes) $(libnldir)/object.c
+$(objdir)handlers.$(objext) : $(libnldir)/handlers.c $(headers)
+	$(compiler)handlers.$(objext) -c $(cflags_third_party) $(includes) $(libnldir)/handlers.c
+$(objdir)socket.$(objext) : $(libnldir)/socket.c $(headers)
+	$(compiler)socket.$(objext) -c $(cflags_third_party) $(includes) $(libnldir)/socket.c
+$(objdir)nl_error.$(objext) : $(libnldir)/error.c $(headers)
+	$(compiler)nl_error.$(objext) -c $(cflags_third_party) $(includes) $(libnldir)/error.c
+$(objdir)cache_mngt.$(objext) : $(libnldir)/cache_mngt.c $(headers)
+	$(compiler)cache_mngt.$(objext) -c $(cflags_third_party) $(includes) $(libnldir)/cache_mngt.c
+$(objdir)hashtable.$(objext) : $(libnldir)/hashtable.c $(headers)
+	$(compiler)hashtable.$(objext) -c $(cflags_third_party) $(includes) $(libnldir)/hashtable.c
+$(objdir)hash.$(objext) : $(libnldir)/hash.c $(headers)
+	$(compiler)hash.$(objext) -c $(cflags_third_party) $(includes) $(libnldir)/hash.c
+$(objdir)nl.$(objext) : $(libnldir)/nl.c $(headers)
+	$(compiler)nl.$(objext) -c $(cflags_third_party) $(includes) $(libnldir)/nl.c
 
 ohNetDllImpl: ohNetCore
 	$(link_dll) $(linkopts_ohNet) $(linkoutput)$(objdir)$(dllprefix)ohNet.$(dllext) $(objects_core)
@@ -936,7 +968,7 @@ $(objdir)TestProxyCs.exe: \
 	$(objdir)ohNet.net.dll \
 	$(csCpTests)TestProxy.cs \
 	$(objdir)CpUpnpOrgConnectionManager1.net.dll
-	$(dotnetsdk) publish $(csCpTests)TestProxy.csproj --framework $(dotnetFramework) --runtime $(dotnetRuntime) --self-contained /p:PublishSingleFile=true --output $(csShared)bin/TestProxy
+	$(dotnetsdk) publish $(csCpTests)TestProxy/TestProxy.csproj --framework $(dotnetFramework) --runtime $(dotnetRuntime) --self-contained /p:PublishSingleFile=$(dotnetPublishSingleFile) /p:Configuration=$(openhome_configuration) --output $(csShared)bin/TestProxy -bl
 	cp -r $(csShared)bin/TestProxy/* $(objdir)
 
 TestDvDeviceCs: $(objdir)TestDvDeviceCs.exe
@@ -949,7 +981,7 @@ $(objdir)TestDvDeviceCs.exe: \
 	$(csDvTests)TestBasicDv.cs \
 	$(csCpTests)TestBasicCp.cs \
 	$(csDvTests)TestDvDevice.cs
-	$(dotnetsdk) publish $(csShared)TestDvDeviceCs.csproj --framework $(dotnetFramework) --runtime $(dotnetRuntime) --self-contained /p:PublishSingleFile=true --output $(csShared)bin/TestDvDeviceCs
+	$(dotnetsdk) publish $(csShared)TestDvDeviceCs/TestDvDeviceCs.csproj --framework $(dotnetFramework) --runtime $(dotnetRuntime) --self-contained /p:PublishSingleFile=$(dotnetPublishSingleFile) /p:Configuration=$(openhome_configuration) --output $(csShared)bin/TestDvDeviceCs -bl
 	cp -r $(csShared)bin/TestDvDeviceCs/* $(objdir)
 
 TestDvLightsCs: $(objdir)TestDvLightsCs.exe
@@ -964,7 +996,7 @@ $(objdir)TestCpDeviceDvCs.exe: \
 	$(csDvTests)TestBasicDv.cs \
 	$(csCpTests)TestBasicCp.cs \
 	$(csCpTests)TestCpDeviceDv.cs
-	$(dotnetsdk) publish $(csShared)TestCpDeviceDvCs.csproj --framework $(dotnetFramework) --runtime $(dotnetRuntime) --self-contained /p:PublishSingleFile=true --output $(csShared)bin/TestCpDeviceDvCs
+	$(dotnetsdk) publish $(csShared)TestCpDeviceDvCs/TestCpDeviceDvCs.csproj --framework $(dotnetFramework) --runtime $(dotnetRuntime) --self-contained /p:PublishSingleFile=$(dotnetPublishSingleFile) /p:Configuration=$(openhome_configuration) --output $(csShared)bin/TestCpDeviceDvCs -bl
 	cp -r $(csShared)bin/TestCpDeviceDvCs/* $(objdir)
 
 
@@ -976,7 +1008,7 @@ $(objdir)TestPerformanceDvCs.exe: \
 	$(objdir)DvOpenhomeOrgTestBasic1.net.dll \
 	$(csDvTests)TestBasicDv.cs \
 	$(csDvTests)TestPerformanceDv.cs
-	$(dotnetsdk) publish $(csDvTests)TestPerformanceDvCs.csproj --framework $(dotnetFramework) --runtime $(dotnetRuntime) --self-contained /p:PublishSingleFile=true --output $(csShared)bin/TestPerformanceDvCs
+	$(dotnetsdk) publish $(csDvTests)TestPerformanceDvCs/TestPerformanceDvCs.csproj --framework $(dotnetFramework) --runtime $(dotnetRuntime) --self-contained /p:PublishSingleFile=$(dotnetPublishSingleFile) /p:Configuration=$(openhome_configuration) --output $(csShared)bin/TestPerformanceDvCs -bl
 	cp -r $(csShared)bin/TestPerformanceDvCs/* $(objdir)
 
 
@@ -987,7 +1019,7 @@ $(objdir)TestPerformanceCpCs.exe: \
 	$(objdir)ohNet.net.dll \
 	$(objdir)CpOpenhomeOrgTestBasic1.net.dll \
 	$(csCpTests)TestPerformanceCp.cs
-	$(dotnetsdk) publish $(csCpTests)TestPerformanceCpCs.csproj --framework $(dotnetFramework) --runtime $(dotnetRuntime) --self-contained /p:PublishSingleFile=true --output $(csShared)bin/TestPerformanceCpCs
+	$(dotnetsdk) publish $(csCpTests)TestPerformanceCpCs/TestPerformanceCpCs.csproj --framework $(dotnetFramework) --runtime $(dotnetRuntime) --self-contained /p:PublishSingleFile=$(dotnetPublishSingleFile) /p:Configuration=$(openhome_configuration) --output $(csShared)bin/TestPerformanceCpCs -bl
 	cp -r $(csShared)bin/TestPerformanceCpCs/* $(objdir)
 
 
@@ -1201,169 +1233,170 @@ java_classes = \
 	$(objdir)org/openhome/net/device/tests/TestDvDevice.class \
 	$(objdir)org/openhome/net/device/tests/TestPerformanceDv.class \
 
+
 ohNetJava : make_obj_dir $(objdir)ohnet.jar
 $(objdir)ohnet.jar : $(java_classes)
 	$(jar) $(jarflags) $(objdir)ohnet.jar -C $(objdir) org
 $(objdir)org/openhome/net/controlpoint/Argument.class : $(publicjavadir)org/openhome/net/controlpoint/Argument.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/controlpoint/Argument.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/controlpoint/Argument.java
 $(objdir)org/openhome/net/controlpoint/ArgumentBinary.class : $(publicjavadir)org/openhome/net/controlpoint/ArgumentBinary.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/controlpoint/ArgumentBinary.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/controlpoint/ArgumentBinary.java
 $(objdir)org/openhome/net/controlpoint/ArgumentBool.class : $(publicjavadir)org/openhome/net/controlpoint/ArgumentBool.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/controlpoint/ArgumentBool.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/controlpoint/ArgumentBool.java
 $(objdir)org/openhome/net/controlpoint/ArgumentInt.class : $(publicjavadir)org/openhome/net/controlpoint/ArgumentInt.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/controlpoint/ArgumentInt.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/controlpoint/ArgumentInt.java
 $(objdir)org/openhome/net/controlpoint/ArgumentString.class : $(publicjavadir)org/openhome/net/controlpoint/ArgumentString.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/controlpoint/ArgumentString.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/controlpoint/ArgumentString.java
 $(objdir)org/openhome/net/controlpoint/ArgumentUint.class : $(publicjavadir)org/openhome/net/controlpoint/ArgumentUint.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/controlpoint/ArgumentUint.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/controlpoint/ArgumentUint.java
 $(objdir)org/openhome/net/controlpoint/CpAttribute.class : $(publicjavadir)org/openhome/net/controlpoint/CpAttribute.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/controlpoint/CpAttribute.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/controlpoint/CpAttribute.java
 $(objdir)org/openhome/net/controlpoint/CpDevice.class : $(publicjavadir)org/openhome/net/controlpoint/CpDevice.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/controlpoint/CpDevice.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/controlpoint/CpDevice.java
 $(objdir)org/openhome/net/controlpoint/CpDeviceDv.class : $(publicjavadir)org/openhome/net/controlpoint/CpDeviceDv.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/controlpoint/CpDeviceDv.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/controlpoint/CpDeviceDv.java
 $(objdir)org/openhome/net/controlpoint/CpDeviceList.class : $(publicjavadir)org/openhome/net/controlpoint/CpDeviceList.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/controlpoint/CpDeviceList.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/controlpoint/CpDeviceList.java
 $(objdir)org/openhome/net/controlpoint/CpDeviceListListener.class : $(publicjavadir)org/openhome/net/controlpoint/CpDeviceListListener.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/controlpoint/CpDeviceListListener.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/controlpoint/CpDeviceListListener.java
 $(objdir)org/openhome/net/controlpoint/CpDeviceListUpnpAll.class : $(publicjavadir)org/openhome/net/controlpoint/CpDeviceListUpnpAll.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/controlpoint/CpDeviceListUpnpAll.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/controlpoint/CpDeviceListUpnpAll.java
 $(objdir)org/openhome/net/controlpoint/CpDeviceListUpnpDeviceType.class : $(publicjavadir)org/openhome/net/controlpoint/CpDeviceListUpnpDeviceType.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/controlpoint/CpDeviceListUpnpDeviceType.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/controlpoint/CpDeviceListUpnpDeviceType.java
 $(objdir)org/openhome/net/controlpoint/CpDeviceListUpnpRoot.class : $(publicjavadir)org/openhome/net/controlpoint/CpDeviceListUpnpRoot.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/controlpoint/CpDeviceListUpnpRoot.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/controlpoint/CpDeviceListUpnpRoot.java
 $(objdir)org/openhome/net/controlpoint/CpDeviceListUpnpServiceType.class : $(publicjavadir)org/openhome/net/controlpoint/CpDeviceListUpnpServiceType.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/controlpoint/CpDeviceListUpnpServiceType.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/controlpoint/CpDeviceListUpnpServiceType.java
 $(objdir)org/openhome/net/controlpoint/CpDeviceListUpnpUuid.class : $(publicjavadir)org/openhome/net/controlpoint/CpDeviceListUpnpUuid.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/controlpoint/CpDeviceListUpnpUuid.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/controlpoint/CpDeviceListUpnpUuid.java
 $(objdir)org/openhome/net/controlpoint/CpProxy.class : $(publicjavadir)org/openhome/net/controlpoint/CpProxy.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/controlpoint/CpProxy.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/controlpoint/CpProxy.java
 $(objdir)org/openhome/net/controlpoint/CpService.class : $(publicjavadir)org/openhome/net/controlpoint/CpService.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/controlpoint/CpService.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/controlpoint/CpService.java
 $(objdir)org/openhome/net/controlpoint/CpUpnpDeviceListFactory.class : $(publicjavadir)org/openhome/net/controlpoint/CpUpnpDeviceListFactory.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/controlpoint/CpUpnpDeviceListFactory.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/controlpoint/CpUpnpDeviceListFactory.java
 $(objdir)org/openhome/net/controlpoint/ICpDeviceList.class : $(publicjavadir)org/openhome/net/controlpoint/ICpDeviceList.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/controlpoint/ICpDeviceList.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/controlpoint/ICpDeviceList.java
 $(objdir)org/openhome/net/controlpoint/ICpDeviceListListener.class : $(publicjavadir)org/openhome/net/controlpoint/ICpDeviceListListener.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/controlpoint/ICpDeviceListListener.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/controlpoint/ICpDeviceListListener.java
 $(objdir)org/openhome/net/controlpoint/ICpProxy.class : $(publicjavadir)org/openhome/net/controlpoint/ICpProxy.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/controlpoint/ICpProxy.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/controlpoint/ICpProxy.java
 $(objdir)org/openhome/net/controlpoint/ICpProxyListener.class : $(publicjavadir)org/openhome/net/controlpoint/ICpProxyListener.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/controlpoint/ICpProxyListener.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/controlpoint/ICpProxyListener.java
 $(objdir)org/openhome/net/controlpoint/ICpUpnpDeviceListFactory.class : $(publicjavadir)org/openhome/net/controlpoint/ICpUpnpDeviceListFactory.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/controlpoint/ICpUpnpDeviceListFactory.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/controlpoint/ICpUpnpDeviceListFactory.java
 $(objdir)org/openhome/net/controlpoint/Invocation.class : $(publicjavadir)org/openhome/net/controlpoint/Invocation.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/controlpoint/Invocation.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/controlpoint/Invocation.java
 $(objdir)org/openhome/net/controlpoint/IPropertyChangeListener.class : $(publicjavadir)org/openhome/net/controlpoint/IPropertyChangeListener.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/controlpoint/IPropertyChangeListener.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/controlpoint/IPropertyChangeListener.java
 $(objdir)org/openhome/net/controlpoint/PropertyChangeListener.class : $(publicjavadir)org/openhome/net/controlpoint/PropertyChangeListener.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/controlpoint/PropertyChangeListener.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/controlpoint/PropertyChangeListener.java
 $(objdir)org/openhome/net/controlpoint/ProxyError.class : $(publicjavadir)org/openhome/net/controlpoint/ProxyError.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/controlpoint/ProxyError.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/controlpoint/ProxyError.java
 $(objdir)org/openhome/net/controlpoint/SyncProxyAction.class : $(publicjavadir)org/openhome/net/controlpoint/SyncProxyAction.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/controlpoint/SyncProxyAction.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/controlpoint/SyncProxyAction.java
 $(objdir)org/openhome/net/controlpoint/tests/TestBasicCp.class : $(publicjavadir)org/openhome/net/controlpoint/tests/TestBasicCp.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/controlpoint/tests/TestBasicCp.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/controlpoint/tests/TestBasicCp.java
 $(objdir)org/openhome/net/controlpoint/tests/TestCpDeviceDv.class : $(publicjavadir)org/openhome/net/controlpoint/tests/TestCpDeviceDv.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/controlpoint/tests/TestCpDeviceDv.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/controlpoint/tests/TestCpDeviceDv.java
 $(objdir)org/openhome/net/controlpoint/tests/TestPerformanceCp.class : $(publicjavadir)org/openhome/net/controlpoint/tests/TestPerformanceCp.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/controlpoint/tests/TestPerformanceCp.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/controlpoint/tests/TestPerformanceCp.java
 $(objdir)org/openhome/net/controlpoint/tests/TestProxy.class : $(publicjavadir)org/openhome/net/controlpoint/tests/TestProxy.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/controlpoint/tests/TestProxy.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/controlpoint/tests/TestProxy.java
 $(objdir)org/openhome/net/core/Action.class : $(publicjavadir)org/openhome/net/core/Action.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/core/Action.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/core/Action.java
 $(objdir)org/openhome/net/core/DebugLevel.class : $(publicjavadir)org/openhome/net/core/DebugLevel.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/core/DebugLevel.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/core/DebugLevel.java
 $(objdir)org/openhome/net/core/CombinedStack.class : $(publicjavadir)org/openhome/net/core/CombinedStack.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/core/CombinedStack.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/core/CombinedStack.java
 $(objdir)org/openhome/net/core/ControlPointStack.class : $(publicjavadir)org/openhome/net/core/ControlPointStack.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/core/ControlPointStack.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/core/ControlPointStack.java
 $(objdir)org/openhome/net/core/DeviceStack.class : $(publicjavadir)org/openhome/net/core/DeviceStack.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/core/DeviceStack.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/core/DeviceStack.java
 $(objdir)org/openhome/net/core/ErrorGeneral.class : $(publicjavadir)org/openhome/net/core/ErrorGeneral.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/core/ErrorGeneral.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/core/ErrorGeneral.java
 $(objdir)org/openhome/net/core/ErrorNetworkAddressInUse.class : $(publicjavadir)org/openhome/net/core/ErrorNetworkAddressInUse.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/core/ErrorNetworkAddressInUse.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/core/ErrorNetworkAddressInUse.java
 $(objdir)org/openhome/net/core/ErrorNoMemory.class : $(publicjavadir)org/openhome/net/core/ErrorNoMemory.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/core/ErrorNoMemory.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/core/ErrorNoMemory.java
 $(objdir)org/openhome/net/core/IMessageListener.class : $(publicjavadir)org/openhome/net/core/IMessageListener.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/core/IMessageListener.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/core/IMessageListener.java
 $(objdir)org/openhome/net/core/InitParams.class : $(publicjavadir)org/openhome/net/core/InitParams.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/core/InitParams.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/core/InitParams.java
 $(objdir)org/openhome/net/core/Library.class : $(publicjavadir)org/openhome/net/core/Library.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/core/Library.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/core/Library.java
 $(objdir)org/openhome/net/core/LibraryException.class : $(publicjavadir)org/openhome/net/core/LibraryException.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/core/LibraryException.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/core/LibraryException.java
 $(objdir)org/openhome/net/core/NetworkAdapter.class : $(publicjavadir)org/openhome/net/core/NetworkAdapter.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/core/NetworkAdapter.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/core/NetworkAdapter.java
 $(objdir)org/openhome/net/core/Parameter.class : $(publicjavadir)org/openhome/net/core/Parameter.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/core/Parameter.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/core/Parameter.java
 $(objdir)org/openhome/net/core/ParameterBinary.class : $(publicjavadir)org/openhome/net/core/ParameterBinary.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/core/ParameterBinary.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/core/ParameterBinary.java
 $(objdir)org/openhome/net/core/ParameterBool.class : $(publicjavadir)org/openhome/net/core/ParameterBool.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/core/ParameterBool.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/core/ParameterBool.java
 $(objdir)org/openhome/net/core/ParameterInt.class : $(publicjavadir)org/openhome/net/core/ParameterInt.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/core/ParameterInt.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/core/ParameterInt.java
 $(objdir)org/openhome/net/core/ParameterRelated.class : $(publicjavadir)org/openhome/net/core/ParameterRelated.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/core/ParameterRelated.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/core/ParameterRelated.java
 $(objdir)org/openhome/net/core/ParameterString.class : $(publicjavadir)org/openhome/net/core/ParameterString.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/core/ParameterString.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/core/ParameterString.java
 $(objdir)org/openhome/net/core/ParameterUint.class : $(publicjavadir)org/openhome/net/core/ParameterUint.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/core/ParameterUint.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/core/ParameterUint.java
 $(objdir)org/openhome/net/core/Property.class : $(publicjavadir)org/openhome/net/core/Property.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/core/Property.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/core/Property.java
 $(objdir)org/openhome/net/core/PropertyBinary.class : $(publicjavadir)org/openhome/net/core/PropertyBinary.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/core/PropertyBinary.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/core/PropertyBinary.java
 $(objdir)org/openhome/net/core/PropertyBool.class : $(publicjavadir)org/openhome/net/core/PropertyBool.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/core/PropertyBool.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/core/PropertyBool.java
 $(objdir)org/openhome/net/core/PropertyError.class : $(publicjavadir)org/openhome/net/core/PropertyError.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/core/PropertyError.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/core/PropertyError.java
 $(objdir)org/openhome/net/core/PropertyInt.class : $(publicjavadir)org/openhome/net/core/PropertyInt.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/core/PropertyInt.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/core/PropertyInt.java
 $(objdir)org/openhome/net/core/PropertyString.class : $(publicjavadir)org/openhome/net/core/PropertyString.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/core/PropertyString.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/core/PropertyString.java
 $(objdir)org/openhome/net/core/PropertyUint.class : $(publicjavadir)org/openhome/net/core/PropertyUint.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/core/PropertyUint.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/core/PropertyUint.java
 $(objdir)org/openhome/net/core/SubnetList.class : $(publicjavadir)org/openhome/net/core/SubnetList.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/core/SubnetList.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/core/SubnetList.java
 $(objdir)org/openhome/net/device/ActionDisabledError.class : $(publicjavadir)org/openhome/net/device/ActionDisabledError.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/device/ActionDisabledError.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/device/ActionDisabledError.java
 $(objdir)org/openhome/net/device/ActionError.class : $(publicjavadir)org/openhome/net/device/ActionError.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/device/ActionError.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/device/ActionError.java
 $(objdir)org/openhome/net/device/DvDevice.class : $(publicjavadir)org/openhome/net/device/DvDevice.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/device/DvDevice.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/device/DvDevice.java
 $(objdir)org/openhome/net/device/DvDeviceFactory.class : $(publicjavadir)org/openhome/net/device/DvDeviceFactory.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/device/DvDeviceFactory.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/device/DvDeviceFactory.java
 $(objdir)org/openhome/net/device/DvDeviceStandard.class : $(publicjavadir)org/openhome/net/device/DvDeviceStandard.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/device/DvDeviceStandard.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/device/DvDeviceStandard.java
 $(objdir)org/openhome/net/device/DvInvocation.class : $(publicjavadir)org/openhome/net/device/DvInvocation.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/device/DvInvocation.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/device/DvInvocation.java
 $(objdir)org/openhome/net/device/DvProvider.class : $(publicjavadir)org/openhome/net/device/DvProvider.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/device/DvProvider.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/device/DvProvider.java
 $(objdir)org/openhome/net/device/DvServerUpnp.class : $(publicjavadir)org/openhome/net/device/DvServerUpnp.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/device/DvServerUpnp.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/device/DvServerUpnp.java
 $(objdir)org/openhome/net/device/IDvDeviceFactory.class : $(publicjavadir)org/openhome/net/device/IDvDeviceFactory.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/device/IDvDeviceFactory.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/device/IDvDeviceFactory.java
 $(objdir)org/openhome/net/device/IDvDeviceListener.class : $(publicjavadir)org/openhome/net/device/IDvDeviceListener.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/device/IDvDeviceListener.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/device/IDvDeviceListener.java
 $(objdir)org/openhome/net/device/IDvInvocationListener.class : $(publicjavadir)org/openhome/net/device/IDvInvocationListener.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/device/IDvInvocationListener.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/device/IDvInvocationListener.java
 $(objdir)org/openhome/net/device/IResourceManager.class : $(publicjavadir)org/openhome/net/device/IResourceManager.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/device/IResourceManager.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/device/IResourceManager.java
 $(objdir)org/openhome/net/device/IResourceWriter.class : $(publicjavadir)org/openhome/net/device/IResourceWriter.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/device/IResourceWriter.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/device/IResourceWriter.java
 $(objdir)org/openhome/net/device/PropertyUpdateError.class : $(publicjavadir)org/openhome/net/device/PropertyUpdateError.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/device/PropertyUpdateError.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/device/PropertyUpdateError.java
 $(objdir)org/openhome/net/device/ResourceWriter.class : $(publicjavadir)org/openhome/net/device/ResourceWriter.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/device/ResourceWriter.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/device/ResourceWriter.java
 $(objdir)org/openhome/net/device/tests/DeviceBasic.class : $(publicjavadir)org/openhome/net/device/tests/DeviceBasic.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/device/tests/DeviceBasic.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/device/tests/DeviceBasic.java
 $(objdir)org/openhome/net/device/tests/TestBasicDv.class : $(publicjavadir)org/openhome/net/device/tests/TestBasicDv.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/device/tests/TestBasicDv.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/device/tests/TestBasicDv.java
 $(objdir)org/openhome/net/device/tests/TestDvDevice.class : $(publicjavadir)org/openhome/net/device/tests/TestDvDevice.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/device/tests/TestDvDevice.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/device/tests/TestDvDevice.java
 $(objdir)org/openhome/net/device/tests/TestPerformanceDv.class : $(publicjavadir)org/openhome/net/device/tests/TestPerformanceDv.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/device/tests/TestPerformanceDv.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) --release 8 $(publicjavadir)org/openhome/net/device/tests/TestPerformanceDv.java
 
 ohNetJavaSrc : $(objdir)ohnet-src.jar
 $(objdir)ohnet-src.jar :

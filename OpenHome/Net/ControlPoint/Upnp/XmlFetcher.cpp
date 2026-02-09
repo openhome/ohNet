@@ -283,23 +283,30 @@ TUint XmlFetch::Type() const
 XmlFetcher::XmlFetcher(const TChar* aName, Fifo<XmlFetcher*>& aFree)
     : Thread(aName)
     , iFree(aFree)
+    , iLock("XMLF")
     , iFetch(NULL)
 {
 }
 
 XmlFetcher::~XmlFetcher()
 {
+    Kill();
+
+    iLock.Wait();
     if (iFetch != NULL) {
         iFetch->Interrupt();
-        iFetch = NULL;
     }
-    Kill();
+    iLock.Signal();
+
     Join();
 }
 
 void XmlFetcher::Fetch(XmlFetch* aFetch)
 {
+    iLock.Wait();
     iFetch = aFetch;
+    iLock.Signal();
+
     Signal();
 }
 
@@ -315,38 +322,50 @@ void XmlFetcher::LogError(const TChar* /*aErr*/)
 
 void XmlFetcher::Run()
 {
+    XmlFetch *fetch = NULL;
+
     for (;;) {
         Wait();
-        try {
-            if (iFetch->Interrupted()) {
-                iFetch->SetError(Error::eAsync, Error::eCodeInterrupted,
-                                 Error::kDescriptionAsyncInterrupted);
+
+        iLock.Wait();
+        fetch = iFetch;
+        iLock.Signal();
+
+        if (fetch != NULL) {
+            try {
+                if (fetch->Interrupted()) {
+                    fetch->SetError(Error::eAsync, Error::eCodeInterrupted,
+                                    Error::kDescriptionAsyncInterrupted);
+                } else {
+                    fetch->Fetch();
+                }
             }
-            else {
-                iFetch->Fetch();
+            catch (HttpError &) {
+                LogError("Http");
             }
+            catch (NetworkTimeout &) {
+                // error already set in XmlFetch::Fetch()
+                LogError("NetworkTimeout");
+            }
+            catch (NetworkError &) {
+                iFetch->SetError(Error::eSocket, Error::kCodeUnknown, kNetworkErrorDescription);
+                LogError("Network");
+            }
+            catch (WriterError &) {
+                LogError("Writer");
+            }
+            catch (ReaderError &) {
+                iFetch->SetError(Error::eSocket, Error::kCodeUnknown, kReaderErrorDescription);
+                LogError("Reader");
+            }
+
+            iLock.Wait();
+            iFetch = NULL;
+            iLock.Signal();
+
+            fetch->SignalCompleted();
+            delete fetch;
         }
-        catch (HttpError&) {
-            LogError("Http");
-        }
-        catch (NetworkTimeout&) {
-            // error already set in XmlFetch::Fetch()
-            LogError("NetworkTimeout");
-        }
-        catch (NetworkError&) {
-            iFetch->SetError(Error::eSocket, Error::kCodeUnknown, kNetworkErrorDescription);
-            LogError("Network");
-        }
-        catch (WriterError&) {
-            LogError("Writer");
-        }
-        catch (ReaderError&) {
-            iFetch->SetError(Error::eSocket, Error::kCodeUnknown, kReaderErrorDescription);
-            LogError("Reader");
-        }
-        iFetch->SignalCompleted();
-        delete iFetch;
-        iFetch = NULL;
 
         iFree.Write(this);
     }

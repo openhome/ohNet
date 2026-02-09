@@ -7,8 +7,6 @@
 #include <pthread.h>
 #include <errno.h>
 #include <assert.h>
-#include <sys/time.h> // eScheduleNice only
-#include <sys/resource.h> // eScheduleNice only
 #include <string.h>
 #include <sys/types.h>
 #include <sys/select.h>
@@ -19,8 +17,14 @@
 #if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD)
 #include <linux/netlink.h>
 #include <linux/rtnetlink.h>
+#if !defined(PLATFORM_QNAP) && !defined(__ANDROID__)
+#include <netlink/genl/genl.h>  //genl_connect, genlmsg_put
+#include <netlink/genl/family.h>
+#include <netlink/genl/ctrl.h>  //genl_ctrl_resolve
+#include <linux/nl80211.h>      //NL80211 definitions
+#endif /* !PLATFORM_QNAP && !__ANDROID__ */
 #endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD */
-#if defined(PLATFORM_MACOSX_GNU) || defined(PLATFORM_FREEBSD) || defined(PLATFORM_QNAP)
+#if defined(PLATFORM_MACOSX_GNU) || defined(PLATFORM_FREEBSD) || defined(PLATFORM_QNAP) 
 #include <net/if.h>
 #else
 #include <linux/wireless.h>
@@ -70,6 +74,16 @@
     while (__result == -1L && errno == EINTR&& !SocketInterrupted(handle)); \
     __result; }))
 
+#ifdef DEFINE_BIG_ENDIAN
+  #define IPv4_ADDRESS(aByte1, aByte2, aByte3, aByte4) (aByte4 | (aByte3<<8) | (aByte2<<16) | (aByte1<<24))
+#elif defined(DEFINE_LITTLE_ENDIAN)
+  #define IPv4_ADDRESS(aByte1, aByte2, aByte3, aByte4) (aByte1 | (aByte2<<8) | (aByte3<<16) | (aByte4<<24))
+#else
+  #error "Endianness must be defined"
+#endif
+
+#define IPv4_ADDR_LOOPBACK IPv4_ADDRESS(127, 0, 0, 1)
+#define IPv4_ADDR_WIRELESS_AP IPv4_ADDRESS(172, 16, 0, 254)
 
 #if defined(PLATFORM_MACOSX_GNU) || defined(PLATFORM_FREEBSD)
 # define TEMP_FAILURE_RETRY(expression)        \
@@ -143,14 +157,23 @@ typedef struct SleepWake
 #endif
 
 struct OsContext {
+#ifdef SYS_CLOCK_MONOTONIC
+    struct timespec iStartTime; /* Time OsCreate was called */
+#else
     struct timeval iStartTime; /* Time OsCreate was called */
     struct timeval iPrevTime; /* Last time OsTimeInUs() was called */
     struct timeval iTimeAdjustment; /* Amount to adjust return for OsTimeInUs() by. 
                                        Will be 0 unless time ever jumps backwards. */
+#endif
     THandle iMutex;
-    OsThreadSchedulePolicy iSchedulerPolicy;
+    THandle iMutexNetwork;
+    THandle iMutexTime;
+    int iThreadPrioritiesEnabled;
     pthread_key_t iThreadArgKey;
     struct InterfaceChangedObserver* iInterfaceChangedObserver;
+#if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD) && !defined(PLATFORM_QNAP) && !defined(__ANDROID__)
+    struct WirelessConfigContext* iWirelessConfigContext;
+#endif
     int32_t iThreadPriorityMin;
 #if defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_IOS)
     SleepWake* iSleepWake;
@@ -165,6 +188,10 @@ static void DestroyInterfaceChangedObserver(OsContext* aContext);
 #if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD) && !defined(__ANDROID__)
 static void DnsRefreshCreate(OsContext* aContext);
 static void DnsRefreshDestroy(OsContext* aContext);
+#if !defined(PLATFORM_QNAP)
+static void WirelessConfigContextCreate(OsContext* aContext);
+static void WirelessConfigContextDestroy(OsContext* aContext);
+#endif /* !PLATFORM_QNAP */
 #endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD && !defined(__ANDROID__) */
 
 #ifdef PLATFORM_MACOSX_GNU
@@ -174,21 +201,62 @@ static void SleepWakeDestroy(OsContext* aContext);
 #endif /* !PLATFORM_IOS */
 #endif /* PLATFORM_MACOSX */
 
+static int OsInitialiseOsMutexes(OsContext* aContext)
+{
+    // OS Mutex General Purpose
+    aContext->iMutex = OsMutexCreate(aContext, "OSMG");
+    if (aContext->iMutex == kHandleNull) {
+        return -1;
+    }
+
+    // OS Mutex Network
+    aContext->iMutexNetwork = OsMutexCreate(aContext, "OSMN");
+    if (aContext->iMutexNetwork == kHandleNull) {
+        return -1;
+    }
+
+    // OS Mutex Time
+    aContext->iMutexTime = OsMutexCreate(aContext, "OSMT"); 
+    if (aContext->iMutexTime == kHandleNull) {
+        return -1;
+    }
+
+    return 0;
+}
+
+static void OsDestroyOsMutexes(OsContext* aContext)
+{
+    if (aContext->iMutex != kHandleNull) {
+        OsMutexDestroy(aContext->iMutex);
+    }
+    if (aContext->iMutexNetwork != kHandleNull) {
+        OsMutexDestroy(aContext->iMutexNetwork);
+    }
+    if (aContext->iMutexTime != kHandleNull) {
+        OsMutexDestroy(aContext->iMutexTime);
+    }
+}
 
 OsContext* OsCreate(OsThreadSchedulePolicy aSchedulerPolicy)
 {
     OsContext* ctx = calloc(1, sizeof(*ctx));
+#ifdef SYS_CLOCK_MONOTONIC
+    clock_gettime(CLOCK_MONOTONIC, &ctx->iStartTime);
+#else
     gettimeofday(&ctx->iStartTime, NULL);
     ctx->iPrevTime = ctx->iStartTime;
     memset(&ctx->iTimeAdjustment, 0, sizeof(ctx->iTimeAdjustment));
-    ctx->iSchedulerPolicy = aSchedulerPolicy;
-    ctx->iMutex = OsMutexCreate(ctx, "DNSM");
-    if (ctx->iMutex == kHandleNull) {
+#endif
+    ctx->iThreadPrioritiesEnabled = (aSchedulerPolicy == eSchedulePriority);
+
+    if (OsInitialiseOsMutexes(ctx) != 0) {
+        OsDestroyOsMutexes(ctx);
         free(ctx);
         return NULL;
     }
+
     if (pthread_key_create(&ctx->iThreadArgKey, NULL) != 0) {
-        OsMutexDestroy(ctx->iMutex);
+        OsDestroyOsMutexes(ctx);
         free(ctx);
         return NULL;
     }
@@ -197,6 +265,9 @@ OsContext* OsCreate(OsThreadSchedulePolicy aSchedulerPolicy)
 
 #if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD) && !defined(__ANDROID__)
     DnsRefreshCreate(ctx);
+#if !defined(PLATFORM_QNAP)
+    WirelessConfigContextCreate(ctx);
+#endif /* !PLATFORM_QNAP */
 #endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD && !defined(__ANDROID__) */
 
 #ifdef PLATFORM_MACOSX_GNU
@@ -210,22 +281,27 @@ OsContext* OsCreate(OsThreadSchedulePolicy aSchedulerPolicy)
 
 void OsDestroy(OsContext* aContext)
 {
-    if (aContext != NULL) {
+    if (aContext == NULL) {
+        return;
+    }
 
 #ifdef PLATFORM_MACOSX_GNU
 #ifndef PLATFORM_IOS
-        SleepWakeDestroy(aContext);
+    SleepWakeDestroy(aContext);
 #endif /* !PLATFORM_IOS */
 #endif /* PLATFORM_MACOSX */ 
 
 #if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD) && !defined(__ANDROID__)
-        DnsRefreshDestroy(aContext);
+    DnsRefreshDestroy(aContext);
+#if !defined(PLATFORM_QNAP)
+    WirelessConfigContextDestroy(aContext);
+#endif /* !PLATFORM_QNAP */
 #endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD && !defined(__ANDROID__) */
-        DestroyInterfaceChangedObserver(aContext);
-        pthread_key_delete(aContext->iThreadArgKey);
-        OsMutexDestroy(aContext->iMutex);
-        free(aContext);
-    }
+
+    DestroyInterfaceChangedObserver(aContext);
+    pthread_key_delete(aContext->iThreadArgKey);
+    OsDestroyOsMutexes(aContext);
+    free(aContext);
 }
 
 void OsQuit(OsContext* aContext)
@@ -345,7 +421,33 @@ void OsStackTraceFinalise(THandle aStackTrace)
 #endif /* STACK_TRACE_ENABLE */
 }
 
-static struct timeval subtractTimeval(struct timeval* aT1, struct timeval* aT2)
+#ifdef SYS_CLOCK_MONOTONIC
+static struct timespec timespecSubtract(struct timespec* aT1, struct timespec* aT2)
+{
+    struct timespec diff;
+    diff.tv_sec = aT1->tv_sec - aT2->tv_sec;
+    if (aT1->tv_nsec > aT2->tv_nsec) {
+        diff.tv_nsec = aT1->tv_nsec - aT2->tv_nsec;
+    }
+    else {
+        diff.tv_sec--;
+        diff.tv_nsec = 1000000000 - aT2->tv_nsec + aT1->tv_nsec;
+    }
+    return diff;
+}
+
+uint64_t OsTimeInUs(OsContext* aContext)
+{
+    struct timespec now, adjusted;
+    OsMutexLock(aContext->iMutexTime);
+    clock_gettime(CLOCK_MONOTONIC, &now);
+    adjusted = timespecSubtract(&now, &aContext->iStartTime);
+    OsMutexUnlock(aContext->iMutexTime);
+
+    return (uint64_t)((adjusted.tv_sec * 1000000) + (adjusted.tv_nsec / 1000));
+}
+#else
+static struct timeval timevalSubtract(struct timeval* aT1, struct timeval* aT2)
 {
     struct timeval diff;
     diff.tv_sec = aT1->tv_sec - aT2->tv_sec;
@@ -359,7 +461,7 @@ static struct timeval subtractTimeval(struct timeval* aT1, struct timeval* aT2)
     return diff;
 }
 
-static struct timeval addTimeval(struct timeval* aT1, struct timeval* aT2)
+static struct timeval timevalAdd(struct timeval* aT1, struct timeval* aT2)
 {
     struct timeval result;
     result.tv_sec = aT1->tv_sec + aT2->tv_sec;
@@ -377,23 +479,30 @@ static struct timeval addTimeval(struct timeval* aT1, struct timeval* aT2)
 uint64_t OsTimeInUs(OsContext* aContext)
 {
     struct timeval now, diff, adjustedNow;
-    OsMutexLock(aContext->iMutex);
+    OsMutexLock(aContext->iMutexTime);
     gettimeofday(&now, NULL);
     
     /* if time has moved backwards, calculate by how much and add this to aContext->iTimeAdjustment */
     if (now.tv_sec < aContext->iPrevTime.tv_sec ||
         (now.tv_sec == aContext->iPrevTime.tv_sec && now.tv_usec < aContext->iPrevTime.tv_usec)) {
-        diff = subtractTimeval(&aContext->iPrevTime, &now);
+        diff = timevalSubtract(&aContext->iPrevTime, &now);
         fprintf(stderr, "WARNING: clock moved backwards by %llu.%03llusecs\n", (unsigned long long)diff.tv_sec, (unsigned long long)(diff.tv_usec/1000));
-        aContext->iTimeAdjustment = addTimeval(&aContext->iTimeAdjustment, &diff);
+        aContext->iTimeAdjustment = timevalAdd(&aContext->iTimeAdjustment, &diff);
     }
+    /* if previous reported time was more than 48 hours ago, assume system time has been updated and jumped forwards*/
+    /* calculate by how much and add this to aContext->iTimeAdjustment */
+    // if (now.tv_sec - aContext->iPrevTime.tv_sec > 172800) {
+    //     diff = timevalSubtract(&now, &aContext->iPrevTime);
+    //     aContext->iTimeAdjustment = timevalSubtract(&aContext->iTimeAdjustment, &diff);
+    // }
     aContext->iPrevTime = now; /* stash current time to allow the next call to spot any backwards move */
-    adjustedNow = addTimeval(&now, &aContext->iTimeAdjustment); /* add any previous backwards moves to the time */
-    diff = subtractTimeval(&adjustedNow, &aContext->iStartTime); /* how long since we started, ignoring any backwards moves */
-    OsMutexUnlock(aContext->iMutex);
+    adjustedNow = timevalAdd(&now, &aContext->iTimeAdjustment); /* add any previous backwards moves to the time */
+    diff = timevalSubtract(&adjustedNow, &aContext->iStartTime); /* how long since we started, ignoring any backwards moves */
+    OsMutexUnlock(aContext->iMutexTime);
 
     return (uint64_t)diff.tv_sec * 1000000 + diff.tv_usec;
 }
+#endif
 
 void OsConsoleWrite(const char* aStr)
 {
@@ -618,7 +727,7 @@ THandle OsMutexCreate(OsContext* aContext, const char* aName)
     pthread_mutexattr_init(&attr);
     (void)pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_ERRORCHECK);
 #ifndef __ANDROID__
-    if (aContext->iSchedulerPolicy == eSchedulePriorityEnable) {
+    if (aContext->iThreadPrioritiesEnabled) {
         int err = pthread_mutexattr_setprotocol(&attr, PTHREAD_PRIO_INHERIT);
         if (err != 0) {
             fprintf(stderr, "OsMutexCreate - failed to set PTHREAD_PRIO_INHERIT - error=%d\n", err);
@@ -666,17 +775,12 @@ int32_t OsMutexUnlock(THandle aMutex)
 
 void OsThreadGetPriorityRange(OsContext* aContext, uint32_t* aHostMin, uint32_t* aHostMax)
 {
-    if (aContext->iSchedulerPolicy == eSchedulePriorityEnable) {
+    if (aContext->iThreadPrioritiesEnabled) {
         const int32_t platMin = sched_get_priority_min(kThreadSchedPolicy);
         const int32_t platMax = sched_get_priority_max(kThreadSchedPolicy);
         aContext->iThreadPriorityMin = platMin;
         *aHostMin = 0;
         *aHostMax = platMax - platMin;
-    }
-    else if (aContext->iSchedulerPolicy == eScheduleNice) {
-        // FIXME - 50/150 copied from previous expectations of threadEntrypoint
-        *aHostMin = 50;
-        *aHostMax = 150;
     }
     else {
         *aHostMin = 1;
@@ -705,7 +809,7 @@ static void* threadEntrypoint(void* aArg)
     ThreadData* data = (ThreadData*)aArg;
     assert(data != NULL);
 
-    if (data->iCtx->iSchedulerPolicy == eSchedulePriorityEnable) {
+    if (data->iCtx->iThreadPrioritiesEnabled) {
         int32_t priority = ((int32_t)data->iPriority) + data->iCtx->iThreadPriorityMin;
         struct sched_param param;
         memset(&param, 0, sizeof(param));
@@ -721,19 +825,6 @@ static void* threadEntrypoint(void* aArg)
 #endif
             printf("Attempt to set thread priority for '%s' to %d failed with %d(%d)\n", name, priority, status, errno);
         }
-    }
-    else if (data->iCtx->iSchedulerPolicy == eScheduleNice) {
-        static const int kMinimumNice = 5; // set MIN
-        // Map all prios > 105 -> nice 0 (default), anything else to MIN
-        //int nice_value = (data->iPriority > 105 ? 0 : kMinimumNice);
-        // Map prio=[50,150]-> nice=[MIN,0]
-        int nice_value = -1 * (((((int) data->iPriority-50) * kMinimumNice) / (150-50)) - kMinimumNice);
-        if ( nice_value < 0 )
-            nice_value = 0;
-        //printf("Thread of priority %d asking for niceness %d (current niceness is %d)\n", data->iPriority, nice_value, getpriority(PRIO_PROCESS, 0));
-        /*int result = */setpriority(PRIO_PROCESS, 0, nice_value);
-        //if ( result == -1 )
-        //    perror("Warning: Could not renice this thread");
     }
 
     // Disable cancellation - we're in a C++ environment, and
@@ -833,10 +924,7 @@ void OsThreadDestroy(THandle aThread)
 
 int32_t OsThreadSupportsPriorities(OsContext* aContext)
 {
-    if (aContext->iSchedulerPolicy == eSchedulePriorityEnable) {
-        return 1;
-    }
-    return 0;
+    return aContext->iThreadPrioritiesEnabled;
 }
 
 static int nfds(const OsNetworkHandle* aHandle)
@@ -868,60 +956,74 @@ static void SetFdNonBlocking(int32_t aSocket)
 static int32_t SocketInterrupted(const OsNetworkHandle* aHandle)
 {
     int32_t interrupted;
-    OsMutexLock(aHandle->iCtx->iMutex);
+    OsMutexLock(aHandle->iCtx->iMutexNetwork);
     interrupted = aHandle->iInterrupted;
-    OsMutexUnlock(aHandle->iCtx->iMutex);
+    OsMutexUnlock(aHandle->iCtx->iMutexNetwork);
     return interrupted;
 }
 
-static int32_t isLoopback(struct sockaddr* aInterface)
+static int IsLoopback(const struct sockaddr* aAddr)
 {
-#ifdef DEFINE_BIG_ENDIAN
-#define MakeIpAddress(aByte1, aByte2, aByte3, aByte4) \
-        (aByte4 | (aByte3<<8) | (aByte2<<16) | (aByte1<<24))
-#elif defined(DEFINE_LITTLE_ENDIAN)
-#define MakeIpAddress(aByte1, aByte2, aByte3, aByte4) \
-        (aByte1 | (aByte2<<8) | (aByte3<<16) | (aByte4<<24))
-#else
-#error "Endianness must be defined."
-#endif
-
-    uint32_t loopbackAddrV4 = MakeIpAddress(127, 0, 0, 1);
-
-    if (aInterface->sa_family == AF_INET6) {
-        return IN6_IS_ADDR_LOOPBACK(&((struct sockaddr_in6*)aInterface)->sin6_addr);
+    if (aAddr->sa_family == AF_INET6) {
+        return IN6_IS_ADDR_LOOPBACK(&((const struct sockaddr_in6*)aAddr)->sin6_addr);
     }
-    else {
-        return (((struct sockaddr_in*)aInterface)->sin_addr.s_addr == loopbackAddrV4);
-    }
+    return (((const struct sockaddr_in*)aAddr)->sin_addr.s_addr == IPv4_ADDR_LOOPBACK);
 }
 
-static int32_t isLinkLocalIPv6(struct sockaddr* aInterface)
+static int IsWirelessAccessPoint(const struct sockaddr* aAddr)
 {
-    if (aInterface->sa_family == AF_INET6) {
-        return IN6_IS_ADDR_LINKLOCAL(&((struct sockaddr_in6*)aInterface)->sin6_addr);
+    if (aAddr->sa_family == AF_INET6) {
+        return 0;
+    }
+    return (((const struct sockaddr_in*)aAddr)->sin_addr.s_addr == IPv4_ADDR_WIRELESS_AP);
+}
+
+static int IsLinkLocalIPv6(const TIpAddress* aAddress)
+{
+    if (aAddress->iFamily == kFamilyV6) {
+        const uint16_t kLocalPrefix = 0xfe80;
+        const uint16_t thisPrefix = (aAddress->iV6[0] << 8) + aAddress->iV6[1];
+        return (thisPrefix == kLocalPrefix);
     }
     return 0;
 }
 
-static int32_t TIpAddressesAreEqual(const TIpAddress* aAddr1, const TIpAddress* aAddr2)
+static int TIpAddressesAreEqual(const TIpAddress* aAddr1, const TIpAddress* aAddr2)
 {
-    if (aAddr1->iFamily == aAddr2->iFamily) {
+    if (aAddr1->iFamily != aAddr2->iFamily) {
+        return 0;
+    }
 
-        if (aAddr1->iFamily == kFamilyV6) {
-            uint8_t i = 0;
-            for (i = 0; i < 16; i++) {
-                if (aAddr1->iV6[i] != aAddr2->iV6[i])
-                    return 0;
+    if (aAddr1->iFamily == kFamilyV6) {
+        int i = 0;
+        for (i = 0; i < 16; i++) {
+            if (aAddr1->iV6[i] != aAddr2->iV6[i]) {
+                return 0;
             }
-            return 1;
         }
-        else if (aAddr1->iFamily == kFamilyV4) {
-            if (aAddr1->iV4 == aAddr2->iV4)
-                return 1;
-        }
+        return 1;
     }
-    return 0;
+
+    return (aAddr1->iV4 == aAddr2->iV4);
+}
+
+static int TIpAddressIsLessThan(const TIpAddress* aAddr1, const TIpAddress* aAddr2)
+{
+    if (aAddr1->iFamily != aAddr2->iFamily) {
+        return (aAddr1->iFamily == kFamilyV4);
+    }
+
+    if (aAddr1->iFamily == kFamilyV6) {
+        int i = 0;
+        for (i = 0; i < 16; i++) {
+            if (aAddr1->iV6[i] < aAddr2->iV6[i]) {
+                return 1;
+            }
+        }
+        return 0;
+    }
+
+    return (aAddr1->iV4 < aAddr2->iV4);
 }
 
 static TIpAddress TIpAddressFromSockAddr(const struct sockaddr* aAddr)
@@ -957,32 +1059,6 @@ static void in6AddrFromTIpAddress(struct in6_addr* aAddr, const TIpAddress* aAdd
     }
 }
 
-static int32_t ipv6AddressIsLinkLocal(const TIpAddress* aAddress)
-{
-    if (aAddress->iFamily == kFamilyV6) {
-        const uint16_t kLocalPrefix = 0xfe80;
-        const uint16_t thisPrefix = (aAddress->iV6[0] << 8) + aAddress->iV6[1];
-        return (thisPrefix == kLocalPrefix);
-    }
-    return 0;
-}
-
-static int32_t isWirelessBaseAddress(const TIpAddress* aAddress)
-{
-    if (aAddress->iFamily == kFamilyV6) {
-        return 0;
-    }
-
-    uint32_t addr = aAddress->iV4;
-    const uint8_t kWirelessOctet = 172;
-#ifdef DEFINE_BIG_ENDIAN
-    const uint8_t thisOctet = (addr >> 24) & 0xff;
-#elif defined(DEFINE_LITTLE_ENDIAN)
-    const uint8_t thisOctet = addr & 0xff;
-#endif
-    return (thisOctet == kWirelessOctet);
-}
-
 static int32_t getScopeId(const TIpAddress* aAddress)
 {
     // Loop through our active interfaces for a match and return the scope_id
@@ -993,7 +1069,7 @@ static int32_t getScopeId(const TIpAddress* aAddress)
     struct ifaddrs* iter;
 
 
-    if (!ipv6AddressIsLinkLocal(aAddress)) {
+    if (!IsLinkLocalIPv6(aAddress)) {
         return 0; // default scope_id to be used on all non-link-local IPv6 addresses
     }
 
@@ -1006,7 +1082,7 @@ static int32_t getScopeId(const TIpAddress* aAddress)
         if (iter->ifa_addr != NULL &&
             iter->ifa_addr->sa_family == AF_INET6 &&
             (iter->ifa_flags & IFF_RUNNING) != 0 &&
-            !isLoopback(iter->ifa_addr)) {
+            !IsLoopback(iter->ifa_addr)) {
 
             const TIpAddress intf = TIpAddressFromSockAddr(iter->ifa_addr);
             if (TIpAddressesAreEqual(aAddress, &intf)) {
@@ -1488,7 +1564,7 @@ int32_t OsNetworkInterrupt(THandle aHandle, int32_t aInterrupt)
     int32_t err = 0;
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
     OsContext* ctx = handle->iCtx;
-    OsMutexLock(ctx->iMutex);
+    OsMutexLock(ctx->iMutexNetwork);
     handle->iInterrupted = aInterrupt;
     int32_t val = 1;
     if (aInterrupt != 0) {
@@ -1501,7 +1577,7 @@ int32_t OsNetworkInterrupt(THandle aHandle, int32_t aInterrupt)
             ;
         }
     }
-    OsMutexUnlock(ctx->iMutex);
+    OsMutexUnlock(ctx->iMutexNetwork);
     return err;
 }
 
@@ -1794,16 +1870,62 @@ int32_t OsNetworkSocketSetMulticastIf(THandle aHandle, TIpAddress aInterface)
 #endif
 }
 
-static int32_t isWireless(const char* ifname, int domain)
+
+#if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD) && !defined(PLATFORM_QNAP) && !defined(__ANDROID__)
+
+typedef struct WirelessConfigContext {
+    struct nl_sock *nlSock;
+    int nl80211Id;
+    struct nl_cb* nlCallback;
+    int nlCallbackDone;
+
+    char aIfNameToCheck[64];
+    int aIfNameMatched;
+
+} WirelessConfigContext;
+
+static int IsWireless(const char* aIfName, int aDomain, OsContext* aContext)
+{    
+    assert(aContext->iWirelessConfigContext != NULL);
+    if (aContext->iWirelessConfigContext->nl80211Id <= 0) {
+        // system doesn't have nl80211 so can't have any wireless
+        return 0;
+    }
+    strncpy(aContext->iWirelessConfigContext->aIfNameToCheck, aIfName, 64);
+    aContext->iWirelessConfigContext->aIfNameMatched = 0;
+    
+    struct nl_msg* msg = nlmsg_alloc();
+    aContext->iWirelessConfigContext->nlCallbackDone = 0;
+    genlmsg_put(msg,
+              NL_AUTO_PORT,
+              NL_AUTO_SEQ,
+              aContext->iWirelessConfigContext->nl80211Id,
+              0,
+              NLM_F_DUMP,
+              NL80211_CMD_GET_INTERFACE,
+              0);
+
+    nl_send_auto(aContext->iWirelessConfigContext->nlSock, msg);
+
+    while(aContext->iWirelessConfigContext->nlCallbackDone != 1) {
+        nl_recvmsgs(aContext->iWirelessConfigContext->nlSock, aContext->iWirelessConfigContext->nlCallback);
+    }
+    nlmsg_free(msg);  
+    int ret = aContext->iWirelessConfigContext->aIfNameMatched;
+    return ret;
+}
+
+#else
+static int IsWireless(const char* aIfName, int aDomain, OsContext* aContext)
 {
 #if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_QNAP)
     int sock = -1;
     int err;
     struct iwreq pwrq;
     memset(&pwrq, 0, sizeof(pwrq));
-    strncpy(pwrq.ifr_name, ifname, IFNAMSIZ);
+    strncpy(pwrq.ifr_name, aIfName, IFNAMSIZ);
 
-    if ((sock = socket(domain, SOCK_STREAM, 0)) == -1) {
+    if ((sock = socket(aDomain, SOCK_STREAM, 0)) == -1) {
         return 0;
     }
 
@@ -1814,27 +1936,7 @@ static int32_t isWireless(const char* ifname, int domain)
     return 0;
 #endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_QNAP */
 }
-
-static int32_t NetMasksAreEqual(const TIpAddress* aAddr1, const TIpAddress* aAddr2)
-{
-    if (aAddr1->iFamily != aAddr2->iFamily) {
-        return 0;
-    }
-
-    if (aAddr1->iFamily == kFamilyV6) {
-        uint8_t i;
-        for (i = 0; i < 16; i++) {
-            if ((aAddr1->iV6[i] & aAddr2->iV6[i]) != aAddr1->iV6[i]) {
-                return 0;
-            }
-        }
-        return 1;
-    }
-    else {
-        return ((aAddr1->iV4 & aAddr2->iV4) == aAddr1->iV4);
-    }
-    return 0;
-}
+#endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD && !PLATFORM_QNAP */
 
 static void append(OsNetworkAdapter* aAdapter, OsNetworkAdapter** aHead, OsNetworkAdapter** aTail)
 {
@@ -1847,178 +1949,230 @@ static void append(OsNetworkAdapter* aAdapter, OsNetworkAdapter** aHead, OsNetwo
     *aTail = aAdapter;
 }
 
-int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters, uint32_t aUseLoopback, uint32_t aIpVersion)
+static int32_t NonLoopbackAdapterExists(struct ifaddrs* aInterfaces, int32_t aIncludeIPv6)
 {
-    gIpVersion = aIpVersion;
-
-    int32_t ret = -1;
-    struct ifaddrs* networkIf;
     struct ifaddrs* iter;
-    int32_t includeLoopback = 1;
-    *aAdapters = NULL;
-    if (TEMP_FAILURE_RETRY(getifaddrs(&networkIf)) == -1) {
-        return -1;
-    }
-
-    /* first check whether we have any suitable interfaces other than loopback */
-    if (aUseLoopback == 0) {
-        iter = networkIf;
-        while (iter != NULL) {
-            if (iter->ifa_addr != NULL) {
-#if !defined(PLATFORM_MACOSX_GNU)
-                const uint8_t familyIsValid = (iter->ifa_addr->sa_family == AF_INET ||
-                    (iter->ifa_addr->sa_family == AF_INET6 && aIpVersion != IP_VERSION_4));
-#else
-                // Omit IPv6 adapters on macOS platforms
-                const uint8_t familyIsValid = (iter->ifa_addr->sa_family == AF_INET);
-#endif
-                if (familyIsValid &&
-                    (iter->ifa_flags & IFF_RUNNING) != 0 &&
-                    !isLoopback(iter->ifa_addr)) {
-                    includeLoopback = 0;
-                    break;
-                }
-            }
-            iter = iter->ifa_next;
-        }
-    }
-
-    OsNetworkAdapter* head = NULL;
-    OsNetworkAdapter* wiredHead = NULL;
-    OsNetworkAdapter* wiredTail = NULL;
-    OsNetworkAdapter* wirelessHead = NULL;
-    OsNetworkAdapter* wirelessTail = NULL;
-    OsNetworkAdapter* loopHead = NULL;      /* List of loopback adapters */
-    OsNetworkAdapter* loopTail = NULL;
-    OsNetworkAdapter* ipv6Head = NULL;
-    OsNetworkAdapter* ipv6Tail = NULL;
-
-    for (iter = networkIf; iter != NULL; iter = iter->ifa_next) {
-
+    for (iter = aInterfaces; iter != NULL; iter = iter->ifa_next) {
         if (iter->ifa_addr == NULL) {
             continue;
         }
-        const int ifaceIsIPv6 = (iter->ifa_addr->sa_family == AF_INET6);
-        const int ifaceIsWireless = isWireless(iter->ifa_name, iter->ifa_addr->sa_family);
-        const int ifaceIsLoopback = isLoopback(iter->ifa_addr);
+        if ((iter->ifa_flags & IFF_RUNNING) == 0) {
+            continue;
+        }
+        if (iter->ifa_addr->sa_family == AF_INET6 && !aIncludeIPv6) {
+            continue;
+        }
+        if (IsLoopback(iter->ifa_addr)) {
+            continue;
+        }
+        return 1;
+    }
+    return 0;
+}
 
+int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters, uint32_t aUseLoopback, uint32_t aIpVersion)
+{
+    *aAdapters = NULL;
+    int includeLoopback = aUseLoopback;
 #if !defined(PLATFORM_MACOSX_GNU)
-        const uint8_t familyIsValid = (iter->ifa_addr->sa_family == AF_INET ||
-            (ifaceIsIPv6 && aIpVersion != IP_VERSION_4));
+    int includeIPv6 = aIpVersion != IP_VERSION_4;
 #else
-        // Omit IPv6 adapters on macOS platforms
-        const uint8_t familyIsValid = (iter->ifa_addr->sa_family == AF_INET);
+    int includeIPv6 = 0;
 #endif
-        if (!familyIsValid ||
-            (iter->ifa_flags & IFF_RUNNING) == 0 ||
-            (includeLoopback == 0 && ifaceIsLoopback == 1) ||
-            (aUseLoopback == 1    && ifaceIsLoopback == 0)) {
+    gIpVersion = aIpVersion;
+
+    struct ifaddrs* ifaces = NULL;
+    struct ifaddrs* ifaceIter = NULL;
+    int ifaceIsLoopback = 0;
+    int ifaceIsIPv6 = 0;
+    int ifaceIsWireless = 0;
+    int validInterfaceCount = 0;
+
+    OsNetworkAdapter* adapter = NULL;
+    OsNetworkAdapter* ipv4WiredHead = NULL;
+    OsNetworkAdapter* ipv4WiredTail = NULL;
+    OsNetworkAdapter* ipv4WirelessHead = NULL;
+    OsNetworkAdapter* ipv4WirelessTail = NULL;
+    OsNetworkAdapter* ipv6WiredHead = NULL;
+    OsNetworkAdapter* ipv6WiredTail = NULL;
+    OsNetworkAdapter* ipv6WirelessHead = NULL;
+    OsNetworkAdapter* ipv6WirelessTail = NULL;
+    OsNetworkAdapter* ipv4LoopbackHead = NULL;
+    OsNetworkAdapter* ipv4LoopbackTail = NULL;
+    OsNetworkAdapter* ipv6LoopbackHead = NULL;
+    OsNetworkAdapter* ipv6LoopbackTail = NULL;
+    OsNetworkAdapter* head = NULL;
+    OsNetworkAdapter* tail = NULL;
+    OsNetworkAdapter** next = NULL;
+
+    OsNetworkAdapter* adapterIter = NULL;
+    OsNetworkAdapter* compareIter = NULL;
+    OsNetworkAdapter* current = NULL;
+    OsNetworkAdapter* previous = NULL;
+    int removeAdapter = 0;
+
+
+    /* Get interface list from the platform */
+    if (TEMP_FAILURE_RETRY(getifaddrs(&ifaces)) == -1) {
+        return -1;
+    }
+
+    /* Include loopback if no other valid interfaces are available */
+    if (includeLoopback == 0 && !NonLoopbackAdapterExists(ifaces, includeIPv6)) {
+        includeLoopback = 1;
+    }
+
+    /* Create network adapters for interfaces and append to approriate lists */
+    for (ifaceIter = ifaces; ifaceIter != NULL; ifaceIter = ifaceIter->ifa_next) {
+        if (ifaceIter->ifa_addr == NULL) {
+            continue;
+        }
+        if (ifaceIter->ifa_netmask == NULL) {
+            continue;
+        }
+        if ((ifaceIter->ifa_flags & IFF_RUNNING) == 0) {
+            continue;
+        }
+        if (IsWirelessAccessPoint(ifaceIter->ifa_addr)) {
+            // FIXME: Shouldn't have this hardcoded in the OS layer
+            // Prefer passing a 'black list' to clients of this function containing adapters we want to exclude
             continue;
         }
 
-        OsNetworkAdapter* iface = (OsNetworkAdapter*)calloc(1, sizeof(*iface));
-        if (iface != NULL) {
-            iface->iName = (char*)malloc(strlen(iter->ifa_name) + 1);
-        }
-        if (iface == NULL || iface->iName == NULL) {
-            OsNetworkFreeInterfaces(wiredHead);
-            OsNetworkFreeInterfaces(wirelessHead);
-            OsNetworkFreeInterfaces(loopHead);
-            goto exit;
-        }
+        ifaceIsIPv6 = (ifaceIter->ifa_addr->sa_family == AF_INET6);
+        ifaceIsWireless = IsWireless(ifaceIter->ifa_name, ifaceIter->ifa_addr->sa_family, aContext);
+        ifaceIsLoopback = IsLoopback(ifaceIter->ifa_addr);
 
-        if (ifaceIsLoopback) {
-            append(iface, &loopHead, &loopTail);
+        if (ifaceIsIPv6 && !includeIPv6) {
+            continue;
         }
-        else if (ifaceIsWireless) {
-            append(iface, &wirelessHead, &wirelessTail);
-        }
-        else if(ifaceIsIPv6) {
-            append(iface, &ipv6Head, &ipv6Tail);
-        }
-        else { // wired, IPv4, non-loopback
-            append(iface, &wiredHead, &wiredTail);
+        if (ifaceIsLoopback && !includeLoopback) {
+            continue;
         }
 
-        (void)strcpy(iface->iName, iter->ifa_name);
-        // Helper functions handle IPv4 and v6 addresses
-        iface->iAddress = TIpAddressFromSockAddr(iter->ifa_addr);
-        iface->iNetMask = TIpAddressFromSockAddr(iter->ifa_netmask);
-        iface->iReserved = ifaceIsWireless;
+        adapter = (OsNetworkAdapter*)calloc(1, sizeof(*adapter));
+        if (adapter != NULL) {
+            adapter->iName = (char*)malloc(strlen(ifaceIter->ifa_name) + 1);
+        }
+        if (adapter == NULL || adapter->iName == NULL) {
+            OsNetworkFreeInterfaces(ipv4WiredHead);
+            OsNetworkFreeInterfaces(ipv4WirelessHead);
+            OsNetworkFreeInterfaces(ipv6WiredHead);
+            OsNetworkFreeInterfaces(ipv6WirelessHead);
+            OsNetworkFreeInterfaces(ipv4LoopbackHead);
+            OsNetworkFreeInterfaces(ipv6LoopbackHead);
+            freeifaddrs(ifaces);
+            return -1;
+        }
+        (void)strcpy(adapter->iName, ifaceIter->ifa_name);
+        adapter->iAddress = TIpAddressFromSockAddr(ifaceIter->ifa_addr);
+        adapter->iNetMask = TIpAddressFromSockAddr(ifaceIter->ifa_netmask);
+        adapter->iReserved = ifaceIsWireless;
+
+        if (!ifaceIsLoopback && !ifaceIsIPv6 && !ifaceIsWireless) {
+            append(adapter, &ipv4WiredHead, &ipv4WiredTail);
+        }
+        if (!ifaceIsLoopback && !ifaceIsIPv6 && ifaceIsWireless) {
+            append(adapter, &ipv4WirelessHead, &ipv4WirelessTail);
+        }
+        if (!ifaceIsLoopback && ifaceIsIPv6 && !ifaceIsWireless) {
+            append(adapter, &ipv6WiredHead, &ipv6WiredTail);
+        }
+        if (!ifaceIsLoopback && ifaceIsIPv6 && ifaceIsWireless) {
+            append(adapter, &ipv6WirelessHead, &ipv6WirelessTail);
+        }
+        if (ifaceIsLoopback && !ifaceIsIPv6) {
+            append(adapter, &ipv4LoopbackHead, &ipv4LoopbackTail);
+        }
+        if (ifaceIsLoopback && ifaceIsIPv6) {
+            append(adapter, &ipv6LoopbackHead, &ipv6LoopbackTail);
+        }
+        validInterfaceCount++;
+    }
+    freeifaddrs(ifaces);
+
+    /* Chain adapter lists together */
+    if (ipv4WiredHead != NULL) {
+        next = (head == NULL) ? &head : &(tail->iNext);
+        *next = ipv4WiredHead;
+        tail = ipv4WiredTail;
+    }
+    if (ipv4WirelessHead != NULL) {
+        next = (head == NULL) ? &head : &(tail->iNext);
+        *next = ipv4WirelessHead;
+        tail = ipv4WirelessTail;
+    }
+    if (ipv6WiredHead != NULL) {
+        next = (head == NULL) ? &head : &(tail->iNext);
+        *next = ipv6WiredHead;
+        tail = ipv6WiredTail;
+    }
+    if (ipv6WirelessHead != NULL) {
+        next = (head == NULL) ? &head : &(tail->iNext);
+        *next = ipv6WirelessHead;
+        tail = ipv6WirelessTail;
+    }
+    if (ipv4LoopbackHead != NULL) {
+        next = (head == NULL) ? &head : &(tail->iNext);
+        *next = ipv4LoopbackHead;
+        tail = ipv4LoopbackTail;
+    }
+    if (ipv6LoopbackHead != NULL) {
+        next = (head == NULL) ? &head : &(tail->iNext);
+        *next = ipv6LoopbackHead;
+        tail = ipv6LoopbackTail;
     }
 
-    // List in order wired, wireless, loopback, IPv6
-    OsNetworkAdapter* tail = NULL;
-    head = wiredHead;
-    tail = wiredTail;
-    if (head == NULL) {
-        head = wirelessHead;
-        tail = wirelessTail;
+    /* Ensure all allocated adapters exist in the chained list */
+    for (adapterIter = head; adapterIter != NULL; adapterIter = adapterIter->iNext) {
+        validInterfaceCount--;
     }
-    else if (wirelessHead != NULL) {
-        tail->iNext = wirelessHead;
-        tail = wirelessTail;
-    }
-    if (head == NULL) {
-        head = loopHead;
-        tail = loopTail;
-    }
-    else if (loopHead != NULL) {
-        tail->iNext = loopHead;
-        tail = loopTail;
-    }
-    if (head != NULL) {
-        tail->iNext = ipv6Head;
-        tail = ipv6Tail;
+    if (validInterfaceCount != 0) {
+        fprintf(stderr, "OsNetworkListAdapters - %i adapters allocated and missing from list\n", validInterfaceCount);
+        return -1;
     }
 
-    // Check for multiple entries with same address and different netmasks and
-    // remove all these except for the least specific (largest superset) netmask.
-    // This code would also work if there are repeated identical address/netmask pairs.
-    OsNetworkAdapter* ifacePrevious = NULL;
-    // outer loop: for each adapter, remove it if another adapter takes priority
-    OsNetworkAdapter* ifaceIter = head;
-    while (ifaceIter != NULL) {
-        int removeIface = 1; // false
+    /* Check for multiple entries with same address and different netmasks and
+     * remove all these except for the least specific (largest superset) netmask.
+     * This code would also work if there are repeated identical address/netmask pairs.
+     */
+    previous = head;
+    for (adapterIter = head; adapterIter != NULL; ) {
+        removeAdapter = 0;
+        for (compareIter = head; compareIter != NULL; compareIter = compareIter->iNext) {
+            if (adapterIter == compareIter) {
+                continue;
+            }
+            if (!TIpAddressesAreEqual(&adapterIter->iAddress, &compareIter->iAddress)) {
+                continue;
+            }
+            if (TIpAddressesAreEqual(&adapterIter->iNetMask, &compareIter->iNetMask) ||
+                TIpAddressIsLessThan(&adapterIter->iNetMask, &compareIter->iNetMask)) {
 
-        // inner loop: check other adapters (not ifaceIter) for priority
-        OsNetworkAdapter* addrsIter = head;
-        while (addrsIter != NULL) {
-            // Helper functions distinguish between IPv4 and v6
-            if (addrsIter != ifaceIter &&
-                TIpAddressesAreEqual(&addrsIter->iAddress, &ifaceIter->iAddress) &&
-                NetMasksAreEqual(&addrsIter->iNetMask, &ifaceIter->iNetMask)) { // Order of arguments is important here
-
-                removeIface = 0; // true
+                removeAdapter = 1;
                 break;
             }
-            addrsIter = addrsIter->iNext;
         }
 
-        if (removeIface == 0) {
-            OsNetworkAdapter* ifaceNext = ifaceIter->iNext;
-            if (ifaceIter == head) {
-                head = ifaceNext;
-            }
-            else {
-                ifacePrevious->iNext = ifaceNext;
-            }
-            free(ifaceIter->iName);
-            free(ifaceIter);
-            ifaceIter = ifaceNext;
-            // don't update ifacePrevious
+        current = adapterIter;
+        adapterIter = adapterIter->iNext;
+        if (!removeAdapter) {
+            previous = current;
+            continue;
+        }
+        if (current == head) {
+            head = current->iNext;
+            previous = head;
         }
         else {
-            ifacePrevious = ifaceIter;
-            ifaceIter = ifaceIter->iNext;
+            previous->iNext = adapterIter;
         }
+        free(current->iName);
+        free(current);
     }
 
-    ret = 0;
     *aAdapters = head;
-exit:
-    freeifaddrs(networkIf);
-    return ret;
+    return 0;
 }
 
 void OsNetworkFreeInterfaces(OsNetworkAdapter* aAdapters)
@@ -2174,6 +2328,8 @@ static int32_t ThreadJoin(THandle aThread)
 
 void adapterChangeObserverThread(void* aPtr)
 {
+    // TODO: consider changing this over to use libnl (since we're already using that for wireless)
+    // see https://stackoverflow.com/a/67387335 for neat example
     InterfaceChangedObserver* observer = (InterfaceChangedObserver*) aPtr;
     OsNetworkHandle *handle = observer->netHnd;
     char buffer[4096];
@@ -2331,11 +2487,11 @@ void DnsRefreshThread(void* aPtr)
                 if (len > 0) {
                     // Only one watcher. If len > 0, assume message is from that single watcher.
                     res_init();
-                    OsMutexLock(ctx->iMutex);
+                    OsMutexLock(ctx->iMutexNetwork);
                     if (dnsRefresh->iCallback != NULL) {
                         dnsRefresh->iCallback(dnsRefresh->iCallbackArg);
                     }
-                    OsMutexUnlock(ctx->iMutex);
+                    OsMutexUnlock(ctx->iMutexNetwork);
                 }
             }
         }
@@ -2384,6 +2540,68 @@ static void DnsRefreshDestroy(OsContext* aContext)
     OsNetworkClose(aContext->iDnsRefresh->iHandle);
     free(aContext->iDnsRefresh);
 }
+
+#if !defined(PLATFORM_QNAP)
+
+static int getWifiName_callback(struct nl_msg *msg, void *arg)
+{     
+    struct WirelessConfigContext* wifiCtx = arg;
+    struct genlmsghdr *gnlh = nlmsg_data(nlmsg_hdr(msg));
+
+    struct nlattr *tb_msg[NL80211_ATTR_MAX + 1];
+
+    nla_parse(tb_msg,
+            NL80211_ATTR_MAX,
+            genlmsg_attrdata(gnlh, 0),
+            genlmsg_attrlen(gnlh, 0),
+            NULL);
+
+    if (tb_msg[NL80211_ATTR_IFNAME]) {
+        if (strncmp(wifiCtx->aIfNameToCheck, nla_get_string(tb_msg[NL80211_ATTR_IFNAME]), strlen(wifiCtx->aIfNameToCheck)) == 0) {
+            printf("OhNet::Os::Posix::getWifiName_callback - interface %s is wireless!\n", wifiCtx->aIfNameToCheck);
+            wifiCtx->aIfNameMatched = 1;
+            return NL_SKIP;
+        }
+    }
+    return NL_SKIP;
+}
+
+static int finish_handler(struct nl_msg *msg, void *arg)
+{
+    struct WirelessConfigContext* wifiCtx = arg;
+    wifiCtx->nlCallbackDone = 1;
+    return NL_SKIP;
+}
+
+static void WirelessConfigContextCreate(OsContext* aContext) {
+    assert(aContext != NULL);
+    assert(aContext->iWirelessConfigContext == NULL);
+    WirelessConfigContext* wifiCtx = calloc(1, sizeof(struct WirelessConfigContext));
+
+    wifiCtx->nlSock = nl_socket_alloc();
+    // socket(AF_NETLINK, SOCK_RAW, NETLINK_GENERIC);
+    genl_connect(wifiCtx->nlSock);   
+
+    wifiCtx->nl80211Id = genl_ctrl_resolve(wifiCtx->nlSock, NL80211_GENL_NAME);
+    // Don't assert here, but always check this before trying to send messages to interface!
+    // assert(wifiCtx->nl80211Id >= 0);
+ 
+    wifiCtx->nlCallback = nl_cb_alloc(NL_CB_DEFAULT);
+    nl_cb_set(wifiCtx->nlCallback, NL_CB_VALID , NL_CB_CUSTOM, getWifiName_callback, wifiCtx);
+    nl_cb_set(wifiCtx->nlCallback, NL_CB_FINISH, NL_CB_CUSTOM, finish_handler, wifiCtx);
+    aContext->iWirelessConfigContext = wifiCtx;    
+}
+
+static void WirelessConfigContextDestroy(OsContext* aContext) {    
+    assert(aContext != NULL);
+    assert(aContext->iWirelessConfigContext != NULL);
+
+    nl_cb_put(aContext->iWirelessConfigContext->nlCallback);
+    nl_close(aContext->iWirelessConfigContext->nlSock);
+    nl_socket_free(aContext->iWirelessConfigContext->nlSock);  
+    free(aContext->iWirelessConfigContext);
+}
+#endif /* !PLATFORM_QNAP */
 
 #endif /* !PLATFORM_MACOSX_GNU  && !PLATFORM_FREEBSD && !defined(__ANDROID__) */
 
@@ -2625,8 +2843,8 @@ void OsNetworkSetDnsChangedObserver(OsContext* aContext, DnsChanged aCallback, v
     if (aContext->iDnsRefresh == NULL) {
         return;
     }
-    OsMutexLock(aContext->iMutex);
+    OsMutexLock(aContext->iMutexNetwork);
     aContext->iDnsRefresh->iCallback = aCallback;
     aContext->iDnsRefresh->iCallbackArg = aArg;
-    OsMutexUnlock(aContext->iMutex);
+    OsMutexUnlock(aContext->iMutexNetwork);
 }

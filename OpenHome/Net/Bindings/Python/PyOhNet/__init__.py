@@ -90,7 +90,13 @@ cpProxies    = []
 def Initialise( aInitParams=None ):
     """Initialise ohNet library - must be first call to module"""
     # aInitParams is a dict, which can contain the following key/value pairs
-    #   - loopack:  True or False
+    #   - loopack:                  True or False   (default False)
+    #   - invokeTimeout:            in msecs
+    #   - msearchTime:              in secs
+    #   - numEventSessionThreads    (default 4)
+    #   - numXmlFetcherThreads      (default 4)
+    #   - numActionInvokerThreads   (default 4)
+    #   - numSubscriberThreads      (default 4)
     lib.OhNetInitParamsCreate.restype = ctypes.c_void_p
     params = ctypes.c_void_p( lib.OhNetInitParamsCreate() )
     if aInitParams:
@@ -98,7 +104,18 @@ def Initialise( aInitParams=None ):
             if aInitParams['loopback'] is not False:
                 lib.OhNetInitParamsSetUseLoopbackNetworkAdapter( params )
         if 'invokeTimeout' in aInitParams:
-            lib.OhNetInitParamsSetInvocationTimeout( params, aInitParams['invokeTimeout'] )     # in millisecs
+            lib.OhNetInitParamsSetInvocationTimeout( params, aInitParams['invokeTimeout'] )
+        if 'numEventSessionThreads' in aInitParams:
+            lib.OhNetInitParamsSetNumEventSessionThreads( params, aInitParams['numEventSessionThreads'] )
+        if 'numXmlFetcherThreads' in aInitParams:
+            lib.OhNetInitParamsSetNumXmlFetcherThreads( params, aInitParams['numXmlFetcherThreads'] )
+        if 'numActionInvokerThreads' in aInitParams:
+            lib.OhNetInitParamsSetNumActionInvokerThreads( params, aInitParams['numActionInvokerThreads'] )
+        if 'numSubscriberThreads' in aInitParams:
+            lib.OhNetInitParamsSetNumSubscriberThreads( params, aInitParams['numSubscriberThreads'] )
+        if 'msearchTime' in aInitParams:
+            lib.OhNetInitParamsSetMsearchTime( params, aInitParams['msearchTime'] )
+            
     if lib.OhNetLibraryInitialise( params ):
         raise OhNetError( 'Failed to initialise Library')
 
@@ -142,21 +159,26 @@ def Start( aMode='cp', aInterface=None ):
     else:
         raise OhNetError( 'Stack mode <%s> not supported' % aMode )
 
-
 def Shutdown():
     """Cleanly shut down ohNet"""
-    while len( adapters ):
-        adapters[0].Shutdown()
-    while len( adapterLists ):
-        adapterLists[0].Shutdown()
-    while len( devices ):
-        devices[0].Shutdown()
-    while len( devLists ):
-        devLists[0].Shutdown()
     while len( actions ):
         actions[0].Shutdown()
+    print('PyOhNet shutdown -->>> actions')
     while len( cpProxies ):
         cpProxies[0].Shutdown()
+    print('PyOhNet shutdown -->>> proxies')
+    while len( devices ):
+        devices[0].Shutdown()
+    print('PyOhNet shutdown -->>> devices')
+    while len( devLists ):
+        devLists[0].Shutdown()
+    print('PyOhNet shutdown -->>> devLists')
+    while len( adapters ):
+        adapters[0].Shutdown()
+    print('PyOhNet shutdown -->>> adapters')
+    while len( adapterLists ):
+        adapterLists[0].Shutdown()
+    print('PyOhNet shutdown -->>> adapterLists')
     if lib:
         if initParams:
             lib.OhNetInitParamsDestroy( initParams )

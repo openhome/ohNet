@@ -1,6 +1,10 @@
 #include <OpenHome/OsWrapper.h>
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Private/Time.h>
+#include <OpenHome/Private/Ascii.h>
+#include <OpenHome/Private/Parser.h>
+
+#include <stdlib.h>
 
 using namespace OpenHome;
 
@@ -221,82 +225,155 @@ TBool PointInTime::IsValid() const
 
 
 
-TBool PointInTime::TryParseFromUnixTimestamp(TUint aTimestamp)
+TBool PointInTime::TryParseFromUnixTimestamp(TInt64 aTimestamp)
 {
-    TUint secsRemaining = aTimestamp;
-    TUint year = Time::kUnixEpochYear;
+    if (aTimestamp >= 0) {
+        TUint secsRemaining = aTimestamp;
+        TUint year = Time::kUnixEpochYear;
+        TUint secs = 0;
 
-    while(true) {
-        TUint secsForYear = Time::SecondsInYear(year);
-        if (secsForYear > secsRemaining) {
-            break;
+        while ((secs = Time::SecondsInYear(year)) <= secsRemaining ) {
+            year += 1;
+            secsRemaining -= secs;
         }
 
-        ++year;
-        secsRemaining -= secsForYear;
-    }
-
-    TByte month = 1;
-    while (true) {
-        TUint secsForMonth = Time::SecondsInMonth(month, year);
-        if (secsForMonth > secsRemaining) {
-            break;
+        TByte month = 1;
+        while ((secs = Time::SecondsInMonth(month, year)) <= secsRemaining) {
+            month += 1;
+            secsRemaining -= secs;
         }
 
-        ++month;
-        secsRemaining -= secsForMonth;
-    }
+        TByte day = 1;
+        while (Time::kSecondsPerDay <= secsRemaining) {
+            day += 1;
+            secsRemaining -= Time::kSecondsPerDay;
+        }
 
-    TByte day = 1;
-    while (Time::kSecondsPerDay <= secsRemaining) {
-        ++day;
-        secsRemaining -= Time::kSecondsPerDay;
-    }
+        TByte hour = 0;
+        while (Time::kSecondsPerHour <= secsRemaining) {
+            hour += 1;
+            secsRemaining -= Time::kSecondsPerHour;
+        }
 
-    TByte hour = 0;
-    while(Time::kSecondsPerHour <= secsRemaining) {
-        ++hour;
-        secsRemaining -= Time::kSecondsPerHour;
-    }
+        TByte min = 0;
+        while (Time::kSecondsPerMinute <= secsRemaining) {
+            min += 1;
+            secsRemaining -= Time::kSecondsPerMinute;
+        }
 
-    TByte min = 0;
-    while(Time::kSecondsPerMinute <= secsRemaining) {
-        ++min;
-        secsRemaining -= Time::kSecondsPerMinute;
+        Set(day, month, year, hour, min, secsRemaining);
+        return IsValid();
     }
+    else {
+        TUint secsRemaining = abs(aTimestamp);
+        TUint year = Time::kUnixEpochYear -1;
+        TUint secs = 0;
 
-    Set(day, month, year, hour, min, secsRemaining);
-    return IsValid();
+        while ((secs = Time::SecondsInYear(year)) <= secsRemaining) {
+            year -= 1;
+            secsRemaining -= secs;
+        }
+
+        TByte month = 12;
+        while ((secs = Time::SecondsInMonth(month, year)) <= secsRemaining) {
+            month -=1;
+            secsRemaining -= secs;
+        }
+
+        TByte day = Time::DaysInMonth(month, year);
+        while (Time::kSecondsPerDay <= secsRemaining) {
+            day -= 1;
+            secsRemaining -= Time::kSecondsPerDay;
+        }
+
+        TByte hour = 23;
+        while (Time::kSecondsPerHour <= secsRemaining) {
+            hour -= 1;
+            secsRemaining -= Time::kSecondsPerHour;
+        }
+
+        TByte min = 59;
+        while (Time::kSecondsPerMinute <= secsRemaining) {
+            min -= 1;
+            secsRemaining -= Time::kSecondsPerMinute;
+        }
+
+        TByte seconds = 60 - secsRemaining;
+
+        Set(day, month, year, hour, min, seconds);
+        return IsValid();
+    }
 }
 
-TUint PointInTime::ConvertToUnixTimestamp() const
+TInt64 PointInTime::ConvertToUnixTimestamp() const
 {
     if (!IsValid()) {
         return 0;
     }
 
-    TUint timestamp = 0;
+    TInt64 timestamp = 0;
     TUint year      = Year();
     TByte month     = Month();
 
     if (Year() < Time::kUnixEpochYear) {
-        return 0;
+        for (TUint i = Time::kUnixEpochYear - 1; i > year; --i) {
+            timestamp -= Time::SecondsInYear(i);
+        }
+
+        for (TUint i = 12; i > month; --i) {
+            timestamp -= Time::SecondsInMonth(i, year);
+        }
+
+        timestamp -= (Time::DaysInMonth(month, year) - Day()) * Time::kSecondsPerDay;
+        timestamp -= (23 - Hours()) * Time::kSecondsPerHour;
+        timestamp -= (59 - Minutes()) * Time::kSecondsPerMinute;
+        timestamp -= (60 - Seconds());
     }
+    else {
+        for (TUint i = Time::kUnixEpochYear; i < year; ++i) {
+            timestamp += Time::SecondsInYear(i);
+        }
 
-    for(TUint i = Time::kUnixEpochYear; i < year; ++i) {
-        timestamp += Time::SecondsInYear(i);
+        for (TByte i = 1; i < month; ++i) {
+            timestamp += Time::SecondsInMonth(i, year);
+        }
+
+        timestamp += (Day() - 1) * Time::kSecondsPerDay;
+
+        timestamp += Hours() * Time::kSecondsPerHour;
+        timestamp += Minutes() * Time::kSecondsPerMinute;
+        timestamp += Seconds();
     }
-
-    for(TByte i = 1; i < month; ++i) {
-        timestamp += Time::SecondsInMonth(i, year);
-    }
-
-    timestamp += (Day() - 1) * Time::kSecondsPerDay;
-
-    timestamp += Hours()   * Time::kSecondsPerHour;
-    timestamp += Minutes() * Time::kSecondsPerMinute;
-    timestamp += Seconds();
 
     return timestamp;
 }
 
+// Converts a given ISO8601 time string into a PointInTime value.
+// This is very limited support as we currently only parse:
+// - Combined Date/Time (UTC only) YYYY-MM-DDThh:mm:ssZ
+TBool PointInTime::TryParseFromISO8601Time(const Brx& aTimeString)
+{
+    if (aTimeString.Bytes() == 0) {
+        return false; // Empty string, so nothing to parse
+    }
+
+    if (aTimeString.At(aTimeString.Bytes() - 1) != 'Z') {
+        return false; // Non-UTC timezone
+    }
+
+    try {
+        Parser p(aTimeString);
+        TUint year   = Ascii::Uint(p.Next('-'));
+        TByte month  = Ascii::Uint(p.Next('-'));
+        TByte day    = Ascii::Uint(p.Next('T'));
+        TByte hour   = Ascii::Uint(p.Next(':'));
+        TByte min    = Ascii::Uint(p.Next(':'));
+        TByte second = Ascii::Uint(p.Next('Z'));
+
+        Set(day, month, year, hour, min, second);
+        return true;
+    }
+    catch (AsciiError&) {
+        return false;
+    }
+}

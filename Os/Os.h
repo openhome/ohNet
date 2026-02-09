@@ -41,12 +41,10 @@ static INLINE uint32_t SwapEndian32(uint32_t aValue)
         |  ((aValue & 0x000000ff) << 24);
 }
 
-typedef enum
-{
-    eScheduleDefault,         /**< Default policy for host platform */
-    eSchedulePriorityEnable,  /**< Enable priority-based scheduling */
-    eScheduleNice,            /**< Enable 'niceness' */
-    eSchedulePriorityDisable, /**< Disable priority-based scheduling */
+typedef enum {
+    eScheduleDefault,   /**< Default policy for host platform */
+    eSchedulePriority,  /**< Enable priority-based scheduling */
+    eScheduleNone       /**< Disable client-specified scheduling */
 } OsThreadSchedulePolicy;
 
 

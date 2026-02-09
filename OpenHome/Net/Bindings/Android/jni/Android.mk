@@ -46,18 +46,14 @@ LOCAL_SRC_FILES := $(ohroot)OpenHome/Ascii.cpp \
                    $(ohroot)OpenHome/Net/Bindings/C/Device/DvInvocationC.cpp \
                    $(ohroot)OpenHome/Net/Bindings/Cpp/Device/DvInvocationStd.cpp \
                    $(ohroot)OpenHome/Net/Device/Upnp/DviProtocolUpnp.cpp \
-                   $(ohroot)OpenHome/Net/Device/DviProviderSubscriptionLongPoll.cpp \
-                   $(ohroot)OpenHome/Net/Device/Providers/DvOpenhomeOrgSubscriptionLongPoll1.cpp \
                    $(ohroot)OpenHome/Net/Device/DviServer.cpp \
                    $(ohroot)OpenHome/Net/Device/Upnp/DviServerUpnp.cpp \
-                   $(ohroot)OpenHome/Net/Device/Upnp/DviServerWebSocket.cpp \
                    $(ohroot)OpenHome/Net/Device/Lpec/DviProtocolLpec.cpp \
                    $(ohroot)OpenHome/Net/Device/Lpec/DviServerLpec.cpp \
                    $(ohroot)OpenHome/Net/Device/DviService.cpp \
                    $(ohroot)OpenHome/Net/Device/Upnp/DviSsdpNotifier.cpp \
                    $(ohroot)OpenHome/Net/Device/DviStack.cpp \
                    $(ohroot)OpenHome/Net/Device/DviSubscription.cpp \
-                   $(ohroot)OpenHome/Net/Device/DviPropertyUpdateCollection.cpp \
                    $(ohroot)OpenHome/Net/Device/DvProvider.cpp \
                    $(ohroot)OpenHome/Net/Bindings/C/Device/DvProviderC.cpp \
                    $(ohroot)OpenHome/Net/Device/DvServerUpnp.cpp \

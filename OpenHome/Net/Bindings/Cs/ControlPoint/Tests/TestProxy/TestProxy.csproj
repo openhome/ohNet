@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>TestProxyCs</AssemblyName>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>OpenHome.Net</RootNamespace>
+    
+    <TargetFrameworks>net8.0</TargetFrameworks>
+    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('OSX'))">$(TargetFrameworks);net8.0-ios;net8.0-maccatalyst</TargetFrameworks>
+
+    <Platform>AnyCPU</Platform>
+
+    <EnableDefaultItems>False</EnableDefaultItems>
+
+    <IntermediateOutputPath>../../../obj</IntermediateOutputPath>
+
+    <ApplicationId>uk.co.linn.ohNet.TestProxy</ApplicationId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="../*" />
+    <Compile Include="../TestProxy.cs" />
+
+    <ProjectReference Include="../../../ohNet.net.csproj" />
+    <ProjectReference Include="../../Proxies/CpUpnpOrgConnectionManager1.csproj" />
+  </ItemGroup>
+
+</Project>

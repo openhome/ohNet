@@ -176,6 +176,20 @@ DllExport ActionArgument STDCALL ActionArgumentCreateBoolOutput(ServiceParameter
 DllExport ActionArgument STDCALL ActionArgumentCreateStringInput(ServiceParameter aParameter, const char* aValue);
 
 /**
+ * Create a string input argument for an action
+ *
+ * Intended to be write only (its value is written on construction and not be later read)
+ *
+ * @param[in] aParameter  Returned by ServiceParameterCreateString.  Defines the name plus any set of allowed values for the argument.
+ *                        Handle must have been previously added to the action using ServiceActionAddInputParameter
+ * @param[in] aValue      Value for the argument
+ * @param[in] aLen        Length of the argument
+ *
+ * @return  Handle for the newly created string type input argument
+ */
+DllExport ActionArgument STDCALL ActionArgumentCreateStringInputAsBuffer(ServiceParameter aParameter, const char* aValue, uint32_t aLen);
+
+/**
  * Create a string output argument for an action
  *
  * Intended to be created without any value.  The value is later set after CpServiceInvokeAction is called

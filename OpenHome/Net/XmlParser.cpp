@@ -331,7 +331,17 @@ TBool XmlParserBasic::TryGetElement(const Brx& aTag, const Brx& aDocument, Brn& 
                         return false;
                 }
                 else if (tagType == eTagOpenClose) {
-                    aResult.Set(Brx::Empty());
+                    if (attributes.Bytes() == 0) {
+                        aResult.Set(Brx::Empty());
+                    }
+                    else {
+                        const TByte *sp = name.Ptr() - 1;
+                        const TByte *ep = remaining.Ptr();
+                        const TUint len = ep - sp;
+                        aResult.Set(sp, len);
+                    }
+
+                    aRemaining.Set(remaining);
                     return true;
                 }
                 namesp.Set(ns);

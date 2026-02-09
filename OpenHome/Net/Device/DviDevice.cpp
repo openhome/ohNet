@@ -5,7 +5,6 @@
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Net/Private/DviStack.h>
-#include <OpenHome/Net/Private/DviProviderSubscriptionLongPoll.h>
 #include <OpenHome/Net/Private/DviProtocolUpnp.h> // for DviProtocolUpnp ctor only
 
 using namespace OpenHome;
@@ -48,7 +47,6 @@ void DviDevice::Construct(const Brx& aUdn)
     iParent = NULL;
     iProtocolDisableCount = 0;
     iSubscriptionId = 0;
-    iProviderSubscriptionLongPoll = NULL;
     iDvStack.DeviceMap().Add(*this);
 }
 
@@ -88,7 +86,6 @@ void DviDevice::Destroy()
     }
     iServices.clear();
     iServiceLock.Signal();
-    delete iProviderSubscriptionLongPoll;
     RemoveWeakRef();
 }
 
@@ -164,15 +161,7 @@ void DviDevice::SetAttribute(const TChar* aKey, const TChar* aValue)
     Parser parser(key);
     Brn name = parser.Next('.');
     aKey += name.Bytes() + 1;
-    if (name == Brn("Core")) {
-        static const char* longPollEnable = "LongPollEnable";
-        if (iProviderSubscriptionLongPoll == NULL &&
-            strncmp(aKey, longPollEnable, sizeof(longPollEnable)-1) == 0) {
-            iProviderSubscriptionLongPoll = new DviProviderSubscriptionLongPoll(*this);
-            ConfigChanged();
-        }
-    }
-    else {
+    {
         AutoMutex _(iLock);
         TBool reEnable = false;
         // assume keys starting 'Test' are a special case which can be updated at any time

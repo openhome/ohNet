@@ -1,4 +1,5 @@
 #include <jni.h>
+#include <stdio.h>
 #include "ArgumentString.h"
 #include "OpenHome/Net/C/CpService.h"
 
@@ -13,16 +14,31 @@ extern "C" {
 JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_ArgumentString_ActionArgumentCreateStringInput
   (JNIEnv *aEnv, jclass aClass, jlong aParameter, jstring aValue)
 {
-	ServiceParameter param = (ServiceParameter) (size_t)aParameter;
-	ActionArgument arg;
-	const char* value = (*aEnv)->GetStringUTFChars(aEnv, aValue, NULL);
-	aClass = aClass;
-	
-	arg = ActionArgumentCreateStringInput(param, value);
-	
-	(*aEnv)->ReleaseStringUTFChars(aEnv, aValue, value);
-	
-	return (jlong) (size_t)arg;
+    ServiceParameter param = (ServiceParameter) (size_t)aParameter;
+    ActionArgument arg;
+    jclass cls = (*aEnv)->GetObjectClass(aEnv, aValue); // local ref will be deleted when method returns
+    jmethodID mid;
+    jstring utf8;
+    jbyteArray byteArray;
+    jsize len;
+    jbyte *data;
+    aClass = aClass;
+
+    mid = (*aEnv)->GetMethodID(aEnv, cls, "getBytes", "(Ljava/lang/String;)[B");
+    if (mid == 0) {
+        printf("ArgumentStringJNI: Method ID \"getBytes()\" not found.\n");
+        fflush(stdout);
+        return (jlong) 0; // error
+    }
+    utf8 = (*aEnv)->NewStringUTF(aEnv, "UTF-8");
+    byteArray = (*aEnv)->CallObjectMethod(aEnv, aValue, mid, utf8);
+
+    len = (*aEnv)->GetArrayLength(aEnv, byteArray);
+    data = (*aEnv)->GetByteArrayElements(aEnv, byteArray, NULL);
+    arg = ActionArgumentCreateStringInputAsBuffer(param, (char *)data, len);
+    (*aEnv)->ReleaseByteArrayElements(aEnv, byteArray, data, JNI_ABORT);
+
+    return (jlong) (size_t)arg;
 }
 
 /*

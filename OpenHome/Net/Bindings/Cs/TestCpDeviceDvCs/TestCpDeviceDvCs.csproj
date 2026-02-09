@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>TestCpDeviceDvCs</AssemblyName>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>OpenHome.Net</RootNamespace>
+    <TargetFrameworks>net8.0</TargetFrameworks>
+    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('OSX'))">$(TargetFrameworks);net8.0-ios;net8.0-maccatalyst</TargetFrameworks>
+    <EnableDefaultItems>False</EnableDefaultItems>
+    <Platform>AnyCPU</Platform>
+
+    <IntermediateOutputPath>../../../obj</IntermediateOutputPath>
+
+    <ApplicationId>uk.co.linn.ohNet.TestCpDeviceDvCs</ApplicationId>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <Compile Include="../ControlPoint/Tests/TestBasicCp.cs" />
+    <Compile Include="../Device/Tests/TestBasicDv.cs" />
+    <Compile Include="../ControlPoint/Tests/TestCpDeviceDv.cs" />
+
+    <ProjectReference Include="../ohNet.net.csproj" />
+    <ProjectReference Include="../ControlPoint/Proxies/CpOpenhomeOrgTestBasic1.csproj" />
+    <ProjectReference Include="../Device/Providers/DvOpenhomeOrgTestBasic1.csproj" />
+  </ItemGroup>
+
+</Project>

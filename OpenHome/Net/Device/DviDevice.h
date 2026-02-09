@@ -40,7 +40,6 @@ public:
 };
 
 class DviSubscription;
-class DviProviderSubscriptionLongPoll;
 class DvStack;
 
 class DviDevice : public IResourceManager, private IStackObject
@@ -121,7 +120,6 @@ private:
     Mutex iDisableLock;
     Semaphore iShutdownSem;
     TUint iSubscriptionId;
-    DviProviderSubscriptionLongPoll* iProviderSubscriptionLongPoll;
 };
 
 /**

@@ -67,6 +67,9 @@ public:
 
 class DllExportClass Mutex : public INonCopyable
 {
+private:
+    static const TChar* kErrorStringDeadlock;
+    static const TChar* kErrorStringUninitialised;
 public:
     DllExport Mutex(const TChar* aName);
     DllExport virtual ~Mutex();

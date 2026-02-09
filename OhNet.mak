@@ -23,7 +23,7 @@ link_libs = Ws2_32.lib Iphlpapi.lib Dbghelp.lib
 static_or_dynamic = /MT
 
 dotnetsdk = dotnet
-dotnetFramework = net6.0
+dotnetFramework = net8.0
 !if "$(openhome_architecture)"=="x64"
 dotnetRuntime = win-x64
 !else
@@ -103,6 +103,7 @@ installincludedir = $(installdir)\include
 mkdir = Scripts\mkdir.bat
 rmdir = Scripts\rmdir.bat
 uset4 = no
+extra_dependencies = 
 
 default : all
 
@@ -204,9 +205,7 @@ copy_build_includes:
 	copy OpenHome\Net\Device\DviService.h $(inc_build)\OpenHome\Net\Private > nul
 	copy OpenHome\Net\Device\DviStack.h $(inc_build)\OpenHome\Net\Private > nul
 	copy OpenHome\Net\Device\Tests\TestBasicDv.h $(inc_build)\OpenHome\Net\Private\Tests > nul
-	copy OpenHome\Net\Device\DviSubscription.h $(inc_build)\OpenHome\Net\Private > nul
-	copy OpenHome\Net\Device\DviPropertyUpdateCollection.h $(inc_build)\OpenHome\Net\Private > nul
-	copy OpenHome\Net\Device\DviProviderSubscriptionLongPoll.h $(inc_build)\OpenHome\Net\Private > nul
+	copy OpenHome\Net\Device\DviSubscription.h $(inc_build)\OpenHome\Net\Private > n\Net\Private > nul
 	copy OpenHome\Net\Device\FunctorDviInvocation.h $(inc_build)\OpenHome\Net\Private > nul
 	copy OpenHome\Net\Device\Bonjour\*.h $(inc_build)\OpenHome\Net\Private > nul
 	copy OpenHome\Net\Device\Providers\*.h $(inc_build)\OpenHome\Net\Core > nul
@@ -224,7 +223,6 @@ copy_build_includes:
 	xcopy OpenHome\Net\Bindings\Js\ControlPoint\Tests\*.*/s $(inc_build)\OpenHome\Net\Private\Js\Tests /y > nul
 	copy OpenHome\Net\Bindings\Js\ControlPoint\lib\*.js $(inc_build)\OpenHome\Net\Private\Js\Tests\lib > nul
 	copy OpenHome\Net\Bindings\Js\ControlPoint\Proxies\CpOpenhomeOrgTestBasic1.js $(inc_build)\OpenHome\Net\Private\Js\Tests\proxies > nul
-	copy OpenHome\Net\Bindings\Js\ControlPoint\Proxies\CpOpenhomeOrgSubscriptionLongPoll1.js $(inc_build)\OpenHome\Net\Private\Js\Tests\proxies > nul
 	copy Os\*.h $(inc_build)\OpenHome > nul
 	copy Os\*.inl $(inc_build)\OpenHome > nul
 

@@ -13,6 +13,7 @@
 #include <OpenHome/Net/Core/FunctorCpDevice.h>
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Net/Private/CpiStack.h>
+#include <OpenHome/Private/NetworkAdapterList.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -85,9 +86,25 @@ void TestDeviceList(CpStack& aCpStack, const std::vector<Brn>& aArgs)
     parser.AddOption(&urn);
     OptionBool refresh("-f", "--refresh", "Wait mx secs then refresh list");
     parser.AddOption(&refresh);
+    OptionUint adapter("-i", "--interface", 0, "index of network adapter to use");
+    parser.AddOption(&adapter);
     if (!parser.Parse(aArgs) || parser.HelpDisplayed()) {
         return;
     }
+
+    std::vector<NetworkAdapter*>* ifs = aCpStack.Env().NetworkAdapterList().CreateNetworkAdapterList();
+    ASSERT(ifs->size() > 0 && adapter.Value() < ifs->size());
+
+    NetworkAdapter* selectedAdapter = (*ifs)[adapter.Value()];
+    aCpStack.Env().NetworkAdapterList().SetCurrentSubnet(selectedAdapter->Subnet());
+
+    Endpoint endpt(0, selectedAdapter->Address());
+    Endpoint::AddressBuf buf;
+    endpt.AppendAddress(buf);
+    Print("Using network interface %s\n\n", buf.Ptr());
+
+    NetworkAdapterList::DestroyNetworkAdapterList(ifs);
+
 //    Debug::SetLevel(Debug::kDevice);
     Debug::AddLevel(Debug::kXmlFetch);
     if (mx.Value() != 0) {

@@ -3,8 +3,8 @@
     <PropertyGroup>
         <AssemblyName>CpAvOpenhomeOrgProduct1.net</AssemblyName>    
 
-        <TargetFrameworks>net6.0</TargetFrameworks>
-        <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('OSX'))">$(TargetFrameworks);net6.0-ios</TargetFrameworks>
+        <TargetFrameworks>net8.0</TargetFrameworks>
+        <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('OSX'))">$(TargetFrameworks);net8.0-ios;net8.0-maccatalyst</TargetFrameworks>
 
         <EnableDefaultItems>False</EnableDefaultItems>
  
@@ -12,6 +12,8 @@
         <IntermediateOutputPath>../../obj</IntermediateOutputPath>
 
         <Platform>AnyCPU</Platform>
+
+        <ApplicationId>uk.co.linn.ohNet.AvOpenhomeOrgProduct1</ApplicationId>
     </PropertyGroup>
 
     <ItemGroup>

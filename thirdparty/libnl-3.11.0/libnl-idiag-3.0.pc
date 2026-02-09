@@ -1,0 +1,12 @@
+prefix=/usr/local
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: libnl-idiag
+Description: Netlink Inet Diag Family Library
+Version: 3.11.0
+Requires: libnl-3.0
+Libs: -L${libdir} -lnl-idiag-3
+Cflags: -I${includedir}/libnl3
+

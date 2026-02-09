@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003"> 
+  <PropertyGroup Condition=" '$(RuntimeIdentifier)' == 'maccatalyst-arm64' ">
+    <ohnetDir>$(MSBuildThisFileDirectory)../../../../Build/Obj/Mac-arm64/$(Configuration)/</ohnetDir>
+    <ohNetGccFlags>-L$(ohnetDir) -lohNetCore -force_load $(ohnetDir)libohNet.dylib</ohNetGccFlags>
+    <ohNetArgs>-cxx -gcc_flags "$(ohNetGccFlags)"</ohNetArgs>
+  </PropertyGroup>
+  <!-- 
+  If MtouchExtraArgs is set, we don't know if the gcc flags have already been specified.
+  So, only set it if it is not already set. Any project that includes ohNet that sets MtouchEventArgs
+  will need to include $(ohNetGccFlags) in the gcc flags.
+  -->
+  <PropertyGroup Condition=" '$(RuntimeIdentifier)' == 'maccatalyst-arm64' And '$(MtouchExtraArgs)' == '' ">
+    <MtouchLink>SdkOnly</MtouchLink>
+    <MtouchUseLlvm>true</MtouchUseLlvm>
+    <MtouchFloat32>true</MtouchFloat32>
+    <MtouchExtraArgs>$(ohNetArgs)</MtouchExtraArgs>
+  </PropertyGroup>
+</Project>

@@ -105,7 +105,7 @@ void NetworkAdapterList::DestroyNetworkAdapterList(std::vector<NetworkAdapter*>*
 void NetworkAdapterList::SetCurrentSubnet(const TIpAddress& aSubnet)
 {
     iListLock.Wait();
-    iSingleSubnetMode = true;
+    iSingleSubnetMode = !TIpAddressUtils::Equals(aSubnet, kIpAddressV4AllAdapters);
     const TIpAddress oldAddress = (iCurrent==NULL ? kIpAddressV4AllAdapters : iCurrent->Address());
     iDefaultSubnet = aSubnet;
     UpdateCurrentAdapter();

@@ -4,9 +4,7 @@
 #include <OpenHome/Net/Private/DviDevice.h>
 #include <OpenHome/Net/Private/DviSubscription.h>
 #include <OpenHome/Private/Printer.h>
-#include <OpenHome/Net/Private/DviServerWebSocket.h>
 #include <OpenHome/Net/Private/Bonjour.h>
-#include <OpenHome/Net/Private/DviPropertyUpdateCollection.h>
 #include <OpenHome/Net/Private/DviProtocolLpec.h>
 
 using namespace OpenHome;
@@ -23,14 +21,12 @@ DvStack::DvStack(OpenHome::Environment& aEnv)
 {
     iEnv.SetDvStack(this);
     iSsdpNotifierManager = new DviSsdpNotifierManager(*this);
-    iPropertyUpdateCollection = new DviPropertyUpdateCollection(*this);
     InitialisationParams* initParams = iEnv.InitParams();
     TUint port = initParams->DvUpnpServerPort();
     iDviDeviceMap = new DviDeviceMap;
     iDviServerUpnp = new DviServerUpnp(*this, port);
     const TUint pubThPriority = initParams->DvPublisherThreadPriority();
     iSubscriptionManager = new DviSubscriptionManager(*this, pubThPriority);
-    iDviServerWebSocket = new DviServerWebSocket(*this);
     if (initParams->DvNumLpecThreads() > 0) {
         port = initParams->DvLpecServerPort();
         AddProtocolFactory(new DviProtocolFactoryLpec(*this, port));
@@ -42,11 +38,9 @@ DvStack::~DvStack()
     for (TUint i=0; i<iProtocolFactories.size(); i++) {
         delete iProtocolFactories[i];
     }
-    delete iDviServerWebSocket;
     delete iDviServerUpnp;
     delete iDviDeviceMap;
     delete iSubscriptionManager;
-    delete iPropertyUpdateCollection;
     delete iSsdpNotifierManager;
     ASSERT(iControlPointObservers.size() == 0);
 }
@@ -54,7 +48,6 @@ DvStack::~DvStack()
 void DvStack::Start()
 {
     iDviServerUpnp->Start();
-    iDviServerWebSocket->Start();
     for (TUint i=0; i<iProtocolFactories.size(); i++) {
         iProtocolFactories[i]->Start();
     }
@@ -117,11 +110,6 @@ DviDeviceMap& DvStack::DeviceMap()
 DviSubscriptionManager& DvStack::SubscriptionManager()
 {
     return *iSubscriptionManager;
-}
-
-DviPropertyUpdateCollection& DvStack::PropertyUpdateCollection()
-{
-    return *iPropertyUpdateCollection;
 }
 
 DviSsdpNotifierManager& DvStack::SsdpNotifierManager()

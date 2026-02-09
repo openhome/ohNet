@@ -306,6 +306,14 @@ void CpiDeviceUpnp::NotifyRemovedBeforeReady()
     iSemReady.Wait();
 }
 
+void CpiDeviceUpnp::NotifyDestroy()
+{
+    if (iTimer != nullptr) {
+        iTimer->Cancel();
+    }
+    InterruptXmlFetch();
+}
+
 TUint CpiDeviceUpnp::Version(const TChar* aDomain, const TChar* aName, TUint /*aProxyVersion*/) const
 {
     ServiceType defaultServiceType(aDomain, aName, 0);
@@ -713,10 +721,13 @@ void CpiDeviceListUpnp::StopListeners()
 
 void CpiDeviceListUpnp::Add(CpiDeviceUpnp* aDevice)
 {
-    CpiDeviceList::Add(&aDevice->Device());
-
+    // NOTE: Must grab this first, otherwise the call to Add() might remove any references to the device
+    //       if it's already in the list and so result in us accessing free'd memory
     const TUint maxAgeMs = aDevice->MaxAgeSeconds() * 1000;
     const TUint repeatMsearchMs = (3 * maxAgeMs) / 4;
+
+    CpiDeviceList::Add(&aDevice->Device());
+
     if (repeatMsearchMs > iRepeatMsearchMs) {
         iRepeatMsearchMs = repeatMsearchMs;
         iRepeatMsearchTimer->FireIn(iRepeatMsearchMs); /* Don't worry that the timer might have been due

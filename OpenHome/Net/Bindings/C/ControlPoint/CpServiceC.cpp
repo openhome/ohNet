@@ -95,6 +95,14 @@ ActionArgument STDCALL ActionArgumentCreateStringInput(ServiceParameter aParamet
     return (ActionArgument)new ArgumentString(*param, buf);
 }
 
+ActionArgument STDCALL ActionArgumentCreateStringInputAsBuffer(ServiceParameter aParameter, const char* aValue, uint32_t aLen)
+{
+    OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
+    ASSERT(param != NULL);
+    Brn buf((TByte*)aValue, aLen);
+    return (ActionArgument)new ArgumentString(*param, buf);
+}
+
 ActionArgument STDCALL ActionArgumentCreateStringOutput(ServiceParameter aParameter)
 {
     OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);

@@ -23,7 +23,8 @@ openhome_configuration = Release
 android_ndk_debug=0
 endif
 
-
+extra_dependencies = 
+requirelibnl = 
 
 # Figure out platform, openhome_system and openhome_architecture
 
@@ -44,6 +45,10 @@ ifeq ($(MACHINE),Darwin)
     platform = iOS
     detected_openhome_system = iOs
     detected_openhome_architecture = x64
+  else ifeq ($(iOS-arm64-sim),1)
+    platform = iOS
+    detected_openhome_system = iOs
+    detected_openhome_architecture = arm64-sim
   else ifeq ($(Linux-rpi),1)
       platform = Linux
       detected_openhome_system = Linux
@@ -51,10 +56,12 @@ ifeq ($(MACHINE),Darwin)
   else
     platform = Mac
     detected_openhome_system = Mac
-    ifeq ($(Mac-arm64),1)
-        detected_openhome_architecture = arm64
-    else
+    ifeq ($(Mac-x64),1)
         detected_openhome_architecture = x64
+    else ifeq ($(Maccatalyst-arm64),1)
+        detected_openhome_architecture = arm64-catalyst
+    else
+        detected_openhome_architecture = arm64
     endif
   endif
 else ifneq (, $(findstring powerpc, $(gcc_machine)))
@@ -90,7 +97,9 @@ else
     endif
     ifneq (,$(findstring arm,$(gcc_machine)))
         ifneq (,$(findstring linux-gnueabihf,$(gcc_machine)))
-            detected_openhome_architecture = armhf
+            detected_openhome_architecture = armhf		
+        else ifneq (,$(findstring arm-poky-linux-gnueabi,$(gcc_machine)))
+            detected_openhome_architecture = armhf		
         else ifeq (${detected_openhome_system},Qnap)
             detected_openhome_architecture = x19
         else
@@ -122,7 +131,7 @@ else
       detected_openhome_architecture = mipsel
     endif
     ifneq (,$(findstring aarch64,$(gcc_machine)))
-      detected_openhome_architecture = arm64
+      detected_openhome_architecture = aarch64
     endif
     ifneq (,$(findstring riscv64,$(gcc_machine)))
       detected_openhome_architecture = riscv64
@@ -131,6 +140,7 @@ endif
 
 detected_openhome_system ?= Unknown
 detected_openhome_architecture ?= Unknown
+openhome_distro ?= None
 
 ifneq (${openhome_system},)
   ifneq (${openhome_system},${detected_openhome_system})
@@ -152,7 +162,10 @@ dotnetRuntime = linux-x64
 
 # NOTE: If you change this, you MUST go through an edit any of the csproj (or csproj generation code) to ensure that the correct defines
 #       are included for iOS builds. 
-dotnetFramework = net6.0
+dotnetFramework = net8.0
+
+# NOTE: MacCatalyst only: Doesn't allow us to ship a 
+dotnetPublishSingleFile = true
 
 ifeq ($(openhome_system),Linux)
 	dotnetsdk = ~/.dotnet/dotnet
@@ -173,16 +186,27 @@ ifeq ($(platform),iOS)
 	linkopts_ohNet =
 	platform_prefix=iPhoneOS
 	platform_compiler=arm-apple-darwin10
+    min_ios_version=12.0
+    min_os_version_opt=-miphoneos-version-min=12.0
 	platform_arch=$(detected_openhome_architecture)
 	ifeq ($(detected_openhome_architecture),x64)
 		platform_prefix=iPhoneSimulator
 		platform_compiler=i686-apple-darwin10
 		platform_arch=x86_64
+        dotnetRuntime=osx-x64
+        min_os_version_opt=-mios-simulator-version-min=$(min_ios_version) 
+
+    else ifeq ($(detected_openhome_architecture),arm64-sim)
+        platform_prefix=iPhoneSimulator
+        platform_compiler=arm64-apple-darwin10
+        platform_arch=arm64
+        dotnetRuntime=osx-arm64
+        min_os_version_opt=-mios-simulator-version-min=$(min_ios_version) 
 	endif
 	devroot=/Applications/Xcode.app/Contents/Developer
 	toolroot=$(devroot)/Toolchains/XcodeDefault.xctoolchain/usr/bin
 	sdkroot=$(devroot)/Platforms/$(platform_prefix).platform/Developer/SDKs/$(platform_prefix).sdk
-	platform_cflags = -I$(sdkroot)/usr/include/ -miphoneos-version-min=12.0 -pipe -no-cpp-precomp -isysroot $(sdkroot) -DPLATFORM_MACOSX_GNU -DPLATFORM_IOS
+	platform_cflags = -I$(sdkroot)/usr/include/ $(min_os_version_opt) -pipe -no-cpp-precomp -isysroot $(sdkroot) -DPLATFORM_MACOSX_GNU -DPLATFORM_IOS -Wno-unused-command-line-argument
 	# TODO: Support armv6 for old devices
 	osbuilddir = $(platform)-$(detected_openhome_architecture)
 	objdir = Build/Obj/$(osbuilddir)/$(build_dir)/
@@ -194,33 +218,41 @@ ifeq ($(platform),iOS)
 	ar = $(toolroot)/ar rc $(objdir)
 	no_shared_objects = yes
 
-    dotnetFramework = net6.0-ios
-    dotnetRuntime = osx-x64
+    dotnetFramework = net8.0-ios
 endif
 
 ifeq ($(platform),Mac)
 	# Darwin, not iOS or Linux-rpi -> Mac
+    openhome_system = Mac
 	linkopts_ohNet = -Wl,-install_name,@loader_path/libohNet.dylib
     ifeq ($(detected_openhome_architecture),x64)
-		platform_cflags = -DPLATFORM_MACOSX_GNU -arch x86_64 -mmacosx-version-min=10.7
-		platform_linkflags = -arch x86_64 -framework CoreFoundation -framework SystemConfiguration -framework IOKit
-		osbuilddir = Mac-x64
-		openhome_architecture = x64
-	else
-		# building for arm64
-		platform_cflags = -DPLATFORM_MACOSX_GNU -arch arm64 -mmacosx-version-min=11
-		platform_linkflags = -arch arm64 -framework CoreFoundation -framework SystemConfiguration -framework IOKit
-		osbuilddir = Mac-arm64
-		openhome_architecture = arm64
+        mac_osx_arch = x86_64
+        osbuilddir = Mac-x64
+        openhome_architecture = x64
+        dotnetRuntime = osx-x64
+    else ifeq ($(detected_openhome_architecture),arm64-catalyst)
+        mac_osx_arch = arm64
+        osbuilddir = Mac-arm64
+        openhome_architecture = arm64
+        dotnetRuntime = maccatalyst-arm64
+        dotnetFramework = net8.0-maccatalyst
+        dotnetPublishSingleFile = false
+    else
+        mac_osx_arch = arm64
+        osbuilddir = Mac-arm64
+        openhome_architecture = arm64
+        dotnetRuntime = osx-arm64
 	endif
+
+
+    platform_cflags = -DPLATFORM_MACOSX_GNU -arch $(mac_osx_arch) -mmacosx-version-min=11 -Wno-unused-command-line-argument
+    platform_linkflags = -arch $(mac_osx_arch) -framework CoreFoundation -framework SystemConfiguration -framework IOKit
 
 	objdir = Build/Obj/$(osbuilddir)/$(build_dir)/
 	compiler = clang -fPIC -stdlib=libc++ -o $(objdir)
 	link = clang++ -pthread -stdlib=libc++ $(platform_linkflags)
 	ar = ar rc $(objdir)
-	openhome_system = Mac
 
-	dotnetRuntime = osx-x64
 endif
 
 ifeq ($(platform), Core-ppc32)
@@ -333,6 +365,7 @@ ifeq ($(vanilla_settings), yes)
 		ifeq (,$(disable_pthread_names))
 			enablepthreadnames = yes
 		endif
+		requirelibnl = yes
     else
 		platform_cflags += -DPLATFORM_QNAP
 	endif
@@ -342,6 +375,10 @@ ifeq ($(vanilla_settings), yes)
 	ifdef enablepthreadnames
 		platform_cflags += -DSET_PTHREAD_NAMES
 	endif
+endif
+
+ifeq ($(openhome_architecture), aarch64)
+	platform_cflags += -DSYS_CLOCK_MONOTONIC
 endif
 
 
@@ -369,6 +406,7 @@ inc_build = Build/Include
 includes = -IBuild/Include/ $(version_specific_includes)
 bundle_build = Build/Bundles
 mDNSdir = Build/mDNS
+libnldir = Build/libnl
 osdir ?= Posix
 objext = o
 libprefix = lib
@@ -469,6 +507,33 @@ ifeq ($(uset4), yes)
 include T4Linux.mak
 endif
 
+
+libnl_objs = \
+    $(objdir)ctrl.$(objext)         \
+	$(objdir)family.$(objext)		\
+	$(objdir)mngt.$(objext)			\
+	$(objdir)genl.$(objext)			\
+	$(objdir)msg.$(objext)			\
+	$(objdir)attr.$(objext)			\
+	$(objdir)utils.$(objext)		\
+	$(objdir)addr.$(objext)			\
+	$(objdir)data.$(objext)			\
+	$(objdir)mpls.$(objext)			\
+	$(objdir)cache.$(objext)		\
+	$(objdir)object.$(objext)		\
+	$(objdir)handlers.$(objext)		\
+	$(objdir)socket.$(objext)		\
+	$(objdir)nl_error.$(objext)		\
+	$(objdir)cache_mngt.$(objext)	\
+	$(objdir)hashtable.$(objext)	\
+	$(objdir)hash.$(objext)			\
+	$(objdir)nl.$(objext)
+
+ifdef requirelibnl
+	extra_dependencies += $(libnl_objs)
+	includes += -I$(libnldir)/include
+endif
+
 # Actual building of code is shared between platforms
 include Common.mak
 
@@ -563,9 +628,7 @@ copy_build_includes:
 	$(cp) OpenHome/Net/Device/DviStack.h $(inc_build)/OpenHome/Net/Private
 	$(cp) OpenHome/Net/Device/Tests/TestBasicDv.h $(inc_build)/OpenHome/Net/Private/Tests
 	$(cp) OpenHome/Net/Device/DviSubscription.h $(inc_build)/OpenHome/Net/Private
-	$(cp) OpenHome/Net/Device/DviPropertyUpdateCollection.h $(inc_build)/OpenHome/Net/Private
 	$(cp) OpenHome/Net/Device/FunctorDviInvocation.h $(inc_build)/OpenHome/Net/Private
-	$(cp) OpenHome/Net/Device/DviProviderSubscriptionLongPoll.h $(inc_build)/OpenHome/Net/Private
 	$(cp) OpenHome/Net/Device/Bonjour/*.h $(inc_build)/OpenHome/Net/Private
 	$(cp) OpenHome/Net/Device/Providers/*.h $(inc_build)/OpenHome/Net/Core
 	$(cp) OpenHome/Net/Device/Upnp/*.h $(inc_build)/OpenHome/Net/Private
@@ -582,12 +645,12 @@ copy_build_includes:
 	$(cp) -r OpenHome/Net/Bindings/Js/ControlPoint/Tests/*.* $(inc_build)/OpenHome/Net/Private/Js/Tests
 	$(cp) OpenHome/Net/Bindings/Js/ControlPoint/lib/*.js $(inc_build)/OpenHome/Net/Private/Js/Tests/lib
 	$(cp) OpenHome/Net/Bindings/Js/ControlPoint/Proxies/CpOpenhomeOrgTestBasic1.js $(inc_build)/OpenHome/Net/Private/Js/Tests/proxies
-	$(cp) OpenHome/Net/Bindings/Js/ControlPoint/Proxies/CpOpenhomeOrgSubscriptionLongPoll1.js $(inc_build)/OpenHome/Net/Private/Js/Tests/proxies
 	$(cp) Os/*.h $(inc_build)/OpenHome
 	$(cp) Os/*.inl $(inc_build)/OpenHome
 
 patch_thirdparty_sources:
 	$(mkdir) $(mDNSdir)
+	$(mkdir) $(libnldir)
 	$(cp) thirdparty/mDNSResponder-1310.80.1/mDNSCore/*.c $(mDNSdir)
 	$(cp) thirdparty/mDNSResponder-1310.80.1/mDNSCore/*.h $(mDNSdir)
 	$(cp) thirdparty/mDNSResponder-1310.80.1/mDNSCore/*.patch $(mDNSdir)
@@ -599,6 +662,33 @@ patch_thirdparty_sources:
 	$(cp) thirdparty/mDNSResponder-1310.80.1/mDNSShared/dns_sd_internal.h $(mDNSdir)
 	$(cp) thirdparty/mDNSResponder-1310.80.1/mDNSShared/dns_sd_private.h $(mDNSdir)
 	$(cp) thirdparty/mDNSResponder-1310.80.1/mDNSShared/mDNSFeatures.h $(mDNSdir)
+
+	$(cp) thirdparty/libnl-3.11.0/lib/genl/ctrl.c $(libnldir)
+	$(cp) thirdparty/libnl-3.11.0/lib/genl/family.c $(libnldir)
+	$(cp) thirdparty/libnl-3.11.0/lib/genl/mngt.c $(libnldir)
+	$(cp) thirdparty/libnl-3.11.0/lib/genl/genl.c $(libnldir)
+	$(cp) thirdparty/libnl-3.11.0/lib/msg.c $(libnldir)
+	$(cp) thirdparty/libnl-3.11.0/lib/attr.c $(libnldir)
+	$(cp) thirdparty/libnl-3.11.0/lib/utils.c $(libnldir)
+	$(cp) thirdparty/libnl-3.11.0/lib/addr.c $(libnldir)
+	$(cp) thirdparty/libnl-3.11.0/lib/data.c $(libnldir)
+	$(cp) thirdparty/libnl-3.11.0/lib/mpls.c $(libnldir)
+	$(cp) thirdparty/libnl-3.11.0/lib/cache.c $(libnldir)
+	$(cp) thirdparty/libnl-3.11.0/lib/object.c $(libnldir)
+	$(cp) thirdparty/libnl-3.11.0/lib/handlers.c $(libnldir)
+	$(cp) thirdparty/libnl-3.11.0/lib/socket.c $(libnldir)
+	$(cp) thirdparty/libnl-3.11.0/lib/error.c $(libnldir)
+	$(cp) thirdparty/libnl-3.11.0/lib/cache_mngt.c $(libnldir)
+	$(cp) thirdparty/libnl-3.11.0/lib/hashtable.c $(libnldir)
+	$(cp) thirdparty/libnl-3.11.0/lib/hash.c $(libnldir)
+	$(cp) thirdparty/libnl-3.11.0/lib/nl.c $(libnldir)
+
+	$(cp) -r thirdparty/libnl-3.11.0/include $(libnldir)
+
+	cp thirdparty/libnl-3.11.0/lib/nl-core.h $(libnldir)
+	# cp thirdparty/libnl-3.11.0/lib/hashtable-api.h $(libnldir)
+	cp thirdparty/libnl-3.11.0/lib/genl/nl-genl.h $(libnldir)
+	cp thirdparty/libnl-3.11.0/lib/mpls.h $(libnldir)
 
 	for i in $(mDNSdir)/*.patch; do python thirdparty/python_patch/patch.py $$i; done
 
@@ -655,11 +745,11 @@ docs:
 
 bundle-after-build: $(build_targets)
 	$(mkdir) $(bundle_build)
-	python bundle_binaries.py --system $(openhome_system) --architecture $(openhome_architecture) --configuration $(openhome_configuration)
+	python bundle_binaries.py --system $(openhome_system) --architecture $(openhome_architecture) --distro $(openhome_distro) --configuration $(openhome_configuration)
 
 bundle:
-	$(mkdir) $(bundle_build)
-	python bundle_binaries.py --system $(openhome_system) --architecture $(openhome_architecture) --configuration $(openhome_configuration)
+	$(mkdir) $(bundle_build)	
+	python bundle_binaries.py --system $(openhome_system) --architecture $(openhome_architecture) --distro $(openhome_distro) --configuration $(openhome_configuration)
 
 ifeq ($(platform),iOS)
 ohNet.net.dll :  $(objdir)ohNet.net.dll

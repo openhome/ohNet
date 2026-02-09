@@ -215,11 +215,34 @@ JNIEXPORT jint JNICALL Java_org_openhome_net_controlpoint_Invocation_CpInvocatio
 JNIEXPORT jstring JNICALL Java_org_openhome_net_controlpoint_Invocation_CpInvocationOutputString
   (JNIEnv *aEnv, jclass aClass, jlong aInvocation, jint aIndex)
 {
-	CpInvocationC invocation = (CpInvocationC) (size_t)aInvocation;
-	char *output = CpInvocationOutputString(invocation, aIndex);
-	aClass = aClass;
-	
-	return (*aEnv)->NewStringUTF(aEnv, output);
+    CpInvocationC invocation = (CpInvocationC) (size_t)aInvocation;
+    char* value;
+    uint32_t len;
+    jclass stringClass;
+    jmethodID cidString;
+    jbyteArray byteArray;
+    jstring utf8;
+    aClass = aClass;
+
+    CpInvocationGetOutputString(invocation, aIndex, &value, &len);
+
+    stringClass = (*aEnv)->FindClass(aEnv, "java/lang/String");
+    if (stringClass == NULL) {
+        printf("Unable to find class java/lang/String\n");
+        fflush(stdout);
+        return NULL;
+    }
+    cidString = (*aEnv)->GetMethodID(aEnv, stringClass, "<init>", "([BLjava/lang/String;)V");
+    if (cidString == NULL) {
+        printf("Unable to find constructor for class java/lang/String\n");
+        fflush(stdout);
+        return NULL;
+    }
+    byteArray = (*aEnv)->NewByteArray(aEnv, len);
+    (*aEnv)->SetByteArrayRegion(aEnv, byteArray, 0, len, (jbyte *) value);
+    utf8 = (*aEnv)->NewStringUTF(aEnv, "UTF-8");
+
+    return (jstring) (*aEnv)->NewObject(aEnv, stringClass, cidString, byteArray, utf8);
 }
 
 /*
