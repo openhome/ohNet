@@ -78,7 +78,7 @@ ShellCommandDebug::ShellCommandDebug(Shell& aShell)
     AddLevel("AdapterChange", Debug::kAdapterChange);
     AddLevel("CpDeviceDv", Debug::kCpDeviceDv);
 
-    AddLevel("All", Debug::kAll & (~Debug::kNetwork));
+    AddLevel("All", Debug::kAll & (~static_cast<TUint64>(Debug::kNetwork)));
 
     AddSeverity("Critical", Debug::kSeverityCritical);
     AddSeverity("Error", Debug::kSeverityError);

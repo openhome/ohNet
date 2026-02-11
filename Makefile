@@ -378,7 +378,7 @@ ifeq ($(vanilla_settings), yes)
 endif
 
 ifeq ($(openhome_architecture), aarch64)
-	platform_cflags += -DSYS_CLOCK_MONOTONIC
+	platform_cflags += -DOHNET_CORE5
 endif
 
 
