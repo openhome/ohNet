@@ -127,11 +127,8 @@ objects_core = \
 	$(objdir)Shell.$(objext) \
 	$(objdir)InfoProvider.$(objext) \
 	$(objdir)ShellCommandDebug.$(objext) \
-<<<<<<< HEAD
-	$(objdir)ShellCommandLogMode.$(objext)
-=======
+	$(objdir)ShellCommandLogMode.$(objext) \
 	$(extra_dependencies)
->>>>>>> master
 
 
 # For simplicity, we make a list of all headers in the project and have all (core) source files depend on them
