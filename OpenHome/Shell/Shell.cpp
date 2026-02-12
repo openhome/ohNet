@@ -3,6 +3,8 @@
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Debug.h>
+#include <OpenHome/Private/Timer.h>
+#include <OpenHome/Net/Private/Globals.h>
 
 using namespace OpenHome;
 
@@ -132,6 +134,13 @@ IShellLogMode& ShellSession::GetShellLogMode()
 void ShellSession::Log(const char* aMsg)
 {
     Brn msg(aMsg);
+
+    // add timestamp
+    char ts[20];
+    snprintf(ts, sizeof(ts), "%010lu: ", (unsigned long)Time::Now(*gEnv));
+    Brn tsBuf(ts);
+    iWriterResponse->Write(tsBuf);
+
     iWriterResponse->Write(msg);
     iWriterResponse->WriteFlush();
 }
