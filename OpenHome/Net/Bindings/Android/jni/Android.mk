@@ -115,6 +115,8 @@ LOCAL_SRC_FILES := $(ohroot)OpenHome/Ascii.cpp \
                    $(ohroot)OpenHome/Shell/Shell.cpp \
                    $(ohroot)OpenHome/Shell/InfoProvider.cpp \
                    $(ohroot)OpenHome/Shell/ShellCommandDebug.cpp \
+                   $(ohroot)OpenHome/Shell/ShellCommandLogMode.cpp \
+
                    ifaddrs-android.cpp
 
 include $(BUILD_SHARED_LIBRARY)
