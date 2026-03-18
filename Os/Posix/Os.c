@@ -2558,7 +2558,6 @@ static int getWifiName_callback(struct nl_msg *msg, void *arg)
 
     if (tb_msg[NL80211_ATTR_IFNAME]) {
         if (strncmp(wifiCtx->aIfNameToCheck, nla_get_string(tb_msg[NL80211_ATTR_IFNAME]), strlen(wifiCtx->aIfNameToCheck)) == 0) {
-            printf("OhNet::Os::Posix::getWifiName_callback - interface %s is wireless!\n", wifiCtx->aIfNameToCheck);
             wifiCtx->aIfNameMatched = 1;
             return NL_SKIP;
         }
