@@ -111,6 +111,7 @@ const Brn ShellSession::kCmdExit = Brn("exit");
 ShellSession::ShellSession(IShellCommandHandler& aCommandHandler)
     : iCommandHandler(aCommandHandler)
     , iShutdownSem("SSHL", 1)
+    , iTimestampDue(true)
 {
     iReadBuffer = new Srs<kMaxCommandBytes>(*this);
     iReaderUntil = new ReaderUntilS<kMaxCommandBytes>(*iReadBuffer);
@@ -135,14 +136,19 @@ void ShellSession::Log(const char* aMsg)
 {
     Brn msg(aMsg);
 
-    // add timestamp
-    char ts[20];
-    snprintf(ts, sizeof(ts), "%010lu: ", (unsigned long)Time::Now(*gEnv));
-    Brn tsBuf(ts);
-    iWriterResponse->Write(tsBuf);
+    if (iTimestampDue) {
+        char ts[20];
+        snprintf(ts, sizeof(ts), "%010lu: ", (unsigned long)Time::Now(*gEnv));
+        Brn tsBuf(ts);
+        iWriterResponse->Write(tsBuf);
+    }
 
     iWriterResponse->Write(msg);
     iWriterResponse->WriteFlush();
+
+    // if log message terminates with \n, next log call should prefix with timestamp
+    // otherwise, next log call should not prefix with timestamp (e.g. log message is being written in multiple parts)
+    iTimestampDue = (msg.Bytes() > 0 && msg[msg.Bytes()-1] == '\n');
 }
 
 void ShellSession::Run()

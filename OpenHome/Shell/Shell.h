@@ -90,6 +90,7 @@ private:
     WriterShellResponse* iWriterResponse;
     Semaphore iShutdownSem;
     ShellLogDistributor iLogDistributor;
+    TBool iTimestampDue;
 };
 
 class ShellCommandHelp;
