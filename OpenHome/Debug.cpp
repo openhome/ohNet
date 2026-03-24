@@ -5,8 +5,8 @@
 
 using namespace OpenHome;
 
-TUint64 Debug::iLevel = Debug::kNone;
-TUint Debug::iSeverity = Debug::kSeverityError;
+TUint64 Debug::iLevel = Debug::kEssential;
+TUint Debug::iSeverity = Debug::kSeverityInfo;
 
 void Debug::SetSeverity(TUint aSeverity)
 {
