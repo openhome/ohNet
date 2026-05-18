@@ -85,11 +85,13 @@ public:
     static TInt Print(const Brx& aMessage);
     static TInt Print(const TChar* aFormat, ...);
     static TInt PrintVA(const TChar* aFormat, va_list aArgs);
+    static TInt PrintWithContext(TUint64 aLevel, const Brx& aMessage);
+    static TInt PrintWithContext(TUint64 aLevel, const TChar* aFormat, ...);
     // following functions are equivalent to the Print()s above but send the formatted string to aOutput
     static TInt PrintHex(FunctorMsg& aOutput, const Brx& aMessage);
     static TInt Print(FunctorMsg& aOutput, const Brx& aMessage);
     static TInt Print(FunctorMsg& aOutput, const TChar* aFormat, va_list aArgs);
-
+    
     static void ToRam(TUint aCapacityBytes); // log to RAM, discarding content on overflow.  Flush() outputs.
     static void Flush(); // output any buffered content
 private:

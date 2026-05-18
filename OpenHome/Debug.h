@@ -27,7 +27,7 @@ private:
 
     #define LOGS(x,y,...) \
         {if( OpenHome::Debug::TestLevel(OpenHome::Debug::x) && OpenHome::Debug::TestSeverity(OpenHome::Debug::y)  ) { \
-            OpenHome::Log::Print(__VA_ARGS__); \
+            OpenHome::Log::PrintWithContext(OpenHome::Debug::x, __VA_ARGS__); \
          } \
         }
 

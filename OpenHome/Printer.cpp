@@ -92,6 +92,24 @@ TInt Log::PrintVA(const TChar* aFormat, va_list aArgs)
     return ret;
 }
 
+TInt Log::PrintWithContext(TUint64 aLevel, const Brx& aMessage)
+{
+    Lock();
+    const TInt ret = Print(LogOutput(), aMessage);
+    Unlock();
+    return ret;
+}
+
+TInt Log::PrintWithContext(TUint64 aLevel, const TChar* aFormat, ...)
+{
+    va_list args;
+    va_start(args, aFormat);
+    TInt n = PrintVA(aFormat, args);
+    va_end(args);
+    return n;
+}
+
+
 TInt Log::PrintHex(FunctorMsg& aOutput, const Brx& aBrx)
 {
     Bws<kMaxPrintBytes+1> buf(kMaxPrintBytes+1);
