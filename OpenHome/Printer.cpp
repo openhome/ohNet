@@ -103,62 +103,48 @@ TInt Log::PrintVA(const TChar* aFormat, va_list aArgs)
     return ret;
 }
 
-// TInt Log::PrintWithContext(TUint64 aLevel, const Brx& aMessage)
-// {
-//     Lock();
-//     TUint8 bitIndex = LevelToBitIndex(aLevel);
-//     TChar prefix[32];
-//     snprintf(prefix, sizeof(prefix), "[%u]", bitIndex);
-//     Brn preBuf(prefix);
-//     const TInt preRet = Print(LogOutput(), preBuf);
-//     const TInt ret = Print(LogOutput(), aMessage);
-//     Unlock();
-//     return preRet + ret;
-// }
-
-// TInt Log::PrintWithContext(TUint64 aLevel, const TChar* aFormat, ...)
-// {
-//     TUint8 bitIndex = LevelToBitIndex(aLevel);
-//     TChar prefix[32];
-//     snprintf(prefix, sizeof(prefix), "[%u]", bitIndex);
-//     Brn preBuf(prefix);
-//     Lock();
-//     const TInt preRet = Print(LogOutput(), preBuf);  
-//     Unlock();  
-//     va_list args;
-//     va_start(args, aFormat);
-//     TInt n = PrintVA(aFormat, args);
-//     va_end(args);
-//     return preRet + n;
-// }
-
-TInt Log::PrintWithContext(TUint64 aLevel, const Brx& aMessage)
+TInt Log::PrintWithContext(TUint64 aLevel, TUint aSeverity, const Brx& aMessage)
 {
     Lock();
-    TUint8 bitIndex = LevelToBitIndex(aLevel);
-    TChar prefix[32];
-    snprintf(prefix, sizeof(prefix), "[%u] ", bitIndex);
-    const TInt preRet = DoPrint(LogOutput(), (const TByte*)prefix);
+    TInt preRet = 0;
+    Log* self = gLogger;
+    if (self && self->iTimestampDue) {
+        TUint8 bitIndex = LevelToBitIndex(aLevel);
+        TChar prefix[64];
+        snprintf(prefix, sizeof(prefix), "%010lu[%u%u]: ", (unsigned long)Time::Now(*gEnv), bitIndex, aSeverity);
+        preRet = DoPrint(LogOutput(), (const TByte*)prefix);
+        self->iTimestampDue = false;
+    }
     const TInt ret = Print(LogOutput(), aMessage);
+    if (self) {
+        self->iTimestampDue = (aMessage.Bytes() > 0 && aMessage[aMessage.Bytes()-1] == '\n');
+    }
     Unlock();
     return preRet + ret;
 }
 
-TInt Log::PrintWithContext(TUint64 aLevel, const TChar* aFormat, ...)
+TInt Log::PrintWithContext(TUint64 aLevel, TUint aSeverity, const TChar* aFormat, ...)
 {
     Lock();
-    TUint8 bitIndex = LevelToBitIndex(aLevel);
-    TChar prefix[32];
-    snprintf(prefix, sizeof(prefix), "[%u] ", bitIndex);
-    const TInt preRet = DoPrint(LogOutput(), (const TByte*)prefix);
+    TInt preRet = 0;
+    Log* self = gLogger;
+    if (self && self->iTimestampDue) {
+        TUint8 bitIndex = LevelToBitIndex(aLevel);
+        TChar prefix[64];
+        snprintf(prefix, sizeof(prefix), "%010lu[%u%u]: ", (unsigned long)Time::Now(*gEnv), bitIndex, aSeverity);
+        preRet = DoPrint(LogOutput(), (const TByte*)prefix);
+        self->iTimestampDue = false;
+    }
     va_list args;
     va_start(args, aFormat);
     const TInt ret = Print(LogOutput(), aFormat, args);
     va_end(args);
+    if (self) {
+        self->iTimestampDue = true;
+    }
     Unlock();
     return preRet + ret;
 }
-
 
 TInt Log::PrintHex(FunctorMsg& aOutput, const Brx& aBrx)
 {
@@ -251,6 +237,7 @@ Log::Log(FunctorMsg& aLogOutput)
     : iLogOutput(aLogOutput)
     , iLockStdio("MLG1")
     , iLockFunctor("MLG2")
+    , iTimestampDue(true)
 {
     gLogger = this;
 }
@@ -356,8 +343,6 @@ RingBufferLogger::RingBufferLogger(TUint aBytes)
     : iMutex("RingBufferLogger")
     , iBytes(aBytes)
     , iRingBuffer(aBytes)
-    , iTimestampEnable(false)
-    , iTimestampDue(false)
 {
     // interpose our own handler, store old handler
     FunctorMsg functor = MakeFunctorMsg(*this, &RingBufferLogger::LogFunctor);
@@ -372,27 +357,12 @@ RingBufferLogger::~RingBufferLogger()
 
 void RingBufferLogger::PrefixTimestamp(TBool aEnable)
 {
-    iTimestampEnable = aEnable;
-    iTimestampDue = true;
 }
 
 void RingBufferLogger::LogFunctor(const TChar* aMsg)
 {
     AutoMutex amx(iMutex);
-
-    if (iTimestampDue) {
-#ifdef _WIN32
-# define snprintf _snprintf_s
-#endif
-        char ts[20];
-        snprintf(ts, sizeof(ts), "%010lu: ", (unsigned long)Time::Now(*gEnv));
-        iDownstreamFunctorMsg(ts);
-        Brn tsBuf(ts);
-        iRingBuffer.Write(tsBuf);
-        iTimestampDue = false;
-    }
     Brn msg(aMsg);
-    iTimestampDue = (iTimestampEnable && msg.Bytes() > 0 && msg[msg.Bytes()-1] == '\n');
     iRingBuffer.Write(msg);
     iDownstreamFunctorMsg(aMsg);
 }

@@ -70,8 +70,6 @@ private:
     TUint iBytes;
     WriterRingBuffer iRingBuffer;
     FunctorMsg iDownstreamFunctorMsg;
-    TBool iTimestampEnable;
-    TBool iTimestampDue;
 };
 
 class Log
@@ -85,8 +83,8 @@ public:
     static TInt Print(const Brx& aMessage);
     static TInt Print(const TChar* aFormat, ...);
     static TInt PrintVA(const TChar* aFormat, va_list aArgs);
-    static TInt PrintWithContext(TUint64 aLevel, const Brx& aMessage);
-    static TInt PrintWithContext(TUint64 aLevel, const TChar* aFormat, ...);
+    static TInt PrintWithContext(TUint64 aLevel, TUint aSeverity, const Brx& aMessage);
+    static TInt PrintWithContext(TUint64 aLevel, TUint aSeverity, const TChar* aFormat, ...);
     // following functions are equivalent to the Print()s above but send the formatted string to aOutput
     static TInt PrintHex(FunctorMsg& aOutput, const Brx& aMessage);
     static TInt Print(FunctorMsg& aOutput, const Brx& aMessage);
@@ -106,6 +104,7 @@ private:
     Mutex iLockStdio;
     Mutex iLockFunctor;
     RamLogger iRamLog;
+    TBool iTimestampDue;
 };
 
 } // namespace OpenHome
