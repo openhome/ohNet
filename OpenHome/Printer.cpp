@@ -58,6 +58,17 @@ inline void Log::Unlock()
     }
 }
 
+inline TUint8 Log::LevelToBitIndex(TUint64 aLevel) 
+{
+    TUint8 index = 0;
+    TUint64 level = aLevel;
+    while (level > 1) {
+        level >>= 1;
+        index++;
+    }
+    return index;  // 0-63
+}
+
 #define Min(a, b) ((a)<(b)? (a) : (b))
 TInt Log::Print(const Brx& aMessage)
 {
@@ -92,21 +103,60 @@ TInt Log::PrintVA(const TChar* aFormat, va_list aArgs)
     return ret;
 }
 
+// TInt Log::PrintWithContext(TUint64 aLevel, const Brx& aMessage)
+// {
+//     Lock();
+//     TUint8 bitIndex = LevelToBitIndex(aLevel);
+//     TChar prefix[32];
+//     snprintf(prefix, sizeof(prefix), "[%u]", bitIndex);
+//     Brn preBuf(prefix);
+//     const TInt preRet = Print(LogOutput(), preBuf);
+//     const TInt ret = Print(LogOutput(), aMessage);
+//     Unlock();
+//     return preRet + ret;
+// }
+
+// TInt Log::PrintWithContext(TUint64 aLevel, const TChar* aFormat, ...)
+// {
+//     TUint8 bitIndex = LevelToBitIndex(aLevel);
+//     TChar prefix[32];
+//     snprintf(prefix, sizeof(prefix), "[%u]", bitIndex);
+//     Brn preBuf(prefix);
+//     Lock();
+//     const TInt preRet = Print(LogOutput(), preBuf);  
+//     Unlock();  
+//     va_list args;
+//     va_start(args, aFormat);
+//     TInt n = PrintVA(aFormat, args);
+//     va_end(args);
+//     return preRet + n;
+// }
+
 TInt Log::PrintWithContext(TUint64 aLevel, const Brx& aMessage)
 {
     Lock();
+    TUint8 bitIndex = LevelToBitIndex(aLevel);
+    TChar prefix[32];
+    snprintf(prefix, sizeof(prefix), "[%u] ", bitIndex);
+    const TInt preRet = DoPrint(LogOutput(), (const TByte*)prefix);
     const TInt ret = Print(LogOutput(), aMessage);
     Unlock();
-    return ret;
+    return preRet + ret;
 }
 
 TInt Log::PrintWithContext(TUint64 aLevel, const TChar* aFormat, ...)
 {
+    Lock();
+    TUint8 bitIndex = LevelToBitIndex(aLevel);
+    TChar prefix[32];
+    snprintf(prefix, sizeof(prefix), "[%u] ", bitIndex);
+    const TInt preRet = DoPrint(LogOutput(), (const TByte*)prefix);
     va_list args;
     va_start(args, aFormat);
-    TInt n = PrintVA(aFormat, args);
+    const TInt ret = Print(LogOutput(), aFormat, args);
     va_end(args);
-    return n;
+    Unlock();
+    return preRet + ret;
 }
 
 

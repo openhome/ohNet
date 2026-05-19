@@ -100,6 +100,7 @@ private:
     static inline FunctorMsg& LogOutput();
     static inline void Lock();
     static inline void Unlock();
+    static inline TUint8 LevelToBitIndex(TUint64 aLevel);
 private:
     FunctorMsg iLogOutput;
     Mutex iLockStdio;
