@@ -126,24 +126,52 @@ TInt Log::PrintWithContext(TUint64 aLevel, TUint aSeverity, const Brx& aMessage)
 TInt Log::PrintWithContext(TUint64 aLevel, TUint aSeverity, const TChar* aFormat, ...)
 {
     Lock();
-    TInt preRet = 0;
+
+    TInt prefixRet = 0;
+    TInt msgRet = 0;
     Log* self = gLogger;
-    if (self && self->iTimestampDue) {
-        TUint8 bitIndex = LevelToBitIndex(aLevel);
-        TChar prefix[64];
-        snprintf(prefix, sizeof(prefix), "%010lu[%u%u]: ", (unsigned long)Time::Now(*gEnv), bitIndex, aSeverity);
-        preRet = DoPrint(LogOutput(), (const TByte*)prefix);
-        self->iTimestampDue = false;
-    }
+    TChar temp[kMaxPrintBytes + 1];
     va_list args;
     va_start(args, aFormat);
-    const TInt ret = Print(LogOutput(), aFormat, args);
-    va_end(args);
+
     if (self) {
-        self->iTimestampDue = true;
+        self->iLockStdio.Wait();
     }
+    const TInt n = vsnprintf(temp, sizeof(temp), aFormat, args);
+    if (self) {
+        self->iLockStdio.Signal();
+    }
+
+    va_end(args);
+    TInt len;
+    if (n < 0) { //vsnprintf failed
+        temp[0] = '\0';
+        len = 0;
+    }
+    else if (n >= (TInt)sizeof(temp)) {
+        // vsnprintf truncates but still null-terminates
+        len = sizeof(temp) - 1;
+    }
+    else {
+        len = n;
+    }
+
+    if (self && self->iTimestampDue) {
+        const TUint8 bitIndex = LevelToBitIndex(aLevel);
+        TChar prefix[64];
+        snprintf(prefix, sizeof(prefix),"%010lu[%u|%u]: ", (unsigned long)Time::Now(*gEnv), bitIndex, aSeverity);
+        prefixRet = DoPrint(LogOutput(), (const TByte*)prefix);
+        self->iTimestampDue = false;
+    }
+
+    msgRet = DoPrint(LogOutput(), (const TByte*)temp);
+
+    if (self) {
+        self->iTimestampDue = (len > 0 && temp[len - 1] == '\n');
+    }
+
     Unlock();
-    return preRet + ret;
+    return prefixRet + msgRet;
 }
 
 TInt Log::PrintHex(FunctorMsg& aOutput, const Brx& aBrx)
