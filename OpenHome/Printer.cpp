@@ -106,13 +106,17 @@ TInt Log::PrintVA(const TChar* aFormat, va_list aArgs)
 TInt Log::PrintWithContext(TUint64 aLevel, TUint aSeverity, const Brx& aMessage)
 {
     Lock();
-    TInt preRet = 0;
+    TInt prefixRet = 0;
     Log* self = gLogger;
     if (self && self->iTimestampDue) {
         TUint8 bitIndex = LevelToBitIndex(aLevel);
         TChar prefix[64];
-        snprintf(prefix, sizeof(prefix), "%010lu[%u%u]: ", (unsigned long)Time::Now(*gEnv), bitIndex, aSeverity);
-        preRet = DoPrint(LogOutput(), (const TByte*)prefix);
+        snprintf(prefix, sizeof(prefix),
+            "%010lu[%lu|%lu]: ",
+            (unsigned long)Time::Now(*gEnv),
+            (unsigned long)bitIndex,
+            (unsigned long)aSeverity);
+        prefixRet = DoPrint(LogOutput(), (const TByte*)prefix);
         self->iTimestampDue = false;
     }
     const TInt ret = Print(LogOutput(), aMessage);
@@ -120,7 +124,7 @@ TInt Log::PrintWithContext(TUint64 aLevel, TUint aSeverity, const Brx& aMessage)
         self->iTimestampDue = (aMessage.Bytes() > 0 && aMessage[aMessage.Bytes()-1] == '\n');
     }
     Unlock();
-    return preRet + ret;
+    return prefixRet + ret;
 }
 
 TInt Log::PrintWithContext(TUint64 aLevel, TUint aSeverity, const TChar* aFormat, ...)
@@ -159,7 +163,11 @@ TInt Log::PrintWithContext(TUint64 aLevel, TUint aSeverity, const TChar* aFormat
     if (self && self->iTimestampDue) {
         const TUint8 bitIndex = LevelToBitIndex(aLevel);
         TChar prefix[64];
-        snprintf(prefix, sizeof(prefix),"%010lu[%u|%u]: ", (unsigned long)Time::Now(*gEnv), bitIndex, aSeverity);
+        snprintf(prefix, sizeof(prefix),
+            "%010lu[%lu|%lu]: ",
+            (unsigned long)Time::Now(*gEnv),
+            (unsigned long)bitIndex,
+            (unsigned long)aSeverity);
         prefixRet = DoPrint(LogOutput(), (const TByte*)prefix);
         self->iTimestampDue = false;
     }
