@@ -80,18 +80,14 @@ add_library(ohNetCore STATIC
         OpenHome/Net/Bindings/C/Device/DvInvocationC.cpp
         OpenHome/Net/Bindings/Cpp/Device/DvInvocationStd.cpp
         OpenHome/Net/Device/Upnp/DviProtocolUpnp.cpp
-        OpenHome/Net/Device/DviProviderSubscriptionLongPoll.cpp
-        OpenHome/Net/Device/Providers/DvOpenhomeOrgSubscriptionLongPoll1.cpp
         OpenHome/Net/Device/DviServer.cpp
         OpenHome/Net/Device/Upnp/DviServerUpnp.cpp
-        OpenHome/Net/Device/Upnp/DviServerWebSocket.cpp
         OpenHome/Net/Device/Lpec/DviProtocolLpec.cpp
         OpenHome/Net/Device/Lpec/DviServerLpec.cpp
         OpenHome/Net/Device/DviService.cpp
         OpenHome/Net/Device/Upnp/DviSsdpNotifier.cpp
         OpenHome/Net/Device/DviStack.cpp
         OpenHome/Net/Device/DviSubscription.cpp
-        OpenHome/Net/Device/DviPropertyUpdateCollection.cpp
         OpenHome/Net/Device/DvProvider.cpp
         OpenHome/Net/Bindings/C/Device/DvProviderC.cpp
         OpenHome/Net/Device/DvServerUpnp.cpp
