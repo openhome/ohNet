@@ -1,0 +1,18 @@
+name: Linux-x64 Build
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build-linux-x64:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Build toolchain image
+        run: docker build -t ohnet-linux-x64-ci -f .github/docker/linux-x64/Dockerfile .github/docker/linux-x64
+
+      - name: Run hudson_build.py (Linux-x64, commit build)
+        run: docker run --rm -v "${{ github.workspace }}:/workspace" -w /workspace ohnet-linux-x64-ci python2.7 hudson_build.py --platform Linux-x64
