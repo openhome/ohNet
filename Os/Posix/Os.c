@@ -157,7 +157,7 @@ typedef struct SleepWake
 #endif
 
 struct OsContext {
-#ifdef OHNET_CORE5
+#ifdef OHNET_CLOCK_MONOTONIC
     struct timespec iStartTime; /* Time OsCreate was called */
 #else
     struct timeval iStartTime; /* Time OsCreate was called */
@@ -240,7 +240,7 @@ static void OsDestroyOsMutexes(OsContext* aContext)
 OsContext* OsCreate(OsThreadSchedulePolicy aSchedulerPolicy)
 {
     OsContext* ctx = calloc(1, sizeof(*ctx));
-#ifdef OHNET_CORE5
+#ifdef OHNET_CLOCK_MONOTONIC 
     clock_gettime(CLOCK_MONOTONIC, &ctx->iStartTime);
 #else
     gettimeofday(&ctx->iStartTime, NULL);
@@ -421,7 +421,7 @@ void OsStackTraceFinalise(THandle aStackTrace)
 #endif /* STACK_TRACE_ENABLE */
 }
 
-#ifdef OHNET_CORE5
+#ifdef OHNET_CLOCK_MONOTONIC
 static struct timespec timespecSubtract(struct timespec* aT1, struct timespec* aT2)
 {
     struct timespec diff;

@@ -377,8 +377,11 @@ ifeq ($(vanilla_settings), yes)
 	endif
 endif
 
+# TODO: should this be for all aarch64, just all scarthgap or check linux kernel version?
 ifeq ($(openhome_architecture), aarch64)
-	platform_cflags += -DOHNET_CORE5
+	platform_cflags += -DOHNET_CLOCK_MONOTONIC
+else ifeq ($(openhome_distro), scarthgap)
+	platform_cflags += -DOHNET_CLOCK_MONOTONIC
 endif
 
 
