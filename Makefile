@@ -380,10 +380,10 @@ endif
 # TODO: should this be for all aarch64, just all scarthgap or check linux kernel version?
 ifeq ($(openhome_architecture), aarch64)
 	platform_cflags += -DOHNET_CLOCK_MONOTONIC
-	platform_cflags += -DOHNET_LINUX_SO_BINDTODEVICE
+	platform_cflags += -DOHNET_LINUX_MULTICAST_IF
 else ifeq ($(openhome_distro), scarthgap)
 	platform_cflags += -DOHNET_CLOCK_MONOTONIC
-	platform_cflags += -DOHNET_LINUX_SO_BINDTODEVICE
+	platform_cflags += -DOHNET_LINUX_MULTICAST_IF
 endif
 
 

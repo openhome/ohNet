@@ -1252,7 +1252,7 @@ exit:
     return index;
 }
 
-#if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD) && defined(OHNET_LINUX_SO_BINDTODEVICE)
+#if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD) && defined(OHNET_LINUX_MULTICAST_IF)
 static int32_t GetInterfaceName(const TIpAddress* aAddress, char* aNameOut, size_t aNameOutBytes)
 {
     int32_t found = -1;
@@ -1284,7 +1284,7 @@ static int32_t GetInterfaceName(const TIpAddress* aAddress, char* aNameOut, size
     freeifaddrs(networkIf);
     return found;
 }
-#endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD && OHNET_LINUX_SO_BINDTODEVICE */
+#endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD && OHNET_LINUX_MULTICAST_IF */
 
 int32_t sockaddrFromEndpoint(struct sockaddr* aAddr, const TIpAddress* aAddress, uint16_t aPort)
 {
@@ -1386,22 +1386,22 @@ int32_t OsNetworkBindMulticast(THandle aHandle, TIpAddress aAdapter, TIpAddress 
             addr.iV6[i] = in6addr_any.s6_addr[i];
         }
     }
-#if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD) && defined(OHNET_LINUX_SO_BINDTODEVICE)
-    /* Linux does not scope delivery of multicast datagrams to the interface a
-       group was joined on - a datagram that physically arrives on a different
-       adapter can still be delivered to this socket. This matters when two
-       adapters (e.g. wired + wireless) share a subnet, where it can otherwise
-       cause SSDP traffic to appear to arrive on/leave from the wrong adapter.
-       Pin reception to aAdapter's interface explicitly where possible; this is
-       best-effort since it requires CAP_NET_RAW and a resolvable interface name. */
-    {
-        OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
-        char ifName[16]; // Linux IFNAMSIZ
-        if (GetInterfaceName(&aAdapter, ifName, sizeof(ifName)) == 0) {
-            setsockopt(handle->iSocket, SOL_SOCKET, SO_BINDTODEVICE, ifName, strlen(ifName) + 1);
-        }
-    }
-#endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD && OHNET_LINUX_SO_BINDTODEVICE */
+// #if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD) && defined(OHNET_LINUX_SO_BINDTODEVICE)
+//     /* Linux does not scope delivery of multicast datagrams to the interface a
+//        group was joined on - a datagram that physically arrives on a different
+//        adapter can still be delivered to this socket. This matters when two
+//        adapters (e.g. wired + wireless) share a subnet, where it can otherwise
+//        cause SSDP traffic to appear to arrive on/leave from the wrong adapter.
+//        Pin reception to aAdapter's interface explicitly where possible; this is
+//        best-effort since it requires CAP_NET_RAW and a resolvable interface name. */
+//     {
+//         OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
+//         char ifName[16]; // Linux IFNAMSIZ
+//         if (GetInterfaceName(&aAdapter, ifName, sizeof(ifName)) == 0) {
+//             setsockopt(handle->iSocket, SOL_SOCKET, SO_BINDTODEVICE, ifName, strlen(ifName) + 1);
+//         }
+//     }
+// #endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD && OHNET_LINUX_SO_BINDTODEVICE */
     return OsNetworkBind(aHandle, addr, aPort);
 }
 
@@ -1913,7 +1913,7 @@ int32_t OsNetworkSocketSetMulticastIf(THandle aHandle, TIpAddress aInterface)
 #if defined(PLATFORM_MACOSX_GNU) || defined(PLATFORM_FREEBSD)
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
     err = setsockopt(handle->iSocket, IPPROTO_IP, IP_MULTICAST_IF, &aInterface.iV4, sizeof(aInterface));
-#elif defined(OHNET_LINUX_SO_BINDTODEVICE)
+#elif defined(OHNET_LINUX_MULTICAST_IF)
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
     if (aInterface.iFamily == kFamilyV6) {
         // Not implemented for IPv6: egress interface selection is left to the routing table, as before.
