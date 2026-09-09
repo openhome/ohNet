@@ -808,10 +808,12 @@ void CpiDeviceListUpnp::Refresh()
 void CpiDeviceListUpnp::DoRefresh()
 {
     Start();
+    iLock.Wait();
     CpDeviceMap::iterator it = iMap.begin();
     for (; it != iMap.end(); ++it) {
         reinterpret_cast<CpiDeviceUpnp*>(it->second->OwnerData())->CheckStillAvailable();
     }
+    iLock.Signal();
     TUint delayMs = iCpStack.Env().InitParams()->MsearchTimeSecs() * 1000;
     delayMs += 500; /* allow slightly longer to cope with wifi delays and devices
                        which send out Alive messages at the last possible moment */
