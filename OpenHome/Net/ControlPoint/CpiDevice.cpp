@@ -257,10 +257,10 @@ void CpiDeviceList::Add(CpiDevice* aDevice)
     Brn udn(aDevice->Udn());
     iMap.insert(std::pair<Brn,CpiDevice*>(udn, aDevice));
     aDevice->AddRef(); // for observer
+    iLock.Signal();
     if (IsDeviceReady(*aDevice)) {
         SetDeviceReady(*aDevice);
     }
-    iLock.Signal();
     aDevice->RemoveRef(); // observer's ref
 }
 
