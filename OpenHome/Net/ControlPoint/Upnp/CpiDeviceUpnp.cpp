@@ -528,8 +528,9 @@ void CpiDeviceUpnp::XmlFetchCompleted(IAsync& aAsync)
 {
     iLock.Wait();
     iXmlFetch = NULL;
-    iLock.Signal();
     TBool err = iRemoved;
+    iLock.Signal();
+
     if (!err) {
         try {
             XmlFetch::Xml(aAsync).TransferTo(iXml);
