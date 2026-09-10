@@ -490,7 +490,10 @@ void CpiDeviceUpnp::XmlFetchReadUdnCompleted(IAsync& aAsync)
     iLock.Wait();
     iXmlFetch = NULL;
     iLock.Signal();
-    TBool err = iRemoved;
+
+    // NOTE: This callback happens when the device has been added to ohNet via it's previous location. At this point
+    //       we're not in a list and so can't be removed.
+    TBool err = false;
     try {
         XmlFetch::Xml(aAsync).TransferTo(iXml);
         iDeviceXmlDocument = new DeviceXmlDocument(iXml);
