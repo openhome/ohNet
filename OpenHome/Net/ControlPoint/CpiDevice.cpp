@@ -275,6 +275,7 @@ void CpiDeviceList::Remove(const Brx& aUdn)
         return;
     }
     CpiDevice* device = RefDeviceLocked(aUdn);
+    device->SetRemoved();
     iMap.erase(it);
     iPendingRemove.push_back(device);
     iCpStack.DeviceListUpdater().QueueRemoved(*this, *device);
