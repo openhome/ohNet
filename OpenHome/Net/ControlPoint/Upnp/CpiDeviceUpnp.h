@@ -100,7 +100,6 @@ private:
     CpiDeviceListUpnp* iList;
     Invocable* iInvocable;
     Semaphore iSemReady;
-    TBool iRemoved;
     TBool iHostUdpIsLowQuality;
     CpiDeviceUpnp* iNewLocation;
     XmlFetch* iXmlCheckLocation;

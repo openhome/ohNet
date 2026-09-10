@@ -43,7 +43,6 @@ CpiDeviceUpnp::CpiDeviceUpnp(CpStack& aCpStack, const Brx& aUdn, const Brx& aLoc
     , iDeviceList(aDeviceList)
     , iList(&aList)
     , iSemReady("CDUS", 0)
-    , iRemoved(false)
     , iNewLocation(NULL)
     , iXmlCheckLocation(NULL)
     , iXmlCheckRefresh(NULL)
@@ -68,7 +67,6 @@ CpiDeviceUpnp::CpiDeviceUpnp(CpStack& aCpStack, const Brx& aLocation, IDeviceRem
     , iDeviceList(aDeviceList)
     , iList(&aList)
     , iSemReady("CDUS", 0)
-    , iRemoved(false)
     , iNewLocation(NULL)
     , iXmlCheckLocation(NULL)
     , iXmlCheckRefresh(NULL)
@@ -299,9 +297,6 @@ TBool CpiDeviceUpnp::OrphanSubscriptionsOnSubnetChange() const
 
 void CpiDeviceUpnp::NotifyRemovedBeforeReady()
 {
-    iLock.Wait();
-    iRemoved = true;
-    iLock.Signal();
     InterruptXmlFetch();
     iSemReady.Wait();
 }
@@ -528,7 +523,7 @@ void CpiDeviceUpnp::XmlFetchCompleted(IAsync& aAsync)
 {
     iLock.Wait();
     iXmlFetch = NULL;
-    TBool err = iRemoved;
+    TBool err = iList == NULL; // iList is null when removed
     iLock.Signal();
 
     if (!err) {
@@ -570,8 +565,9 @@ void CpiDeviceUpnp::XmlCheckLocationCompleted(IAsync& aAsync)
     iXmlCheckLocation = NULL;
     CpiDeviceUpnp* newLocation = iNewLocation;
     iNewLocation = NULL;
+    TBool removed = iList == NULL; // iList is null when removed
     iLock.Signal();
-    if (!iRemoved) {
+    if (!removed) {
         TBool contactable = false;
         try {
             contactable = XmlFetch::WasContactable(aAsync);
@@ -596,8 +592,9 @@ void CpiDeviceUpnp::XmlCheckRefreshCompleted(IAsync& aAsync)
 {
     iLock.Wait();
     iXmlCheckRefresh = NULL;
+    TBool removed = iList == NULL; // iList is null when removed
     iLock.Signal();
-    if (!iRemoved) {
+    if (!removed) {
         TBool interrupted = false;
         TBool contactable = false;
 
