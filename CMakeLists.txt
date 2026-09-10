@@ -146,6 +146,7 @@ add_library(ohNetCore STATIC
         OpenHome/Shell/Shell.cpp
         OpenHome/Shell/InfoProvider.cpp
         OpenHome/Shell/ShellCommandDebug.cpp
+        OpenHome/Shell/ShellCommandLogMode.cpp
         ${OH_OS_DIR}Os.c
         ${OH_OS_DIR}File.cpp
         ${OH_OS_DIR}TerminalOs.cpp
