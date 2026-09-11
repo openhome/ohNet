@@ -32,90 +32,91 @@ public:
 private:
     Mutex iLock;
     std::string iTargetUdn;
-    std::vector<CpDeviceCpp*> iList;
-    std::vector<CpDeviceCpp*> iSeenDevices;
+    CpDeviceCpp* iTargetDevice;
+    CpDeviceCpp* iLastSeenTargetDevice;
     Semaphore& iAddedSem;
 };
 
 CpDevices::CpDevices(const std::string& aTargetUdn, Semaphore& aAddedSem)
     : iLock("DLMX")
     , iTargetUdn(aTargetUdn)
+    , iTargetDevice(nullptr)
+    , iLastSeenTargetDevice(nullptr)
     , iAddedSem(aAddedSem)
 {
 }
 
 CpDevices::~CpDevices()
 {
-    const TUint count = (TUint)iList.size();
-    for (TUint i=0; i<count; i++) {
-        iList[i]->RemoveRef();
+    if (iTargetDevice != nullptr) {
+        iTargetDevice->RemoveRef();
+        iTargetDevice = nullptr;
     }
 
-    for (TUint i = 0; i < iSeenDevices.size(); i += 1) {
-        iSeenDevices[i]->RemoveRef();
+    if (iLastSeenTargetDevice != nullptr) {
+        iLastSeenTargetDevice->RemoveRef();
+        iLastSeenTargetDevice = nullptr;
     }
-    iSeenDevices.clear();
-
-    iList.clear();
 }
 
 void CpDevices::TestActions()
 {
-    ASSERT(iList.size() != 0);
-    CpDeviceCpp* device = iList[0];
-    TestBasicCp::TestActions(*device);
+    ASSERT(iTargetDevice != nullptr);
+    TestBasicCp::TestActions(*iTargetDevice);
 }
 
 void CpDevices::TestThrowsWhenDisabled()
 {
-    ASSERT(iSeenDevices.size() != 0);
-    CpDeviceCpp* device = iSeenDevices[0];
-    ASSERT(device->Udn() == iTargetUdn);
-    TestBasicCp::TestThrowsWhenDisabled(*device);
+    ASSERT(iTargetDevice == nullptr);
+    ASSERT(iLastSeenTargetDevice != nullptr);
+    TestBasicCp::TestThrowsWhenDisabled(*iLastSeenTargetDevice);
 }
 
 void CpDevices::TestThrowsCustomError()
 {
-    ASSERT(iList.size() != 0);
-    CpDeviceCpp* device = iList[0];
-    TestBasicCp::TestThrowsCustomError(*device);
+    ASSERT(iTargetDevice != nullptr);
+    TestBasicCp::TestThrowsCustomError(*iTargetDevice);
 }
 
 void CpDevices::TestSubscriptions()
 {
-    ASSERT(iList.size() != 0);
-    CpDeviceCpp* device = iList[0];
-    TestBasicCp::TestSubscriptions(*device);
+    ASSERT(iTargetDevice != nullptr);
+    TestBasicCp::TestSubscriptions(*iTargetDevice);
 }
 
 void CpDevices::Added(CpDeviceCpp& aDevice)
 {
     iLock.Wait();
 
-    iSeenDevices.push_back(&aDevice);
-    aDevice.AddRef();
+    if (aDevice.Udn() == iTargetUdn) {
+        ASSERT(iTargetDevice == nullptr);
+        iTargetDevice = &aDevice;
+        iTargetDevice->AddRef();
 
-    if (iList.size() == 0 && aDevice.Udn() == iTargetUdn) {
-        iList.push_back(&aDevice);
-        aDevice.AddRef();
+        if (iLastSeenTargetDevice) {
+            iLastSeenTargetDevice->RemoveRef();
+        }
+        iLastSeenTargetDevice = &aDevice;
+        iLastSeenTargetDevice->AddRef();
+
         iAddedSem.Signal();
     }
+
     iLock.Signal();
 }
 
 void CpDevices::Removed(CpDeviceCpp& aDevice)
 {
     iLock.Wait();
-    std::vector<CpDeviceCpp*>::iterator it = iList.begin();
-    while (it != iList.end()) {
-        if ((*it)->Udn() == aDevice.Udn()) {
-            iList.erase(it);
-            aDevice.RemoveRef();
-            break;
+
+    if (aDevice.Udn() == iTargetUdn) {
+        if (iTargetDevice) {
+            iTargetDevice->RemoveRef();
+            iTargetDevice = nullptr;
         }
     }
-    iLock.Signal();
 
+    iLock.Signal();
 }
 
 
