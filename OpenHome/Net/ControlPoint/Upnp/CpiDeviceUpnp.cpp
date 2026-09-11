@@ -810,11 +810,21 @@ void CpiDeviceListUpnp::DoRefresh()
 {
     Start();
     iLock.Wait();
+    std::vector<CpiDevice*> devices;
+    devices.reserve(iMap.size());
     CpDeviceMap::iterator it = iMap.begin();
-    for (; it != iMap.end(); ++it) {
-        reinterpret_cast<CpiDeviceUpnp*>(it->second->OwnerData())->CheckStillAvailable();
+    while (it != iMap.end()) {
+        devices.push_back(it->second);
+        it->second->AddRef();
+        it++;
     }
     iLock.Signal();
+
+    for (TUint i = 0; i < devices.size(); i += 1) {
+        reinterpret_cast<CpiDeviceUpnp*>(devices[i]->OwnerData())->CheckStillAvailable();
+        devices[i]->RemoveRef();
+    }
+
     TUint delayMs = iCpStack.Env().InitParams()->MsearchTimeSecs() * 1000;
     delayMs += 500; /* allow slightly longer to cope with wifi delays and devices
                        which send out Alive messages at the last possible moment */
