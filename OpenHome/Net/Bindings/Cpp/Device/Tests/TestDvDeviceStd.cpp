@@ -33,6 +33,7 @@ private:
     Mutex iLock;
     std::string iTargetUdn;
     std::vector<CpDeviceCpp*> iList;
+    std::vector<CpDeviceCpp*> iSeenDevices;
     Semaphore& iAddedSem;
 };
 
@@ -49,6 +50,12 @@ CpDevices::~CpDevices()
     for (TUint i=0; i<count; i++) {
         iList[i]->RemoveRef();
     }
+
+    for (TUint i = 0; i < iSeenDevices.size(); i += 1) {
+        iSeenDevices[i]->RemoveRef();
+    }
+    iSeenDevices.clear();
+
     iList.clear();
 }
 
@@ -61,8 +68,9 @@ void CpDevices::TestActions()
 
 void CpDevices::TestThrowsWhenDisabled()
 {
-    ASSERT(iList.size() != 0);
-    CpDeviceCpp* device = iList[0];
+    ASSERT(iSeenDevices.size() != 0);
+    CpDeviceCpp* device = iSeenDevices[0];
+    ASSERT(device->Udn() == iTargetUdn);
     TestBasicCp::TestThrowsWhenDisabled(*device);
 }
 
@@ -83,6 +91,10 @@ void CpDevices::TestSubscriptions()
 void CpDevices::Added(CpDeviceCpp& aDevice)
 {
     iLock.Wait();
+
+    iSeenDevices.push_back(&aDevice);
+    aDevice.AddRef();
+
     if (iList.size() == 0 && aDevice.Udn() == iTargetUdn) {
         iList.push_back(&aDevice);
         aDevice.AddRef();
@@ -91,8 +103,19 @@ void CpDevices::Added(CpDeviceCpp& aDevice)
     iLock.Signal();
 }
 
-void CpDevices::Removed(CpDeviceCpp& /*aDevice*/)
+void CpDevices::Removed(CpDeviceCpp& aDevice)
 {
+    iLock.Wait();
+    std::vector<CpDeviceCpp*>::iterator it = iList.begin();
+    while (it != iList.end()) {
+        if ((*it)->Udn() == aDevice.Udn()) {
+            iList.erase(it);
+            aDevice.RemoveRef();
+            break;
+        }
+    }
+    iLock.Signal();
+
 }
 
 
@@ -144,6 +167,7 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
         sem->Wait();
         deviceList->TestThrowsWhenDisabled();
         device->Device().SetEnabled();
+        sem->Wait(30 * 1000); // allow up to 30s for the device to be discovered again
         deviceList->TestThrowsCustomError();
         deviceList->TestSubscriptions();
     }

@@ -108,7 +108,7 @@ void TestBasicCp::TestSubscriptions(CpDeviceCpp& aDevice)
     Functor functor = MakeFunctor(&sem, updatesComplete);
     proxy->SetPropertyChanged(functor);
     proxy->Subscribe();
-    sem.Wait(); // wait for initial event
+    sem.Wait(5 * 1000); // wait for initial event, failing after 5seconds should the device not respond/not be enabled
 
     /* For each property,
          call the setter action it
