@@ -339,44 +339,50 @@ void ReaderHttpRequest::Read(TUint aTimeoutMs)
     iMethod = 0;
     ResetHeaders();
 
-    for (;;) {
-        if (aTimeoutMs > 0) {
-            iTimer->FireIn(aTimeoutMs);
+    if (aTimeoutMs > 0) {
+        iTimer->FireIn(aTimeoutMs);
+    }
+
+    try {
+        for (;;) {
+            Brn line = Ascii::Trim(iReader.ReadUntil(Ascii::kLf));
+    //        LOG(kHttp, "HTTP Read Request    %.*s\n", PBUF(line));
+            TUint bytes = line.Bytes();
+            if (!bytes) {
+                if (count == 0) {
+                    continue; // a blank line before first header - ignore (RFC 2616 section 4.1)
+                }
+                if (iMethod == 0) {
+                    THROW(HttpError);
+                }
+                return;
+            }
+
+            if (Ascii::IsWhitespace(line[0])) {
+                continue; // a line starting with spaces is a continuation line
+            }
+
+            Parser parser(line);
+
+            if (count == 0) { // method
+                Brn method = parser.Next();
+                Brn uri = parser.Next();
+                Brn version = Ascii::Trim(parser.Remaining());
+                ProcessMethod(method, uri, version);
+            }
+            else { // header
+                Brn field = parser.Next(':');
+                Brn value = Ascii::Trim(parser.Remaining());
+                ProcessHeader(field, value);
+            }
+            count++;
         }
-        Brn line = Ascii::Trim(iReader.ReadUntil(Ascii::kLf));
+    }
+    catch (Exception&) {
         if (aTimeoutMs > 0) {
             iTimer->Cancel();
         }
-//        LOG(kHttp, "HTTP Read Request    %.*s\n", PBUF(line));
-        TUint bytes = line.Bytes();
-        if (!bytes) {
-            if (count == 0) {
-                continue; // a blank line before first header - ignore (RFC 2616 section 4.1)
-            }
-            if (iMethod == 0) {
-                THROW(HttpError);
-            }
-            return;
-        }
-
-        if (Ascii::IsWhitespace(line[0])) {
-            continue; // a line starting with spaces is a continuation line
-        }
-
-        Parser parser(line);
-
-        if (count == 0) { // method
-            Brn method = parser.Next();
-            Brn uri = parser.Next();
-            Brn version = Ascii::Trim(parser.Remaining());
-            ProcessMethod(method, uri, version);
-        }
-        else { // header
-            Brn field = parser.Next(':');
-            Brn value = Ascii::Trim(parser.Remaining());
-            ProcessHeader(field, value);
-        }
-        count++;
+        throw;
     }
 }
 
@@ -482,43 +488,51 @@ void ReaderHttpResponse::Read(TUint aTimeoutMs)
     iReader.ReadFlush();
     ResetHeaders();
     TUint count = 0;
-    for (;;) {
-        if (aTimeoutMs > 0) {
-            iTimer->FireIn(aTimeoutMs);
+    if (aTimeoutMs > 0) {
+        iTimer->FireIn(aTimeoutMs);
+    }
+    try {
+        for (;;) {
+            Brn line = Ascii::Trim(iReader.ReadUntil(Ascii::kLf));
+            LOG(kHttp, "HTTP Read Response   %.*s\n", PBUF(line));
+            TUint bytes = line.Bytes();
+            if (!bytes) {
+                if (count == 0) {
+                    continue; // a blank line before first header - ignore (RFC 2616 section 4.1)
+                }
+                if (aTimeoutMs > 0) {
+                    iTimer->Cancel();
+                }
+                return;
+            }
+
+            if (Ascii::IsWhitespace(line[0])) {
+                continue; // a line starting with spaces is a continuation line
+            }
+
+            Parser parser(line);
+
+            if (count == 0) { // status
+     //            LOG(kHttp, " status   ");
+                Brn version = parser.Next(' ');
+                Brn code = parser.Next(' ');
+                Brn description = Ascii::Trim(parser.Remaining());
+                ProcessStatus(version, code, description);
+            }
+            else { // header
+    //            LOG(kHttp, " header  ");
+                Brn field = parser.Next(':');
+                Brn value = Ascii::Trim(parser.Remaining());
+                ProcessHeader(field, value);
+            }
+            count++;
         }
-        Brn line = Ascii::Trim(iReader.ReadUntil(Ascii::kLf));
+    }
+    catch (Exception&) {
         if (aTimeoutMs > 0) {
             iTimer->Cancel();
         }
-        LOG(kHttp, "HTTP Read Response   %.*s\n", PBUF(line));
-        TUint bytes = line.Bytes();
-        if (!bytes) {
-            if (count == 0) {
-                continue; // a blank line before first header - ignore (RFC 2616 section 4.1)
-            }
-            return;
-        }
-
-        if (Ascii::IsWhitespace(line[0])) {
-            continue; // a line starting with spaces is a continuation line
-        }
-
-        Parser parser(line);
-
-        if (count == 0) { // status
- //            LOG(kHttp, " status   ");
-            Brn version = parser.Next(' ');
-            Brn code = parser.Next(' ');
-            Brn description = Ascii::Trim(parser.Remaining());
-            ProcessStatus(version, code, description);
-        }
-        else { // header
-//            LOG(kHttp, " header  ");
-            Brn field = parser.Next(':');
-            Brn value = Ascii::Trim(parser.Remaining());
-            ProcessHeader(field, value);
-        }
-        count++;
+        throw;
     }
 }
 
