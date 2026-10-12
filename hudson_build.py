@@ -249,7 +249,9 @@ class JenkinsBuild():
                 self.fetch_dependencies()
 
                 # Parse yocto environment file, set up for build
-                env_string = subprocess.check_output(". dependencies/%s/%s/environment-setup-%s && env" % (self.platform, toolchain_name[arch], toolchain_arch[arch]), shell=True)
+                env_string = subprocess.check_output(". dependencies/%s/%s/environment-setup-%s && env" % (
+                    {self.platform["arch"]}-{self.platform["distro"]}-{self.platform["os"]}, 
+                    toolchain_name[arch], toolchain_arch[arch]), shell=True)
                 for el in env_string.decode("utf-8").split("\n"):
                     if "=" in el:
                         os.environ[el.split("=")[0]] = el.split("=", 1)[1]
