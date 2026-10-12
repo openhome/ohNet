@@ -212,7 +212,7 @@ class JenkinsBuild():
 
     def fetch_dependencies(self):
         subprocess.check_call(['sh', 'go', 'fetch', '--clean'])
-        subprocess.check_call(['sh', 'go', 'fetch', '--all', f'--platform={self.platform["arch"]}-{self.platform["distro"]}-self.platform["os"]'])
+        subprocess.check_call(['sh', 'go', 'fetch', '--all', f'--platform={self.platform["arch"]}-{self.platform["distro"]}-{self.platform["os"]}'])
 
     def set_platform_args(self):
         os_platform = self.platform['os']
