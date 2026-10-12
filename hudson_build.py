@@ -212,10 +212,9 @@ class JenkinsBuild():
 
     def fetch_dependencies(self):
         try:
-            output = subprocess.check_output(['sh', 'go', 'fetch', '--clean'])
+            subprocess.check_call(['sh', 'go', 'fetch', '--clean'])
         except subprocess.CalledProcessError:
-            print("process errored; output was:")
-            print(output)
+            print("process errored")
         subprocess.check_output(['sh', 'go', 'fetch', '--all', f'--platform=[self.platform]'])
 
     def set_platform_args(self):
