@@ -211,6 +211,9 @@ class JenkinsBuild():
         #      provided to the makefile so we configure the paths there
 
     def fetch_dependencies(self):
+        print(f"in working dir {os.getcwd()}")
+        print("files present:")
+        print(os.listdir())
         subprocess.check_output(['sh', 'go', 'fetch', '--clean']);
         subprocess.check_output(['sh', 'go', 'fetch', '--all', f'--platform=[self.platform]']);
 
