@@ -38,6 +38,8 @@ build/
 Build/
 Build.stripped/
 
+dependencies/
+
 /Build/
 /vgout/
 /hgout/

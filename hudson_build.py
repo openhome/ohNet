@@ -13,6 +13,10 @@ from Helpers.remote import *
 from os import path
 
 
+sys.path.append( os.path.abspath( 'ohdevtools' ))
+sys.path.append( os.path.abspath( '../ohdevtools' ))
+sys.path.append( os.path.abspath( '../../ohdevtools' ))
+
 try:
     import boto3
 except:
@@ -206,6 +210,10 @@ class JenkinsBuild():
         #NOTE: The script doesn't set up any PATH entries for dotnet. No point setting them here as the env isn't
         #      provided to the makefile so we configure the paths there
 
+    def fetch_dependencies(self):
+        subprocess.check_output(['sh', 'go', 'fetch', '--clean']);
+        subprocess.check_output(['sh', 'go', 'fetch', '--all', f'--platform=[self.platform]']);
+
     def set_platform_args(self):
         os_platform = self.platform['os']
         arch = self.platform['arch']
@@ -229,25 +237,19 @@ class JenkinsBuild():
                     'armhf': 'cortexa9t2hf-neon-poky-linux-gnueabi',
                     'aarch64': 'armv8a-poky-linux',
                 }
+                toolchain_name = {
+                    'armhf': 'yocto_core4_sdk',
+                    'aarch64': 'yocto_core5_sdk',
+                }
                 distro_version = {
                     'kirkstone': '5.15-kirkstone',
                     'scarthgap': '6.6-scarthgap',
                 }  
-                # get built SDK from our AWS storage
-                # print("working dir is " + os.getcwd())
-                # print("running as " + os.getlogin())
-                # resource = boto3.resource('s3')
-                # bucket = resource.Bucket("linn-artifacts-private")
-                # fetched_path = "/home/hudson-smarties/yocto_sdk.sh"
-                # with open(fetched_path, "wb") as sdk_file:
-                #     bucket.download_fileobj("yocto_core4_sdk/linn-fb-glibc-x86_64-linn-image-core-cortexa9t2hf-neon-linn-imx6dl-toolchain-5.15-kirkstone-0.0.24.sh", sdk_file)
-                # st = os.stat(fetched_path)
-                # os.chmod(fetched_path, st.st_mode | stat.S_IXUSR)
-                
-                # subprocess.check_output(fetched_path + " -y -d /home/hudson-smarties/linn-fb/5.15-kirkstone", shell=True)
+
+                self.fetch_dependencies()
 
                 # Parse yocto environment file, set up for build
-                env_string = subprocess.check_output(". /opt/linn-wayland/%s/environment-setup-%s && env" % (distro_version[distro], toolchain_arch[arch]), shell=True)
+                env_string = subprocess.check_output(". dependencies/%s/%s/environment-setup-%s && env" % (self.platform, toolchain_name[arch], toolchain_arch[arch]), shell=True)
                 for el in env_string.decode("utf-8").split("\n"):
                     if "=" in el:
                         os.environ[el.split("=")[0]] = el.split("=", 1)[1]
