@@ -225,12 +225,111 @@ void SuiteTimerThrash::Test()
     
     Thread::Sleep(11000);   // wait 11 seconds 
 
+    Log::Print("Timers Run: %u\n", iCount);
+
     TEST(iCount == 10000);  // ensure all 10000 timers did fire
     
     for (TUint i = 0; i < 10000; i++) {
         delete (iTimers[i]);
     }
 }
+
+class SuiteTimerCancel : public Suite, private INonCopyable
+{
+public:
+    SuiteTimerCancel(Environment& aEnv);
+    void Test();
+private:
+    void TakesLock();
+    void SlowCallback();
+    void SelfCancel();
+private:
+    Environment& iEnv;
+    Mutex iLock;
+    Semaphore iCallbackStarted;
+    TBool iInCallback;
+    TUint iCount;
+    Timer* iSelfCancelTimer;
+};
+
+SuiteTimerCancel::SuiteTimerCancel(Environment &aEnv)
+    : Suite("Timer cancellation")
+    , iEnv(aEnv)
+    , iLock("TCNL")
+    , iCallbackStarted("TCS1", 0)
+    , iInCallback(false)
+    , iCount(0)
+    , iSelfCancelTimer(NULL)
+{ }
+
+void SuiteTimerCancel::TakesLock()
+{
+    AutoMutex _(iLock);
+    iCount++;
+}
+
+void SuiteTimerCancel::SlowCallback()
+{
+    iInCallback = true;
+    iCallbackStarted.Signal();
+    Thread::Sleep(500);
+    iInCallback = false;
+}
+
+void SuiteTimerCancel::SelfCancel()
+{
+    iSelfCancelTimer->Cancel(); // must not wait on the callback we're inside
+    iCount++;
+}
+
+void SuiteTimerCancel::Test()
+{
+    // Cancelling a timer while holding a lock on another timer's callback is blocked on
+    // MUST NOT deadlock. Cancellation waits only for the signal callback belonging to the
+    // timer being cancelled.
+    {
+        Timer contender(iEnv, MakeFunctor(*this, &SuiteTimerCancel::TakesLock), "Contender");
+        Timer other(iEnv, MakeFunctor(*this, &SuiteTimerCancel::TakesLock), "Other");
+
+        iCount = 0;
+        other.FireIn(60*1000); // Long enough it'll never fire.
+
+        iLock.Wait();
+        contender.FireIn(1);   // Blocks...
+        Thread::Sleep(200);    // Let TimerManager catch up
+        other.Cancel();        // MUST return rather than blocking
+        iLock.Signal();
+
+        Thread::Sleep(500);    // Let TimerManager catch up
+        TEST(iCount == 1);
+    }
+
+    // Cancel MUST NOT return while the timer is firing. Callers rely on this
+    {
+        Timer slow(iEnv, MakeFunctor(*this, &SuiteTimerCancel::SlowCallback), "Slow");
+        iInCallback = false;
+
+        (void)iCallbackStarted.Clear();
+
+        slow.FireIn(1);
+        iCallbackStarted.Wait();
+        TEST(iInCallback);
+        slow.Cancel();
+        TEST(!iInCallback);
+    }
+
+    // Callback cancelling itself. This shouldn't happen but guards against programmer error
+    {
+        iSelfCancelTimer = new Timer(iEnv, MakeFunctor(*this, &SuiteTimerCancel::SelfCancel), "SelfCancel");
+        iCount = 0;
+        iSelfCancelTimer->FireIn(1);
+        Thread::Sleep(300);
+        TEST(iCount == 1);
+        delete iSelfCancelTimer;
+        iSelfCancelTimer = NULL;
+    }
+}
+
 
 class TimerTestThread : public Thread
 {
@@ -252,6 +351,7 @@ void TimerTestThread::Run()
     //Debug::SetLevel(Debug::kTimer);
     Runner runner("Timer testing\n");
     runner.Add(new SuiteTimerBasic(iEnv));
+    runner.Add(new SuiteTimerCancel(iEnv));
     runner.Add(new SuiteTimerThrash(iEnv));
     runner.Run();
     Signal();
