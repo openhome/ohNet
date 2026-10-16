@@ -361,13 +361,12 @@ public:
 class HttpHeaderHost : public HttpHeader
 {
 public:
-    OpenHome::Endpoint& Endpoint();
+    OpenHome::Endpoint Endpoint();
     const Brx& Host() const;
 private:
     virtual TBool Recognise(const Brx& aHeader);
     virtual void Process(const Brx& aValue);
 private:
-    OpenHome::Endpoint iEndpoint;
     Brh iHost;
 };
 

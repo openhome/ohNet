@@ -744,13 +744,31 @@ void HttpHeader::Reset()
 
 // HttpHeaderHost
 
-OpenHome::Endpoint& HttpHeaderHost::Endpoint()
+OpenHome::Endpoint HttpHeaderHost::Endpoint()
 {
-    if (!Received()) {
-        OpenHome::Endpoint defaultEndpoint;
-        iEndpoint = defaultEndpoint;
+    OpenHome::Endpoint result;
+
+    if (Received()) {
+        try {
+            TUint index = Ascii::IndexOf(iHost, ':');
+            Brn address(iHost);
+            TUint port = 0;
+            if (index != iHost.Bytes()) {
+                address.Set(address.Ptr(), index);
+                Brn portBuf = iHost.Split(index+1, iHost.Bytes()-index-1);
+                port = Ascii::Uint(portBuf);
+            }
+            result = OpenHome::Endpoint(port, address, eResolutionHintLikelyIPv4Address);
+        }
+        catch(AsciiError&) {
+            THROW(HttpError);
+        }
+        catch(NetworkError&) {
+            THROW(HttpError);
+        }
     }
-    return iEndpoint;
+
+    return result;
 }
 
 const Brx& HttpHeaderHost::Host() const
@@ -765,27 +783,8 @@ TBool HttpHeaderHost::Recognise(const Brx& aHeader)
 
 void HttpHeaderHost::Process(const Brx& aValue)
 {
-    OpenHome::Endpoint defaultEndpoint;
-    iEndpoint = defaultEndpoint;
     iHost.Set(aValue);
     SetReceived();
-    try {
-        TUint index = Ascii::IndexOf(aValue, ':');
-        Brn address(aValue);
-        TUint port = 0;
-        if (index != aValue.Bytes()) {
-            address.Set(address.Ptr(), index);
-            Brn portBuf = aValue.Split(index+1, aValue.Bytes()-index-1);
-            port = Ascii::Uint(portBuf);
-        }
-        iEndpoint = OpenHome::Endpoint(port, address);
-    }
-    catch(AsciiError&) {
-        THROW(HttpError);
-    }
-    catch(NetworkError&) {
-        THROW(HttpError);
-    }
 }
 
 
