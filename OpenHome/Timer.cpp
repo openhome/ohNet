@@ -13,6 +13,9 @@ Timer::Timer(Environment& aEnv, Functor aFunctor, const TChar* aId)
     : iMgr(aEnv.TimerManager())
     , iFunctor(aFunctor)
     , iId(aId)
+    , iNext(NULL)
+    , iTime(0)
+    , iQueued(false)
 {
 }
 
@@ -30,14 +33,7 @@ void Timer::FireAt(TUint aTime)
 void Timer::Cancel()
 {
     //LOG(kTimer, "Timer::Cancel() for %s\n", iId);
-    TBool lock = !IsInManagerThread(iMgr);
-    if (lock) {
-        iMgr.CallbackLock();
-    }
-    iMgr.Remove(*this);
-    if (lock) {
-        iMgr.CallbackUnlock();
-    }
+    iMgr.Cancel(*this);
 }
 
 const TChar* Timer::Id() const
@@ -45,35 +41,23 @@ const TChar* Timer::Id() const
     return iId;
 }
 
-TBool Timer::IsInManagerThread(OpenHome::Environment& aEnv)
-{ // static
-    return IsInManagerThread(aEnv.TimerManager());
-}
-
-TBool Timer::IsInManagerThread(TimerManager& aMgr)
-{ // static
-    return (Thread::Current() == aMgr.MgrThread());
-}
-
 Timer::~Timer()
 {
     Cancel();
 }
 
-// TimerManager
 
+// TimerManager
 TimerManager::TimerManager(Environment& aEnv, TUint aThreadPriority)
     : iEnv(aEnv)
-    , iMutexNow("TIM1")
-    , iRemoving(false)
-    , iSemaphore("TIMM", 0)
-    , iMutex("TIM2")
-    , iMutexTimer("TIM3")
-    , iNextTimer(0)
+    , iLock("TIM1")
+    , iWake("TIMW", 0)
+    , iCancelDone("TIMC", 0)
+    , iHead(NULL)
+    , iRunning(NULL)
+    , iThread(NULL)
     , iStop(false)
     , iStopped("MTS2", 0)
-    , iCallbackMutex("TMCB")
-    , iThreadHandle(NULL)
     , iBusyStartTimeMs(0)
     , iLastRunTimeMs(0)
     , iCallbacksPerTick(0)
@@ -90,163 +74,176 @@ TimerManager::~TimerManager()
 
 void TimerManager::Stop()
 {
-    iMutex.Wait();
-    
+    iLock.Wait();
+
     if (!iStop) {
         iStop = true;
-        iMutex.Signal();
-        iSemaphore.Signal();
+        iLock.Signal();
+        iWake.Signal();
         iStopped.Wait();
     }
     else {
-        iMutex.Signal();
+        iLock.Signal();
     }
 }
 
-void TimerManager::CallbackLock()
+
+
+void TimerManager::InsertLocked(Timer& aTimer)
 {
-    iCallbackMutex.Wait();
+    ASSERT(!aTimer.iQueued);
+
+    //NOTE: We use signed difference to ensure ordering is correct when the clock wraps
+    Timer** ptr = &iHead;
+    while (*ptr != NULL && (TInt)((*ptr)->iTime - aTimer.iTime) <= 0) {
+        ptr = &((*ptr)->iNext);
+    }
+
+    aTimer.iNext   = *ptr;
+    *ptr           = &aTimer;
+    aTimer.iQueued = true;
 }
 
-void TimerManager::CallbackUnlock()
+void TimerManager::RemoveLocked(Timer& aTimer)
 {
-    iCallbackMutex.Signal();
-}
-
-// Called when the head item in the base timer queue changes
-// Prime the master timer accordingly, unless this change in the head item
-// is due to us removing already expired items
-
-void TimerManager::HeadChanged(QueueSortedEntry& aEntry)
-{
-    if(IsTail(aEntry)) {
+    if (!aTimer.iQueued) {
         return;
     }
 
-    iMutexNow.Wait();
+    Timer** ptr = &iHead;
 
-    if (!iRemoving) {
-        iMutexNow.Signal();
-        iMutex.Wait();
-        iNextTimer = Entry(aEntry).iTime;
-        iMutex.Signal();
-        iSemaphore.Signal();
-        return;
-    }
-
-    if (&aEntry == &iNow) {
-        iRemoving = false;
-    }
-
-    iMutexNow.Signal();
-}
-
-// Fire expired timers
-//
-// This is achieved by inserting a dummy entry that represents 'now' into the sorted timer queue,
-// then removing head items until we reach this 'now' item. All queue entries removed during this process
-// represent expired timers.
-//
-// Note that during this process any change to the head item in the queue does does not cause the master timer
-// to be retriggered. (See HeadChanged) 
-
-void TimerManager::Fire()
-{
-    const TUint now = Os::TimeInMs(iEnv.OsCtx());
-    if (iLastRunTimeMs > now) { // wrapped
-        iLastRunTimeMs = 0;
-        iCallbacksPerTick = 0;
-    }
-    else if (iLastRunTimeMs == now) {
-    }
-    else if (now - iLastRunTimeMs > kMaxTimerGranularityMs) {
-        iBusyStartTimeMs = now;
-        iCallbacksPerTick = 0;
-    }
-    if (iBusyStartTimeMs == 0 || iBusyStartTimeMs > now) { // Clock has wrapped.  Reset our busy counter for the sake of simplicity
-        iBusyStartTimeMs = now;
-    }
-    else if (now - iBusyStartTimeMs > kMaxBusyTimeMs) {
-        iCallbackList.Log();
-        ASSERTS();
-    }
-    iLastRunTimeMs = now;
-    iMutexNow.Wait();
-    iRemoving = true;
-    iNow.iTime = now + 1; // will go after all the entries before or at now
-    iMutexNow.Signal();
-
-    // Add an entry for now, then ...
-
-    DoAdd(iNow);
-    
-    //LOG(kTimer, "TimerManager::Fire() - TimerExpired, removing entries before %u\n", iNow.iTime);
-
-    // remove all the entries before now
-    // See HeadChanged() for how iRemoving gets turned off
-    // Note that it has to be done this way so that the first
-    // item to become the head after the dummy now entry has
-    // been removed gets to prime the timer driver
-
-    CallbackLock();
-    for (;;) {
-        Timer& head = RemoveHead();
-        if(&head == &iNow) {
+    while (*ptr != NULL) {
+        if (*ptr == &aTimer) {
+            *ptr = aTimer.iNext;
             break;
         }
-        iCallbackList.Add(head);
-        if (++iCallbacksPerTick > kMaxCallbacksPerTick) {
-            iCallbackList.Log();
-            ASSERTS();
-        }
-        LOG(kTimer, "TimerManager::Fire() - running %s\n", head.iId);
-        head.iFunctor(); // run the timer's callback
+        ptr = &((*ptr)->iNext);
     }
-    CallbackUnlock();
+
+    aTimer.iNext   = NULL;
+    aTimer.iQueued = false;
 }
 
 void TimerManager::FireAt(Timer& aTimer, TUint aTime)
 {
-    AutoMutex mutex(iMutexTimer);
-    Remove(aTimer);
+    iLock.Wait();
+    RemoveLocked(aTimer);
     aTimer.iTime = aTime;
-    Add(aTimer);
+    InsertLocked(aTimer);
+    iLock.Signal();
+
+    /* Always wake the manager - it recomputes the head deadline for itself.
+       An occasional spurious wake-up is far cheaper than tracking whether this
+       change actually moved the head. */
+    iWake.Signal();
 }
 
-Thread* TimerManager::MgrThread() const
-{
-    return iThreadHandle;
-}
 
-TInt TimerManager::Compare(QueueSortedEntry& aEntry1, QueueSortedEntry& aEntry2)
+void TimerManager::Cancel(Timer& aTimer)
 {
-    return (Entry(aEntry1).iTime - Entry(aEntry2).iTime);
+    // NOTE: We guarantee that the given timer's callback is not currently in progress,
+    //       so that it will be sage to destory whatever the callback references.
+
+    iLock.Wait();
+    RemoveLocked(aTimer);
+
+    TBool isTimerRunning  = iRunning == &aTimer;
+    TBool isManagerThread = Thread::Current() == iThread;
+    TBool wait            = isTimerRunning && !isManagerThread;
+    iLock.Signal();
+
+    if (wait) {
+        iCancelDone.Wait();
+    }
 }
 
 void TimerManager::Run()
 {
-    iThreadHandle = Thread::Current();
-    iSemaphore.Wait();
-    iMutex.Wait();
-    while (!iStop) {
-        TInt delay = Time::TimeToWaitFor(iEnv, iNextTimer);
-        iMutex.Signal();
-        if (delay <= 0) { // in the past or now
-            Fire();
-            iSemaphore.Wait();
+    for (;;) {
+
+        /* Clear before reading the head so that any timer queued after this
+           point leaves a pending signal behind and cannot be slept through. */
+        (void)iWake.Clear();
+
+        iLock.Wait();
+        if (iStop) {
+            iLock.Signal();
+            break;
         }
-        else { // in the future
+        const TBool pending = (iHead != NULL);
+        const TInt delay = (pending? Time::TimeToWaitFor(iEnv, iHead->iTime) : 0);
+        iLock.Signal();
+
+        if (!pending) {
+            iWake.Wait(); // nothing scheduled - sleep until something is
+        }
+        else if (delay > 0) {
             try {
-                iSemaphore.Wait(delay);
+                iWake.Wait((TUint)delay);
             }
             catch (Timeout&) {
             }
         }
-        iMutex.Wait();
+
+        // Watchdog bookkeeping...
+        const TUint now = Os::TimeInMs(iEnv.OsCtx());
+        if (iLastRunTimeMs > now) { // wrapped
+            iLastRunTimeMs = 0;
+            iCallbacksPerTick = 0;
+        }
+        else if (iLastRunTimeMs == now) {
+        }
+        else if (now - iLastRunTimeMs > kMaxTimerGranularityMs) {
+            iBusyStartTimeMs = now;
+            iCallbacksPerTick = 0;
+        }
+        if (iBusyStartTimeMs == 0 || iBusyStartTimeMs > now) { // Clock has wrapped.  Reset our busy counter for the sake of simplicity
+            iBusyStartTimeMs = now;
+        }
+        else if (now - iBusyStartTimeMs > kMaxBusyTimeMs) {
+            iCallbackList.Log();
+            ASSERTS();
+        }
+        iLastRunTimeMs = now;
+
+        // Fire timers...
+        for (;;) {
+            iLock.Wait();
+            Timer* timer = iHead;
+            if (timer == NULL || !Time::IsInPastOrNow(iEnv, timer->iTime)) {
+                iLock.Signal();
+                break;
+            }
+            RemoveLocked(*timer);
+            iRunning = timer;
+            iCancelDone.Clear();
+            iLock.Signal();
+
+            iCallbackList.Add(*timer);
+            if (++iCallbacksPerTick > kMaxCallbacksPerTick) {
+                iCallbackList.Log();
+                ASSERTS();
+            }
+            LOG(kTimer, "TimerManager::DrainExpired() - running %s\n", timer->iId);
+
+            // NOTE: Timers are fired without holding a lock
+            timer->iFunctor();
+
+            iLock.Wait();
+            iRunning = NULL;
+            iLock.Signal();
+            iCancelDone.Signal(); // We always signal this regardless of if we have waiters. It's cleared above before each run
+        }
     }
-    iMutex.Signal();
+
     iStopped.Signal();
 }
+
+// Run every timer whose deadline has passed.
+//
+// Entries are unlinked one at a time and the callback is run with iLock
+// released, so a callback is free to take any lock, to (re)schedule timers, or
+// to cancel any timer other than itself.
 
 
 // TimerManager::Callback

@@ -4,20 +4,12 @@
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Time.h>
-#include <OpenHome/Private/Queue.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Functor.h>
 
 namespace OpenHome {
 
 class Environment;
-
-class QueueSortedEntryTimer : public QueueSortedEntry
-{
-    friend class TimerManager;
-protected:
-    TUint iTime;  // Absolute (milliseconds from startup)
-};
 
 class TimerManager;
 
@@ -46,7 +38,7 @@ private:
     Environment& iEnv;
 };
 
-class Timer : public QueueSortedEntryTimer, public ITimer
+class Timer : public ITimer, private OpenHome::INonCopyable
 {
     friend class TimerManager;
 public:
@@ -56,24 +48,27 @@ public:
     void Cancel();
     const TChar* Id() const;
     ~Timer();
-    static TBool IsInManagerThread(Environment& aEnv);
-private:
-    static TBool IsInManagerThread(TimerManager& aMgr);
 private:
     TimerManager& iMgr;
     Functor iFunctor;
     const TChar* iId;
+    Timer* iNext;  // Next entry in TimerManager's list.  NULL if last, or if not queued.
+    TUint iTime;   // Absolute (milliseconds from startup).  Only meaningful while iQueued.
+    TBool iQueued; // True iff this timer is currently in TimerManager's list.
 };
 
-class TimerManager : public QueueSorted<Timer>
+/* Timers are held in a single list, sorted by deadline, owned outright by the
+   manager thread's lock.  Callbacks run on the manager thread with no lock
+   held, so a callback may take any lock, and any thread may cancel any timer
+   other than the one whose callback is running at that instant. */
+
+class TimerManager : private OpenHome::INonCopyable
 {
     friend class Timer;
 public:
     TimerManager(Environment& aEnv, TUint aThreadPriority);
     void Stop();
     ~TimerManager();
-    void CallbackLock();
-    void CallbackUnlock();
 private:
     class Callback
     {
@@ -102,28 +97,24 @@ private:
     };
 private:
     void Run();
-    void Fire();
     void FireAt(Timer& aTimer, TUint aTime);
-    Thread* MgrThread() const;
-    virtual void HeadChanged(QueueSortedEntry& aEntry);
-    virtual TInt Compare(QueueSortedEntry& aEntry1, QueueSortedEntry& aEntry2);
+    void Cancel(Timer& aTimer);
+    void InsertLocked(Timer& aTimer);
+    void RemoveLocked(Timer& aTimer);
 private:
     Environment& iEnv;
-    QueueSortedEntryTimer iNow;
-    Mutex iMutexNow;
-    TBool iRemoving;
+    Mutex iLock;           // guards iHead, iRunning, iCancelWaiters, iStop
+    Semaphore iWake;       // wakes the manager thread when the list changes
+    Semaphore iCancelDone; // signalled once a callback returns, for waiting cancellers
+    Timer* iHead;          // sorted by deadline, soonest first.  NULL when empty.
+    Timer* iRunning;       // timer whose callback is executing, else NULL
     ThreadFunctor* iThread;
-    Semaphore iSemaphore;
-    Mutex iMutex;
-    Mutex iMutexTimer;
-    TUint iNextTimer;
     TBool iStop;
     Semaphore iStopped;
-    Mutex iCallbackMutex;
-    Thread* iThreadHandle;
     static const TUint kMaxBusyTimeMs = 1000 * 60 * 30; // 30 minutes
     static const TUint kMaxTimerGranularityMs = 10;
     static const TUint kMaxCallbacksPerTick = 1000;
+    // the following are only ever touched by the manager thread
     TUint iBusyStartTimeMs;
     TUint iLastRunTimeMs;
     TUint iCallbacksPerTick;
