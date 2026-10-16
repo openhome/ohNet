@@ -862,19 +862,29 @@ TBool CpiDeviceListUpnp::IsLocationReachable(const Brx& aLocation) const
     catch (UriError&) {
         return false;
     }
+
+    // NOTE: In almost ALL cases, SSDP messaging should be giving us straight IP addresses.
+    //       Hinting to the endpoint tha we have that reduces the amount of work done for each
+    //       incoming packet. We also do this WITHOUT holding the lock in a bid
+    Endpoint endpt;
     try {
-        AutoMutex _(iLock);
-        Endpoint endpt(0, uri.Host());
-        Optional<NetworkAdapter> onif = iCpStack.Env().NetworkAdapterList().CurrentAdapter("CpiDeviceListUpnp::IsLocationReachable");
-        if (onif.Ok()) {
-            NetworkAdapter& nif = onif.Unwrap();
-            if (TIpAddressUtils::Equals(nif.Address(), iInterface) && nif.ContainsAddress(endpt.Address())) {
-                reachable = true;
-            }
-            nif.RemoveRef("CpiDeviceListUpnp::IsLocationReachable");
-        }
+        endpt.SetAddress(uri.Host(), Endpoint::ResolutionHint::LikelyIPv4Address);
     }
-    catch (NetworkError&) {}
+    catch (NetworkError&) {
+        return false;
+    }
+
+    iLock.Wait();
+    Optional<NetworkAdapter> onif = iCpStack.Env().NetworkAdapterList().CurrentAdapter("CpiDeviceListUpnp::IsLocationReachable");
+    if (onif.Ok()) {
+        NetworkAdapter& nif = onif.Unwrap();
+        if (TIpAddressUtils::Equals(nif.Address(), iInterface) && nif.ContainsAddress(endpt.Address())) {
+            reachable = true;
+        }
+        nif.RemoveRef("CpiDeviceListUpnp::IsLocationReachable");
+    }
+    iLock.Signal();
+
     return reachable;
 }
 
