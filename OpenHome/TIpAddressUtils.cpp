@@ -268,3 +268,60 @@ void TIpAddressUtils::AddressToStringV6(Bwx& aAddressBuffer, const TIpAddress& a
     }
     aAddressBuffer.PtrZ();
 }
+
+TBool TIpAddressUtils::TryParseIPv4Address(TIpAddress& aResult, const Brx& aAddress)
+{
+    if (aAddress.Bytes() == 0) {
+        return false;
+    }
+
+    const TUint bytes = aAddress.Bytes();
+    TUint cursor     = 0;
+    TUint8 octets[4] = {0};
+
+    for (TUint part = 0; part < 4; part += 1) {
+        TUint start = cursor;
+        TUint value = 0;
+
+        while (cursor < bytes && cursor - start < 3 && Ascii::IsDigit((TChar)aAddress[cursor])) {
+            value = value * 10 + (aAddress[cursor] - '0');
+            cursor += 1;
+        }
+
+        TUint digits = cursor - start;
+        if (digits == 0 || value > 255 || (digits > 1 && aAddress[start] == '0')) {
+            break;
+        }
+
+        octets[part] = (TByte)value;
+        if (part < 3) {
+            if (cursor >= bytes || aAddress[cursor] != '.') {
+                break;
+            }
+            cursor += 1;
+        }
+    }
+
+    TBool success = cursor == bytes;
+    if (success) {
+        aResult.iFamily = kFamilyV4;
+
+        TUint32 addr = 0;
+#ifdef DEFINE_LITTLE_ENDIAN
+        addr =        octets[0];
+        addr = addr | octets[1]<<8;
+        addr = addr | octets[2]<<16;
+        addr = addr | octets[3]<<24;
+#elif defined DEFINE_BIG_ENDIAN
+        addr =        octets[3];
+        addr = addr | octets[2]<<8;
+        addr = addr | octets[1]<<16;
+        addr = addr | octets[0]<<24;
+#else
+# error No endianess defined
+#endif
+        aResult.iV4 = addr;
+    }
+
+    return success;
+}

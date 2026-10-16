@@ -24,6 +24,8 @@ public:
     static TIpAddress MapIPv4ToIPv6Address(const TIpAddress& aAddr);
     static TIpAddress AddressV6AllAdapters();
     static void ToString(const TIpAddress& aAddr, Bwx& aAddressBuffer);
+
+    static TBool TryParseIPv4Address(TIpAddress& aResult, const Brx& aAddressString);
 private:
     static void AddressToStringV4(Bwx& aAddressBuffer, const TIpAddress& aAddress);
     static void AddressToStringV6(Bwx& aAddressBuffer, const TIpAddress& aAddress);

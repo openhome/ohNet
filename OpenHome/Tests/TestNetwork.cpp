@@ -9,6 +9,8 @@
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Net/Private/Globals.h>
 
+#include <array>
+
 using namespace OpenHome;
 using namespace OpenHome::TestFramework;
 
@@ -706,6 +708,54 @@ void SuiteUnicast::Receiver()
     } while (val != kQuit);
 }
 
+// SuiteTpIAddressUtils
+class SuiteTIpAddressUtils : public Suite
+{
+public:
+    SuiteTIpAddressUtils();
+private: // Suite
+    void Test() override;
+};
+
+SuiteTIpAddressUtils::SuiteTIpAddressUtils()
+    : Suite("SuiteTIpAddressUtils")
+{ }
+
+void SuiteTIpAddressUtils::Test()
+{
+    TIpAddress result;
+    TIpAddressUtils::AddressBuf buf;
+
+    // TIpAddressUtils::TryParseIPv4Address
+    {
+        std::array<Brn, 3> passingStrings = {
+            Brn("230.255.255.250"),
+            Brn("127.0.0.1"),
+            Brn("0.0.0.0")
+        };
+
+        for (TUint i = 0; i < passingStrings.size(); i += 1) {
+            TEST(TIpAddressUtils::TryParseIPv4Address(result, passingStrings[i]));
+            buf.SetBytes(0);
+            TIpAddressUtils::ToString(result, buf);
+            TEST(buf == passingStrings[i]);
+        }
+
+        std::array<Brn,5> failingStrings = {
+            Brn("1.2.3.4.5.6"),
+            Brn("Garbage.String"),
+            Brn("1.2.3.garbage"),
+            Brn("1.010.101.000"), // Leading 0's shuld be ignored
+            Brn()
+        };
+
+        for (TUint i = 0; i < failingStrings.size(); i += 1) {
+            TEST(TIpAddressUtils::TryParseIPv4Address(result, failingStrings[i]) == false);
+        }
+    }
+}
+
+
 class MainNetworkTestThread : public Thread
 {
 public:
@@ -727,6 +777,7 @@ void MainNetworkTestThread::Run()
     // SuiteMulticast disabled because Linn network setup means that each multicast message is duplicated when
     // running on a core server (used for automated post-commit tests)
     //runner.Add(new SuiteMulticast());
+    runner.Add(new SuiteTIpAddressUtils());
     runner.Run();
     Signal();
 }
