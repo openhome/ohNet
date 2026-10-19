@@ -6,7 +6,7 @@ ohroot := ../../../../../
 mDNSdir := Build/mDNS
 
 LOCAL_C_INCLUDES := $(ohroot)Build/Include
-LOCAL_CFLAGS := -fexceptions -Wall -Werror -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE -fvisibility=hidden -Wno-unused -Wno-address-of-packed-member -Wno-int-to-pointer-cast
+LOCAL_CFLAGS := -fexceptions -Wall -Werror -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE -DMULTICAST_CAN_DELIVER_TO_ALL_INTERFACES -fvisibility=hidden -Wno-unused -Wno-address-of-packed-member -Wno-int-to-pointer-cast
 LOCAL_LDLIBS := -llog
 LOCAL_MODULE    := ohNet
 LOCAL_SRC_FILES := $(ohroot)OpenHome/Ascii.cpp \

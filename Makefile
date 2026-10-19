@@ -388,6 +388,11 @@ else ifeq ($(openhome_distro), buildroot)
 	platform_cflags += -DOHNET_CLOCK_MONOTONIC
 endif
 
+# NOTE: Android is defined in Bindings/Android/Android.mk
+ifeq ($(openhome_system), Linux)
+    platform_cflags += -DMULTICAST_CAN_DELIVER_TO_ALL_INTERFACES
+endif
+
 
 
 

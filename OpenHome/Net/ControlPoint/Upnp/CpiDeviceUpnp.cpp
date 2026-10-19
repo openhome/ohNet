@@ -851,6 +851,10 @@ TBool CpiDeviceListUpnp::IsDeviceReady(CpiDevice& aDevice)
 
 TBool CpiDeviceListUpnp::IsLocationReachable(const Brx& aLocation) const
 {
+#if !defined(MULTICAST_CAN_DELIVER_TO_ALL_INTERFACES)
+    return true;
+#else
+
     /* linux's filtering of multicast messages appears to be buggy and messages
        received by all interfaces are sometimes delivered to sockets which are
        bound to / members of a group on a single (different) interface.  It'd be
@@ -887,6 +891,7 @@ TBool CpiDeviceListUpnp::IsLocationReachable(const Brx& aLocation) const
     iLock.Signal();
 
     return reachable;
+#endif // !MULTICAST_CAN_DELIVER_TO_ALL_INTERFACES
 }
 
 void CpiDeviceListUpnp::RefreshTimerComplete()

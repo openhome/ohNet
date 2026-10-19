@@ -617,6 +617,9 @@ void DviProtocolUpnp::LogMulticastNotification(const char* aType)
 
 TBool DviProtocolUpnpAdapterSpecificData::IsLocationReachable(const Endpoint& aEndpoint)
 {
+#if !defined(MULTICAST_CAN_DELIVER_TO_ALL_INTERFACES)
+    return true;
+#else
     /* This method has the same purpose as CpiDeviceListUpnp::IsLocationReachable.
         The reachability check is needed to ensure that all M-SEARCH responses contain
         a location Uri that can be accessed by the M-SEARCH sender. */
@@ -624,6 +627,7 @@ TBool DviProtocolUpnpAdapterSpecificData::IsLocationReachable(const Endpoint& aE
     TIpAddress addr2 = TIpAddressUtils::ApplyMask(iSubnet, iMask);
 
     return TIpAddressUtils::Equals(addr1, addr2);
+#endif // !MULTICAST_CAN_DELIVERY_TO_ALL_INTERFACES
 }
 
 void DviProtocolUpnp::SsdpSearchAll(const Endpoint& aEndpoint, TUint aMx, const TIpAddress& aAdapter)
