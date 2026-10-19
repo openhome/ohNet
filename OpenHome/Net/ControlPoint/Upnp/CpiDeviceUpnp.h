@@ -170,6 +170,8 @@ private:
     static const TUint kRefreshRetries = 4;
     Environment& iEnv;
     TIpAddress iInterface;
+    TIpAddress iSubnet;
+    TIpAddress iMask;
     SsdpListenerMulticast* iMulticastListener;
     TInt iNotifyHandlerId;
     TUint iInterfaceChangeListenerId;

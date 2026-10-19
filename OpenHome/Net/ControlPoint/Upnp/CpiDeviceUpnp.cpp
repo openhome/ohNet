@@ -656,16 +656,20 @@ CpiDeviceListUpnp::CpiDeviceListUpnp(CpStack& aCpStack, FunctorCpiDevice aAdded,
     iSubnetListChangeListenerId = ifList.AddSubnetListChangeListener(MakeFunctor(*this, &CpiDeviceListUpnp::SubnetListChanged), "CpiDeviceListUpnp-subnet");
     iSsdpLock.Wait();
     if (current == NULL) {
-        iInterface = kIpAddressV4AllAdapters;
-        iUnicastListener = NULL;
+        iInterface         = kIpAddressV4AllAdapters;
+        iSubnet            = kIpAddressV4AllAdapters;
+        iMask              = kIpAddressV4AllAdapters;
+        iUnicastListener   = NULL;
         iMulticastListener = NULL;
-        iNotifyHandlerId = 0;
+        iNotifyHandlerId   = 0;
     }
     else {
-        iInterface = current->Address();
-        iUnicastListener = new SsdpListenerUnicast(iCpStack.Env(), *this, iInterface);
+        iInterface         = current->Address();
+        iSubnet            = current->Subnet();
+        iMask              = current->Mask();
+        iUnicastListener   = new SsdpListenerUnicast(iCpStack.Env(), *this, iInterface);
         iMulticastListener = &(iCpStack.Env().MulticastListenerClaim(iInterface));
-        iNotifyHandlerId = iMulticastListener->AddNotifyHandler(this);
+        iNotifyHandlerId   = iMulticastListener->AddNotifyHandler(this);
     }
     iSsdpLock.Signal();
     iCpStack.Env().AddResumeObserver(*this);
@@ -875,14 +879,11 @@ TBool CpiDeviceListUpnp::IsLocationReachable(const Brx& aLocation) const
     }
 
     iLock.Wait();
-    Optional<NetworkAdapter> onif = iCpStack.Env().NetworkAdapterList().CurrentAdapter("CpiDeviceListUpnp::IsLocationReachable");
-    if (onif.Ok()) {
-        NetworkAdapter& nif = onif.Unwrap();
-        if (TIpAddressUtils::Equals(nif.Address(), iInterface) && nif.ContainsAddress(endpt.Address())) {
-            reachable = true;
-        }
-        nif.RemoveRef("CpiDeviceListUpnp::IsLocationReachable");
-    }
+
+    TIpAddress addr1 = TIpAddressUtils::ApplyMask(endpt.Address(), iMask);
+    TIpAddress addr2 = TIpAddressUtils::ApplyMask(iSubnet, iMask);
+    reachable        = TIpAddressUtils::Equals(addr1, addr2);
+
     iLock.Signal();
 
     return reachable;
@@ -926,7 +927,13 @@ void CpiDeviceListUpnp::HandleInterfaceChange()
     NetworkAdapter* current = iCpStack.Env().NetworkAdapterList().CurrentAdapter("CpiDeviceListUpnp::HandleInterfaceChange").Ptr();
     if (current != NULL && TIpAddressUtils::Equals(current->Address(), iInterface)) {
         // list of subnets has changed but our interface is still available so there's nothing for us to do here
+        iLock.Wait();
+        iSubnet = current->Subnet();
+        iMask   = current->Mask();
+        iLock.Signal();
+
         current->RemoveRef("CpiDeviceListUpnp::HandleInterfaceChange");
+
         return;
     }
     StopListeners();
@@ -934,6 +941,8 @@ void CpiDeviceListUpnp::HandleInterfaceChange()
     if (current == NULL) {
         iLock.Wait();
         iInterface = kIpAddressV4AllAdapters;
+        iSubnet    = kIpAddressV4AllAdapters;
+        iMask      = kIpAddressV4AllAdapters;
         iLock.Signal();
         RemoveAll();
         return;
@@ -945,7 +954,10 @@ void CpiDeviceListUpnp::HandleInterfaceChange()
     
     iLock.Wait();
     iInterface = current->Address();
+    iSubnet    = current->Subnet();
+    iMask      = current->Mask();
     iLock.Signal();
+
     current->RemoveRef("CpiDeviceListUpnp::HandleInterfaceChange");
 
     {
