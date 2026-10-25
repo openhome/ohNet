@@ -1051,6 +1051,33 @@ void SuiteAscii::Test()
     TEST(Ascii::UintHex(Brn("1234abcd")) == 0x1234abcd); // full width hex uint32
     TEST_THROWS(Ascii::UintHex(Brn("112345678")), AsciiError); // too long
     TEST_THROWS(Ascii::UintHex(Brn("invalid")), AsciiError); // non-hex chars
+
+    // Range limits.  Input that does not fit the return type must be rejected,
+    // not silently wrapped - these parsers see attacker-supplied Content-Length,
+    // chunk sizes, uri ports and ssdp header values.
+
+    TEST(Ascii::Int(Brn("2147483647")) == 2147483647);          // INT32_MAX
+    TEST(Ascii::Int(Brn("-2147483648")) == INT32_MIN);
+    TEST_THROWS(Ascii::Int(Brn("2147483648")), AsciiError);
+    TEST_THROWS(Ascii::Int(Brn("-2147483649")), AsciiError);
+    TEST_THROWS(Ascii::Int(Brn("99999999999999999999")), AsciiError);
+
+    TEST(Ascii::Uint(Brn("4294967295")) == 4294967295u);        // UINT32_MAX
+    TEST_THROWS(Ascii::Uint(Brn("4294967296")), AsciiError);
+    TEST_THROWS(Ascii::Uint(Brn("99999999999999999999")), AsciiError);
+    // leading zeros are padding, not magnitude
+    TEST(Ascii::Uint(Brn("0000000000004294967295")) == 4294967295u);
+
+    TEST(Ascii::Int64(Brn("9223372036854775807")) == 9223372036854775807ll);
+    TEST(Ascii::Int64(Brn("-9223372036854775808")) == INT64_MIN);
+    TEST_THROWS(Ascii::Int64(Brn("9223372036854775808")), AsciiError);
+    TEST_THROWS(Ascii::Int64(Brn("-9223372036854775809")), AsciiError);
+
+    TEST(Ascii::Uint64(Brn("18446744073709551615")) == 18446744073709551615ull);
+    TEST_THROWS(Ascii::Uint64(Brn("18446744073709551616")), AsciiError);
+    TEST_THROWS(Ascii::Uint64(Brn("99999999999999999999999")), AsciiError);
+
+    TEST(Ascii::UintHex(Brn("ffffffff")) == 0xffffffffu);
 }   
     
 class SuiteParser : public Suite

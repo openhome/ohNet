@@ -161,7 +161,13 @@ Exception::Exception(const TChar* aMsg, const TChar* aFile, TUint aLine)
     Log::Print(Thread::CurrentThreadName());
     Log::Print(")\n");
 #endif
-    iStackTrace = Os::StackTraceInitialise(OpenHome::gEnv->OsCtx());
+    /* gEnv is NULL before UpnpLibrary::Initialise() and again after Close().
+       Utility classes (Uri, Ascii, Parser, http headers) are usable outside that
+       window, as is any thread still unwinding during shutdown, so an exception
+       thrown there must not dereference it.  A NULL stack trace handle is
+       understood by StackTraceCopy/NumEntries/Finalise. */
+    iStackTrace = (OpenHome::gEnv == NULL)? kHandleNull
+                                          : Os::StackTraceInitialise(OpenHome::gEnv->OsCtx());
 }
 
 const TChar* kUnknown = "Release mode. File/line information unavailable";
@@ -176,7 +182,9 @@ Exception::Exception(const TChar* aMsg)
     Log::Print(Thread::CurrentThreadName());
     Log::Print(")\n");
 #endif
-    iStackTrace = Os::StackTraceInitialise(OpenHome::gEnv->OsCtx());
+    // no stack trace outside the library's lifetime - see ctor above
+    iStackTrace = (OpenHome::gEnv == NULL)? kHandleNull
+                                          : Os::StackTraceInitialise(OpenHome::gEnv->OsCtx());
 }
 
 Exception::Exception(const Exception& aException)
