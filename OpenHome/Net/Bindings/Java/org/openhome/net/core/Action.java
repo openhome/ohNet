@@ -55,15 +55,17 @@ public class Action
 	 */
 	public void destroy()
 	{
+		long handle;
 		synchronized(this)
 		{
 			if (iHandle == 0)
 			{
 				return;
 			}
+			handle = iHandle;
 			iHandle = 0;
 		}
-		ServiceActionDestroy(iHandle);
+		ServiceActionDestroy(handle);
 	}
 	
 	/**
