@@ -9,14 +9,11 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Uri.h>
 #include <OpenHome/Types.h>
-#include <OpenHome/Private/Fifo.h>
 #include <OpenHome/Private/Network.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Http.h>
 #include <OpenHome/Net/Private/Error.h>
 #include <OpenHome/Exception.h>
-
-#include <list>
 
 EXCEPTION(XmlFetchError)
 
@@ -25,85 +22,109 @@ class SocketTcpClient;
 namespace Net {
 
 class CpStack;
+class XmlFetcher;
+class XmlFetchBlock;
+class XmlFetchManager;
 
+// A caller should only ever interact with XmlFetch via XmlFetchManager::Fetch/CheckContactable
+// and the static methods on XmlFetch.
+// To perform a fetch, the caller should:
+// - Use XmlFetchManager::Fetch/CheckContactable function to generate a queued XmlFetch
+// - Use XmlFetchManager::Interrupt(__) should you wish to cancel a pending fetch
+// - ONCE FETCH HAS CALLED BACK
+//      - Use the static functions on XmlFetch to access the result of the fetch.
+//
+// NOTE: XmlFetch instances are pooled internally and so the result of the fetch is only
+//       valid whilst your completion callback is running.
 class XmlFetch : public Async
 {
 public:
-    void Set(const Brx& aAbsoluteUri, FunctorAsync& aFunctor);
-    void CheckContactable(const Brx& aAbsoluteUri, FunctorAsync& aFunctor);
-    ~XmlFetch();
-    const OpenHome::Uri& Uri() const;
-    void SignalCompleted();
-    void SetError(Error::ELevel aLevel, TUint aCode, const Brx& aDescription);
     static Bwh& Xml(IAsync& aAsync);
     static TBool WasContactable(IAsync& aAsync);
     static TBool DidError(IAsync& aAsync);
     static OpenHome::Net::Error& GetError(IAsync& aAsync); // Throws XMLFetchError if not errored. Check DidError() first
-    void Fetch();
-    void Interrupt();
-    TBool Interrupted() const;
+
 private:
-    XmlFetch(CpStack& aCpStack);
+    void SetError(Error::ELevel aLevel, TUint aCode, const Brx& aDescription);
     TBool Error() const;
-    void WriteRequest(const Brx& aMethod);
-    void Read();
     virtual void Output(IAsyncOutput& aConsole);
     virtual TUint Type() const;
 private:
-    static const TUint kRwBufferLength = 16*1024;
-    static const TUint kResponseTimeoutMs = 60 * 1000;
-    CpStack& iCpStack;
-    OpenHome::Uri iUri;
+    XmlFetch* iNext;
+    Brn iLocation;
     FunctorAsync iFunctor;
-    TUint iSequenceNumber;
     Bwh iXml;
     OpenHome::Net::Error iError;
-    mutable OpenHome::Mutex iLock;
+    TUint iSequenceNumber;
     TBool iInterrupted;
     TBool iCheckContactable;
     TBool iContactable;
-    OpenHome::SocketTcpClient iSocket;
-    Srs<1024> iReadBuffer;
-    ReaderUntilS<1024> iReaderUntil;
-    ReaderHttpChunked iDechunker;
-    ReaderHttpEntity iReaderEntity;
 
+    friend class XmlFetcher;
     friend class XmlFetchManager;
 };
 
 class XmlFetcher : public Thread
 {
 public:
-    XmlFetcher(const TChar* aName, Fifo<XmlFetcher*>& aFree);
+    XmlFetcher(const TChar* aName, Environment& aEnv, XmlFetchManager& aManager);
     ~XmlFetcher();
-    void Fetch(XmlFetch* aFetch);
+    TBool InterruptIfRunning(XmlFetch& aFetch);
 private:
     void LogError(const TChar* aErr);
     void Run();
+    void DoFetch();
+    void WriteRequest(const Brx& aMethod);
+    TBool Read();
 private:
-    Fifo<XmlFetcher*>& iFree;
-    OpenHome::Mutex iLock;
+    static const TUint kRwBufferLength    = 16*1024;
+    static const TUint kResponseTimeoutMs = 60 * 1000;
+
+    Environment& iEnv;
+    XmlFetchManager& iManager;
+    Mutex iLock;
     XmlFetch* iFetch;
+    Uri iUri;
+    SocketTcpClient iSocket;
+    Srs<1024> iReadBuffer;
+    ReaderUntilS<1024> iReaderUntil;
+    ReaderHttpChunked iDechunker;
+    ReaderHttpEntity iReaderEntity;
 };
 
-class CpStack;
-
-class XmlFetchManager : public Thread
+class XmlFetchManager
 {
 public:
     XmlFetchManager(CpStack& aCpStack);
     ~XmlFetchManager();
-    XmlFetch* Fetch();
-    void Fetch(XmlFetch* aFetch);
+    XmlFetch* Fetch(const Brx& aAbsoluteUri, FunctorAsync& aFunctor);
+    XmlFetch* CheckContactable(const Brx& aAbsoluteUri, FunctorAsync& aFunctor);
+    void Interrupt(XmlFetch& aFetch);
 private:
-    void Run();
+    void EnqueueFetch(XmlFetch* aFetch);
+    XmlFetch* NextFetch();
+    TBool IsFetchInterrupted(XmlFetch* aFetch);
+    void AddPoolBlock();
+    XmlFetch* AcquireFetch();
+    void ReleaseFetch(XmlFetch* aFetch);
+    void ReleaseFetchLocked(XmlFetch* aFetch);
+    void SetFetchShutdownError(XmlFetch* aFetch);
 private:
     CpStack& iCpStack;
-    OpenHome::Mutex iLock;
-    std::list<XmlFetch*> iList;
-    Fifo<XmlFetcher*> iFree;
+    Mutex iLock;
+    Semaphore iPending;
+    XmlFetchBlock* iPool;
+    XmlFetch* iFreeList;
+    XmlFetch* iPendingList;
     XmlFetcher** iFetchers;
     TBool iActive;
+
+    // XmlFetch usage stats
+    TUint iNumBlocks;
+    TUint iNumInUse;
+    TUint iMaxInUse;
+
+    friend class XmlFetcher;
 };
 
 } // namespace Net

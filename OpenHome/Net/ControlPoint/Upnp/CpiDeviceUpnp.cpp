@@ -78,10 +78,8 @@ CpiDeviceUpnp::CpiDeviceUpnp(CpStack& aCpStack, const Brx& aLocation, IDeviceRem
 
     AutoMutex _(iLock);
     XmlFetchManager& xmlFetchManager = aCpStack.XmlFetchManager();
-    iXmlFetch = xmlFetchManager.Fetch();
     FunctorAsync functor = MakeFunctorAsync(*this, &CpiDeviceUpnp::XmlFetchReadUdnCompleted);
-    iXmlFetch->Set(aLocation, functor);
-    xmlFetchManager.Fetch(iXmlFetch);
+    iXmlFetch = xmlFetchManager.Fetch(aLocation, functor);
 }
 
 const Brx& CpiDeviceUpnp::Udn() const
@@ -138,27 +136,27 @@ void CpiDeviceUpnp::FetchXml()
         }
         return;
     }
-    XmlFetchManager& xmlFetchManager = iDevice->GetCpStack().XmlFetchManager();
-    iXmlFetch = xmlFetchManager.Fetch();
     iDevice->AddRef();
+    XmlFetchManager& xmlFetchManager = iDevice->GetCpStack().XmlFetchManager();
     FunctorAsync functor = MakeFunctorAsync(*this, &CpiDeviceUpnp::XmlFetchCompleted);
-    iXmlFetch->Set(iLocation, functor);
-    xmlFetchManager.Fetch(iXmlFetch);
+    iXmlFetch = xmlFetchManager.Fetch(iLocation, functor);
 }
 
 void CpiDeviceUpnp::InterruptXmlFetch()
 {
+    XmlFetchManager& xmlFetchManager = iDevice->GetCpStack().XmlFetchManager();
+
     AutoMutex a(iLock);
     if (iXmlFetch != NULL) {
-        iXmlFetch->Interrupt();
+        xmlFetchManager.Interrupt(*iXmlFetch);
         iXmlFetch = NULL;
     }
     if (iXmlCheckLocation != NULL) {
-        iXmlCheckLocation->Interrupt();
+        xmlFetchManager.Interrupt(*iXmlCheckLocation);
         iXmlCheckLocation = NULL;
     }
     if (iXmlCheckRefresh != NULL) {
-        iXmlCheckRefresh->Interrupt();
+        xmlFetchManager.Interrupt(*iXmlCheckLocation);
         iXmlCheckRefresh = NULL;
     }
     iList = NULL;
@@ -182,11 +180,9 @@ void CpiDeviceUpnp::CheckStillAvailable(CpiDeviceUpnp* aNewLocation)
     iNewLocation = aNewLocation;
     XmlFetchManager& xmlFetchManager = iDevice->GetCpStack().XmlFetchManager();
     ASSERT(iXmlCheckLocation == NULL);
-    iXmlCheckLocation = xmlFetchManager.Fetch();
     iDevice->AddRef();
     FunctorAsync functor = MakeFunctorAsync(*this, &CpiDeviceUpnp::XmlCheckLocationCompleted);
-    iXmlCheckLocation->CheckContactable(iLocation, functor);
-    xmlFetchManager.Fetch(iXmlCheckLocation);
+    iXmlCheckLocation = xmlFetchManager.CheckContactable(iLocation, functor);
     iLock.Signal();
 }
 
@@ -194,11 +190,9 @@ void CpiDeviceUpnp::CheckStillAvailable()
 {
     AutoMutex _(iLock);
     XmlFetchManager& xmlFetchManager = iDevice->GetCpStack().XmlFetchManager();
-    iXmlCheckRefresh = xmlFetchManager.Fetch();
     iDevice->AddRef();
     FunctorAsync functor = MakeFunctorAsync(*this, &CpiDeviceUpnp::XmlCheckRefreshCompleted);
-    iXmlCheckRefresh->CheckContactable(iLocation, functor);
-    xmlFetchManager.Fetch(iXmlCheckRefresh);
+    iXmlCheckRefresh = xmlFetchManager.CheckContactable(iLocation, functor);
 }
 
 TBool CpiDeviceUpnp::GetAttribute(const char* aKey, Brh& aValue) const

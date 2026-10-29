@@ -12,6 +12,7 @@
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
+static const Brn kUriErrorDescription("Uri Error");
 static const Brn kHttpErrorDescription("Http Error");
 static const Brn kReaderErrorDescription("Reader Error");
 static const Brn kWriterErrorDescription("Writer Error");
@@ -19,47 +20,6 @@ static const Brn kNetworkErrorDescription("Network Error");
 
 
 // XmlFetch
-
-void XmlFetch::Set(const Brx& aAbsoluteUri, FunctorAsync& aFunctor)
-{
-    iUri.Replace(aAbsoluteUri);
-    iFunctor = aFunctor;
-    iSequenceNumber = iCpStack.Env().SequenceNumber();
-}
-
-void XmlFetch::CheckContactable(const Brx& aAbsoluteUri, FunctorAsync& aFunctor)
-{
-    Set(aAbsoluteUri, aFunctor);
-    iCheckContactable = true;
-}
-
-XmlFetch::~XmlFetch()
-{
-}
-
-const OpenHome::Uri& XmlFetch::Uri() const
-{
-    return iUri;
-}
-
-void XmlFetch::SignalCompleted()
-{
-    FunctorAsync& asyncEndHandler = iCpStack.Env().InitParams()->AsyncEndHandler();
-    if (asyncEndHandler) {
-        asyncEndHandler(*this);
-    }
-    ASSERT(iFunctor);
-    try {
-        iFunctor(*this);
-    }
-    catch(XmlFetchError&) {
-        FunctorAsync& asyncErrorHandler = iCpStack.Env().InitParams()->AsyncErrorHandler();
-        if (asyncErrorHandler) {
-            asyncErrorHandler(*this);
-        }
-    }
-}
-
 TBool XmlFetch::Error() const
 {
     return (iError.Level() != Error::eNone);
@@ -77,84 +37,6 @@ void XmlFetch::SetError(Error::ELevel aLevel, TUint aCode, const Brx& aDescripti
             iError.Set(aLevel, aCode, aDescription);
         }
     }
-}
-
-void XmlFetch::Fetch()
-{
-    const Brx& absUri = iUri.AbsoluteUri();
-    LOG(kXmlFetch, "> XmlFetch::Fetch for %.*s\n", PBUF(absUri));
-
-    iLock.Wait();
-    iSocket.Interrupt(false);
-    iLock.Signal();
-    iSocket.Open(iCpStack.Env());
-    AutoSocket a(iSocket);
-    iLock.Wait();
-    if (iInterrupted) {
-        SetError(Error::eAsync, Error::eCodeInterrupted, Error::kDescriptionAsyncInterrupted);
-        iLock.Signal();
-        THROW(ReaderError);
-    }
-    iLock.Signal();
-    try {
-        const TUint port = (iUri.Port()==Uri::kPortNotSpecified? 80 : iUri.Port());
-        Endpoint endpoint(port, iUri.Host());
-        TUint timeout = iCpStack.Env().InitParams()->TcpConnectTimeoutMs();
-        iSocket.Connect(endpoint, timeout);
-        WriteRequest(iCheckContactable ? Http::kMethodHead : Http::kMethodGet);
-        try {
-            Read();
-        }
-        catch (HttpError&) {
-            if (!iCheckContactable) {
-                throw;
-            }
-
-            // possible the device doesn't support HTTP HEAD method, try again with GET
-            // close then re-open socket - some devices don't like keep-alive and additional requests
-            iSocket.Close();
-            iSocket.Open(iCpStack.Env());
-            iSocket.Connect(endpoint, timeout);
-
-            iError.Clear();
-            WriteRequest(Http::kMethodGet);
-            Read();
-        }
-    }
-    catch (NetworkTimeout&) {
-        SetError(Error::eSocket, Error::eCodeTimeout, Error::kDescriptionSocketTimeout);
-    }
-    catch (NetworkError&) {
-        SetError(Error::eSocket, Error::kCodeUnknown, kNetworkErrorDescription);
-    }
-    catch (HttpError&) {
-        SetError(Error::eHttp, Error::kCodeUnknown, kHttpErrorDescription);
-    }
-    catch (WriterError&) {
-        SetError(Error::eSocket, Error::kCodeUnknown, kWriterErrorDescription);
-    }
-    catch (ReaderError&) {
-        SetError(Error::eSocket, Error::kCodeUnknown, kReaderErrorDescription);
-    }
-
-    LOG(kXmlFetch, "< XmlFetch::Fetch for %.*s\n", PBUF(absUri));
-}
-
-void XmlFetch::Interrupt()
-{
-    iLock.Wait();
-    iInterrupted = true;
-    iSocket.Interrupt(true);
-    iLock.Signal();
-}
-
-TBool XmlFetch::Interrupted() const
-{
-    TBool ret;
-    iLock.Wait();
-    ret = iInterrupted;
-    iLock.Signal();
-    return ret;
 }
 
 Bwh& XmlFetch::Xml(IAsync& aAsync)
@@ -196,61 +78,6 @@ Error& XmlFetch::GetError(IAsync& aAsync)
     THROW(XmlFetchError); 
 }
 
-XmlFetch::XmlFetch(CpStack& aCpStack)
-    : iCpStack(aCpStack)
-    , iSequenceNumber(0)
-    , iLock("XMLM")
-    , iInterrupted(false)
-    , iCheckContactable(false)
-    , iContactable(false)
-    , iReadBuffer(iSocket)
-    , iReaderUntil(iReadBuffer)
-    , iDechunker(iReaderUntil)
-    , iReaderEntity(iReaderUntil)
-{
-}
-
-void XmlFetch::WriteRequest(const Brx& aMethod)
-{
-    Sws<kRwBufferLength> writeBuffer(iSocket);
-    WriterHttpRequest writerRequest(writeBuffer);
-
-    writerRequest.WriteMethod(aMethod, iUri.PathAndQuery(), Http::eHttp11);
-    const TUint port = (iUri.Port()==Uri::kPortNotSpecified? 80 : iUri.Port());
-    Http::WriteHeaderHostAndPort(writerRequest, iUri.Host(), port);
-    Http::WriteHeaderContentLength(writerRequest, 0);
-    Http::WriteHeaderConnectionClose(writerRequest);
-    writerRequest.WriteFlush();
-}
-
-void XmlFetch::Read()
-{
-    iReaderEntity.ReadFlush();
-    ReaderHttpResponse readerResponse(iCpStack.Env(), iReaderUntil);
-    HttpHeaderContentLength headerContentLength;
-    HttpHeaderTransferEncoding headerTransferEncoding;
-
-    readerResponse.AddHeader(headerContentLength);
-    readerResponse.AddHeader(headerTransferEncoding);
-    readerResponse.Read(kResponseTimeoutMs);
-    const HttpStatus& status = readerResponse.Status();
-    if (status != HttpStatus::kOk) {
-        const Brx& reason = status.Reason();
-        LOG_TRACE(kXmlFetch, "XmlFetch::Read, http error %u %.*s\n", status.Code(), PBUF(reason));
-        SetError(Error::eHttp, status.Code(), reason);
-        THROW(HttpError);
-    }
-    if (iCheckContactable) {
-        iContactable = true;
-        return;
-    }
-
-    WriterBwh writer(1024);
-    iReaderEntity.ReadAll(writer, headerContentLength, headerTransferEncoding,
-                          ReaderHttpEntity::Client);
-    writer.TransferTo(iXml);
-}
-
 void XmlFetch::Output(IAsyncOutput& /*aConsole*/)
 {
     // Its non-trivial to serialise output from different fetcher threads.
@@ -280,34 +107,41 @@ TUint XmlFetch::Type() const
 
 // XmlFetcher
 
-XmlFetcher::XmlFetcher(const TChar* aName, Fifo<XmlFetcher*>& aFree)
+XmlFetcher::XmlFetcher(const TChar* aName, Environment& aEnv, XmlFetchManager& aManager)
     : Thread(aName)
-    , iFree(aFree)
+    , iEnv(aEnv)
+    , iManager(aManager)
     , iLock("XMLF")
     , iFetch(NULL)
-{
-}
+    , iReadBuffer(iSocket)
+    , iReaderUntil(iReadBuffer)
+    , iDechunker(iReaderUntil)
+    , iReaderEntity(iReaderUntil)
+{ }
 
 XmlFetcher::~XmlFetcher()
 {
     Kill();
 
     iLock.Wait();
-    if (iFetch != NULL) {
-        iFetch->Interrupt();
-    }
+    iSocket.Interrupt(true);
     iLock.Signal();
 
     Join();
 }
 
-void XmlFetcher::Fetch(XmlFetch* aFetch)
+TBool XmlFetcher::InterruptIfRunning(XmlFetch& aFetch)
 {
+    TBool didInterrupt = false;
+
     iLock.Wait();
-    iFetch = aFetch;
+    if (iFetch == &aFetch) {
+        iSocket.Interrupt(true);
+        didInterrupt = true;
+    }
     iLock.Signal();
 
-    Signal();
+    return didInterrupt;
 }
 
 #ifdef DEFINE_TRACE
@@ -316,29 +150,31 @@ void XmlFetcher::LogError(const TChar* aErr)
 void XmlFetcher::LogError(const TChar* /*aErr*/)
 #endif
 {
-    const Brx& absUri = iFetch->Uri().AbsoluteUri();
-    LOG_ERROR(kXmlFetch, "Error - %s - from %.*s\n", aErr, PBUF(absUri));
+    LOG_ERROR(kXmlFetch, "Error - %s - from %.*s\n", aErr, PBUF(iFetch->iLocation));
 }
 
 void XmlFetcher::Run()
 {
-    XmlFetch *fetch = NULL;
+    XmlFetch* fetch = NULL;
 
     for (;;) {
-        Wait();
+        fetch = iManager.NextFetch();
+        if (fetch == NULL) {
+            break; // No more work, we're shutting down.
+        }
 
         iLock.Wait();
-        fetch = iFetch;
+        iFetch = fetch;
         iLock.Signal();
 
         if (fetch != NULL) {
             try {
-                if (fetch->Interrupted()) {
-                    fetch->SetError(Error::eAsync, Error::eCodeInterrupted,
-                                    Error::kDescriptionAsyncInterrupted);
-                } else {
-                    fetch->Fetch();
-                }
+                iUri.Replace(fetch->iLocation);
+                DoFetch();
+            }
+            catch (UriError&) {
+                iFetch->SetError(Error::eHttp, Error::kCodeUnknown, kUriErrorDescription);
+                LogError("Http(URI)");
             }
             catch (HttpError &) {
                 LogError("Http");
@@ -363,22 +199,176 @@ void XmlFetcher::Run()
             iFetch = NULL;
             iLock.Signal();
 
-            fetch->SignalCompleted();
-            delete fetch;
-        }
+            FunctorAsync& asyncEndHandler = iEnv.InitParams()->AsyncEndHandler();
+            if (asyncEndHandler) {
+                asyncEndHandler(*fetch);
+            }
+            ASSERT(fetch->iFunctor);
+            try {
+                fetch->iFunctor(*fetch);
+            }
+            catch(XmlFetchError&) {
+                FunctorAsync& asyncErrorHandler = iEnv.InitParams()->AsyncErrorHandler();
+                if (asyncErrorHandler) {
+                    asyncErrorHandler(*fetch);
+                }
+            }
 
-        iFree.Write(this);
+            iManager.ReleaseFetch(fetch);
+        }
     }
 }
+
+void XmlFetcher::DoFetch()
+{
+    const Brx& absUri = iUri.AbsoluteUri();
+    LOG(kXmlFetch, "> XmlFetch::Fetch for %.*s\n", PBUF(absUri));
+
+    iLock.Wait();
+    iSocket.Interrupt(false);
+    iLock.Signal();
+    iSocket.Open(iEnv);
+    AutoSocket a(iSocket);
+    iLock.Wait();
+
+    if (iManager.IsFetchInterrupted(iFetch)) {
+        iFetch->SetError(Error::eAsync, Error::eCodeInterrupted, Error::kDescriptionAsyncInterrupted);
+        iLock.Signal();
+        THROW(ReaderError);
+    }
+    iLock.Signal();
+    try {
+        const TUint port = (iUri.Port()==Uri::kPortNotSpecified? 80 : iUri.Port());
+        Endpoint endpoint(port, iUri.Host());
+        TUint timeout = iEnv.InitParams()->TcpConnectTimeoutMs();
+        iSocket.Connect(endpoint, timeout);
+        WriteRequest(iFetch->iCheckContactable ? Http::kMethodHead : Http::kMethodGet);
+
+        TBool success = Read();
+        if (!success) {
+            if (!iFetch->iCheckContactable) {
+                THROW(HttpError);
+            }
+
+            // possible the device doesn't support HTTP HEAD method, try again with GET
+            // close then re-open socket - some devices don't like keep-alive and additional requests
+            iSocket.Close();
+            iSocket.Open(iEnv);
+            iSocket.Connect(endpoint, timeout);
+
+            iFetch->iError.Clear();
+            WriteRequest(Http::kMethodGet);
+            if (!Read()) {
+                THROW(HttpError);
+            }
+        }
+    }
+    catch (NetworkTimeout&) {
+        iFetch->SetError(Error::eSocket, Error::eCodeTimeout, Error::kDescriptionSocketTimeout);
+    }
+    catch (NetworkError&) {
+        iFetch->SetError(Error::eSocket, Error::kCodeUnknown, kNetworkErrorDescription);
+    }
+    catch (HttpError&) {
+        iFetch->SetError(Error::eHttp, Error::kCodeUnknown, kHttpErrorDescription);
+    }
+    catch (WriterError&) {
+        iFetch->SetError(Error::eSocket, Error::kCodeUnknown, kWriterErrorDescription);
+    }
+    catch (ReaderError&) {
+        iFetch->SetError(Error::eSocket, Error::kCodeUnknown, kReaderErrorDescription);
+    }
+
+    LOG(kXmlFetch, "< XmlFetch::Fetch for %.*s\n", PBUF(absUri));
+}
+
+void XmlFetcher::WriteRequest(const Brx& aMethod)
+{
+    Sws<kRwBufferLength> writeBuffer(iSocket);
+    WriterHttpRequest writerRequest(writeBuffer);
+
+    writerRequest.WriteMethod(aMethod, iUri.PathAndQuery(), Http::eHttp11);
+    const TUint port = (iUri.Port()==Uri::kPortNotSpecified? 80 : iUri.Port());
+    Http::WriteHeaderHostAndPort(writerRequest, iUri.Host(), port);
+    Http::WriteHeaderContentLength(writerRequest, 0);
+    Http::WriteHeaderConnectionClose(writerRequest);
+    writerRequest.WriteFlush();
+}
+
+TBool XmlFetcher::Read()
+{
+    iReaderEntity.ReadFlush();
+    ReaderHttpResponse readerResponse(iEnv, iReaderUntil);
+    HttpHeaderContentLength headerContentLength;
+    HttpHeaderTransferEncoding headerTransferEncoding;
+
+    readerResponse.AddHeader(headerContentLength);
+    readerResponse.AddHeader(headerTransferEncoding);
+    readerResponse.Read(kResponseTimeoutMs);
+    const HttpStatus& status = readerResponse.Status();
+    if (status != HttpStatus::kOk) {
+        const Brx& reason = status.Reason();
+        LOG_TRACE(kXmlFetch, "XmlFetch::Read, http error %u %.*s\n", status.Code(), PBUF(reason));
+        iFetch->SetError(Error::eHttp, status.Code(), reason);
+        return false;
+    }
+    if (iFetch->iCheckContactable) {
+        iFetch->iContactable = true;
+        return true;
+    }
+
+    WriterBwh writer(1024);
+    iReaderEntity.ReadAll(writer, headerContentLength, headerTransferEncoding,
+                          ReaderHttpEntity::Client);
+    writer.TransferTo(iFetch->iXml);
+    return true;
+}
+
+// XmlFetchBlock
+//
+// @PoolBlockSize
+// Previously an XmlFetch instance would contain it's own URI, socket, read/write buffers and HTTP readers.
+// This was changed so that these are owned by XmlFetcher instead and reused across multiple fetches.
+// As such the size of XmlFetch reduced from ~5KB to ~150bytes. With this in mind, a single XMLFetch from before
+// used the same about of RAM as about 30 instances today.
+// Most users have 1 or 2 products on the network and with a conservative estimate of 5 fetches per device, a block
+// size of 5KB more than covers this need. When tested on the office network, a peek of around 60 fetches was observed
+// requiring only 2 blocks to service the pool.
+namespace OpenHome {
+namespace Net {
+
+struct XmlFetchBlock
+{
+    static const TUint kMaxBlockSize   = 5 * 1024; //@PoolBlockSize
+    static const TUint kFetchesPerBlock = kMaxBlockSize / sizeof(XmlFetch);
+
+    XmlFetchBlock* iNext;
+    XmlFetch iFetches[kFetchesPerBlock];
+};
+
+} // namespace Net
+} // namespace OpenHome
 
 
 // XmlFetchManager
 
+// TODO: XmlFetchBlocks are never freed during runtime. If we wanted to be really nice we could offer
+//       a global "Cleanup" function that does some housekeeping and could remove blocks who don't have
+//       a single fetch in use.
+
+// TODO: The current pending list operates in LIFO order. This is different from the previous case that was
+//       FIFO order. In most networks, the number of devices are small and so shouldn't have much of an impact
+
 XmlFetchManager::XmlFetchManager(CpStack& aCpStack)
-    : Thread("XmlFetchManager")
-    , iCpStack(aCpStack)
+    : iCpStack(aCpStack)
     , iLock("FETL")
-    , iFree(iCpStack.Env().InitParams()->NumXmlFetcherThreads())
+    , iPending("FETP", 0)
+    , iPool(NULL)
+    , iFreeList(NULL)
+    , iPendingList(NULL)
+    , iNumBlocks(0)
+    , iNumInUse(0)
+    , iMaxInUse(0)
 {
     const TUint numThreads = iCpStack.Env().InitParams()->NumXmlFetcherThreads();
     iFetchers = (XmlFetcher**)malloc(sizeof(*iFetchers) * numThreads);
@@ -386,13 +376,12 @@ XmlFetchManager::XmlFetchManager(CpStack& aCpStack)
         Bws<Thread::kMaxNameBytes+1> thName;
         thName.AppendPrintf("XmlFetcher %d", i);
         thName.PtrZ();
-        iFetchers[i] = new XmlFetcher((const TChar*)thName.Ptr(), iFree);
-        iFree.Write(iFetchers[i]);
+        iFetchers[i] = new XmlFetcher((const TChar*)thName.Ptr(), iCpStack.Env(), *this);
         iFetchers[i]->Start();
     }
 
+    AddPoolBlock();
     iActive = true;
-    Start();
 }
 
 XmlFetchManager::~XmlFetchManager()
@@ -402,38 +391,82 @@ XmlFetchManager::~XmlFetchManager()
     iLock.Wait();
     iActive = false;
     iLock.Signal();
-    Kill();
-    Join();
 
-    iFree.ReadInterrupt();
+    iLock.Wait();
+    for (TUint i = 0; i < iCpStack.Env().InitParams()-> NumXmlFetcherThreads(); i += 1) {
+        iPending.Signal();
+    }
+    iLock.Signal();
+
 
     for (TUint i=0; i<iCpStack.Env().InitParams()->NumXmlFetcherThreads(); i++) {
         delete iFetchers[i];
     }
     free(iFetchers);
 
-    TUint size = (TUint)iList.size();
-    while (size > 0) {
-        XmlFetch* fetch = iList.front();
-        fetch->SetError(Error::eAsync, Error::eCodeShutdown,
-                        Error::kDescriptionAsyncShutdown);
-        fetch->SignalCompleted();
-        iList.pop_front();
-        size--;
+    while (iPendingList) {
+        XmlFetch* fetch = iPendingList;
+        iPendingList    = fetch->iNext;
+
+        SetFetchShutdownError(fetch);
+        // Don't bother calling release as the fetches are all released next
     }
 
+    while (iPool) {
+        XmlFetchBlock* block = iPool;
+        iPool                = block->iNext;
+        delete block;
+    }
+
+    LOG(kEssential, "~XmlFetchManager: XmlFetchPool was %u blocks in size (a total of %u instances). Peak usage: %u\n", iNumBlocks, iNumBlocks * XmlFetchBlock::kFetchesPerBlock, iMaxInUse);
     LOG(kXmlFetch, "< ~XmlFetchManager\n");
 }
 
-XmlFetch* XmlFetchManager::Fetch()
+XmlFetch* XmlFetchManager::Fetch(const Brx& aAbsoluteUri, FunctorAsync& aFunctor)
 {
-    return new XmlFetch(iCpStack);
+    XmlFetch* fetch          = AcquireFetch();
+    fetch->iFunctor          = aFunctor;
+    fetch->iSequenceNumber   = iCpStack.Env().SequenceNumber();
+    fetch->iCheckContactable = false;
+    fetch->iLocation.Set(aAbsoluteUri);
+    fetch->iError.Clear();
+    EnqueueFetch(fetch);
+    return fetch;
 }
 
-void XmlFetchManager::Fetch(XmlFetch* aFetch)
+XmlFetch* XmlFetchManager::CheckContactable(const Brx& aAbsoluteUri, FunctorAsync& aFunctor)
 {
-    const Brx& absUri = aFetch->Uri().AbsoluteUri();
-    LOG(kXmlFetch, "Fetch for %.*s\n", PBUF(absUri));
+    XmlFetch* fetch          = AcquireFetch();
+    fetch->iFunctor          = aFunctor;
+    fetch->iSequenceNumber   = iCpStack.Env().SequenceNumber();
+    fetch->iCheckContactable = true;
+    fetch->iLocation.Set(aAbsoluteUri);
+    fetch->iError.Clear();
+    EnqueueFetch(fetch);
+    return fetch;
+}
+
+void XmlFetchManager::Interrupt(XmlFetch& aFetch)
+{
+    Log::Print(">XmlFetchManager::Interrupt\n");
+
+    iLock.Wait();
+    aFetch.iInterrupted = true;
+    iLock.Signal();
+
+    for (TUint i = 0; i < iCpStack.Env().InitParams()->NumXmlFetcherThreads(); i += 1) {
+        TBool didInterrupt = iFetchers[i]->InterruptIfRunning(aFetch);
+        if (didInterrupt) {
+            break;
+        }
+    }
+
+    Log::Print("<XmlFetchManager::Interrupt\n");
+}
+
+void XmlFetchManager::EnqueueFetch(XmlFetch* aFetch)
+{
+    LOG(kXmlFetch, "Fetch for %.*s\n", PBUF(aFetch->iLocation));
 
     FunctorAsync& asyncBeginHandler = iCpStack.Env().InitParams()->AsyncBeginHandler();
     if (asyncBeginHandler) {
@@ -442,30 +475,115 @@ void XmlFetchManager::Fetch(XmlFetch* aFetch)
 
     AutoMutex a(iLock);
     if (!iActive) {
-        aFetch->SetError(Error::eAsync, Error::eCodeShutdown,
-                         Error::kDescriptionAsyncShutdown);
-        aFetch->SignalCompleted();
-        delete aFetch;
-        return;
+        SetFetchShutdownError(aFetch);
+        ReleaseFetchLocked(aFetch);
     }
-    iList.push_back(aFetch);
-    Signal();
+    else {
+        aFetch->iNext = iPendingList;
+        iPendingList  = aFetch;
+        iPending.Signal();
+    }
 }
 
-void XmlFetchManager::Run()
+void XmlFetchManager::SetFetchShutdownError(XmlFetch* aFetch)
 {
-    for (;;) {
-        Wait();
-        XmlFetcher* fetcher = iFree.Read();
-        iLock.Wait();
-        if (!iActive) {
-            iLock.Signal();
-            continue; // the next Wait() will throw ThreadKill
-        }
-        XmlFetch* fetch = iList.front();
-        iList.front() = NULL;
-        iList.pop_front();
-        iLock.Signal();
-        fetcher->Fetch(fetch);
+    aFetch->SetError(Error::eAsync,
+                     Error::eCodeShutdown,
+                     Error::kDescriptionAsyncShutdown);
+
+    FunctorAsync& asyncEndHandler = iCpStack.Env().InitParams()->AsyncEndHandler();
+    if (asyncEndHandler) {
+        asyncEndHandler(*aFetch);
     }
+    ASSERT(aFetch->iFunctor);
+    try {
+        aFetch->iFunctor(*aFetch);
+    }
+    catch(XmlFetchError&) {
+        FunctorAsync& asyncErrorHandler = iCpStack.Env().InitParams()->AsyncErrorHandler();
+        if (asyncErrorHandler) {
+            asyncErrorHandler(*aFetch);
+        }
+    }
+}
+
+XmlFetch* XmlFetchManager::NextFetch()
+{
+    iPending.Wait();
+
+    AutoMutex m(iLock);
+    if (!iActive) {
+        return NULL; // Signal for XmlFetcher threads to exit
+    }
+
+    ASSERT(iPendingList != NULL);
+
+    XmlFetch* fetch = iPendingList;
+    iPendingList    = fetch->iNext;
+    fetch->iNext    = NULL;
+
+    return fetch;
+}
+
+XmlFetch* XmlFetchManager::AcquireFetch()
+{
+    AutoMutex a(iLock);
+
+    if (iFreeList == NULL) {
+        AddPoolBlock();
+    }
+
+    XmlFetch* fetch = iFreeList;
+    iFreeList       = fetch->iNext;
+    fetch->iNext    = NULL;
+
+    iNumInUse += 1;
+    if (iNumInUse > iMaxInUse) {
+        iMaxInUse = iNumInUse;
+    }
+
+    return fetch;
+}
+
+void XmlFetchManager::ReleaseFetch(XmlFetch* aFetch)
+{
+    AutoMutex a(iLock);
+    ReleaseFetchLocked(aFetch);
+}
+
+void XmlFetchManager::ReleaseFetchLocked(XmlFetch* aFetch)
+{
+    aFetch->iNext = iFreeList;
+    iFreeList     = aFetch;
+
+    iNumInUse -= 1;
+}
+
+void XmlFetchManager::AddPoolBlock()
+{
+    XmlFetchBlock* newBlock = new XmlFetchBlock();
+    ASSERT(newBlock != NULL);
+
+    newBlock->iNext = iPool;
+    iPool           = newBlock;
+
+    for (TUint i = 0; i < XmlFetchBlock::kFetchesPerBlock; i += 1) {
+        XmlFetch& fetch = newBlock->iFetches[i];
+        fetch.iNext     = iFreeList;
+        iFreeList       = &fetch;
+    }
+
+    iNumBlocks += 1;
+    if (iNumBlocks > 1) {
+        LOG(Debug::kEssential, "XmlFetchManager: XmlFetch pool increasing. Now: %u blocks of %u fetches (%u in total)\n", iNumBlocks, XmlFetchBlock::kFetchesPerBlock, iNumBlocks * XmlFetchBlock::kFetchesPerBlock);
+    }
+}
+
+TBool XmlFetchManager::IsFetchInterrupted(XmlFetch* aFetch)
+{
+    TBool result = false;
+    iLock.Wait();
+    result = aFetch->iInterrupted;;
+    iLock.Signal();
+    return result;
 }
