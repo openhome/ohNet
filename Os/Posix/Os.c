@@ -41,6 +41,16 @@
 #include <ifaddrs.h>
 #include <signal.h>
 
+#ifdef PLATFORM_FREEBSD
+/* FreeBSD names these after RFC 3493. */
+# ifndef IPV6_ADD_MEMBERSHIP
+#  define IPV6_ADD_MEMBERSHIP IPV6_JOIN_GROUP
+# endif
+# ifndef IPV6_DROP_MEMBERSHIP
+#  define IPV6_DROP_MEMBERSHIP IPV6_LEAVE_GROUP
+# endif
+#endif /* PLATFORM_FREEBSD */
+
 #ifdef PLATFORM_MACOSX_GNU
 #include <SystemConfiguration/SystemConfiguration.h>
 #include <execinfo.h>
@@ -1976,7 +1986,7 @@ static int IsWireless(const char* aIfName, int aDomain, OsContext* aContext)
 #else
 static int IsWireless(const char* aIfName, int aDomain, OsContext* aContext)
 {
-#if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_QNAP)
+#if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_QNAP) && !defined(PLATFORM_FREEBSD)
     int sock = -1;
     int err;
     struct iwreq pwrq;
@@ -1992,7 +2002,7 @@ static int IsWireless(const char* aIfName, int aDomain, OsContext* aContext)
     return err == 0 ? 1 : 0;
 #else
     return 0;
-#endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_QNAP */
+#endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_QNAP && !PLATFORM_FREEBSD */
 }
 #endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_FREEBSD && !PLATFORM_QNAP */
 
