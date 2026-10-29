@@ -38,10 +38,10 @@ Endpoint::Endpoint()
 }
 
 // Construct endpoint with supplied address and port
-Endpoint::Endpoint(TUint aPort, const Brx& aAddress)
+Endpoint::Endpoint(TUint aPort, const Brx& aAddress, EResolutionHint aHint)
 {
     SetPort(aPort);
-    SetAddress(aAddress);
+    SetAddress(aAddress, aHint);
 }
 
 Endpoint::Endpoint(TUint aPort, TIpAddress aAddress)
@@ -63,8 +63,17 @@ void Endpoint::SetPort(const Endpoint& aEndpoint)
 }
 
 // Replace the endpoint address with the supplied address string
-void Endpoint::SetAddress(const Brx& aAddress)
+void Endpoint::SetAddress(const Brx& aAddress, EResolutionHint aHint)
 {
+    // If it's likely we already have an IPAddress we can attempt to parse this
+    // directly first to avoid a sys-call roundtrip.
+    // FIXME: IPv6 support?
+    if (aHint == eResolutionHintLikelyIPv4Address) {
+        if (TIpAddressUtils::TryParseIPv4Address(iAddress, aAddress)) {
+            return;
+        }
+    }
+
     iAddress = GetHostByName(aAddress);
     if (TIpAddressUtils::IsIPv6MappedIPv4Address(iAddress)) {
         iAddress = TIpAddressUtils::IPv4FromIPv6MappedIPv4Address(iAddress);

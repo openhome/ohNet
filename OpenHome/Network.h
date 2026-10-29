@@ -40,6 +40,12 @@ enum ESocketFamily
     eSocketFamilyV6 = 2,
 };
 
+enum EResolutionHint 
+{
+    eResolutionHintNone              = 0,
+    eResolutionHintLikelyIPv4Address = 1,
+};
+
 // Addressing
 
 // The Endpoint class has been designed with a restricted interface in order to facilitate
@@ -52,17 +58,21 @@ public:
     static const TUint kMaxEndpointBytes = 48;                               // As above with de-limiter before port of 5 characters and '[]' enclosing the address
     typedef Bws<TIpAddressUtils::kMaxAddressBytes> AddressBuf;
     typedef Bws<kMaxEndpointBytes> EndpointBuf;
+
 public:
     Endpoint();
-    Endpoint(TUint aPort, const Brx& aAddress);          // specify port, specify ip address from string e.g. "192.168.0.1"
-    Endpoint(TUint aPort, TIpAddress aAddress);          // specify port, specify ip address from uint
-    void SetPort(TUint aPort);                           // set port
-    void SetPort(const Endpoint& aEndpoint);             // set port from other endpoint
-    void SetAddress(const Brx& aAddress);                // set address from string e.g. "192.168.0.1"
+    Endpoint(TUint aPort,
+             const Brx& aAddress,
+             EResolutionHint aHint = eResolutionHintNone);         // specify port, specify ip address from string e.g. "192.168.0.1"
+    Endpoint(TUint aPort, TIpAddress aAddress);                    // specify port, specify ip address from uint
+    void SetPort(TUint aPort);                                     // set port
+    void SetPort(const Endpoint& aEndpoint);                       // set port from other endpoint
+    void SetAddress(const Brx& aAddress,
+                    EResolutionHint aHint = eResolutionHintNone);  // set address from string e.g. "192.168.0.1"
     void SetAddress(TIpAddress aAddress);
-    void SetAddress(const Endpoint& aEndpoint);          // set address from other endpoint
-    void Replace(const Endpoint& aEndpoint);             // set endpoint from other endpoint
-    TBool Equals(const Endpoint& aEndpoint) const;       // test if this endpoint is equal to the specified endpoint
+    void SetAddress(const Endpoint& aEndpoint);                    // set address from other endpoint
+    void Replace(const Endpoint& aEndpoint);                       // set endpoint from other endpoint
+    TBool Equals(const Endpoint& aEndpoint) const;                 // test if this endpoint is equal to the specified endpoint
     inline TBool operator==(const Endpoint& aEndpoint) const { return Equals(aEndpoint); }
     TIpAddress Address() const;
     TUint16 Port() const;                                // return port as a network order uint16
