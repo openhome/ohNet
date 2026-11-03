@@ -257,25 +257,26 @@ DviService* DviDevice::ServiceReference(const Brx& aServiceName)
     try {
         version = Ascii::Uint(versionBuf);
     }
-    catch (AsciiError&) {
-        return service;
-    }
+    catch (AsciiError&) { }
 
-    const TUint count = (TUint)iServices.size();
-    for (TUint i=0; i<count; i++) {
-        DviService* s = iServices[i];
-        ServiceType type = s->ServiceType();
-        Bwh serviceUpnpDomain(type.Domain().Bytes() + 10);
-        Ssdp::CanonicalDomainToUpnp(type.Domain(), serviceUpnpDomain);
+    if (version > 0) {
+        const TUint count = (TUint)iServices.size();
+        for (TUint i=0; i<count; i++) {
+            DviService* s = iServices[i];
+            ServiceType type = s->ServiceType();
+            Bwh serviceUpnpDomain(type.Domain().Bytes() + 10);
+            Ssdp::CanonicalDomainToUpnp(type.Domain(), serviceUpnpDomain);
 
-        if (serviceUpnpDomain == upnpDomain && type.Name() == name) {
-            if (type.Version() >= version) {
-                s->AddRef();
-                service = s;
-                break;
+            if (serviceUpnpDomain == upnpDomain && type.Name() == name) {
+                if (type.Version() >= version) {
+                    s->AddRef();
+                    service = s;
+                    break;
+                }
             }
         }
     }
+
     iServiceLock.Signal();
     return service;
 }
