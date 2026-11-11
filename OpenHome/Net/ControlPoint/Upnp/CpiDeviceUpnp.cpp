@@ -189,6 +189,11 @@ void CpiDeviceUpnp::CheckStillAvailable(CpiDeviceUpnp* aNewLocation)
 void CpiDeviceUpnp::CheckStillAvailable()
 {
     AutoMutex _(iLock);
+    if (iXmlCheckRefresh != NULL) {
+        // Fetch already in progress...
+        return;
+    }
+
     XmlFetchManager& xmlFetchManager = iDevice->GetCpStack().XmlFetchManager();
     iDevice->AddRef();
     FunctorAsync functor = MakeFunctorAsync(*this, &CpiDeviceUpnp::XmlCheckRefreshCompleted);
@@ -739,9 +744,31 @@ void CpiDeviceListUpnp::Add(CpiDeviceUpnp* aDevice)
 
 void CpiDeviceListUpnp::TryAdd(const Brx& aLocation)
 {
-    (void)new CpiDeviceUpnp(iCpStack, aLocation, *this, *this);
-    // CpiDeviceUpnp will try fetching its own XML and add itself to device list later
-    // FIXME - may leak if we shutdown while xml fetch is in progress
+    // If a device with a matching location is already in the list,
+    // request the device to refresh itself rather than allocate a new
+    // one to throw away shortly afterwards
+    CpiDevice* existingDevice = NULL;
+
+    iLock.Wait();
+    for (CpDeviceMap::iterator it = iMap.begin(); it != iMap.end(); ++it) {
+        CpiDeviceUpnp* d = reinterpret_cast<CpiDeviceUpnp*>(it->second->OwnerData());
+        if (d->Location() == aLocation) {
+            existingDevice = it->second;
+            existingDevice->AddRef();
+            break;
+        }
+    }
+    iLock.Signal();
+
+    if (existingDevice != NULL) {
+        reinterpret_cast<CpiDeviceUpnp*>(existingDevice->OwnerData())->CheckStillAvailable();
+        existingDevice->RemoveRef();
+    }
+    else {
+        (void)new CpiDeviceUpnp(iCpStack, aLocation, *this, *this);
+        // CpiDeviceUpnp will try fetching its own XML and add itself to device list later
+        // FIXME - may leak if we shutdown while xml fetch is in progress
+    }
 }
 
 TBool CpiDeviceListUpnp::Update(const Brx& aUdn, const Brx& aLocation, TUint aMaxAge)
