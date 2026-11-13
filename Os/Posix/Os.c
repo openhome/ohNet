@@ -120,6 +120,7 @@ typedef struct OsNetworkHandle
     int32_t    iPipe[2];
     int32_t    iInterrupted;
     OsContext* iCtx;
+    THandle    iLock;
 } OsNetworkHandle;
 
 typedef struct DnsRefresher
@@ -975,9 +976,9 @@ static void SetFdNonBlocking(int32_t aSocket)
 static int32_t SocketInterrupted(const OsNetworkHandle* aHandle)
 {
     int32_t interrupted;
-    OsMutexLock(aHandle->iCtx->iMutexNetwork);
+    OsMutexLock(aHandle->iLock);
     interrupted = aHandle->iInterrupted;
-    OsMutexUnlock(aHandle->iCtx->iMutexNetwork);
+    OsMutexUnlock(aHandle->iLock);
     return interrupted;
 }
 
@@ -1349,11 +1350,19 @@ static OsNetworkHandle* CreateHandle(OsContext* aContext, int32_t aSocket)
         free(handle);
         return kHandleNull;
     }
+    THandle lock = OsMutexCreate(aContext, "SOCK");
+    if (lock == kHandleNull) {
+        close(handle->iPipe[0]);
+        close(handle->iPipe[1]);
+        free(handle);
+        return kHandleNull;
+    }
     SetFdNonBlocking(handle->iPipe[0]);
     handle->iSocket = aSocket;
     assert(aSocket >= 0 && aSocket < MAX_FILE_DESCRIPTOR);
     handle->iInterrupted = 0;
     handle->iCtx = aContext;
+    handle->iLock = lock;
 
     return handle;
 }
@@ -1632,8 +1641,7 @@ int32_t OsNetworkInterrupt(THandle aHandle, int32_t aInterrupt)
 {
     int32_t err = 0;
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
-    OsContext* ctx = handle->iCtx;
-    OsMutexLock(ctx->iMutexNetwork);
+    OsMutexLock(handle->iLock);
     handle->iInterrupted = aInterrupt;
     int32_t val = 1;
     if (aInterrupt != 0) {
@@ -1646,7 +1654,7 @@ int32_t OsNetworkInterrupt(THandle aHandle, int32_t aInterrupt)
             ;
         }
     }
-    OsMutexUnlock(ctx->iMutexNetwork);
+    OsMutexUnlock(handle->iLock);
     return err;
 }
 
@@ -1658,6 +1666,7 @@ int32_t OsNetworkClose(THandle aHandle)
         err  = close(handle->iSocket);
         err |= close(handle->iPipe[0]);
         err |= close(handle->iPipe[1]);
+        OsMutexDestroy(handle->iLock);
         free(handle);
     }
     return err;
