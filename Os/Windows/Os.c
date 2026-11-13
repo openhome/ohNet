@@ -539,15 +539,16 @@ typedef struct OsNetworkHandle
     WSAEVENT   iEventSocket;
     WSAEVENT   iEventInterrupt;
     int32_t    iInterrupted;
+    THandle    iLock;
     OsContext* iCtx;
 }OsNetworkHandle;
 
 static int32_t SocketInterrupted(const OsNetworkHandle* aHandle)
 {
     int32_t interrupted;
-    OsMutexLock(aHandle->iCtx->iMutex);
+    OsMutexLock(aHandle->iLock);
     interrupted = aHandle->iInterrupted;
-    OsMutexUnlock(aHandle->iCtx->iMutex);
+    OsMutexUnlock(aHandle->iLock);
     return interrupted;
 }
 
@@ -586,6 +587,15 @@ static OsNetworkHandle* CreateHandle(OsContext* aContext, SOCKET aSocket)
         free(handle);
         return kHandleNull;
     }
+    handle->iLock = OsMutexCreate(aContext, "SOCK");
+    if (handle->iLock == kHandleNull) {
+        WSACloseEvent(handle->iEventInterrupt);
+        WSACloseEvent(handle->iEventSocket);
+        (void)closesocket(aSocket);
+        free(handle);
+        return kHandleNull;
+    }
+
     handle->iSocket = aSocket;
     handle->iInterrupted = 0;
     handle->iCtx = aContext;
@@ -812,7 +822,7 @@ int32_t OsNetworkInterrupt(THandle aHandle, int32_t aInterrupt)
 {
     int32_t err = 0;
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
-    OsMutexLock(handle->iCtx->iMutex);
+    OsMutexLock(handle->iLock);
     handle->iInterrupted = aInterrupt;
     if (aInterrupt != 0) {
         (void)WSASetEvent(handle->iEventInterrupt);
@@ -820,7 +830,7 @@ int32_t OsNetworkInterrupt(THandle aHandle, int32_t aInterrupt)
     else {
         (void)WSAResetEvent(handle->iEventInterrupt);
     }
-    OsMutexUnlock(handle->iCtx->iMutex);
+    OsMutexUnlock(handle->iLock);
     return err;
 }
 
@@ -831,6 +841,7 @@ int32_t OsNetworkClose(THandle aHandle)
     if (0 == err) {
         WSACloseEvent(handle->iEventInterrupt);
         WSACloseEvent(handle->iEventSocket);
+        OsMutexDestroy(handle->iLock);
         free(handle);
     }
     return err;
