@@ -92,6 +92,19 @@ void Mutex::Signal()
     OpenHome::Os::MutexUnlock(iHandle);
 }
 
+TBool Mutex::TryAcquire() {
+    TInt err = OpenHome::Os::MutexTryLock(iHandle);
+    if (err == 0) {
+        return true;
+    } else if (err == 1) {
+        return false;
+    }
+
+    const TChar* msg = (err == -1) ? kErrorStringDeadlock : kErrorStringUninitialised;
+    Log::Print("ERROR: %s %s from thread %.*s\n", msg, iName, PBUF(Thread::CurrentThreadName()));
+    ASSERTS();
+    return false; // never reached due to assert but needed to stop compiler complaining
+}
 
 // MutexInstrumented
 

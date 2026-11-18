@@ -39,6 +39,7 @@ public:
     inline static THandle MutexCreate(OsContext* aContext, const TChar* aName);
     inline static void MutexDestroy(THandle aMutex);
     inline static TInt MutexLock(THandle aMutex);
+    inline static TInt MutexTryLock(THandle aMutex);
     inline static void MutexUnlock(THandle aMutex);
     static void ThreadGetPriorityRange(OsContext* aContext, TUint& aHostMin, TUint& aHostMax);
     inline static THandle ThreadCreate(OsContext* aContext, const TChar* aName, TUint aPriority,

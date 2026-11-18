@@ -278,6 +278,21 @@ void OsMutexDestroy(THandle aMutex);
 int32_t OsMutexLock(THandle aMutex);
 
 /**
+ * Try and acquire mutex lock if availale.
+ *
+ * Will return immediately if the mutex is already locked by any thread.
+ *
+ * @param[in] aMutex  Mutex handle returned from MutexCreate()
+ *
+ * @return  0 on success
+ *          1  if mutex is already locked by another thread
+ *          -1 if called by a thread which already holds the lock
+ *          -2 on any other error
+ *          Note that a failure will be treated as a fatal error by the caller
+ */
+int32_t OsMutexTryLock(THandle aMutex);
+
+/**
  * Unlock a mutex
  *
  * Will not be called if the current thread does not have the mutex locked.

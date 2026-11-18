@@ -52,6 +52,11 @@ inline TInt Os::MutexLock(THandle aMutex)
     ASSERT(aMutex != kHandleNull);
     return OsMutexLock(aMutex);
 }
+inline TInt Os::MutexTryLock(THandle aMutex)
+{
+    ASSERT(aMutex != kHandleNull);
+    return OsMutexTryLock(aMutex);
+}
 inline void Os::MutexUnlock(THandle aMutex)
 {
     ASSERT(aMutex != kHandleNull);
