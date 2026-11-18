@@ -353,6 +353,31 @@ int32_t OsMutexLock(THandle aMutex)
     return 0;
 }
 
+int32_t OsMutexTryLock(THandle aMutex)
+{    
+    /* Not supported on Windows: TryEnterCriticalSection succeeds on
+       re-entry by the owning thread, and the recursion count this
+       implementation relies on (see OsMutexLock/OsMutexUnlock) cannot
+       distinguish that from a fresh acquisition without leaking a lock
+       level. Callers of OsMutexTryLock only run on Posix; fail loudly
+       here rather than risk a subtly stuck mutex if that ever changes. */
+    UNUSED(aMutex);
+    assert(0 && "OsMutexTryLock is not supported on Windows");
+    return -2;
+    
+    /* disabled implementation */
+    // Mutex* mutex = (Mutex*)aMutex;
+    // if (!TryEnterCriticalSection(&mutex->iCs)) {
+    //     return 1;
+    // }
+    // if (0 != mutex->iCount) {
+    //     LeaveCriticalSection(&mutex->iCs);
+    //     return -1;
+    // }
+    // mutex->iCount++;
+    // return 0;
+}
+
 int32_t OsMutexUnlock(THandle aMutex)
 {
     Mutex* mutex = (Mutex*)aMutex;

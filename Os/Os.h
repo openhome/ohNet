@@ -285,10 +285,11 @@ int32_t OsMutexLock(THandle aMutex);
  * @param[in] aMutex  Mutex handle returned from MutexCreate()
  *
  * @return  0 on success
- *          1  if mutex is already locked by another thread
- *          -1 if called by a thread which already holds the lock
+ *          1  if mutex is already locked by another thread (caller should handle appropriately)
  *          -2 on any other error
- *          Note that a failure will be treated as a fatal error by the caller
+ *          Note: re-entrant/deadlock calls are indistinguishable from "busy" in Posix without implementing 
+ *          some form of separate thread-id tracking. Windows implementation is currently disabled since 
+ *          it would behave differently and is currently not needed.
  */
 int32_t OsMutexTryLock(THandle aMutex);
 

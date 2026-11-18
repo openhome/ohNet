@@ -775,8 +775,9 @@ int32_t OsMutexTryLock(THandle aMutex)
     else if (status == EBUSY) {
         return 1;
     }
-    else if (status == EDEADLK)
-        return -1;
+    // TODO: trylock doesn't check for deadlock - implement thread id tracking separately if needed!!!
+    // else if (status == EDEADLK)
+    //     return -1;
     return -2;
 }
 
