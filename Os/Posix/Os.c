@@ -444,7 +444,12 @@ uint64_t OsTimeInUs(OsContext* aContext)
     adjusted = timespecSubtract(&now, &aContext->iStartTime);
     OsMutexUnlock(aContext->iMutexTime);
 
-    return (uint64_t)((adjusted.tv_sec * 1000000) + (adjusted.tv_nsec / 1000));
+    /* Widen to 64 bits BEFORE multiplying.  On 32-bit platforms (armhf, Core4) time_t and tv_nsec are 32-bit, so
+       the old form, (uint64_t)((tv_sec * 1000000) + (tv_nsec / 1000)), did the multiply and add in 32-bit signed
+       arithmetic and overflowed once the sum passed 2^31 microseconds (2147.48 s, about 35.8 minutes after
+       OsCreate).  The wrapped value was then sign-extended to 64 bits, so the time seen by OpenHome timers jumped
+       forward and backwards every 35.8 minutes */
+    return ((uint64_t)adjusted.tv_sec * 1000000) + ((uint64_t)adjusted.tv_nsec / 1000);
 }
 #else
 static struct timeval timevalSubtract(struct timeval* aT1, struct timeval* aT2)

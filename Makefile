@@ -384,6 +384,8 @@ ifeq ($(openhome_architecture), aarch64)
 else ifeq ($(openhome_distro), scarthgap)
 	platform_cflags += -DOHNET_CLOCK_MONOTONIC
 	platform_cflags += -DOHNET_LINUX_MULTICAST_IF
+else ifeq ($(openhome_distro), buildroot)
+	platform_cflags += -DOHNET_CLOCK_MONOTONIC
 endif
 
 
