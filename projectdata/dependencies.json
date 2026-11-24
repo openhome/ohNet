@@ -1,0 +1,48 @@
+[
+    {
+        "name": "yocto_core4_sdk",
+        "type": "internal",
+        "platform-specific": true,
+        "platform-ignore": {
+            "armhf-kirkstone-linux": false,
+            "armhf-scarthgap-linux": false,
+            "*": true
+        },
+        "platform-version": {
+            "armhf-kirkstone-linux": "0.1.8",
+            "armhf-scarthgap-linux": "0.2.77"
+        },
+        "platform-archivename": {
+            "armhf-kirkstone-linux": "5.15-kirkstone",
+            "armhf-scarthgap-linux": "6.6-scarthgap"
+        },
+        "ignore": "${platform-ignore[$platform]}",
+        "version": "${platform-version[$platform]}",
+        "cross-check": false,
+        "archive-filename": "linn-wayland-glibc-x86_64-linn-image-core-cortexa9t2hf-neon-linn-imx6dl-toolchain-${platform-archivename[$platform]}.sh",
+        "archive-path": "${binary-repo}/${name}/${version}/linn-imx6dl/${archive-filename}"
+    },
+    {
+        "name": "yocto_core5_sdk",
+        "type": "internal",
+        "platform-specific": true,
+        "platform-ignore": {
+            "aarch64-kirkstone-linux": false,
+            "aarch64-scarthgap-linux": false,
+            "*": true
+        },
+        "platform-version": {
+            "aarch64-kirkstone-linux": "0.1.8",
+            "aarch64-scarthgap-linux": "0.2.77"
+        },
+        "platform-archivename": {
+            "aarch64-kirkstone-linux": "5.15-kirkstone",
+            "aarch64-scarthgap-linux": "6.6-scarthgap"
+        },
+        "ignore": "${platform-ignore[$platform]}",
+        "version": "${platform-version[$platform]}",
+        "cross-check": false,
+        "archive-filename": "linn-wayland-glibc-x86_64-linn-image-core-armv8a-imx8mp-lpddr4-dsm-linn-toolchain-${platform-archivename[$platform]}.sh",
+        "archive-path": "${binary-repo}/${name}/${version}/imx8mp-lpddr4-dsm-linn/${archive-filename}"
+    }
+]

@@ -76,6 +76,7 @@ public:
 
     DllExport void Wait();
     DllExport void Signal();
+    DllExport TBool TryAcquire();
 protected:
     THandle iHandle;
     TChar iName[5];

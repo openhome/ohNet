@@ -15,4 +15,4 @@ jobs:
         run: docker build -t ohnet-linux-x64-ci -f .github/docker/linux-x64/Dockerfile .github/docker/linux-x64
 
       - name: Run hudson_build.py (Linux-x64, commit build)
-        run: docker run --rm -v "${{ github.workspace }}:/workspace" -w /workspace ohnet-linux-x64-ci python2.7 hudson_build.py --platform Linux-x64
+        run: docker run --rm -v "${{ github.workspace }}:/workspace" -w /workspace ohnet-linux-x64-ci python3 hudson_build.py --platform Linux-x64

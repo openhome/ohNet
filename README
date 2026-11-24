@@ -33,6 +33,10 @@ If you have a .NET runtime available and want to regenerate makefiles, proxies o
     make generate-makefiles uset4=yes
     make GenAll uset4=yes
 
+Note: cross-compiling requires a suitable toolchain to be present ('projectdata/dependencies.json'
+        contains details for fetching such an SDK in the Linn build environment and can be ignored
+        outside of this)
+
 Installing
 ----------
 See "INSTALL.txt".

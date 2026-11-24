@@ -772,6 +772,20 @@ int32_t OsMutexLock(THandle aMutex)
     return -2;
 }
 
+int32_t OsMutexTryLock(THandle aMutex)
+{
+    int status = pthread_mutex_trylock((pthread_mutex_t*)aMutex);
+    if (status == 0)
+        return 0;
+    else if (status == EBUSY) {
+        return 1;
+    }
+    // TODO: trylock doesn't check for deadlock - implement thread id tracking separately if needed!!!
+    // else if (status == EDEADLK)
+    //     return -1;
+    return -2;
+}
+
 int32_t OsMutexUnlock(THandle aMutex)
 {
     int status = pthread_mutex_unlock((pthread_mutex_t*)aMutex);

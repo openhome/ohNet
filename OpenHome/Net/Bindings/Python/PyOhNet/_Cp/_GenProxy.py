@@ -35,7 +35,7 @@ class GenProxy:
 
     def __init__( self, aType, aXml ):
         """Create python proxy service code for ohNet"""
-        m = re.match('urn:([\w\-\.]+):service:([\w\-\.]+):(\d+)', aType )
+        m = re.match(r'urn:([\w\-\.]+):service:([\w\-\.]+):(\d+)', aType )
         domain, service, version = m.groups()
         actions, properties, svs = self._ParseXml( aXml )
         self.proxy = self._BuildProxy( service, domain, int( version ), actions, properties, svs )

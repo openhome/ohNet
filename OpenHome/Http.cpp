@@ -353,7 +353,10 @@ void ReaderHttpRequest::Read(TUint aTimeoutMs)
                     continue; // a blank line before first header - ignore (RFC 2616 section 4.1)
                 }
                 if (iMethod == 0) {
-                    THROW(HttpError);
+                    THROW(HttpError); // Timer cancelled in the catch block
+                }
+                if (aTimeoutMs > 0) {
+                    iTimer->Cancel();
                 }
                 return;
             }

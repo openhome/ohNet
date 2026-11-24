@@ -1,0 +1,4 @@
+Import('env')
+
+deps = env.Install('${INSTALL_DIR}/', 'dependencies.json')
+Alias('projectdata', deps)
