@@ -44,6 +44,7 @@ public:
     void Wait();
     // Note: aTimeoutMs == 0 means wait forever
     void Wait(TUint aTimeoutMs);
+    TBool TryWait(TUint aTimeoutMs);
     /**
      * Clear any pending signals
      *

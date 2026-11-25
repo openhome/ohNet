@@ -33,14 +33,21 @@ void Semaphore::Wait()
 
 void Semaphore::Wait(TUint aTimeoutMs)
 {
-    if (aTimeoutMs == 0) {
-        Wait();
-        return;
-    }
-    ASSERT(iHandle != kHandleNull);
-    if (!OpenHome::Os::SemaphoreTimedWait(iHandle, aTimeoutMs)) {
+    if (!TryWait(aTimeoutMs)) {
         THROW(Timeout);
     }
+}
+
+TBool Semaphore::TryWait(TUint aTimeoutMs)
+{
+    ASSERT(iHandle != kHandleNull);
+
+    if (aTimeoutMs == 0) {
+        Wait();
+        return true;
+    }
+
+    return OpenHome::Os::SemaphoreTimedWait(iHandle, aTimeoutMs);
 }
 
 TBool Semaphore::Clear()
