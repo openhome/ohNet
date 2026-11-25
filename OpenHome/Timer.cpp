@@ -178,11 +178,7 @@ void TimerManager::Run()
             iWake.Wait(); // nothing scheduled - sleep until something is
         }
         else if (delay > 0) {
-            try {
-                iWake.Wait((TUint)delay);
-            }
-            catch (Timeout&) {
-            }
+            (void)iWake.TryWait((TUint)delay);
         }
 
         // Watchdog bookkeeping...
