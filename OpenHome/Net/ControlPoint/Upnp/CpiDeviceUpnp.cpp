@@ -903,7 +903,7 @@ TBool CpiDeviceListUpnp::IsLocationReachable(const Brx& aLocation) const
     //       incoming packet. We also do this WITHOUT holding the lock in a bid
     Endpoint endpt;
     try {
-        endpt.SetAddress(uri.Host(), Endpoint::ResolutionHint::LikelyIPv4Address);
+        endpt.SetAddress(uri.Host(), eResolutionHintLikelyIPv4Address);
     }
     catch (NetworkError&) {
         return false;
