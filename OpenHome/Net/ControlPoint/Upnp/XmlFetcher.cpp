@@ -337,7 +337,7 @@ TBool XmlFetcher::Read()
 namespace OpenHome {
 namespace Net {
 
-struct XmlFetchBlock
+class XmlFetchBlock
 {
     static const TUint kMaxBlockSize   = 5 * 1024; //@PoolBlockSize
     static const TUint kFetchesPerBlock = kMaxBlockSize / sizeof(XmlFetch);
