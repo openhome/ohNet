@@ -339,6 +339,8 @@ namespace Net {
 
 class XmlFetchBlock
 {
+    friend class XmlFetchManager;
+
     static const TUint kMaxBlockSize   = 5 * 1024; //@PoolBlockSize
     static const TUint kFetchesPerBlock = kMaxBlockSize / sizeof(XmlFetch);
 
