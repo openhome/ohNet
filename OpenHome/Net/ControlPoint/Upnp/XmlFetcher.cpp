@@ -365,7 +365,8 @@ XmlFetchManager::XmlFetchManager(CpStack& aCpStack)
     , iPending("FETP", 0)
     , iPool(NULL)
     , iFreeList(NULL)
-    , iPendingList(NULL)
+    , iPendingListHead(NULL)
+    , iPendingListTail(NULL)
     , iNumBlocks(0)
     , iNumInUse(0)
     , iMaxInUse(0)
@@ -404,9 +405,9 @@ XmlFetchManager::~XmlFetchManager()
     }
     free(iFetchers);
 
-    while (iPendingList) {
-        XmlFetch* fetch = iPendingList;
-        iPendingList    = fetch->iNext;
+    while (iPendingListHead) {
+        XmlFetch* fetch  = iPendingListHead;
+        iPendingListHead = fetch->iNext;
 
         SetFetchShutdownError(fetch);
         // Don't bother calling release as the fetches are all released next
@@ -479,8 +480,17 @@ void XmlFetchManager::EnqueueFetch(XmlFetch* aFetch)
         ReleaseFetchLocked(aFetch);
     }
     else {
-        aFetch->iNext = iPendingList;
-        iPendingList  = aFetch;
+        aFetch->iNext = NULL;
+
+        if (iPendingListTail) {
+            iPendingListTail->iNext = aFetch;
+        }
+        else {
+            iPendingListHead = aFetch;
+        }
+
+        iPendingListTail = aFetch;
+
         iPending.Signal();
     }
 }
@@ -516,11 +526,15 @@ XmlFetch* XmlFetchManager::NextFetch()
         return NULL; // Signal for XmlFetcher threads to exit
     }
 
-    ASSERT(iPendingList != NULL);
+    ASSERT(iPendingListHead != NULL);
 
-    XmlFetch* fetch = iPendingList;
-    iPendingList    = fetch->iNext;
-    fetch->iNext    = NULL;
+    XmlFetch* fetch  = iPendingListHead;
+    iPendingListHead = fetch->iNext;
+    fetch->iNext     = NULL;
+
+    if (iPendingListHead == NULL) {
+        iPendingListTail = NULL;
+    }
 
     return fetch;
 }

@@ -115,7 +115,8 @@ private:
     Semaphore iPending;
     XmlFetchBlock* iPool;
     XmlFetch* iFreeList;
-    XmlFetch* iPendingList;
+    XmlFetch* iPendingListHead;
+    XmlFetch* iPendingListTail;
     XmlFetcher** iFetchers;
     TBool iActive;
 
