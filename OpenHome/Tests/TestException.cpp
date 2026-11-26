@@ -6,6 +6,26 @@
 using namespace OpenHome;
 using namespace OpenHome::TestFramework;
 
+/* Set by Runner::Main before the library is initialised - see TestExceptionMain.cpp.
+   Reported from a suite because Runner::Run() zeroes the pass/fail counters. */
+TBool gThrewWithNoEnv = false;
+
+class SuiteNoEnv : public Suite
+{
+public:
+    SuiteNoEnv() : Suite("Exception outside the library lifetime") {}
+    void Test();
+};
+
+void SuiteNoEnv::Test()
+{
+    /* gEnv is NULL before Initialise() and again after Close(), and the Exception
+       ctor used to dereference it unconditionally.  Reaching this line at all
+       means the probe in Runner::Main did not segfault; the flag confirms the
+       exception was also thrown and caught normally. */
+    TEST(gThrewWithNoEnv);
+}
+
 class SuiteThreadSafety : public Suite
 {
 public:
@@ -63,6 +83,7 @@ void SuiteThreadSafety::Test()
 void TestException()
 {
     Runner runner("Binary Buffer Testing");
+    runner.Add(new SuiteNoEnv());
     runner.Add(new SuiteThreadSafety());
     runner.Run();
 }

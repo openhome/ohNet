@@ -434,6 +434,25 @@ Brn Ascii::Trim(const Brx& aBuffer)
     return (aBuffer.Split(start, end - start));
 }
 
+/* |INT32_MIN| and |INT64_MIN| - one larger than the matching MAX, so a negative
+   literal has a different limit from a positive one. */
+static const TUint   kIntMinMagnitude   = 2147483648u;
+static const TUint64 kInt64MinMagnitude = 9223372036854775808ull;
+
+/* Accumulate one digit into aValue, throwing AsciiError instead of overflowing.
+   aLimit is the largest magnitude the caller can represent.  Previously these
+   parsers accumulated into a signed type with no check at all, which is
+   undefined behaviour and silently returned wrapped values for over-long
+   input (e.g. an attacker-supplied Content-Length). */
+template<typename T>
+static void AccumulateDigit(T& aValue, TUint aDigit, T aBase, T aLimit)
+{
+    if (aValue > (aLimit - aDigit) / aBase) {
+        THROW(AsciiError);
+    }
+    aValue = aValue * aBase + aDigit;
+}
+
 TInt Ascii::Int(const Brx& aBuffer)
 {
     Brn trim = Trim(aBuffer);
@@ -443,7 +462,7 @@ TInt Ascii::Int(const Brx& aBuffer)
 
     TBool negative = false;
 
-    TInt value = 0;
+    TUint magnitude = 0;
 
     for (TUint i = 0; i < trim.Bytes(); i++)
     {
@@ -461,10 +480,14 @@ TInt Ascii::Int(const Brx& aBuffer)
             THROW(AsciiError);
         }
 
-        value = value * 10 + DecValue(c);
+        // the sign is fixed by the first character, so the limit is known here
+        AccumulateDigit<TUint>(magnitude, DecValue(c), 10, negative? kIntMinMagnitude : (TUint)INT32_MAX);
     }
 
-    return (negative ? -value : value);
+    if (negative) {
+        return (magnitude == kIntMinMagnitude)? INT32_MIN : -(TInt)magnitude;
+    }
+    return (TInt)magnitude;
 }
 
 TUint Ascii::Uint(const Brx& aBuffer)
@@ -474,7 +497,7 @@ TUint Ascii::Uint(const Brx& aBuffer)
         THROW(AsciiError);  // empty string
     }
 
-    TInt value = 0;
+    TUint value = 0;
 
     for (TUint i = 0; i < trim.Bytes(); i++)
     {
@@ -484,7 +507,7 @@ TUint Ascii::Uint(const Brx& aBuffer)
             THROW(AsciiError);
         }
 
-        value = value * 10 + DecValue(c);
+        AccumulateDigit<TUint>(value, DecValue(c), 10, UINT32_MAX);
     }
 
     return (value);
@@ -499,7 +522,7 @@ TInt64 Ascii::Int64(const Brx& aBuffer)
 
     TBool negative = false;
 
-    TInt64 value = 0;
+    TUint64 magnitude = 0;
 
     for (TUint i = 0; i < trim.Bytes(); i++)
     {
@@ -517,10 +540,13 @@ TInt64 Ascii::Int64(const Brx& aBuffer)
             THROW(AsciiError);
         }
 
-        value = value * 10 + DecValue(c);
+        AccumulateDigit<TUint64>(magnitude, DecValue(c), 10, negative? kInt64MinMagnitude : (TUint64)INT64_MAX);
     }
 
-    return (negative ? -value : value);
+    if (negative) {
+        return (magnitude == kInt64MinMagnitude)? INT64_MIN : -(TInt64)magnitude;
+    }
+    return (TInt64)magnitude;
 }
 
 TUint64 Ascii::Uint64(const Brx& aBuffer)
@@ -530,7 +556,7 @@ TUint64 Ascii::Uint64(const Brx& aBuffer)
         THROW(AsciiError);  // empty string
     }
 
-    TInt64 value = 0;
+    TUint64 value = 0;
 
     for (TUint i = 0; i < trim.Bytes(); i++)
     {
@@ -540,7 +566,7 @@ TUint64 Ascii::Uint64(const Brx& aBuffer)
             THROW(AsciiError);
         }
 
-        value = value * 10 + DecValue(c);
+        AccumulateDigit<TUint64>(value, DecValue(c), 10, UINT64_MAX);
     }
 
     return (value);
@@ -557,13 +583,13 @@ TUint Ascii::UintHex(const Brx& aBuffer)
         THROW(AsciiError);  // clearly too long
     }
 
-    TInt val = 0;
+    TUint val = 0;
     for (TUint i=0; i<trim.Bytes(); i++) {
         TByte c = trim[i];
         if (!Ascii::IsHex(c)) {
             THROW(AsciiError);
         }
-        val = (val * 16) + Ascii::HexValue(c);
+        AccumulateDigit<TUint>(val, Ascii::HexValue(c), 16, UINT32_MAX);
     }
 
     return val;
